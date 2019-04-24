@@ -31,6 +31,7 @@ namespace Chimera {
     }
 
     static void fix_descoping() noexcept {
+        // More like disable descoping and do it when the player loses health or shield
         static float health = 0;
         static float shield = 0;
         auto *player = PlayerTable::get_player_table().get_client_player();

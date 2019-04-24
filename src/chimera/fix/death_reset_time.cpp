@@ -16,6 +16,7 @@ namespace Chimera {
     }
 
     void setup_death_reset_time_fix() noexcept {
+        // Basically make it so the death timer doesn't go up by itself - Chimera makes it go up every tick instead
         auto *data = get_chimera().get_signature("death_timer_reset_sig").data();
         overwrite(data, static_cast<std::uint16_t>(0x9090));
         death_time = *reinterpret_cast<std::uint16_t **>(data + 8);

@@ -37,6 +37,7 @@ namespace Chimera {
         char center[256] = "Dead";
         char relative[256] = "";
 
+        // Check if the player exists. If so, show the coordinates of them (and their object's parent if they have one)
         if(player) {
             auto &object_table = ObjectTable::get_object_table();
             auto *object = object_table.get_dynamic_object(player->object_id);
