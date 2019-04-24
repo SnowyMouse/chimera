@@ -1,0 +1,27 @@
+#define MONOLITH_VERSION_MAJOR 1
+#define MONOLITH_VERSION_MINOR 0
+#define MONOLITH_VERSION_BUILD 5
+
+1 VERSIONINFO
+FILEVERSION      MONOLITH_VERSION_MAJOR,MONOLITH_VERSION_MINOR,0,MONOLITH_VERSION_BUILD
+PRODUCTVERSION   MONOLITH_VERSION_MAJOR,MONOLITH_VERSION_MINOR,0,MONOLITH_VERSION_BUILD
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments",         "It might be finished?"
+            VALUE "CompanyName",      "Kavawuvi ^v^"
+            VALUE "FileDescription",  "Monolith mod loader for Halo CE"
+            VALUE "FileVersion",      "1.0.5"
+            VALUE "InternalName",     "monolith"
+            VALUE "OriginalFilename", "strings.dll"
+            VALUE "ProductName",      "Monolith"
+            VALUE "ProductVersion",   "1.0.5"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

@@ -1,0 +1,25 @@
+#include "version.hpp"
+
+1 VERSIONINFO
+FILEVERSION      CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,0,CHIMERA_VERSION_BUILD
+PRODUCTVERSION   CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,0,CHIMERA_VERSION_BUILD
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments",         "It's still not finished"
+            VALUE "CompanyName",      "Kavawuvi ^v^"
+            VALUE "FileDescription",  "Chimera version " CHIMERA_VERSION_STRING " (alpha)"
+            VALUE "FileVersion",      CHIMERA_VERSION_STRING
+            VALUE "InternalName",     "chimera"
+            VALUE "OriginalFilename", "chimera.dll"
+            VALUE "ProductName",      "Chimera"
+            VALUE "ProductVersion",   CHIMERA_VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

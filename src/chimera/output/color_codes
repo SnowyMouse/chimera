@@ -1,0 +1,126 @@
+## Quake III Arena codes
+0    000000
+1    FF0000
+2    00FF00
+3    FFFF00
+4    0000FF
+5    00FFFF
+6    FF00FF
+7    FFFFFF
+8    FF7F00
+9    7F7F7F
+
+## More colors taken from ET palette with matching codes.
+)    FF0033
+!    FF9919
+@    7F3F00
+#    7F007F
+$    007FFF
+%    7F00FF
+&    3399CC
+*    B21919
+(    006633
+-    999933
+
+## ET codes, non-matching
+_    CC9933
+=    007F7F
++    FFFF7F
+|    7F0000
+\    CCFFCC
+:    00007F
+
+## Reset to default
+;    XXXXXX
+
+## Halo internal colors
+## UI Blue
+[    2895FF
+
+## UI Blue, Disabled
+{    0D3667
+
+## UI White
+]    CCCCCC
+
+##   UI White, Disabled
+}    45494F
+
+## Scoreboard light grey
+'    B2B2B2
+
+## Console Pink
+"    FF4CFF
+
+## Red Team Scoreboard player
+<    994C4C
+
+## Red Team Scoreboard player, highlighted
+,    FFB2B2
+
+## Blue Team Scoreboard Player
+>    4C4C99
+
+## Blue Team Scoreboard Player, highlighted
+.    B2B2FF
+
+## FFA Scoreboard player
+?    75BAFF
+
+## FFA Scoreboard player, highlghted
+/    DBFFFF
+
+## 52 Color NES style palette, QWERTY Layout without blacks or overly close whites.
+## Organised so you can use Shift to select a darker shade of a color
+Q    7C7C7C
+q    BCBCBC
+W    0000FC
+w    0078F8
+E    0000BC
+e    0058F8
+R    4428BC
+r    6844FC
+T    940084
+t    D800CC
+Y    A80020
+y    E40058
+U    A81000
+u    F83800
+I    881400
+i    E45C10
+O    503000
+o    AC7C00
+P    007800
+p    00B800
+A    006800
+a    00A800
+S    005800
+s    00A844
+D    004058
+d    008888
+F    3CBCFC
+f    A4E4FC
+G    6888FC
+g    B8B8F8
+H    9878F8
+h    D8B8F8
+J    F878F8
+j    F8B8F8
+K    F85898
+k    F8A4C0
+L    F87858
+l    F0D0B0
+Z    FCA044
+z    FCE0A8
+X    F8B800
+x    F8D878
+C    B8F818
+c    D8F878
+V    58D854
+v    B8F8B8
+B    58F898
+b    B8F8D8
+N    00E8D8
+n    00FCFC
+M    787878
+m    F8D8F8

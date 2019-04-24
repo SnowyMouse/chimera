@@ -1,0 +1,86 @@
+chimera_language_shortened_name                                                 es
+
+chimera_error_config                                                            Error al abrir el archivo de configuración %s
+chimera_error_command_not_found                                                 Comando no encontrado
+chimera_error_command_error                                                     %s: Un error ocurrió mientras se ejecutaba el comando
+chimera_error_command_unavailable                                               %s: Comando no disponible en tu instalación de Halo (falta %s)
+chimera_error_not_enough_arguments                                              %s: No fueron especificados suficientes argumentos. Se esperaba por lo menos %zu
+chimera_error_too_many_arguments                                                %s: Se especificaron demasiados argumentos. Se esperaba como mucho %zu
+
+chimera_custom_chat_to_all                                                      Todos
+chimera_custom_chat_to_team                                                     Equipo
+chimera_custom_chat_to_vehicle                                                  Vehículo
+
+chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
+chimera_custom_chat_from_team                                                   ^%s%s^;^; (equipo): %s
+chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehículo): %s
+
+chimera_category_core                                                           esencial
+chimera_category_debug                                                          debug
+chimera_category_enhancement                                                    mejora
+chimera_category_mouse                                                          mouse
+chimera_category_visual                                                         visual
+
+chimera_af_command_help                                                         Habilita el filtrado anisotrópico.
+chimera_block_buffering_command_help                                            Deshabilita el buffering. Puede mejorar la respuesta de entrada del mouse.
+chimera_block_buffering_command_warning                                         ¡La deshabilitación del buffering ya está activada (probablemente a través de config.txt)!
+chimera_block_camera_shake_command_help                                         Deshabilita la sacudida de cámara al recibir daños.
+chimera_block_gametype_indicator_command_help                                   Oculta el indicador de tipo de partida.
+chimera_block_gametype_rules_command_help                                       Deshabilita las reglas del tipo de juego al comienzo de una partida.
+chimera_block_hold_f1_command_help                                              Deshabilita el aviso \"Mantén presionado F1 para puntajes\".
+chimera_block_loading_screen_command_help                                       Deshabilita la pantalla de carga.
+chimera_block_mouse_acceleration_command_help                                   Deshabilita la aceleración de mouse.
+chimera_block_zoom_blur_command_help                                            Desactiva el desenfoque de la mira.
+chimera_command_categories                                                      Categorías:
+chimera_command_commands_in_category                                            Comandos en %s:
+chimera_command_error_no_such_category_or_command                               No existe tal categoría o comando %s
+chimera_command_help                                                            Obtén información acerca de Chimera.
+chimera_command_info_for_command                                                Información para %s:
+chimera_command_version                                                         Chimera versión %s por Kavawuvi ^v^
+chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
+chimera_devmode_command_help                                                    Habilita el devmode. Esto habilitará los comandos de cheats y de desarrollador.
+chimera_hud_kill_feed_command_help                                              Muestra los anuncios de muertes en el HUD.
+chimera_language_command_available_languages                                    Lenguajes disponibles:
+chimera_language_command_error_invalid_language                                 Lenguaje inválido %s.
+chimera_language_command_help                                                   Establece el idioma de Chimera.
+chimera_mouse_sensitivity_command_help                                          Cambia la sensibilidad del mouse.
+chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical
+chimera_signature_info_command_error                                            Signatura desconocida %s
+chimera_signature_info_command_help                                             Obtén información para una signatura.
+chimera_signature_info_command_signature_address                                Dirección de memoria
+chimera_signature_info_command_signature_feature                                Característica
+chimera_signature_info_command_signature_info                                   Información de signatura para %s:
+chimera_throttle_fps_help                                                       Bloquea la velocidad de cuadros de Halo.
+
+chimera_about_command_credits_header                                            Créditos
+chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\nTESTEO\n    SteamFox
+chimera_about_command_license_header                                            Licencia
+chimera_about_command_license                                                   Copyright (C) 2019 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3 o\nsuperior. Visita https://www.gnu.org/licenses/ para mayor información.
+chimera_about_command_help                                                      Lista de información acerca de este mod.
+chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
+chimera_auto_center_command_help                                                Establece el comportamiento del auto-centrado. 0 = Comportamiento de PC, 1 = Comportamiento de Xbox, 2 = Sin auto-centrado.
+chimera_auto_center_command_invalid_setting                                     El ajuste debe estar entre 0 y 2.
+chimera_block_all_bullshit_help                                                 Deshabilita varias cosas que la mayoría de la gente puede encontrar molestas.
+chimera_category_controller                                                     Mando.
+chimera_category_custom_chat                                                    chat_custom.
+chimera_chat_block_ips_command_help                                             Oculta las IPs mostradas en los mensajes.
+chimera_chat_block_server_messages_command_help                                 Oculta los mensajes del servidor.
+chimera_chat_color_help_command_help                                            Muestra una lista de los colores del chat al ingresar mensajes en éste.
+chimera_fov_command_help                                                        Establece el campo de visión. Usa \"auto\" para FOV automático o el sufijo \"v\" para bloquearlo a un FOV vertical.
+chimera_player_info_help                                                        Muestra información para un jugador por el índice del rcon, o de ti mismo si no se da ninguno.
+chimera_set_name_help                                                           Establece tu nombre.
+chimera_show_coordinates_help                                                   Muestra tus coordenadas en el mapa.
+chimera_show_fps_help                                                           Muestra tu velocidad de fotogramas actual.
+chimera_signature_info_command_dumped                                           Se volcaron todas las signaturas a %s
+chimera_uncap_cinematic_command_help                                            Deshabilita el bloqueo de 30 FPS en las cinemáticas.
+
+chimera_command_no_commands_available_in_category                               No hay comandos disponibles para tu instalación de Halo.
+chimera_console_prompt_color_command_help                                       Cambia el color de la consola.
+chimera_console_prompt_color_command_output                                     %.02f rojo, %.02f verde, %.02f azul
+chimera_enable_console_command_help                                             Habilita la consola.
+chimera_enable_console_command_warning                                          La consola fue habilitada antes de iniciar el juego (-console) y no puede ser deshabilitada.
+
+chimera_error_must_be_host                                                      Debes ser el host del servidor para hacer eso.
+chimera_error_player_not_found                                                  El/la jugador/ra %s no fue encontrado/da.
+
+chimera_warning_command_will_take_effect_on_next_load                           Este comando tendrá efecto la próxima vez que cargue.
