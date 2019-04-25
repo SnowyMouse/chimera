@@ -21,6 +21,7 @@ namespace Chimera {
     }
 
     static void correct_sun() noexcept {
+        // Since Halo PC scales sun by 768p (even though its default res is 800x600 and supports custom resolution), we scale lens flares by dividing by 768
         static std::uint16_t height = 0;
         auto new_height = get_resolution().height;
         if(new_height != height) {
