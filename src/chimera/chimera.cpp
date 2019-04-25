@@ -58,21 +58,6 @@ namespace Chimera {
             // Set up memory/decompression stuff
             set_up_chimera_memory();
 
-            const char *decompression_benchmark = chimera->get_ini()->get_value("decompression.show_benchmark");
-            const char *decompression_threads = chimera->get_ini()->get_value("decompression.max_threads");
-
-            if(decompression_benchmark) {
-                set_show_decompression_benchmark(STR_TO_BOOL(decompression_benchmark));
-            }
-
-            if(decompression_threads) {
-                int max_decompression_threads = std::stoi(decompression_threads);
-                if(max_decompression_threads < 1) {
-                    max_decompression_threads = 1;
-                }
-                set_decompression_threads(static_cast<std::size_t>(max_decompression_threads));
-            }
-
             if(this->feature_present("client")) {
                 // Fix the camo by default
                 extern bool camo_fix_command(int argc, const char **argv);

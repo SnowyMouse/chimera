@@ -1,6 +1,6 @@
 chimera_language_shortened_name                                                 es
 
-chimera_error_config                                                            Error al abrir el archivo de configuración %s
+chimera_error_config                                                            Chimera: Error al abrir el archivo de configuración %s
 chimera_error_command_not_found                                                 Comando no encontrado
 chimera_error_command_error                                                     %s: Un error ocurrió mientras se ejecutaba el comando
 chimera_error_command_unavailable                                               %s: Comando no disponible en tu instalación de Halo (falta %s)

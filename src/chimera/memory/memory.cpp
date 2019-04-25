@@ -14,6 +14,8 @@
 #include "../fast_load/fast_load.hpp"
 #include "decompress.hpp"
 #include "bitmap.hpp"
+#include "../localization/localization.hpp"
+#include "../config/ini.hpp"
 
 #include <mutex>
 #include <thread>
@@ -38,9 +40,32 @@ namespace Chimera {
     static std::uint16_t *loaded_map_index;
     static std::byte *loaded_map_ptr;
 
+    static void failed_message() noexcept;
+
     static void actually_set_up_chimera_memory() noexcept {
+        const char *decompression_benchmark = get_chimera().get_ini()->get_value("decompression.show_benchmark");
+        const char *decompression_threads = get_chimera().get_ini()->get_value("decompression.max_threads");
+
+        if(decompression_benchmark) {
+            set_show_decompression_benchmark(STR_TO_BOOL(decompression_benchmark));
+        }
+
+        if(decompression_threads) {
+            int max_decompression_threads = std::stoi(decompression_threads);
+            if(max_decompression_threads < 1) {
+                max_decompression_threads = 1;
+            }
+            set_decompression_threads(static_cast<std::size_t>(max_decompression_threads));
+        }
+
+        const char *enable_this = get_chimera().get_ini()->get_value("memory.enable_map_memory_buffer");
+        if(enable_this && !STR_TO_BOOL(enable_this)) {
+            return;
+        }
+
         data_allocation = reinterpret_cast<std::byte *>(VirtualAlloc(0, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
         if(!data_allocation) {
+            add_frame_event(failed_message);
             return;
         }
 
@@ -351,5 +376,10 @@ namespace Chimera {
             std::fclose(bf);
             std::fclose(sf);
         }
+    }
+
+    static void failed_message() noexcept {
+        remove_frame_event(failed_message);
+        console_error(localize("chimera_error_failed_allocation"));
     }
 }

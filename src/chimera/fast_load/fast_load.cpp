@@ -104,23 +104,25 @@ namespace Chimera {
         for(std::size_t i=0;i<maps_count();i++) {
             if(same_string_case_insensitive(indices[i].file_name, loading_map)) {
                 auto *path = path_for_map(indices[i].file_name);
-                read_map(path);
+                bool map_can_be_loaded = get_memory() != nullptr;
+                bool map_already_crc = indices[i].crc32 != 0xFFFFFFFF;
 
-                // If CRC32 has already been calculated, return.
-                if(indices[i].crc32 != 0xFFFFFFFF) {
+                // Do what we need to do
+                if(map_can_be_loaded) {
+                    read_map(path);
+                }
+                if(map_already_crc) {
                     return;
                 }
 
                 // Load the header
-                FILE *f = std::fopen(path, "rb");
+                std::FILE *f = std::fopen(path, "rb");
                 if(!f) {
                     return;
                 }
                 MapHeader header;
                 std::fread(&header, sizeof(header), 1, f);
-                indices[i].crc32 = ~calculate_crc32_of_map_file(nullptr, header);
-
-                // Close
+                indices[i].crc32 = ~calculate_crc32_of_map_file(map_can_be_loaded ? nullptr : f, header);
                 std::fclose(f);
 
                 return;
