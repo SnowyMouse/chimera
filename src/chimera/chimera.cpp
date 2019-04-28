@@ -101,6 +101,9 @@ namespace Chimera {
 
                 // This could be useful
                 set_up_server_history();
+
+                // lol
+                set_up_nav_numbers_fix();
             }
             else {
                 enable_output(true);
