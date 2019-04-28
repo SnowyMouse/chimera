@@ -198,8 +198,8 @@ namespace Chimera {
             std::copy(nodes, nodes + current_tick_object.node_count, current_tick_object.nodes);
             current_tick_object.center = object->center_position;
 
-            // Bipeds get a max speed of 2.5 per tick before they aren't interpolated. Other objects get 5.0 world units.
-            static constexpr float MAX_INTERPOLATION_DISTANCES[] = { 5.0*5.0, 2.5*2.5 };
+            // Bipeds get a max speed of 2.5 per tick before they aren't interpolated. Other objects get 7.5 world units.
+            static const float MAX_INTERPOLATION_DISTANCES[] = { 7.5*7.5, 2.5*2.5 };
 
             // Let's check if the distance between the two points is too great (such as if the object was teleported).
             current_tick_object.interpolate = distance_squared(current_tick_object.center, previous_tick[i].center) < MAX_INTERPOLATION_DISTANCES[object->type == OBJECT_TYPE_BIPED];
