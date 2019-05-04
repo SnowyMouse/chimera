@@ -69,6 +69,7 @@ chimera_enable_console_command_help                                             
 chimera_enable_console_command_warning                                          Console was enabled before startup (-console) and cannot be disabled.
 chimera_fov_command_help                                                        Set field of view. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
 chimera_hud_kill_feed_command_help                                              Show the kill feed in the HUD.
+chimera_interpolate_help                                                        Set whether or not to make objects move per-frame instead of per-tick.
 chimera_language_command_available_languages                                    Available languages:
 chimera_language_command_error_invalid_language                                 Invalid language %s.
 chimera_language_command_help                                                   Set the language of Chimera.

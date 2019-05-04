@@ -26,7 +26,6 @@
 #include "fix/leak_descriptors.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
-#include "fix/interpolate/interpolate.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
 #include "memory/decompress.hpp"
@@ -83,9 +82,6 @@ namespace Chimera {
 
                 // Fix the damn FOV
                 set_up_fov_fix();
-
-                // And fix this stupid shit too
-                set_up_interpolation();
 
                 // And this should get fixed, too. Holy shit.
                 set_up_descope_fix();
@@ -314,21 +310,13 @@ namespace Chimera {
     void initial_tick() {
         remove_preframe_event(initial_tick);
         if(chimera->feature_present("client")) {
-            #define SET_BY_DEFAULT(function, ...) {\
-                extern bool function(int, const char **);\
-                function(1, __VA_ARGS__);\
-            }
-
-            const char *true_str = "true";
-
-            SET_BY_DEFAULT(block_mouse_acceleration_command, &true_str);
-            SET_BY_DEFAULT(hud_kill_feed_command, &true_str);
-            SET_BY_DEFAULT(enable_console_command, &true_str);
-            SET_BY_DEFAULT(aim_assist_command, &true_str);
-
-            const char *diagonals_str = "0.75";
-
-            SET_BY_DEFAULT(diagonals_command, &diagonals_str);
+            // Set default settings
+            chimera->execute_command("chimera_block_mouse_acceleration true");
+            chimera->execute_command("chimera_hud_kill_feed true");
+            chimera->execute_command("chimera_enable_console true");
+            chimera->execute_command("chimera_aim_assist true");
+            chimera->execute_command("chimera_interpolate true");
+            chimera->execute_command("chimera_diagonals 0.75");
 
             // Load the custom chat
             initialize_custom_chat();
