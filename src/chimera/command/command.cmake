@@ -39,6 +39,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/visual/camo_fix.cpp
     ${COMMAND_DIR}/client/visual/console_prompt_color.cpp
     ${COMMAND_DIR}/client/visual/fov.cpp
+    ${COMMAND_DIR}/client/visual/interpolate.cpp
     ${COMMAND_DIR}/client/visual/model_detail.cpp
     ${COMMAND_DIR}/client/visual/simple_score_screen.cpp
     ${COMMAND_DIR}/client/visual/split_screen_hud.cpp

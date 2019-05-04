@@ -3,6 +3,7 @@
 
 namespace Chimera {
     void set_up_interpolation() noexcept;
+    void disable_interpolation() noexcept;
 }
 
 #endif
