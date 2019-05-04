@@ -32,7 +32,7 @@ namespace Chimera {
     auto bsp_polies = std::make_unique<std::uint32_t []>(BSP_POLY_LIMIT);
     void set_up_extend_limits() noexcept {
         // There's a ton of stuff here.
-        static const float draw_distance = 1026.0F * 1.34F * 1.34F * 1.34F * 1.34F * 1.34F / 1.97F;
+        static const float MAXIMUM_DRAW_DISTANCE = 1026.0F * 1.34F * 1.34F * 1.34F * 1.34F * 1.34F / 1.97F;
         static auto visible_objects = std::make_unique<std::uint32_t []>(VISIBLE_OBJECT_LIMIT);
 
         auto &bsp_poly_1_sig = get_chimera().get_signature("bsp_poly_1_sig");
@@ -65,8 +65,7 @@ namespace Chimera {
         auto &visible_object_limit_1_sig = get_chimera().get_signature("visible_object_limit_1_sig");
         auto &visible_object_limit_2_sig = get_chimera().get_signature("visible_object_limit_2_sig");
 
-        auto &draw_distance_1_sig = get_chimera().get_signature("draw_distance_1_sig");
-        auto &draw_distance_2_sig = get_chimera().get_signature("draw_distance_2_sig");
+        auto &draw_distance_sig = get_chimera().get_signature("draw_distance_sig");
 
         // Chimera allocated a new BSP polygon array. We need to point to those.
         overwrite(bsp_poly_1_sig.data() + 1, bsp_polies.get());
@@ -131,8 +130,7 @@ namespace Chimera {
         overwrite(visible_object_limit_1_sig.data() + 7, static_cast<std::uint16_t>(VISIBLE_OBJECT_LIMIT));
         overwrite(visible_object_limit_2_sig.data() + 1, static_cast<std::uint32_t>(VISIBLE_OBJECT_LIMIT));
 
-        overwrite(draw_distance_1_sig.data() + 1, &draw_distance);
-        overwrite(draw_distance_2_sig.data() + 2, &draw_distance);
+        overwrite(draw_distance_sig.data() + 1, &MAXIMUM_DRAW_DISTANCE);
     }
 
     // Basically we're looping through all of the BSP polygons
