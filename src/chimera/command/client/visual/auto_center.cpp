@@ -48,9 +48,7 @@ namespace Chimera {
 
     // Apply the mod, disabling auto centering.
     static void apply_mod() noexcept {
-        static const short mod[] = { 0x8B, 0x51, 0x54, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x90, 0x90, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x90, 0xE9 };
-        static auto *auto_center_ptr = get_chimera().get_signature("auto_center_sig").data();
-        write_code(auto_center_ptr, mod, sizeof(mod)/sizeof(mod[0]));
+        overwrite(get_chimera().get_signature("auto_center_sig").data(), static_cast<std::uint16_t>(0x9090));
     }
 
     // This is the number of frames that occurred this tick.
