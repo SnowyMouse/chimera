@@ -3,8 +3,6 @@
 #include "math_trig.hpp"
 
 namespace Chimera {
-
-    ColorRGB::ColorRGB() noexcept {}
     ColorRGB::ColorRGB(float r, float g, float b) noexcept :
         red(r),
         green(g),
@@ -17,12 +15,7 @@ namespace Chimera {
         red(other.red),
         green(other.green),
         blue(other.blue) {}
-    ColorRGB::ColorRGB(const ColorRGB &other) noexcept :
-        red(other.red),
-        green(other.green),
-        blue(other.blue) {}
 
-    ColorARGB::ColorARGB() noexcept {}
     ColorARGB::ColorARGB(float a, float r, float g, float b) noexcept :
         alpha(a),
         red(r),
@@ -37,13 +30,7 @@ namespace Chimera {
         red(other.red),
         green(other.green),
         blue(other.blue) {}
-    ColorARGB::ColorARGB(const ColorARGB &other) noexcept :
-        alpha(other.alpha),
-        red(other.red),
-        green(other.green),
-        blue(other.blue) {}
 
-    ColorByte::ColorByte() noexcept {}
     ColorByte::ColorByte(float a, float r, float g, float b) noexcept :
         blue(static_cast<unsigned char>(b * 255)),
         green(static_cast<unsigned char>(g * 255)),
@@ -58,13 +45,6 @@ namespace Chimera {
         ColorByte::ColorByte(1.0f, other.red, other.green, other.blue) {}
     ColorByte::ColorByte(const ColorARGB &other) noexcept :
         ColorByte::ColorByte(other.alpha, other.red, other.green, other.blue) {}
-    ColorByte::ColorByte(const ColorByte &other) noexcept :
-        blue(other.blue),
-        green(other.green),
-        red(other.red),
-        alpha(other.alpha) {}
-
-    Quaternion::Quaternion() noexcept {}
 
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     Quaternion::Quaternion(const RotationMatrix &matrix) noexcept {
@@ -97,8 +77,6 @@ namespace Chimera {
         }
     }
 
-    Quaternion::Quaternion(const Quaternion& copy) noexcept : x(copy.x), y(copy.y), z(copy.z), w(copy.w) {}
-
     RotationMatrix::RotationMatrix() noexcept {}
 
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
@@ -127,12 +105,6 @@ namespace Chimera {
         tmp2 = quaternion.x*quaternion.w;
         this->v[2].y = 2.0f * (tmp1 + tmp2)*invs;
         this->v[1].z = 2.0f * (tmp1 - tmp2)*invs;
-    }
-
-    RotationMatrix::RotationMatrix(const RotationMatrix &copy) noexcept {
-        this->v[0] = copy.v[0];
-        this->v[1] = copy.v[1];
-        this->v[2] = copy.v[2];
     }
 
     // special thanks to MosesOfEgypt for the rotation interpolation stuff here

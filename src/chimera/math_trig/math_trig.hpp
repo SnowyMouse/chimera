@@ -13,11 +13,12 @@ namespace Chimera {
         float green = 1.0;
         float blue = 1.0;
 
-        ColorRGB() noexcept;
+        ColorRGB() noexcept = default;
         ColorRGB(float r, float g, float b) noexcept;
         ColorRGB(const ColorByte &other) noexcept;
         ColorRGB(const ColorARGB &other) noexcept;
-        ColorRGB(const ColorRGB &other) noexcept;
+        ColorRGB(const ColorRGB &) noexcept = default;
+        ColorRGB &operator=(const ColorRGB &) noexcept = default;
     };
 
     struct ColorARGB {
@@ -26,11 +27,12 @@ namespace Chimera {
         float green = 1.0;
         float blue = 1.0;
 
-        ColorARGB() noexcept;
+        ColorARGB() noexcept = default;
         ColorARGB(float a, float r, float g, float b) noexcept;
         ColorARGB(const ColorByte &other) noexcept;
         ColorARGB(const ColorRGB &other) noexcept;
-        ColorARGB(const ColorARGB &other) noexcept;
+        ColorARGB(const ColorARGB &) noexcept = default;
+        ColorARGB &operator=(const ColorARGB &) noexcept = default;
     };
 
     struct ColorByte {
@@ -39,12 +41,13 @@ namespace Chimera {
         unsigned char red;
         unsigned char alpha = 255;
 
-        ColorByte() noexcept;
+        ColorByte() noexcept = default;
         ColorByte(float a, float r, float g, float b) noexcept;
         ColorByte(unsigned char a, unsigned char r, unsigned char g, unsigned char b) noexcept;
         ColorByte(const ColorRGB &other) noexcept;
         ColorByte(const ColorARGB &other) noexcept;
-        ColorByte(const ColorByte &other) noexcept;
+        ColorByte(const ColorByte &) noexcept = default;
+        ColorByte &operator=(const ColorByte &) noexcept = default;
     };
 
     struct Point3D {
@@ -72,20 +75,22 @@ namespace Chimera {
 
     struct RotationMatrix;
     struct Quaternion {
-        float x;
-        float y;
-        float z;
-        float w;
-        Quaternion() noexcept;
+        float x = 0.0F;
+        float y = 0.0F;
+        float z = 0.0F;
+        float w = 1.0F;
+        Quaternion() noexcept = default;
         Quaternion(const RotationMatrix &matrix) noexcept;
-        Quaternion(const Quaternion &copy) noexcept;
+        Quaternion(const Quaternion &) noexcept = default;
+        Quaternion &operator =(const Quaternion &) noexcept = default;
     };
 
     struct RotationMatrix {
         Point3D v[3];
         RotationMatrix() noexcept;
         RotationMatrix(const Quaternion &quaternion) noexcept;
-        RotationMatrix(const RotationMatrix &copy) noexcept;
+        RotationMatrix(const RotationMatrix &) noexcept = default;
+        RotationMatrix &operator =(const RotationMatrix &) noexcept = default;
     };
 
     /**
