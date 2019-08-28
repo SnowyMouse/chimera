@@ -48,6 +48,18 @@ namespace Chimera {
                     at += 1;
                     break;
 
+                // mov [reg]
+                case 0x66: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(op1 == 0x89) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
+                    std::terminate();
+                }
+
                 // push 0x00000000-0xFFFFFFFF
                 case 0x68: {
                     offsets.push_back(at - at_start);
@@ -164,6 +176,12 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
+                        break;
+                    }
+                    else if(a == 0x93) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 6);
+                        at += 6;
                         break;
                     }
                     std::terminate();
