@@ -213,6 +213,7 @@ namespace Chimera {
 
         // Controller
         ADD_COMMAND("chimera_aim_assist", "chimera_category_controller", "client", aim_assist_command, true, 0, 1);
+        ADD_COMMAND("chimera_auto_uncrouch", "chimera_category_controller", "client_auto_uncrouch", auto_uncrouch_command, true, 0, 1);
         ADD_COMMAND("chimera_diagonals", "chimera_category_controller", "client_diagonals", diagonals_command, true, 0, 1);
         ADD_COMMAND("chimera_deadzones", "chimera_category_controller", "client_deadzones", deadzones_command, true, 0, 1);
 

@@ -162,6 +162,19 @@ namespace Chimera {
                     std::terminate();
                 }
 
+                // mov bl, [eax+esi]
+                case 0x8A: {
+                    auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(a == 0x1C) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
+
+                    std::terminate();
+                }
+
                 // moving stuff
                 case 0x8B: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
@@ -184,6 +197,20 @@ namespace Chimera {
                         at += 6;
                         break;
                     }
+                    std::terminate();
+                }
+
+                // lea
+                case 0x8D: {
+                    auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    auto b = *reinterpret_cast<const std::uint8_t *>(at + 2);
+                    if(a == 0x44 && b == 0x0C) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 4);
+                        at += 4;
+                        break;
+                    }
+
                     std::terminate();
                 }
 

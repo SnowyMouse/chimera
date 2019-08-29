@@ -10,6 +10,8 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/debug/player_info.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
     ${COMMAND_DIR}/client/controller/aim_assist.cpp
+    ${COMMAND_DIR}/client/controller/auto_uncrouch.cpp
+    ${COMMAND_DIR}/client/controller/auto_uncrouch.S
     ${COMMAND_DIR}/client/controller/deadzones.cpp
     ${COMMAND_DIR}/client/controller/deadzones.S
     ${COMMAND_DIR}/client/controller/diagonals.cpp
