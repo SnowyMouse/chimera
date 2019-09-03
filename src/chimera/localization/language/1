@@ -53,7 +53,7 @@ chimera_signature_info_command_signature_info                                   
 chimera_throttle_fps_help                                                       Bloquea la velocidad de cuadros de Halo.
 
 chimera_about_command_credits_header                                            Créditos
-chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\nTESTEO\n    SteamFox
+chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
 chimera_about_command_license_header                                            Licencia
 chimera_about_command_license                                                   Copyright (C) 2019 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3 o\nsuperior. Visita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
@@ -84,3 +84,13 @@ chimera_error_must_be_host                                                      
 chimera_error_player_not_found                                                  El/la jugador/ra %s no fue encontrado/da.
 
 chimera_warning_command_will_take_effect_on_next_load                           Este comando tendrá efecto la próxima vez que cargue.
+
+chimera_auto_uncrouch_help                                                      Agachado tipo Xbox, al alcanzar máxima velocidad con un mando el jugador se pondrá de pie.
+chimera_block_server_ip_command_help                                            Oculta la IP del servidor en pantalla, útil para transmisiones en directo.
+chimera_deadzones_command_help                                                  Establece el valor para toda zona muerta en mandos de consola.
+chimera_diagonals_command_help                                                  Activa diagonales para el movimiento con mando en multijugador.
+chimera_interpolate_help                                                        Mejora la apariencia del movimiento en objetos y animaciones (Uso intensivo de CPU.)
+chimera_model_detail_command_help                                               Cambia el nivel de detalle que el juego usa en modelos 3D.
+chimera_shrink_empty_weapons_help                                               Miniaturiza las armas vacias en el suelo.
+chimera_simple_score_screen_command_help                                        Muestra una tabla de puntuacion simplificada y más clásica.
+chimera_split_screen_hud_command_help                                           Usa el HUD de pantalla dividida como HUD principal.
