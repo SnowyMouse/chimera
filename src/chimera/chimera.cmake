@@ -29,6 +29,7 @@ add_library(chimera MODULE
     src/chimera/fast_load/fast_load.S
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
+    src/chimera/fix/blue_32bit_color_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp
     src/chimera/fix/extend_limits.cpp

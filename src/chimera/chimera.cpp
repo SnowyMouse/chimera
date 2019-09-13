@@ -18,6 +18,7 @@
 #include "annoyance/registry.hpp"
 #include "master_server/master_server.hpp"
 #include "fast_load/fast_load.hpp"
+#include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
@@ -100,6 +101,9 @@ namespace Chimera {
 
                 // lol
                 set_up_nav_numbers_fix();
+
+                // More lol
+                set_up_blue_32bit_color_fix();
             }
             else {
                 enable_output(true);
