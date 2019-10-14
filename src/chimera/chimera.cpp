@@ -94,7 +94,9 @@ namespace Chimera {
                 set_up_descope_fix();
 
                 // Why is this broken?
-                //set_up_aim_assist_fix();
+                if(chimera->feature_present("client_widescreen_custom_edition")) {
+                    set_up_aim_assist_fix();
+                }
 
                 // Last I checked, not even MCC has this fixed lol.
                 set_up_sun_fix();
@@ -329,7 +331,9 @@ namespace Chimera {
             chimera->execute_command("chimera_diagonals 0.75");
 
             // Load the custom chat
-            initialize_custom_chat();
+            if(chimera->feature_present("client_widescreen_custom_edition")) {
+                initialize_custom_chat();
+            }
 
             // Fix console fade
             setup_console_fade_fix();
