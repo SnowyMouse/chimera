@@ -44,7 +44,11 @@ namespace Chimera {
         if(find_signatures()) {
             this->p_commands = Chimera::get_all_commands();
             initialize_console_hook();
-            initialize_fast_load();
+
+            // Enable fast loading
+            if(this->feature_present("core_fast_load")) {
+                initialize_fast_load();
+            }
 
             // Remove the annoying DRM from the game
             remove_drm();
@@ -56,7 +60,9 @@ namespace Chimera {
             set_up_fix_leaking_descriptors();
 
             // Set up memory/decompression stuff
-            set_up_chimera_memory();
+            if(this->feature_present("core_memory")) {
+                set_up_chimera_memory();
+            }
 
             if(this->feature_present("client")) {
                 // Fix the camo by default

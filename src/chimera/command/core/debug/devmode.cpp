@@ -15,7 +15,7 @@ namespace Chimera {
             if(new_enabled != enabled) {
                 auto &devmode_sig = get_chimera().get_signature("devmode_sig");
                 if(new_enabled) {
-                    const SigByte force_devmode[] = { 0x90, 0x90, 0x85, 0xC0, 0x90, 0x90, 0x83, 0xF8, 0x06, 0x7E, 0x6E };
+                    const SigByte force_devmode[] = { 0x90, 0x90, -1, -1, 0x90, 0x90, -1, -1, -1, -1, -1 };
                     write_code(devmode_sig.data(), force_devmode, sizeof(force_devmode)/sizeof(force_devmode[0]));
                 }
                 else {

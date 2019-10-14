@@ -298,7 +298,7 @@ namespace Chimera {
 
     void setup_text_hook() noexcept {
         static Hook hook;
-        auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
+        auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data() + 7;
         write_jmp_call(reinterpret_cast<void *>(text_hook_addr), hook, reinterpret_cast<const void *>(on_text));
     }
 }
