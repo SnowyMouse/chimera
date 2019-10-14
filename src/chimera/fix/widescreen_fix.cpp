@@ -236,28 +236,27 @@ namespace Chimera {
         }
     }
 
+    static std::uint16_t *tabs_ptr;
+
     extern "C" void reposition_menu_text_element(std::int16_t *element) noexcept {
         std::int16_t increase = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
 
         element[1] += increase;
         element[3] += increase;
 
-
         // This is for the score screens which use tabbing.
-        // TODO: use actual signatures
-        std::int16_t *tabs = reinterpret_cast<std::int16_t *>(0x67F708);
-        std::uint16_t tab_count = static_cast<std::uint16_t>(tabs[0]);
+        std::uint16_t tab_count = static_cast<std::uint16_t>(tabs_ptr[0]);
 
         static std::int16_t last_increase = -1337;
         if(tab_count == 0) {
             last_increase = -1337;
         }
         else {
-            if(tabs[1] != last_increase) {
+            if(tabs_ptr[1] != last_increase) {
                 for(std::size_t i = 0; i < tab_count; i++) {
-                    tabs[i + 1] += increase;
+                    tabs_ptr[i + 1] += increase;
                 }
-                last_increase = tabs[1];
+                last_increase = tabs_ptr[1];
             }
         }
     }
@@ -296,6 +295,7 @@ namespace Chimera {
     void set_widescreen_fix(bool new_setting) noexcept {
         if(new_setting != setting) {
             ce = get_chimera().feature_present("client_widescreen_custom_edition");
+            tabs_ptr = *reinterpret_cast<std::uint16_t **>(get_chimera().get_signature("widescreen_text_tab_sig").data() + 0x3);
 
             auto &widescreen_scope = get_chimera().get_signature("widescreen_scope_sig");
             scope_width = reinterpret_cast<float *>(widescreen_scope.data() + 4);
