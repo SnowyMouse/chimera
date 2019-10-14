@@ -23,7 +23,7 @@ namespace Chimera {
         static const SigByte zoom_blur_1_mod[] = {  -1,   -1, 0x38,   -1,   -1, 0x38};
         static const SigByte zoom_blur_2_mod[] = {  -1,   -1, 0x38};
         static const SigByte zoom_blur_3_mod[] = {0x31, 0xC0, 0x90};
-        static const SigByte zoom_blur_4_mod[] = {-1,   0x01};
+        static const SigByte zoom_blur_4_mod[] = {0x01};
 
         if(new_value != enabled) {
             if(new_value) {
