@@ -287,8 +287,16 @@ namespace Chimera {
 
     static void temporarily_unfix_scope_mask() noexcept;
 
+    #define FuckBoxOut(line) MessageBox(0, "FUCK!!!! " # line, "YOU!!!!", 0);
+    #define FuckBoxOut2(line) FuckBoxOut(line)
+    #define FuckBox FuckBoxOut2(__LINE__)
+
+    static bool ce = false;
+
     void set_widescreen_fix(bool new_setting) noexcept {
         if(new_setting != setting) {
+            ce = get_chimera().feature_present("client_widescreen_custom_edition");
+
             auto &widescreen_scope = get_chimera().get_signature("widescreen_scope_sig");
             scope_width = reinterpret_cast<float *>(widescreen_scope.data() + 4);
 
@@ -344,8 +352,10 @@ namespace Chimera {
             write_function_override(reinterpret_cast<void *>(widescreen_text_stare_name_sig.data()), text_stare_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_stare_name), &widescreen_element_position_text_stare_name_fn);
 
             static Hook text_f3_name;
-            auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
-            write_function_override(reinterpret_cast<void *>(widescreen_text_f3_name_sig.data()), text_f3_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_f3_name), &widescreen_element_position_text_f3_name_fn);
+            if(ce) {
+                auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
+                write_function_override(reinterpret_cast<void *>(widescreen_text_f3_name_sig.data()), text_f3_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_f3_name), &widescreen_element_position_text_f3_name_fn);
+            }
 
             static Hook nav_marker;
             auto &widescreen_nav_marker_sig = get_chimera().get_signature("widescreen_nav_marker_sig");
@@ -355,34 +365,36 @@ namespace Chimera {
             auto &widescreen_nav_marker_sp_sig = get_chimera().get_signature("widescreen_nav_marker_sp_sig");
             write_jmp_call(widescreen_nav_marker_sp_sig.data(), nav_marker_sp, reinterpret_cast<const void *>(widescreen_set_upscale_flag), reinterpret_cast<const void *>(widescreen_unset_upscale_flag));
 
-            auto &widescreen_text_f2_text_position_motd_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_sig");
-            f2_motd_x = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_sig.data() + 0xC);
+            if(ce) {
+                auto &widescreen_text_f2_text_position_motd_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_sig");
+                f2_motd_x = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_sig.data() + 0xC);
 
-            auto &widescreen_text_f2_text_position_heading_sig = get_chimera().get_signature("widescreen_text_f2_text_position_heading_sig");
-            f2_heading_x = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_heading_sig.data() + 0x5);
+                auto &widescreen_text_f2_text_position_heading_sig = get_chimera().get_signature("widescreen_text_f2_text_position_heading_sig");
+                f2_heading_x = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_heading_sig.data() + 0x5);
 
-            auto &widescreen_text_f2_text_position_motd_body_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_body_sig");
-            f2_motd_body_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_body_sig.data() + 0x5);
-            f2_motd_body_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_body_sig.data() + 0x7 + 0x5);
+                auto &widescreen_text_f2_text_position_motd_body_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_body_sig");
+                f2_motd_body_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_body_sig.data() + 0x5);
+                f2_motd_body_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_motd_body_sig.data() + 0x7 + 0x5);
 
-            auto &widescreen_text_f2_text_position_rules_1_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_1_sig");
-            f2_rules_1_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_1_sig.data() + 0x5);
-            f2_rules_1_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_1_sig.data() + 0x7 + 0x5);
+                auto &widescreen_text_f2_text_position_rules_1_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_1_sig");
+                f2_rules_1_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_1_sig.data() + 0x5);
+                f2_rules_1_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_1_sig.data() + 0x7 + 0x5);
 
-            auto &widescreen_text_f2_text_position_rules_2_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_2_sig");
-            f2_rules_2_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_2_sig.data() + 0x5);
-            f2_rules_2_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_2_sig.data() + 0x7 + 0x5);
+                auto &widescreen_text_f2_text_position_rules_2_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_2_sig");
+                f2_rules_2_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_2_sig.data() + 0x5);
+                f2_rules_2_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_2_sig.data() + 0x7 + 0x5);
 
-            auto &widescreen_text_f2_text_position_rules_3_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_3_sig");
-            f2_rules_3_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_3_sig.data() + 0x5);
-            f2_rules_3_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_3_sig.data() + 0x7 + 0x5);
+                auto &widescreen_text_f2_text_position_rules_3_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_3_sig");
+                f2_rules_3_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_3_sig.data() + 0x5);
+                f2_rules_3_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_3_sig.data() + 0x7 + 0x5);
 
-            auto &widescreen_text_f2_text_position_rules_4_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_sig");
-            f2_rules_4_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_4_sig.data() + 0x5);
-            f2_rules_4_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_4_sig.data() + 0x7 + 0x5);
+                auto &widescreen_text_f2_text_position_rules_4_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_sig");
+                f2_rules_4_x1 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_4_sig.data() + 0x5);
+                f2_rules_4_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f2_text_position_rules_4_sig.data() + 0x7 + 0x5);
 
-            auto &widescreen_text_f2_text_position_rules_4_left_x_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_left_x_sig");
-            f2_rules_4_left_x = reinterpret_cast<std::int32_t *>(widescreen_text_f2_text_position_rules_4_left_x_sig.data() + 0x1);
+                auto &widescreen_text_f2_text_position_rules_4_left_x_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_left_x_sig");
+                f2_rules_4_left_x = reinterpret_cast<std::int32_t *>(widescreen_text_f2_text_position_rules_4_left_x_sig.data() + 0x1);
+            }
 
             static Hook position_teammate_indicator;
             auto &widescreen_teammate_indicator_sig = get_chimera().get_signature("widescreen_teammate_indicator_sig");
@@ -443,17 +455,30 @@ namespace Chimera {
                 widescreen_text_pgcr_sig.rollback();
                 widescreen_element_motion_sensor_scaling_sig.rollback();
                 widescreen_text_stare_name_sig.rollback();
-                widescreen_text_f3_name_sig.rollback();
+                if(ce) {
+                    auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
+                    widescreen_text_f3_name_sig.rollback();
+                }
                 widescreen_nav_marker_sig.rollback();
                 widescreen_nav_marker_sp_sig.rollback();
-                widescreen_text_f2_text_position_motd_sig.rollback();
-                widescreen_text_f2_text_position_heading_sig.rollback();
-                widescreen_text_f2_text_position_motd_body_sig.rollback();
-                widescreen_text_f2_text_position_rules_1_sig.rollback();
-                widescreen_text_f2_text_position_rules_2_sig.rollback();
-                widescreen_text_f2_text_position_rules_3_sig.rollback();
-                widescreen_text_f2_text_position_rules_4_sig.rollback();
-                widescreen_text_f2_text_position_rules_4_left_x_sig.rollback();
+                if(ce) {
+                    auto &widescreen_text_f2_text_position_motd_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_sig");
+                    auto &widescreen_text_f2_text_position_heading_sig = get_chimera().get_signature("widescreen_text_f2_text_position_heading_sig");
+                    auto &widescreen_text_f2_text_position_motd_body_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_body_sig");
+                    auto &widescreen_text_f2_text_position_rules_1_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_1_sig");
+                    auto &widescreen_text_f2_text_position_rules_2_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_2_sig");
+                    auto &widescreen_text_f2_text_position_rules_3_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_3_sig");
+                    auto &widescreen_text_f2_text_position_rules_4_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_sig");
+                    auto &widescreen_text_f2_text_position_rules_4_left_x_sig = get_chimera().get_signature("widescreen_text_f2_text_position_rules_4_left_x_sig");
+                    widescreen_text_f2_text_position_motd_sig.rollback();
+                    widescreen_text_f2_text_position_heading_sig.rollback();
+                    widescreen_text_f2_text_position_motd_body_sig.rollback();
+                    widescreen_text_f2_text_position_rules_1_sig.rollback();
+                    widescreen_text_f2_text_position_rules_2_sig.rollback();
+                    widescreen_text_f2_text_position_rules_3_sig.rollback();
+                    widescreen_text_f2_text_position_rules_4_sig.rollback();
+                    widescreen_text_f2_text_position_rules_4_left_x_sig.rollback();
+                }
                 widescreen_teammate_indicator_sig.rollback();
                 widescreen_hud_pickup_icon_sig.rollback();
                 widescreen_text_loading_screen_sig.rollback();
@@ -516,19 +541,21 @@ namespace Chimera {
             overwrite(f1_server_ip_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
             overwrite(f1_server_name_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
 
-            overwrite(f2_motd_x, static_cast<std::int16_t>(widescreen_width_480p - 640.0f + 625));
-            overwrite(f2_heading_x, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
-            overwrite(f2_motd_body_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 105));
-            overwrite(f2_motd_body_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 625));
-            overwrite(f2_rules_1_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 330));
-            overwrite(f2_rules_1_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
-            overwrite(f2_rules_2_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 10));
-            overwrite(f2_rules_2_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 310));
-            overwrite(f2_rules_3_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 330));
-            overwrite(f2_rules_3_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
-            overwrite(f2_rules_4_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 310));
-            overwrite(f2_rules_4_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 450));
-            overwrite(f2_rules_4_left_x, static_cast<std::uint32_t>((widescreen_width_480p - 640.0f) / 2 + 10));
+            if(ce) {
+                overwrite(f2_motd_x, static_cast<std::int16_t>(widescreen_width_480p - 640.0f + 625));
+                overwrite(f2_heading_x, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
+                overwrite(f2_motd_body_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 105));
+                overwrite(f2_motd_body_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 625));
+                overwrite(f2_rules_1_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 330));
+                overwrite(f2_rules_1_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
+                overwrite(f2_rules_2_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 10));
+                overwrite(f2_rules_2_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 310));
+                overwrite(f2_rules_3_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 330));
+                overwrite(f2_rules_3_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 630));
+                overwrite(f2_rules_4_x1, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 310));
+                overwrite(f2_rules_4_x2, static_cast<std::int16_t>((widescreen_width_480p - 640.0f) / 2 + 450));
+                overwrite(f2_rules_4_left_x, static_cast<std::uint32_t>((widescreen_width_480p - 640.0f) / 2 + 10));
+            }
             overwrite(loading_screen_text_x2, static_cast<std::int16_t>(widescreen_width_480p));
             overwrite(console_output_width, static_cast<std::int32_t>(widescreen_width_480p));
 
