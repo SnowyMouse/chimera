@@ -10,7 +10,8 @@ namespace Chimera {
         if(argc == 1) {
             bool new_value = STR_TO_BOOL(argv[0]);
             if(new_value != simple_score_screen_active) {
-                auto &ss_elements_sig = get_chimera().get_signature("ss_elements_sig");
+                auto &ss_elements_sig_a = get_chimera().get_signature("ss_elements_sig_a");
+                auto &ss_elements_sig_b = get_chimera().get_signature("ss_elements_sig_b");
                 auto &ss_score_background_sig = get_chimera().get_signature("ss_score_background_sig");
                 auto &ss_score_position_sig = get_chimera().get_signature("ss_score_position_sig");
                 simple_score_screen_active = new_value;
@@ -23,17 +24,19 @@ namespace Chimera {
                     #define PING_POS SCORE_POS + 60
                     #define HEADER_POS PLACE_POS - 20
 
-                    auto *ss_elements_addr = ss_elements_sig.data();
-                    overwrite(ss_elements_addr + 0, static_cast<unsigned char>(0xB9));
-                    overwrite(ss_elements_addr + 1, (static_cast<uint16_t>(HEADER_POS) << 16) | (static_cast<uint16_t>(HEADER_POS)));
-                    overwrite(ss_elements_addr + 5, static_cast<unsigned char>(0x90));
-                    overwrite(ss_elements_addr + 0x2E + 7*0 + 5, static_cast<short>(PLACE_POS)); // placement
-                    overwrite(ss_elements_addr + 0x2E + 7*1 + 5, static_cast<short>(NAME_POS)); // name
-                    overwrite(ss_elements_addr + 0x2E + 7*2 + 5, static_cast<short>(SCORE_POS)); // score
-                    overwrite(ss_elements_addr + 0x2E + 7*3 + 5, static_cast<short>(0x6FFF)); // kills
-                    overwrite(ss_elements_addr + 0x2E + 7*4 + 5, static_cast<short>(0x6FFF)); // assists
-                    overwrite(ss_elements_addr + 0x2E + 7*5 + 5, static_cast<short>(0x6FFF)); // deaths
-                    overwrite(ss_elements_addr + 0x2E + 7*6 + 2, static_cast<short>(PING_POS)); // ping
+                    auto *ss_elements_addr_a = ss_elements_sig_a.data();
+                    overwrite(ss_elements_addr_a + 0, static_cast<unsigned char>(0xB9));
+                    overwrite(ss_elements_addr_a + 1, (static_cast<uint16_t>(HEADER_POS) << 16) | (static_cast<uint16_t>(HEADER_POS)));
+                    overwrite(ss_elements_addr_a + 5, static_cast<unsigned char>(0x90));
+
+                    auto *ss_elements_addr_b = ss_elements_sig_b.data();
+                    overwrite(ss_elements_addr_b + 7*0 + 5, static_cast<short>(PLACE_POS)); // placement
+                    overwrite(ss_elements_addr_b + 7*1 + 5, static_cast<short>(NAME_POS)); // name
+                    overwrite(ss_elements_addr_b + 7*2 + 5, static_cast<short>(SCORE_POS)); // score
+                    overwrite(ss_elements_addr_b + 7*3 + 5, static_cast<short>(0x6FFF)); // kills
+                    overwrite(ss_elements_addr_b + 7*4 + 5, static_cast<short>(0x6FFF)); // assists
+                    overwrite(ss_elements_addr_b + 7*5 + 5, static_cast<short>(0x6FFF)); // deaths
+                    overwrite(ss_elements_addr_b + 7*6 + 2, static_cast<short>(PING_POS)); // ping
 
                     auto *ss_score_position_addr = ss_score_position_sig.data();
                     overwrite(ss_score_position_addr + 2, static_cast<char>(0x10));
@@ -43,7 +46,8 @@ namespace Chimera {
                     write_code_s(ss_score_background_sig.data() + 52, nope);
                 }
                 else {
-                    ss_elements_sig.rollback();
+                    ss_elements_sig_a.rollback();
+                    ss_elements_sig_b.rollback();
                     ss_score_background_sig.rollback();
                     ss_score_position_sig.rollback();
                 }
