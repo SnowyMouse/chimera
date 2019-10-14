@@ -75,6 +75,8 @@ namespace Chimera {
     };
     static_assert(sizeof(FontData) == 0x1C);
 
+    static FontData *font_data;
+
     extern "C" void display_text(const void *data, std::uint32_t xy, std::uint32_t wh, const void *function_to_use);
 
     // This is called every frame, giving us a chance to add text
@@ -84,7 +86,6 @@ namespace Chimera {
         }
 
         // TODO: SIGNATURE FOR FONT DATA
-        static FontData *font_data = reinterpret_cast<FontData *>(0x67F6EC);
         auto old_font_data = *font_data;
 
         for(auto &text : text_list) {
@@ -298,7 +299,9 @@ namespace Chimera {
 
     void setup_text_hook() noexcept {
         static Hook hook;
-        auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data() + 7;
+        auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
         write_jmp_call(reinterpret_cast<void *>(text_hook_addr), hook, reinterpret_cast<const void *>(on_text));
+
+        font_data = *reinterpret_cast<FontData **>(get_chimera().get_signature("text_font_data_sig").data() + 13);
     }
 }
