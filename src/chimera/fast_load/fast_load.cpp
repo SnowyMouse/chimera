@@ -166,7 +166,7 @@ namespace Chimera {
             const void *original_fn;
             write_function_override(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), hook, reinterpret_cast<const void *>(do_nothing), &original_fn);
 
-            do_load_multiplayer_maps<MapIndex>();
+            add_pretick_event(do_load_multiplayer_maps<MapIndex>);
         }
     }
 
@@ -176,6 +176,8 @@ namespace Chimera {
         static std::uint32_t *count = nullptr;
 
         static std::vector<MapIndexType> indices_vector;
+
+        remove_pretick_event(do_load_multiplayer_maps<MapIndex>);
 
         static const char *BLACKLISTED_MAPS[] = {
             "a10",
