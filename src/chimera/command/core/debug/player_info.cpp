@@ -25,7 +25,7 @@ namespace Chimera {
 
         // If the player does not exist show an error
         if(!player) {
-            console_error(localize("chimera_error_player_not_found"), *argv);
+            console_error(localize("chimera_error_player_not_found"), argc ? *argv : nullptr);
             return false;
         }
 

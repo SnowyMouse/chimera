@@ -170,7 +170,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_chat_block_ips", "chimera_category_custom_chat", "client_custom_chat", chat_block_ips_command, true, 0, 1);
 
         // Debug
-        ADD_COMMAND("chimera_budget", "chimera_category_debug", "core", budget_command, true, 0, 1);
+        ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
         ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode", devmode_command, true, 0, 1);
         ADD_COMMAND("chimera_load_ui_map", "chimera_category_debug", "client", load_ui_map_command, false, 0, 0);
         ADD_COMMAND("chimera_player_info", "chimera_category_debug", "core", player_info_command, false, 0, 1);
