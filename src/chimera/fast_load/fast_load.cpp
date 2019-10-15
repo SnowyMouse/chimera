@@ -137,21 +137,25 @@ namespace Chimera {
     }
 
     void initialize_fast_load() noexcept {
-        // Hijack Halo's map listing function
-        static Hook hook;
-        const void *original_fn;
-        write_function_override(get_chimera().get_signature("load_multiplayer_maps_sig").data(), hook, reinterpret_cast<const void *>(load_multiplayer_maps), &original_fn);
+        bool ce = get_chimera().feature_present("core_fast_load_custom_edition");
 
-        // Do things
-        if(DEDICATED_SERVER) {
-            add_pretick_event(on_pretick);
-        }
-        else {
-            auto *get_crc = get_chimera().get_signature("get_crc_sig").data();
-            static unsigned char nop7[7] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-            overwrite(get_crc, nop7, sizeof(nop7));
-            overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
-            overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
+        if(ce) {
+            // Hijack Halo's map listing function
+            static Hook hook;
+            const void *original_fn;
+            write_function_override(get_chimera().get_signature("load_multiplayer_maps_sig").data(), hook, reinterpret_cast<const void *>(load_multiplayer_maps), &original_fn);
+
+            // Do things
+            if(DEDICATED_SERVER) {
+                add_pretick_event(on_pretick);
+            }
+            else {
+                auto *get_crc = get_chimera().get_signature("get_crc_sig").data();
+                static unsigned char nop7[7] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+                overwrite(get_crc, nop7, sizeof(nop7));
+                overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
+                overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
+            }
         }
     }
 

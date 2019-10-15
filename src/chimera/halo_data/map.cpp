@@ -9,12 +9,12 @@ namespace Chimera {
     }
 
     MapIndex *map_indices() noexcept {
-        static auto **all_map_indices = *reinterpret_cast<MapIndex ***>(get_chimera().get_signature("map_index_sig").data() + 2);
+        static auto **all_map_indices = *reinterpret_cast<MapIndex ***>(get_chimera().get_signature("map_index_sig").data() + 10);
         return *all_map_indices;
     }
 
     std::uint32_t maps_count() noexcept {
-        static auto *map_count = *reinterpret_cast<std::uint32_t **>(get_chimera().get_signature("map_index_sig").data() + 2) + 1;
+        static auto *map_count = *reinterpret_cast<std::uint32_t **>(get_chimera().get_signature("map_index_sig").data() + 2);
         return *map_count;
     }
 
