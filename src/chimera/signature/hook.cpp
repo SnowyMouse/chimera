@@ -92,7 +92,7 @@ namespace Chimera {
                 case 0x81: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     // add/or/adc/sbb/and/sub/xor/cmp <register> 0x00000000-0x7FFFFFFF
-                    if(op1 >= 0xC0) {
+                    if(op1 >= 0xC0 || op1 == 0x0D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
@@ -191,7 +191,7 @@ namespace Chimera {
                         at += 2;
                         break;
                     }
-                    else if(a == 0x93) {
+                    else if(a == 0x93 || a == 0x0D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;

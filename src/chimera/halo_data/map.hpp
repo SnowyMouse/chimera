@@ -2,6 +2,7 @@
 #define CHIMERA_MAP_HPP
 
 #include <cstdint>
+#include <cstddef>
 
 #include "pad.hpp"
 
@@ -75,17 +76,21 @@ namespace Chimera {
         std::uint8_t loaded;
 
         PAD(0x3);
+    };
+    static_assert(sizeof(MapIndex) == 0xC);
 
-        /** CRC32 of the map */
+    /** This is an individual map index */
+    struct MapIndexCustomEdition : MapIndex {
+        /** CRC32 checksum for joining/hosting servers */
         std::uint32_t crc32;
     };
-    static_assert(sizeof(MapIndex) == 0x10);
+    static_assert(sizeof(MapIndexCustomEdition) == 0x10);
 
     /**
      * Get a pointer to all of the map indices
      * @return pointer to all of the map indices
      */
-    MapIndex *map_indices() noexcept;
+    std::byte *map_indices() noexcept;
 
     /**
      * Get the number of maps loaded

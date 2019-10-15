@@ -8,8 +8,8 @@ namespace Chimera {
         return *map_header;
     }
 
-    MapIndex *map_indices() noexcept {
-        static auto **all_map_indices = *reinterpret_cast<MapIndex ***>(get_chimera().get_signature("map_index_sig").data() + 10);
+    std::byte *map_indices() noexcept {
+        static auto **all_map_indices = *reinterpret_cast<std::byte ***>(get_chimera().get_signature("map_index_sig").data() + 10);
         return *all_map_indices;
     }
 

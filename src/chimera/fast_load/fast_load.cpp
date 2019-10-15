@@ -16,11 +16,11 @@
 extern "C" {
     std::uint32_t crc32(std::uint32_t crc, const void *buf, std::size_t size) noexcept;
     void on_get_crc32_hook() noexcept;
-
-    void load_multiplayer_maps() noexcept;
 }
 
 namespace Chimera {
+    template<typename MapIndexType> static void do_load_multiplayer_maps();
+
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
         while(std::tolower(*a) == std::tolower(*b)) {
@@ -98,7 +98,7 @@ namespace Chimera {
     extern "C" void on_get_crc32() noexcept {
         // Get the loading map and all map indices so we can find which map is loading
         static char *loading_map = *reinterpret_cast<char **>(get_chimera().get_signature("loading_map_sig").data() + 1);
-        auto *indices = map_indices();
+        auto *indices = reinterpret_cast<MapIndexCustomEdition *>(map_indices());
 
         // Iterate through each map
         for(std::size_t i=0;i<maps_count();i++) {
@@ -136,14 +136,17 @@ namespace Chimera {
         }
     }
 
+    static void do_nothing() {}
+
     void initialize_fast_load() noexcept {
         bool ce = get_chimera().feature_present("core_fast_load_custom_edition");
+        bool retail = get_chimera().feature_present("core_fast_load_retail");
 
         if(ce) {
             // Hijack Halo's map listing function
             static Hook hook;
             const void *original_fn;
-            write_function_override(get_chimera().get_signature("load_multiplayer_maps_sig").data(), hook, reinterpret_cast<const void *>(load_multiplayer_maps), &original_fn);
+            write_function_override(get_chimera().get_signature("load_multiplayer_maps_sig").data(), hook, reinterpret_cast<const void *>(do_load_multiplayer_maps<MapIndexCustomEdition>), &original_fn);
 
             // Do things
             if(DEDICATED_SERVER) {
@@ -157,14 +160,24 @@ namespace Chimera {
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
             }
         }
+        else if(retail) {
+            // Hijack Halo's map listing function
+            static Hook hook;
+            const void *original_fn;
+            write_function_override(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), hook, reinterpret_cast<const void *>(do_nothing), &original_fn);
+
+            add_pretick_event(do_load_multiplayer_maps<MapIndex>);
+        }
     }
 
-    extern "C" void do_load_multiplayer_maps() {
+    template<typename MapIndexType> static void do_load_multiplayer_maps() {
         static std::vector<std::pair<std::unique_ptr<char []>, std::size_t>> names_vector;
-        static MapIndex **indices = nullptr;
+        static MapIndexType **indices = nullptr;
         static std::uint32_t *count = nullptr;
 
-        static std::vector<MapIndex> indices_vector;
+        static std::vector<MapIndexType> indices_vector;
+
+        remove_pretick_event(do_load_multiplayer_maps<MapIndexType>);
 
         static const char *BLACKLISTED_MAPS[] = {
             "a10",
@@ -191,8 +204,8 @@ namespace Chimera {
         }
         else {
             // Find locations
-            std::byte *data_location = *reinterpret_cast<std::byte **>(get_chimera().get_signature("map_index_sig").data() + 2);
-            indices = reinterpret_cast<MapIndex **>(data_location);
+            std::byte *data_location = *reinterpret_cast<std::byte **>(get_chimera().get_signature("map_index_sig").data() + 10);
+            indices = reinterpret_cast<MapIndexType **>(data_location);
             count = reinterpret_cast<std::uint32_t *>(data_location + 4);
 
             // Make sure Halo doesn't free the data, itself.
@@ -286,8 +299,10 @@ namespace Chimera {
         // Lastly, allocate things
         indices_vector.reserve(*count);
         for(std::size_t i = 0; i < *count; i++) {
-            MapIndex index = {};
-            index.crc32 = 0xFFFFFFFF;
+            MapIndexType index = {};
+            if(sizeof(index) == sizeof(MapIndexCustomEdition)) {
+                reinterpret_cast<MapIndexCustomEdition *>(&index)->crc32 = 0xFFFFFFFF;
+            }
             index.file_name = names_vector[i].first.get();
             index.loaded = 1;
             index.map_name_index = i < stock_map_count ? i : stock_map_count;
