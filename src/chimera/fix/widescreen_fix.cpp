@@ -286,10 +286,6 @@ namespace Chimera {
 
     static void temporarily_unfix_scope_mask() noexcept;
 
-    #define FuckBoxOut(line) MessageBox(0, "FUCK!!!! " # line, "YOU!!!!", 0);
-    #define FuckBoxOut2(line) FuckBoxOut(line)
-    #define FuckBox FuckBoxOut2(__LINE__)
-
     static bool ce = false;
 
     void set_widescreen_fix(bool new_setting) noexcept {

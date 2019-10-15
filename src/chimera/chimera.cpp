@@ -331,9 +331,7 @@ namespace Chimera {
             chimera->execute_command("chimera_diagonals 0.75");
 
             // Load the custom chat
-            if(chimera->feature_present("client_widescreen_custom_edition")) {
-                initialize_custom_chat();
-            }
+            initialize_custom_chat();
 
             // Fix console fade
             setup_console_fade_fix();

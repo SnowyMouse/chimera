@@ -360,7 +360,7 @@ namespace Chimera {
 
     // Determine what color ID to use for a player
     static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use) {
-        auto &player_info = ServerInfo::get_server_info()->players[player];
+        auto &player_info = ServerInfoPlayerList::get_server_info_player_list()->players[player];
         std::uint8_t armor_color = player_info.armor_color;
         std::uint8_t team = player_info.team;
 
@@ -497,7 +497,7 @@ namespace Chimera {
         }
 
         // Get player info
-        auto &player_info = ServerInfo::get_server_info()->players[player_index];
+        auto &player_info = ServerInfoPlayerList::get_server_info_player_list()->players[player_index];
         ColorARGB color_to_use;
         auto *name_color_to_use = color_id_for_player(player_index, &color_to_use);
 
@@ -697,7 +697,7 @@ namespace Chimera {
 
     extern "C" void welcome_message(PlayerID player_a) {
         // Get server information
-        auto *server_info = ServerInfo::get_server_info();
+        auto *server_info = ServerInfoPlayerList::get_server_info_player_list();
 
         // Get the player name
         auto get_player_name = [&server_info](PlayerID id, ColorARGB *color_to_use) -> std::string {
@@ -740,7 +740,7 @@ namespace Chimera {
     }
 
     static void check_for_quit_players() {
-        auto *server_info = ServerInfo::get_server_info();
+        auto *server_info = ServerInfoPlayerList::get_server_info_player_list();
         if(!server_info) {
             std::fill(player_in_server, player_in_server + sizeof(player_in_server), false);
             return;

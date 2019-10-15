@@ -100,21 +100,9 @@ namespace Chimera {
     static_assert(sizeof(ServerInfoMachineCustomEditionDedicatedServer) == 0xEC);
 
     /**
-     * This is server information (players, machines, etc.)
+     * Player list stuff
      */
-    struct ServerInfo {
-        /** Name of the server */
-        wchar_t server_name[0x42];
-
-        /** Name of the currently loaded map */
-        char map_name[0x80];
-
-        /** Name of the gametype */
-        wchar_t gametype[0x18];
-
-        /** There is a lot of fun stuff in here that I'm not sure about */
-        PAD(0xA8);
-
+    struct ServerInfoPlayerList {
         PAD(0x1);
 
         /** Maximum players in the server */
@@ -135,11 +123,10 @@ namespace Chimera {
         // ServerInfoMachine[16] or ServerInfoMachineCustomEditionDedicatedServer[16]
 
         /**
-         * Get the machine struct of the player.
-         * @param  machine index of the machine
-         * @return         pointer to the machine or nullptr if not valid
+         * Get the server info player list
+         * @return pointer to the server info player list or nullptr if not possible
          */
-        ServerInfoMachine &get_machine(std::uint8_t machine) noexcept;
+        static ServerInfoPlayerList *get_server_info_player_list() noexcept;
 
         /**
          * Get the player struct by its ID
@@ -147,6 +134,39 @@ namespace Chimera {
          * @return        pointer to the player or nullptr if not valid
          */
         ServerInfoPlayer *get_player(PlayerID player) noexcept;
+
+        // Nope
+        ServerInfoPlayerList() = delete;
+    };
+    static_assert(sizeof(ServerInfoPlayerList) == 0x214);
+
+    /**
+     * This is server information (players, machines, etc.)
+     */
+    struct ServerInfo {
+        PAD(0x8);
+
+        /** Name of the server */
+        wchar_t server_name[0x42];
+
+        /** Name of the currently loaded map */
+        char map_name[0x80];
+
+        /** Name of the gametype */
+        wchar_t gametype[0x18];
+
+        /** There is a lot of fun stuff in here that I'm not sure about */
+        PAD(0x68);
+
+        // Add another 0x40 bytes if on Custom Edition
+
+
+        /**
+         * Get the machine struct of the player.
+         * @param  machine index of the machine
+         * @return         pointer to the machine or nullptr if not valid
+         */
+        ServerInfoMachine &get_machine(std::uint8_t machine) noexcept;
 
         /**
          * Get the server info struct
@@ -157,7 +177,7 @@ namespace Chimera {
         /** Nope */
         ServerInfo() = delete;
     };
-    static_assert(sizeof(ServerInfo) == 0x3F0);
+    static_assert(sizeof(ServerInfo) == 0x1A4);
 }
 
 #endif

@@ -31,7 +31,7 @@ namespace Chimera {
     }
 
     Player *PlayerTable::get_player_by_rcon_id(std::size_t rcon_id) noexcept {
-        auto *server_info = ServerInfo::get_server_info();
+        auto *server_info = ServerInfoPlayerList::get_server_info_player_list();
         if(!server_info) {
             return nullptr;
         }
