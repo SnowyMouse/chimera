@@ -244,6 +244,18 @@ namespace Chimera {
                     break;
                 }
 
+                // mov something
+                case 0xC7: {
+                    auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(a == 0x05) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 6);
+                        at += 6;
+                        break;
+                    }
+                    std::terminate();
+                }
+
                 // fld
                 case 0xD9: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
