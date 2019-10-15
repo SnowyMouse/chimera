@@ -28,7 +28,7 @@ namespace Chimera {
             return nullptr;
         }
 
-        static std::uint32_t offset = *reinterpret_cast<std::uint32_t *>(get_chimera().get_signature("server_info_player_list_offset_sig").data() + 2) - 1;
+        static std::uint32_t offset = *reinterpret_cast<std::uint32_t *>(get_chimera().get_signature("server_info_player_list_offset_sig").data() + 4) - 1;
         return reinterpret_cast<ServerInfoPlayerList *>(reinterpret_cast<std::byte *>(info) + offset);
     }
 
