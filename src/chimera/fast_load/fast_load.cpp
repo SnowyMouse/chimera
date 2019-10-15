@@ -285,13 +285,9 @@ namespace Chimera {
             }
         };
 
-        add_map_by_path("maps\\*.vap");
         add_map_by_path("maps\\*.map");
-        add_map_by_path("usermaps\\*.vap");
-        add_map_by_path("usermaps\\*.map");
-        char dir[MAX_PATH] = {};
+        char dir[MAX_PATH];
         const char *chimera_path = get_chimera().get_path();
-        std::snprintf(dir, sizeof(dir), "%s\\maps\\*.vap", chimera_path);
         std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path);
 
         // Lastly, allocate things
@@ -314,11 +310,7 @@ namespace Chimera {
     const char *path_for_map(const char *map) noexcept {
         static char path[MAX_PATH];
         #define RETURN_IF_FOUND(...) std::snprintf(path, sizeof(path), __VA_ARGS__, map); if(PathFileExistsA(path)) return path;
-        RETURN_IF_FOUND("maps\\%s.vap");
         RETURN_IF_FOUND("maps\\%s.map");
-        RETURN_IF_FOUND("usermaps\\%s.vap");
-        RETURN_IF_FOUND("usermaps\\%s.map");
-        RETURN_IF_FOUND("%s\\maps\\%s.vap", get_chimera().get_path());
         RETURN_IF_FOUND("%s\\maps\\%s.map", get_chimera().get_path());
         std::snprintf(path, sizeof(path), "maps\\%s.map", map);
         return path;
