@@ -42,7 +42,7 @@ namespace Chimera {
 
         // If we *can* load Chimera, then do it
         if(find_signatures()) {
-            this->p_commands = Chimera::get_all_commands();
+            this->get_all_commands();
             initialize_console_hook();
 
             // Enable fast loading
@@ -228,7 +228,7 @@ namespace Chimera {
     void Chimera::set_language(Language language) noexcept {
         if(this->p_language != language) {
             this->p_language = language;
-            this->p_commands = Chimera::get_all_commands();
+            this->get_all_commands();
         }
     }
 

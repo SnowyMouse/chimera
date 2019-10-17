@@ -152,17 +152,17 @@ namespace Chimera {
 
     Command::Command(const char *name, const char *category, const char *feature, const char *help, CommandFunction function, bool autosave, std::size_t args) : Command(name, category, feature, help, function, autosave, args, args) {}
 
-    std::vector<Command> Chimera::get_all_commands() noexcept {
-        std::vector<Command> commands;
+    void Chimera::get_all_commands() noexcept {
+        this->p_commands.clear();
 
         #define ADD_COMMAND(name, category, feature, command_fn, autosave, ...) \
             extern bool command_fn(int, const char **); \
             static_assert(autosave == false || autosave == true, "autosave value is not a boolean"); \
-            commands.emplace_back(name, localize(category), feature, localize(name "_command_help"), command_fn, autosave, __VA_ARGS__);
+            this->p_commands.emplace_back(name, localize(category), feature, localize(name "_command_help"), command_fn, autosave, __VA_ARGS__);
 
         // Chimera-specific commands
-        commands.emplace_back("chimera", localize("chimera_category_core"), "core", localize("chimera_command_help"), Chimera::chimera_command, false, 0, 1);
-        commands.emplace_back("chimera_signature_info", localize("chimera_category_core"), "core", localize("chimera_signature_info_command_help"), Chimera::signature_info_command, false, 1, 1);
+        this->p_commands.emplace_back("chimera", localize("chimera_category_core"), "core", localize("chimera_command_help"), Chimera::chimera_command, false, 0, 1);
+        this->p_commands.emplace_back("chimera_signature_info", localize("chimera_category_core"), "core", localize("chimera_signature_info_command_help"), Chimera::signature_info_command, false, 1, 1);
         ADD_COMMAND("chimera_about", "chimera_category_core", "core", about_command, true, 0, 0);
         ADD_COMMAND("chimera_language", "chimera_category_core", "core", language_command, true, 0, 1);
         ADD_COMMAND("chimera_chat_color_help", "chimera_category_custom_chat", "client_custom_chat", chat_color_help_command, true, 0, 1);
@@ -171,6 +171,13 @@ namespace Chimera {
 
         // Debug
         ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
+
+        if(this->feature_present("core_devmode_retail")) {
+            ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode_retail", devmode_retail_command, true, 0, 1);
+        }
+        else {
+            ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode", devmode_command, true, 0, 1);
+        }
         ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode", devmode_command, true, 0, 1);
         ADD_COMMAND("chimera_load_ui_map", "chimera_category_debug", "client", load_ui_map_command, false, 0, 0);
         ADD_COMMAND("chimera_player_info", "chimera_category_debug", "core", player_info_command, false, 0, 1);
@@ -179,7 +186,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_tps", "chimera_category_debug", "core", tps_command, false, 0, 1);
 
         // Enhancements
-        commands.emplace_back("chimera_block_all_bullshit", localize("chimera_category_enhancement"), "client", localize("chimera_block_all_bullshit_help"), Chimera::block_all_bullshit_command, false, 0, 0);
+        this->p_commands.emplace_back("chimera_block_all_bullshit", localize("chimera_category_enhancement"), "client", localize("chimera_block_all_bullshit_help"), Chimera::block_all_bullshit_command, false, 0, 0);
         ADD_COMMAND("chimera_block_buffering", "chimera_category_enhancement", "client_disable_buffering", block_buffering_command, true, 0, 1);
         ADD_COMMAND("chimera_enable_console", "chimera_category_enhancement", "client", enable_console_command, true, 0, 1);
         ADD_COMMAND("chimera_hud_kill_feed", "chimera_category_enhancement", "client_hud_kill_feed", hud_kill_feed_command, true, 0, 1);
@@ -216,7 +223,5 @@ namespace Chimera {
         ADD_COMMAND("chimera_auto_uncrouch", "chimera_category_controller", "client_auto_uncrouch", auto_uncrouch_command, true, 0, 1);
         ADD_COMMAND("chimera_diagonals", "chimera_category_controller", "client_diagonals", diagonals_command, true, 0, 1);
         ADD_COMMAND("chimera_deadzones", "chimera_category_controller", "client_deadzones", deadzones_command, true, 0, 1);
-
-        return commands;
     }
 }

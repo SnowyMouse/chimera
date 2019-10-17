@@ -148,9 +148,8 @@ namespace Chimera {
 
         /**
          * Get all commands
-         * @return the commands
          */
-        static std::vector<Command> get_all_commands() noexcept;
+        void get_all_commands() noexcept;
     };
 
     /**
