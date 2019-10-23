@@ -30,6 +30,7 @@ add_library(chimera MODULE
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/blue_32bit_color_fix.cpp
+    src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp
     src/chimera/fix/extend_limits.cpp
@@ -61,6 +62,7 @@ add_library(chimera MODULE
     src/chimera/halo_data/decal.cpp
     src/chimera/halo_data/effect.cpp
     src/chimera/halo_data/flag.cpp
+    src/chimera/halo_data/game_engine.cpp
     src/chimera/halo_data/light.cpp
     src/chimera/halo_data/map.cpp
     src/chimera/halo_data/map.S

@@ -29,6 +29,8 @@
 #include "fix/sun_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
+#include "fix/custom_map_lobby_fix.hpp"
+#include "halo_data/game_engine.hpp"
 #include "memory/decompress.hpp"
 #include "memory/memory.hpp"
 #include "config/ini.hpp"
@@ -96,6 +98,11 @@ namespace Chimera {
                 // Why is this broken?
                 if(chimera->feature_present("client_widescreen_custom_edition")) {
                     set_up_aim_assist_fix();
+                }
+
+                // Why would Halo PC even have this check? lol
+                if(game_engine() == GameEngine::GAME_ENGINE_RETAIL && chimera->feature_present("client_retail_custom_map_lobby")) {
+                    set_up_custom_map_lobby_fix();
                 }
 
                 // Last I checked, not even MCC has this fixed lol.
