@@ -77,10 +77,6 @@ add_library(chimera MODULE
     src/chimera/localization/localization.cpp
     src/chimera/master_server/master_server.cpp
     src/chimera/math_trig/math_trig.cpp
-    src/chimera/memory/bitmap.cpp
-    src/chimera/memory/decompress.cpp
-    src/chimera/memory/memory.cpp
-    src/chimera/memory/memory.S
     src/chimera/output/draw_text.cpp
     src/chimera/output/draw_text.S
     src/chimera/output/output.cpp
@@ -94,7 +90,6 @@ add_library(chimera MODULE
 
     ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/color_lookup_table.hpp
 )
 
 # Set how we'll generate localization_string
@@ -111,13 +106,6 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes
 )
 
-# Set how we'll generate color_lookup_table
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/color_lookup_table.hpp
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/memory/color_lookup_generator.py ${CMAKE_CURRENT_BINARY_DIR}/color_lookup_table.hpp
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/memory/color_lookup_generator.py
-)
-
 target_include_directories(chimera
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -125,7 +113,7 @@ target_include_directories(chimera
 # Set the name
 set_target_properties(chimera PROPERTIES PREFIX "")
 set_target_properties(chimera PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")
-target_link_libraries(chimera shlwapi lzma)
+target_link_libraries(chimera shlwapi)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")

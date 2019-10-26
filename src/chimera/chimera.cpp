@@ -31,8 +31,6 @@
 #include "fix/model_detail.hpp"
 #include "fix/custom_map_lobby_fix.hpp"
 #include "halo_data/game_engine.hpp"
-#include "memory/decompress.hpp"
-#include "memory/memory.hpp"
 #include "config/ini.hpp"
 
 namespace Chimera {
@@ -60,11 +58,6 @@ namespace Chimera {
 
             // Fix this
             set_up_fix_leaking_descriptors();
-
-            // Set up memory/decompression stuff
-            if(this->feature_present("core_memory")) {
-                set_up_chimera_memory();
-            }
 
             if(this->feature_present("client")) {
                 // Fix the camo by default

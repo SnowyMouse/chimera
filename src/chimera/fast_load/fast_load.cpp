@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <shlwapi.h>
 
-#include "../memory/memory.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -45,12 +44,7 @@ namespace Chimera {
         };
 
         auto read = [&f, &current_offset](void *where, std::size_t size) {
-            if(f) {
-                std::fread(where, size, 1, f);
-            }
-            else {
-                read_memory(reinterpret_cast<std::byte *>(where), current_offset, size);
-            }
+            std::fread(where, size, 1, f);
             current_offset += size;
         };
 
@@ -104,13 +98,9 @@ namespace Chimera {
         for(std::size_t i=0;i<maps_count();i++) {
             if(same_string_case_insensitive(indices[i].file_name, loading_map)) {
                 auto *path = path_for_map(indices[i].file_name);
-                bool map_can_be_loaded = get_memory() != nullptr;
                 bool map_already_crc = indices[i].crc32 != 0xFFFFFFFF;
 
                 // Do what we need to do
-                if(map_can_be_loaded) {
-                    read_map(path);
-                }
                 if(map_already_crc) {
                     return;
                 }
@@ -122,7 +112,7 @@ namespace Chimera {
                 }
                 MapHeader header;
                 std::fread(&header, sizeof(header), 1, f);
-                indices[i].crc32 = ~calculate_crc32_of_map_file(map_can_be_loaded ? nullptr : f, header);
+                indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
                 std::fclose(f);
 
                 return;
