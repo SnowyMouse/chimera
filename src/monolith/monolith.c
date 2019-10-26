@@ -8,7 +8,6 @@
  */
 
 #define MODS_PATH "mods\\"
-#define CHIMERA_DLL "chimera.dll"
 
 #include <w32api.h>
 #define _WIN32_WINNT Windows7
@@ -63,40 +62,16 @@ static BOOL load_dlls() {
     dll_count = 0;
     loaded_dlls = VirtualAlloc(NULL, sizeof(*loaded_dlls) * dll_capacity, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-    // First load chimera.dll
-    if(PathFileExists(CHIMERA_DLL)) {
-        loaded_dlls[0].module = LoadLibrary(CHIMERA_DLL);
-        dll_count++;
-
-        typedef void (*void_fn)();
-        typedef int (*int_fn)();
-        typedef const char *(*char_arr_fn)();
-
-        void_fn instantiate_chimera = (void_fn)GetProcAddress(loaded_dlls[0].module, "instantiate_chimera");
-        void_fn destroy_chimera = (void_fn)GetProcAddress(loaded_dlls[0].module, "destroy_chimera");
-        int_fn find_signatures = (int_fn)GetProcAddress(loaded_dlls[0].module, "find_signatures");
-        char_arr_fn signature_errors = (char_arr_fn)GetProcAddress(loaded_dlls[0].module, "signature_errors");
-        int_fn halo_type = (int_fn)GetProcAddress(loaded_dlls[0].module, "halo_type");
-
-        // Make sure we have those functions
-        if(!instantiate_chimera || !destroy_chimera || !find_signatures || !signature_errors || !halo_type) {
-            MessageBox(NULL, "Unrecognizable " CHIMERA_DLL, "Error", MB_OK);
-            return FALSE;
-        }
-        else {
-            instantiate_chimera();
-            if(find_signatures() == 0) {
-                MessageBox(NULL, signature_errors(), "Error", MB_OK);
-                destroy_chimera();
-                return FALSE;
-            }
-        }
-    }
-
-    // Don't continue if we can't do anything
-    else {
-        unload_dlls();
-        loaded_dlls = NULL;
+    // Load Chimera
+    extern void instantiate_chimera();
+    extern void destroy_chimera();
+    extern int find_signatures();
+    extern const char *signature_errors();
+    extern int halo_type();
+    instantiate_chimera();
+    if(find_signatures() == 0) {
+        MessageBox(NULL, signature_errors(), "Error", MB_OK);
+        destroy_chimera();
         return FALSE;
     }
 
@@ -112,7 +87,7 @@ static BOOL load_dlls() {
         ok = FindNextFile(handle, &find_file_data);
 
         // Wine workaround; As of 4.3-staging, *.dll matches anything with an extension that starts with .dll apparently. Also prevent chimera.dll from being loaded here.
-        if(!string_equal(path + end - 4, ".dll") || string_equal(path, MODS_PATH CHIMERA_DLL)) {
+        if(!string_equal(path + end - 4, ".dll") || string_equal(path, MODS_PATH "chimera.dll")) {
             continue;
         }
 
@@ -139,7 +114,7 @@ static BOOL load_dlls() {
 }
 
 // DLL entry point
-BOOL WINAPI DllMainCRTStartup(HINSTANCE instance, DWORD reason, LPVOID reserved) {
+BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
     switch(reason) {
         case DLL_PROCESS_ATTACH:
             {

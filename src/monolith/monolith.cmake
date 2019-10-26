@@ -6,7 +6,7 @@
 # Define the source files
 add_library(monolith MODULE
     src/monolith/monolith.c
-    src/monolith/version.rc
+    src/chimera/version.rc
 )
 
 # Set the name
@@ -14,6 +14,5 @@ set_target_properties(monolith PROPERTIES PREFIX "")
 set_target_properties(monolith PROPERTIES OUTPUT_NAME "strings")
 
 # lol
-set_target_properties(monolith PROPERTIES COMPILE_FLAGS "-m32 -fno-stack-protector")
-set_target_properties(monolith PROPERTIES LINK_FLAGS "-m32 -nostdlib")
-target_link_libraries(monolith shlwapi)
+set_target_properties(monolith PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")
+target_link_libraries(monolith shlwapi chimera)

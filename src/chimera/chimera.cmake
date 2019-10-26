@@ -6,7 +6,7 @@
 include(src/chimera/command/command.cmake)
 
 # Define the source files
-add_library(chimera MODULE
+add_library(chimera STATIC
     src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/keystone.cpp
     src/chimera/annoyance/registry.cpp
@@ -111,8 +111,6 @@ target_include_directories(chimera
 )
 
 # Set the name
-set_target_properties(chimera PROPERTIES PREFIX "")
-set_target_properties(chimera PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")
 target_link_libraries(chimera shlwapi)
 
 # This one isn't worth fixing
