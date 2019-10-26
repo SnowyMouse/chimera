@@ -1,7 +1,9 @@
 #include <cstdio>
 #include <cstring>
 #include <thread>
+
 #include <curl/curl.h>
+
 #include "hac_map_downloader.hpp"
 
 void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {

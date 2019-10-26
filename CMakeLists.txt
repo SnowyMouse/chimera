@@ -49,4 +49,4 @@ include("src/7z_lzma/7z_lzma.cmake")
 # HAC Map Downloader
 #
 # We need this to download maps from the HAC2 / HaloNet repo
-include("src/hac_map_downloader/hac_map_downloader.cmake")
+# include("src/hac_map_downloader/hac_map_downloader.cmake")
