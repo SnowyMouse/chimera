@@ -10,22 +10,25 @@
  */
 class HACMapDownloader {
 public:
+    enum DownloadStage {
+        DOWNLOAD_STAGE_NOT_STARTED,
+        DOWNLOAD_STAGE_STARTING,
+        DOWNLOAD_STAGE_DOWNLOADING,
+        DOWNLOAD_STAGE_EXTRACTING,
+        DOWNLOAD_STAGE_COMPLETE,
+        DOWNLOAD_STAGE_FAILED
+    };
+
     /**
      * Begin the download
      */
     void dispatch();
 
     /**
-     * Check if the download is complete. If it is complete, use is_successful() to check if no errors occurred.
-     * @return true if the download is complete
+     * Get the current download status
+     * @return download status
      */
-    bool is_finished() noexcept;
-
-    /**
-     * Check if the map was successfully downloaded.
-     * @return true if the map was successfully downloaded
-     */
-    bool is_successful() noexcept;
+    DownloadStage get_status() noexcept;
 
     /**
      * Get the total downloaded size of the file.
@@ -44,6 +47,12 @@ public:
      * @return pointer to a vector holding map data or nullptr if the download was not successful
      */
     const std::vector<std::byte> *get_map_data() noexcept;
+
+    /**
+     * Get whether or not the download is finished
+     * @return true if the download is finished
+     */
+    bool is_finished() noexcept;
 
     HACMapDownloader(const char *map, const char *temp_file, const char *map_file);
     ~HACMapDownloader();
@@ -64,12 +73,6 @@ private:
     /** Post! */
     std::string post_fields;
 
-    /** Are we done? */
-    bool finished = true;
-
-    /** Did it work? */
-    bool successful = false;
-
     /** File to write to as we download */
     std::FILE *temp_file_handle;
 
@@ -78,6 +81,9 @@ private:
 
     /** How much is left to download */
     std::size_t total_size = 0;
+
+    /** Current status of the download */
+    DownloadStage status = DOWNLOAD_STAGE_NOT_STARTED;
 
     /**
      * Dispatch thread that does the map downloading
@@ -99,12 +105,6 @@ private:
 
     /** Unlock the mutex */
     void unlock();
-
-    /** Data to download */
-    std::vector<std::byte> compressed_data;
-
-    /** Data decompressed */
-    std::vector<std::byte> decompressed_data;
 
     /** Callback class */
     class HACMapDownloaderCallback;
