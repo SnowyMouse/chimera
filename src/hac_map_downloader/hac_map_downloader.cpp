@@ -64,7 +64,7 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
 class HACMapDownloader::HACMapDownloaderCallback {
 public:
     // When we've received data, put it in here
-    static size_t write_callback(std::byte *ptr, std::size_t size, std::size_t nmemb, HACMapDownloader *userdata) {
+    static size_t write_callback(std::byte *ptr, std::size_t, std::size_t nmemb, HACMapDownloader *userdata) {
         userdata->mutex.lock();
         userdata->status = HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
         std::fwrite(ptr, nmemb, 1, userdata->temp_file_handle);
@@ -73,7 +73,7 @@ public:
     }
 
     // When progress has been made, record it here
-    static int progress_callback(HACMapDownloader *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+    static int progress_callback(HACMapDownloader *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t, curl_off_t) {
         clientp->mutex.lock();
         clientp->downloaded_size = dlnow;
         clientp->total_size = dltotal;
