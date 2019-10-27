@@ -18,6 +18,7 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
         char url[255];
         std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=7z&map=%s", repo, downloader->map.data());
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
+        downloader->download_started = Clock::now();
         result = curl_easy_perform(downloader->curl);
         repo++;
     }
@@ -27,47 +28,62 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
     downloader->mutex.lock();
     curl_easy_cleanup(downloader->curl);
     downloader->curl = nullptr;
-    downloader->status = DOWNLOAD_STAGE_EXTRACTING;
+
+    // Write the last data
+    std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->temp_file_handle);
+    downloader->buffer_used = 0;
+    downloader->buffer.clear();
 
     // Close the file handle
     std::fclose(downloader->temp_file_handle);
 
-    // Open, but reading this time
-    downloader->temp_file_handle = std::fopen(downloader->temp_file.data(), "rb");
-    if(!downloader->temp_file_handle) {
-        downloader->status = DOWNLOAD_STAGE_FAILED;
-        downloader->mutex.unlock();
-        return;
-    }
-
-    // Unlock the mutex
-    downloader->mutex.unlock();
-
+    // If we are just testing extraction, do nothing above except lock the mutex so we can set the status
     #else
-
-    // If we're just testing extraction, pretend everything just got finished
     downloader->mutex.lock();
-    downloader->status = DOWNLOAD_STAGE_EXTRACTING;
+    #endif
 
-    downloader->temp_file_handle = std::fopen(downloader->temp_file.data(), "rb");
-    if(!downloader->temp_file_handle) {
-        downloader->status = DOWNLOAD_STAGE_FAILED;
-        downloader->mutex.unlock();
-        return;
-    }
+    downloader->status = DOWNLOAD_STAGE_EXTRACTING;
     downloader->mutex.unlock();
 
-    #endif
+    downloader->extract();
+}
+
+std::size_t HACMapDownloader::get_download_speed() noexcept {
+    // If we haven't started, return 0
+    if(this->downloaded_size == 0) {
+        return 0.0;
+    }
+
+    auto now = Clock::now();
+    auto difference = now - this->download_started;
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(difference).count();
+
+    // Don't divide by zero
+    if(ms <= 0) {
+        return 0.0;
+    }
+
+    return (this->downloaded_size) / ms;
 }
 
 // Callback class
 class HACMapDownloader::HACMapDownloaderCallback {
 public:
     // When we've received data, put it in here
-    static size_t write_callback(std::byte *ptr, std::size_t, std::size_t nmemb, HACMapDownloader *userdata) {
+    static size_t write_callback(const std::byte *ptr, std::size_t, std::size_t nmemb, HACMapDownloader *userdata) {
         userdata->mutex.lock();
         userdata->status = HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
-        std::fwrite(ptr, nmemb, 1, userdata->temp_file_handle);
+        if(userdata->buffer_used + nmemb > userdata->buffer.size()) {
+            std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->temp_file_handle);
+            std::fwrite(ptr, nmemb, 1, userdata->temp_file_handle);
+            userdata->buffer_used = 0;
+
+        }
+        else {
+            std::copy(ptr, ptr + nmemb, userdata->buffer.data() + userdata->buffer_used);
+            userdata->buffer_used += nmemb;
+        }
+
         userdata->mutex.unlock();
         return nmemb;
     }
@@ -125,6 +141,14 @@ void HACMapDownloader::dispatch() {
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
+
+    // Hold 1 MiB of data in memory
+    this->buffer.insert(this->buffer.end(), 1024 * 1024, std::byte());
+    this->buffer_used = 0;
+
+    // Set the number of bytes downloaded to 0
+    this->downloaded_size = 0;
+    this->total_size = 0;
 
     // Unlock
     this->mutex.unlock();

@@ -4,6 +4,7 @@
 #include <mutex>
 #include <vector>
 #include <cstdlib>
+#include <chrono>
 
 /**
  * Map downloading class
@@ -54,6 +55,12 @@ public:
      */
     bool is_finished() noexcept;
 
+    /**
+     * Get the download speed in kilobytes per second
+     * @return download speed in kilobytes per second
+     */
+    std::size_t get_download_speed() noexcept;
+
     HACMapDownloader(const char *map, const char *temp_file, const char *map_file);
     ~HACMapDownloader();
 
@@ -91,20 +98,25 @@ private:
      */
     static void dispatch_thread(HACMapDownloader *downloader);
 
+    /** Buffer for holding data */
+    std::vector<std::byte> buffer;
+
+    /** Amount of the buffer used */
+    std::size_t buffer_used;
+
+    /** Clock to use */
+    using Clock = std::chrono::steady_clock;
+
+    /** Time when the download started*/
+    Clock::time_point download_started;
+
     /** CURL handle */
     void *curl = nullptr;
 
-    /** Lock the mutex */
-    void lock();
-
     /**
-     * Try to lock the mutex
-     * @return true if locked
+     * Extract the .7z file
      */
-    bool try_lock();
-
-    /** Unlock the mutex */
-    void unlock();
+    void extract() noexcept;
 
     /** Callback class */
     class HACMapDownloaderCallback;
