@@ -5,9 +5,12 @@
 #define CURL_STATICLIB
 #include <curl/curl.h>
 
+#define TEST_EXTRACTION_ONLY
+
 #include "hac_map_downloader.hpp"
 
 void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
+    #ifndef TEST_EXTRACTION_ONLY
     // Set the URL
     CURLcode result;
     unsigned int repo = 1;
@@ -20,7 +23,7 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
     }
     while(result != CURLcode::CURLE_COULDNT_RESOLVE_HOST && result != CURLcode::CURLE_OK);
 
-    // Note that we're extracting
+    // Note that we're extracting; clean up CURL
     downloader->mutex.lock();
     curl_easy_cleanup(downloader->curl);
     downloader->curl = nullptr;
@@ -39,6 +42,22 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
 
     // Unlock the mutex
     downloader->mutex.unlock();
+
+    #else
+
+    // If we're just testing extraction, pretend everything just got finished
+    downloader->mutex.lock();
+    downloader->status = DOWNLOAD_STAGE_EXTRACTING;
+
+    downloader->temp_file_handle = std::fopen(downloader->temp_file.data(), "rb");
+    if(!downloader->temp_file_handle) {
+        downloader->status = DOWNLOAD_STAGE_FAILED;
+        downloader->mutex.unlock();
+        return;
+    }
+    downloader->mutex.unlock();
+
+    #endif
 }
 
 // Callback class
@@ -73,6 +92,7 @@ void HACMapDownloader::dispatch() {
         return;
     }
 
+    #ifndef TEST_EXTRACTION_ONLY
     this->temp_file_handle = std::fopen(this->temp_file.data(), "wb");
 
     // If we failed to open, give up and close, unlocking the mutex
@@ -101,6 +121,7 @@ void HACMapDownloader::dispatch() {
 
     // 10 second timeout
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+    #endif
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
