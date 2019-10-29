@@ -134,14 +134,14 @@ full speed. You can re-enable this behavior if you want.
 
 #### Block all bullshit
 This feature runs the following commands:
-* `chimera_block_buffering 1`
-* `chimera_block_camera_shake 1`
-* `chimera_block_gametype_indicator 1`
-* `chimera_block_gametype_rules 1`
-* `chimera_block_hold_f1 1`
-* `chimera_block_loading_screen 1`
-* `chimera_block_zoom_blur 1`
-* `chimera_block_mouse_acceleration 1`
+- `chimera_block_buffering 1`
+- `chimera_block_camera_shake 1`
+- `chimera_block_gametype_indicator 1`
+- `chimera_block_gametype_rules 1`
+- `chimera_block_hold_f1 1`
+- `chimera_block_loading_screen 1`
+- `chimera_block_zoom_blur 1`
+- `chimera_block_mouse_acceleration 1`
 
 **Usage:** `chimera_block_all_bullshit`
 
