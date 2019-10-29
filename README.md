@@ -30,6 +30,17 @@ game.
 
 ### Passive features
 These are features that are always on.
+- [Interpolation](#interpolation)
+- [Limit increase](#limit-increase)
+- [Reduced DRM](#reduced-drm)
+- [Descope fix](#descope-fix)
+- [Fast loading](#fast-loading)
+- [Fast server listing](#fast-server-listing)
+- [128 MiB map leak fix](#128-mib-map-leak-fix)
+- [Model LOD fix](#model-lod-fix)
+- [FOV fix](#fov-fix)
+- [Sun fix](#sun-fix)
+- [Custom chat](#custom-chat)
 
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
@@ -106,6 +117,45 @@ The Keystone chat is crashy and broken. Chimera adds a replacement chat.
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
 these features are off by default.
+- [Aim assist](#aim-assist)
+- [Anisotropic filtering](#anisotropic-filtering)
+- [Auto centering](#auto-centering)
+- [Auto uncrouching](#auto-uncrouching)
+- [Block all bullshit](#block-all-bullshit)
+- [Block buffering](#block-buffering)
+- [Block camera shaking](#block-camera-shaking)
+- [Block gametype indicator](#block-gametype-indicator)
+- [Block gametype rules](#block-gametype-rules)
+- [Block hold F1](#block-hold-f1)
+- [Block letterbox](#block-letterbox)
+- [Block loading screen](#block-loading-screen)
+- [Block mouse acceleration](#block-mouse-acceleration)
+- [Block server IP](#block-server-ip)
+- [Block zoom blur](#block-zoom-blur)
+- [Budget](#budget)
+- [Chat: Block IPs](#chat-block-ips)
+- [Chat: Block server messages](#chat-block-server-messages)
+- [Chat: Chat color help](#chat-chat-color-help)
+- [Console prompt color](#console-prompt-color)
+- [Deadzones](#deadzones)
+- [Devmode](#devmode)
+- [Diagonals](#diagonals)
+- [Enable console](#enable-console)
+- [FOV](#fov)
+- [HUD kill feed](#hud-kill-feed)
+- [Language](#language)
+- [Model detail](#model-detail)
+- [Mouse sensitivity](#mouse-sensitivity)
+- [Player info](#player-info)
+- [Set name](#set-name)
+- [Show coordinates](#show-coordinates)
+- [Show FPS](#show-fps)
+- [Shrink empty weapons](#shrink-empty-weapons)
+- [Split screen HUD](#split-screen-hud)
+- [Throttle FPS](#throttle-fps)
+- [TPS](#tps)
+- [Uncap cinematic](#uncap-cinematic)
+- [Widescreen fix](#widescreen-fix)
 
 #### Aim assist
 Halo's aim assist was broken in the PC release. Chimera fixes it. By default,
