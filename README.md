@@ -4,17 +4,17 @@ Chimera is a mod for Halo: Combat Evolved for the PC.
 ## Installation
 Here is the installation procedure for installing Chimera:
 
-    1. Update your installation of Halo to version 1.10.
-    2. Back up your game's Strings.dll. Renaming it to `strings-old.dll` works.
-    3. Copy strings.dll, chimera.dll, and chimera.ini into your game folder.
+1. Update your installation of Halo to version 1.10.
+2. Back up your game's Strings.dll. Renaming it to `strings-old.dll` works.
+3. Copy strings.dll and chimera.ini into your game folder.
 
-    NOTE: Each file goes into the main game folder, NOT controls. If you put
-    the files in controls, it will not work.
+NOTE: Each file goes into the main game folder, NOT controls. If you put the
+files in controls, it will not work.
 
 Uninstalling Chimera is simple:
 
-    1. Delete Chimera's strings.dll, chimera.dll, and (optionally) chimera.ini.
-    2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
+1. Delete Chimera's strings.dll and (optionally) chimera.ini.
+2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
 
 ## Mod support
 Chimera does not support any binary mods like HAC2 or Open Sauce. The reason
