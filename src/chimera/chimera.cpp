@@ -24,6 +24,7 @@
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
 #include "fix/fov_fix.hpp"
+#include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
@@ -112,6 +113,9 @@ namespace Chimera {
 
                 // More lol
                 set_up_blue_32bit_color_fix();
+
+                // wtf
+                set_up_force_crash_fix();
             }
             else {
                 enable_output(true);

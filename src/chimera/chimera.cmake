@@ -35,6 +35,7 @@ add_library(chimera STATIC
     src/chimera/fix/descope_fix.cpp
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
+    src/chimera/fix/force_crash.cpp
     src/chimera/fix/fov_fix.cpp
     src/chimera/fix/interpolate/antenna.cpp
     src/chimera/fix/interpolate/camera.cpp
