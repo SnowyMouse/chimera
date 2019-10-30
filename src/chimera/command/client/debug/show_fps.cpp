@@ -60,7 +60,7 @@ namespace Chimera {
             std::snprintf(avg, sizeof(avg), "%.00f", last_fps);
         }
         static ColorARGB blue = ColorARGB { 0.7, 0.45, 0.72, 1.0 };
-        apply_text(std::move(avg), 100, 0, 100, 20, blue, get_generic_font(GenericFont::FONT_SMALL), FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_TOP_RIGHT);
+        apply_text(std::move(avg), 100, 0, 100, 20, blue, get_generic_font(GenericFont::FONT_CONSOLE), FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_TOP_RIGHT);
 
         last_frame = now;
     }
