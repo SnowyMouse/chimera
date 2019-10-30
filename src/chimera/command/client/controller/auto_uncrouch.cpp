@@ -36,7 +36,7 @@ namespace Chimera {
             if(new_value != active) {
                 static Hook control_bitmasks_hook;
                 auto *control_bitmask_data = get_chimera().get_signature("control_bitmask_sig").data();
-                controls = *reinterpret_cast<Controls **>(get_chimera().get_signature("controls_sig").data() + 2);
+                controls = *reinterpret_cast<Controls **>(get_chimera().get_signature("controls_sig").data() + 11);
                 if(new_value) {
                     write_jmp_call(control_bitmask_data, control_bitmasks_hook, reinterpret_cast<const void *>(auto_uncrouch_asm));
                 }
