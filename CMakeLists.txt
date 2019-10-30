@@ -38,11 +38,6 @@ include("src/chimera/chimera.cmake")
 # This loads chimera.dll and anything in mods/
 include("src/monolith/monolith.cmake")
 
-# LZMA
-#
-# We need this to extract .7z files
-include("src/7z_lzma/7z_lzma.cmake")
-
 # HAC Map Downloader
 #
 # We need this to download maps from the HAC2 / HaloNet repo

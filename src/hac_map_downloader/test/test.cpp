@@ -2,12 +2,12 @@
 #include "../hac_map_downloader.hpp"
 
 int main(int argc, const char **argv) {
-    if(argc != 4) {
-        std::printf("Usage: %s <map name> <tmp path> <final path>\n", argv[0]);
+    if(argc != 3) {
+        std::printf("Usage: %s <map name> <tmp path>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    HACMapDownloader downloader(argv[1], argv[2], argv[3]);
+    HACMapDownloader downloader(argv[1], argv[2]);
     downloader.dispatch();
 
     for(;;) {
@@ -32,10 +32,6 @@ int main(int argc, const char **argv) {
                 char full_buffer[80];
                 std::snprintf(full_buffer, sizeof(full_buffer), "Progress: %7.02f / %7.02f MiB (%4.01f%%, %s)", dlnow / 1024.0F / 1024.0F, dltotal / 1024.0F / 1024.0F, static_cast<float>(dlnow) / dltotal * 100.0F, download_speed_buffer);
                 std::printf("%-80s\r", full_buffer);
-                break;
-            }
-            case HACMapDownloader::DOWNLOAD_STAGE_EXTRACTING: {
-                std::printf("%-80s\r", "Extracting...");
                 break;
             }
             case HACMapDownloader::DOWNLOAD_STAGE_STARTING: {

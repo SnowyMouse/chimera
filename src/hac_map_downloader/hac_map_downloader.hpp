@@ -15,7 +15,6 @@ public:
         DOWNLOAD_STAGE_NOT_STARTED,
         DOWNLOAD_STAGE_STARTING,
         DOWNLOAD_STAGE_DOWNLOADING,
-        DOWNLOAD_STAGE_EXTRACTING,
         DOWNLOAD_STAGE_COMPLETE,
         DOWNLOAD_STAGE_FAILED
     };
@@ -61,7 +60,7 @@ public:
      */
     std::size_t get_download_speed() noexcept;
 
-    HACMapDownloader(const char *map, const char *temp_file, const char *map_file);
+    HACMapDownloader(const char *map, const char *output_file);
     ~HACMapDownloader();
 
 private:
@@ -72,16 +71,13 @@ private:
     std::string map;
 
     /** Temp file to save to */
-    std::string temp_file;
-
-    /** Map file to save to */
-    std::string map_file;
+    std::string output_file;
 
     /** Post! */
     std::string post_fields;
 
     /** File to write to as we download */
-    std::FILE *temp_file_handle;
+    std::FILE *output_file_handle;
 
     /** How much was downloaded so far */
     std::size_t downloaded_size = 0;
@@ -112,11 +108,6 @@ private:
 
     /** CURL handle */
     void *curl = nullptr;
-
-    /**
-     * Extract the .7z file
-     */
-    void extract() noexcept;
 
     /** Callback class */
     class HACMapDownloaderCallback;

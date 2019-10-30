@@ -5,12 +5,9 @@
 #define CURL_STATICLIB
 #include <curl/curl.h>
 
-#define TEST_EXTRACTION_ONLY
-
 #include "hac_map_downloader.hpp"
 
 void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
-    #ifndef TEST_EXTRACTION_ONLY
     // Set the URL
     CURLcode result;
     unsigned int repo = 1;
@@ -30,22 +27,15 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
     downloader->curl = nullptr;
 
     // Write the last data
-    std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->temp_file_handle);
+    std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->output_file_handle);
     downloader->buffer_used = 0;
     downloader->buffer.clear();
 
     // Close the file handle
-    std::fclose(downloader->temp_file_handle);
+    std::fclose(downloader->output_file_handle);
 
-    // If we are just testing extraction, do nothing above except lock the mutex so we can set the status
-    #else
-    downloader->mutex.lock();
-    #endif
-
-    downloader->status = DOWNLOAD_STAGE_EXTRACTING;
+    downloader->status = DOWNLOAD_STAGE_COMPLETE;
     downloader->mutex.unlock();
-
-    downloader->extract();
 }
 
 std::size_t HACMapDownloader::get_download_speed() noexcept {
@@ -74,10 +64,9 @@ public:
         userdata->mutex.lock();
         userdata->status = HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
         if(userdata->buffer_used + nmemb > userdata->buffer.size()) {
-            std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->temp_file_handle);
-            std::fwrite(ptr, nmemb, 1, userdata->temp_file_handle);
+            std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->output_file_handle);
+            std::fwrite(ptr, nmemb, 1, userdata->output_file_handle);
             userdata->buffer_used = 0;
-
         }
         else {
             std::copy(ptr, ptr + nmemb, userdata->buffer.data() + userdata->buffer_used);
@@ -109,10 +98,10 @@ void HACMapDownloader::dispatch() {
     }
 
     #ifndef TEST_EXTRACTION_ONLY
-    this->temp_file_handle = std::fopen(this->temp_file.data(), "wb");
+    this->output_file_handle = std::fopen(this->output_file.data(), "wb");
 
     // If we failed to open, give up and close, unlocking the mutex
-    if(!this->temp_file_handle) {
+    if(!this->output_file_handle) {
         this->status = HACMapDownloader::DOWNLOAD_STAGE_FAILED;
         this->mutex.unlock();
         return;
@@ -187,7 +176,7 @@ bool HACMapDownloader::is_finished() noexcept {
     return finished;
 }
 
-HACMapDownloader::HACMapDownloader(const char *map, const char *temp_file, const char *map_file) : map(map), temp_file(temp_file), map_file(map_file) {}
+HACMapDownloader::HACMapDownloader(const char *map, const char *output_file) : map(map), output_file(output_file) {}
 HACMapDownloader::~HACMapDownloader() {
     while(!this->is_finished());
 }
