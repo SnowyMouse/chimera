@@ -292,6 +292,8 @@ namespace Chimera {
 
         FIND("tag_data_address_sig", "core", { 0xC7, 0x05, -1, -1, -1, -1, -1, -1, -1, -1, 0xFF, 0xD6, 0x0F, 0xBF, 0x0D });
 
+        FIND("first_person_node_base_address_sig", "client", { 0x8B, 0x0D, -1, -1, -1, -1, 0x53, 0x8A, 0x5C, 0x24, 0x08 });
+
         return signatures;
     }
 }

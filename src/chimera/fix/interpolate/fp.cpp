@@ -1,9 +1,12 @@
 #include "../../math_trig/math_trig.hpp"
 
+#include <optional>
 #include <algorithm>
 #include <cstdint>
 
 #include "fp.hpp"
+#include "../../chimera.hpp"
+#include "../../signature/signature.hpp"
 
 namespace Chimera {
     struct FirstPersonNode {
@@ -13,8 +16,16 @@ namespace Chimera {
     };
     static_assert(sizeof(FirstPersonNode) == 0x20);
 
-    // This is the FP node data from Halo.
-    static FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(0x40000EC0+0x8C);
+    static std::byte *first_person_nodes() noexcept {
+        // This is the FP node data from Halo.
+        std::optional<std::byte *> first_person_nodes_opt;
+
+        if(!first_person_nodes_opt.has_value()) {
+            first_person_nodes_opt = **reinterpret_cast<std::byte ***>(get_chimera().get_signature("first_person_node_base_address_sig").data() + 2);
+        }
+
+        return first_person_nodes_opt.value();
+    }
 
     // This is the FP node data to copy and interpolate.
     #define NODES_PER_BUFFER 128
@@ -33,15 +44,16 @@ namespace Chimera {
     void interpolate_fp_before() noexcept {
         // This is the progress of the current tick.
         extern float interpolation_tick_progress;
+        FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(first_person_nodes() + 0x8C);
 
         // Check if a tick has passed. If so, copy data to the current interpolation buffer.
         if(tick_passed) {
             // Get the current and last weapon.
             static std::uint32_t last_weapon = ~0;
-            static std::uint32_t &current_weapon = *reinterpret_cast<std::uint32_t *>(0x40000EC0+8);
+            static std::uint32_t &current_weapon = *reinterpret_cast<std::uint32_t *>(first_person_nodes()+8);
 
             // This is set to 0 if no first person model is being drawn or the weapon has changed.
-            skip = !*reinterpret_cast<std::uint32_t *>(0x40000EC0) || last_weapon != current_weapon;
+            skip = !*reinterpret_cast<std::uint32_t *>(first_person_nodes) || last_weapon != current_weapon;
 
             // Swap buffers.
             if(current_tick == fp_buffers[0]) {
@@ -73,6 +85,7 @@ namespace Chimera {
     void interpolate_fp_after() noexcept {
         // Revert the interpolation to prevent weird things from happening.
         if(!skip) {
+            FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(first_person_nodes() + 0x8C);
             std::copy(current_tick, current_tick + NODES_PER_BUFFER, fpn);
         }
     }
