@@ -79,8 +79,14 @@ namespace Chimera {
     };
     static_assert(sizeof(TagDataHeader) == 0x28);
 
+    /**
+     * Get the tag data address
+     * @return tag data address
+     */
+    std::byte *get_tag_data_address() noexcept;
+
     inline TagDataHeader &get_tag_data_header() noexcept {
-        return *reinterpret_cast<TagDataHeader *>(0x40440000);
+        return *reinterpret_cast<TagDataHeader *>(get_tag_data_address());
     }
 
     /**

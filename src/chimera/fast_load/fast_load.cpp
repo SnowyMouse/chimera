@@ -9,6 +9,7 @@
 #include "../signature/hook.hpp"
 #include "../event/tick.hpp"
 #include "../halo_data/map.hpp"
+#include "../halo_data/tag.hpp"
 
 #include "fast_load.hpp"
 
@@ -54,12 +55,13 @@ namespace Chimera {
         read(tag_data, header.tag_data_size);
 
         // Get the scenario tag so we can get the BSPs
-        auto *scenario_tag = tag_data + (*reinterpret_cast<std::uint32_t *>(tag_data) - 0x40440000) + (*reinterpret_cast<std::uint32_t *>(tag_data + 4) & 0xFFFF) * 0x20;
-        auto *scenario_tag_data = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag + 0x14) - 0x40440000);
+        std::uint32_t tag_data_addr = reinterpret_cast<std::uint32_t>(get_tag_data_address());
+        auto *scenario_tag = tag_data + (*reinterpret_cast<std::uint32_t *>(tag_data) - tag_data_addr) + (*reinterpret_cast<std::uint32_t *>(tag_data + 4) & 0xFFFF) * 0x20;
+        auto *scenario_tag_data = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag + 0x14) - tag_data_addr);
 
         // CRC32 the BSP(s)
         auto &structure_bsp_count = *reinterpret_cast<std::uint32_t *>(scenario_tag_data + 0x5A4);
-        auto *structure_bsps = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag_data + 0x5A4 + 4) - 0x40440000);
+        auto *structure_bsps = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag_data + 0x5A4 + 4) - tag_data_addr);
         for(std::size_t b=0;b<structure_bsp_count;b++) {
             char *bsp = structure_bsps + b * 0x20;
             auto &bsp_offset = *reinterpret_cast<std::uint32_t *>(bsp);
