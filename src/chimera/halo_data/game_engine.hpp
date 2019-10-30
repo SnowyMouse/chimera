@@ -8,7 +8,10 @@ namespace Chimera {
         GAME_ENGINE_CUSTOM_EDITION,
 
         /** Retail */
-        GAME_ENGINE_RETAIL
+        GAME_ENGINE_RETAIL,
+
+        /** Demo */
+        GAME_ENGINE_DEMO
     };
 
     /**

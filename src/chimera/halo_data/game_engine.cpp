@@ -15,6 +15,9 @@ namespace Chimera {
             else if(std::strcmp(game_engine, "halor") == 0) {
                 game_engine_used = GameEngine::GAME_ENGINE_RETAIL;
             }
+            else if(std::strcmp(game_engine, "halod") == 0) {
+                game_engine_used = GameEngine::GAME_ENGINE_DEMO;
+            }
         }
         return game_engine_used.value();
     }
