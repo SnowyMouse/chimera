@@ -11,6 +11,7 @@ namespace Chimera {
     extern "C" void on_set_video_mode_initially() noexcept;
 
     void set_up_video_mode() noexcept {
+        auto &chimera = get_chimera();
         bool pc = chimera.feature_present("client_resolution_pc");
         bool demo = chimera.feature_present("client_resolution_demo");
 
@@ -22,7 +23,6 @@ namespace Chimera {
         std::uint32_t default_height = 600;
         std::uint32_t default_refresh_rate = 60;
 
-        auto &chimera = get_chimera();
         auto *ini = chimera.get_ini();
         auto *enabled = ini->get_value("video_mode.enabled");
         if(!enabled || *enabled != '1') {
