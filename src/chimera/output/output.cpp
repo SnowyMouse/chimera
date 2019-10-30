@@ -62,7 +62,9 @@ namespace Chimera {
 
     void set_up_rcon_message_hook() noexcept {
         static Hook hook;
-        write_jmp_call(get_chimera().get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));
+        if(get_chimera().feature_present("client_rcon")) {
+            write_jmp_call(get_chimera().get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));
+        }
     }
 
     void set_server_messages_blocked(bool blocked) noexcept {
