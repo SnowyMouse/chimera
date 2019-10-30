@@ -7,6 +7,7 @@
 #include "../../event/camera.hpp"
 #include "../../event/frame.hpp"
 #include "../../event/tick.hpp"
+#include "../../halo_data/game_engine.hpp"
 
 #include "antenna.hpp"
 #include "camera.hpp"
@@ -31,6 +32,8 @@ namespace Chimera {
     // This is the current effective tick rate.
     static float interpolation_current_tick_rate = 30.0;
 
+    static float *tick_progress = nullptr;
+
     static void on_tick() noexcept {
         interpolate_antenna_on_tick();
         interpolate_flag_on_tick();
@@ -47,7 +50,7 @@ namespace Chimera {
     }
 
     static void on_preframe() noexcept {
-        interpolation_tick_progress = interpolation_current_tick_rate * *reinterpret_cast<float *>(0x40000304);
+        interpolation_tick_progress = interpolation_current_tick_rate * *tick_progress;
 
         if(interpolation_tick_progress > 1) {
             interpolation_tick_progress = 1;
@@ -74,6 +77,15 @@ namespace Chimera {
         static Hook fp_interp_hook;
         first_person_camera_tick_rate = *reinterpret_cast<float **>(get_chimera().get_signature("fp_cam_tick_rate_sig").data() + 2);
         //nav_point = reinterpret_cast<void(*)()>(get_chimera().get_signature("nav_point_sig").data());
+
+        if(game_engine() == GAME_ENGINE_DEMO) {
+            tick_progress = reinterpret_cast<float *>(0x4BAD0304);
+        }
+        else {
+            tick_progress = reinterpret_cast<float *>(0x40000304);
+        }
+
+        tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 0x1C);
 
         add_tick_event(on_tick);
         add_preframe_event(on_preframe);
