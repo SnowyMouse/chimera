@@ -11,6 +11,13 @@ namespace Chimera {
     extern "C" void on_set_video_mode_initially() noexcept;
 
     void set_up_video_mode() noexcept {
+        bool pc = chimera.feature_present("client_resolution_pc");
+        bool demo = chimera.feature_present("client_resolution_demo");
+
+        if(!pc && !demo) {
+            return;
+        }
+
         std::uint32_t default_width = 800;
         std::uint32_t default_height = 600;
         std::uint32_t default_refresh_rate = 60;
@@ -35,10 +42,18 @@ namespace Chimera {
         SET_VALUE("refresh_rate", default_refresh_rate)
         SET_VALUE("vsync", vsync)
 
-        auto *default_res = chimera.get_signature("default_resolution_sig").data();
-        overwrite(default_res + 4, default_width);
-        overwrite(default_res + 12, default_height);
-        overwrite(default_res + 20, default_refresh_rate);
+        if(pc) {
+            auto *default_res = chimera.get_signature("default_resolution_pc_sig").data();
+            overwrite(default_res + 4, default_width);
+            overwrite(default_res + 12, default_height);
+            overwrite(default_res + 20, default_refresh_rate);
+        }
+        else if(demo) {
+            auto *default_res = chimera.get_signature("default_resolution_demo_sig").data();
+            overwrite(default_res + 1, default_width);
+            overwrite(default_res + 28, default_height);
+            overwrite(default_res + 6, default_refresh_rate);
+        }
 
         // Disable Halo's loading of the profile data
         overwrite(chimera.get_signature("load_profile_resolution_sig").data(), static_cast<std::uint8_t>(0xEB));
