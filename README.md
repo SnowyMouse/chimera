@@ -41,6 +41,7 @@ These are features that are always on.
 - [FOV fix](#fov-fix)
 - [Sun fix](#sun-fix)
 - [Custom chat](#custom-chat)
+- [NVIDIA camo fix](#nvidia-camo-fix)
 
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
@@ -113,6 +114,10 @@ resolution. Chimera makes it scale by 768p, instead.
 
 #### Custom chat
 The Keystone chat is crashy and broken. Chimera adds a replacement chat.
+
+#### NVIDIA camo fix
+Chimera fixes a bug where, if the GPU is an NVIDIA graphics card, it uses alpha
+blended camo instead of the liquid camo shader.
 
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
