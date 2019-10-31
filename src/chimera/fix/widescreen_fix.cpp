@@ -288,10 +288,13 @@ namespace Chimera {
 
     static bool ce = false;
 
+    static bool f1 = false;
+
     void set_widescreen_fix(bool new_setting) noexcept {
         if(new_setting != setting) {
             ce = get_chimera().feature_present("client_widescreen_custom_edition");
             tabs_ptr = *reinterpret_cast<std::uint16_t **>(get_chimera().get_signature("widescreen_text_tab_sig").data() + 0x3);
+            f1 = get_chimera().feature_present("client_widescreen_f1");
 
             auto &widescreen_scope = get_chimera().get_signature("widescreen_scope_sig");
             scope_width = reinterpret_cast<float *>(widescreen_scope.data() + 4);
@@ -334,7 +337,14 @@ namespace Chimera {
 
             static Hook text_f1;
             auto &widescreen_text_f1_sig = get_chimera().get_signature("widescreen_text_f1_sig");
-            write_function_override(reinterpret_cast<void *>(widescreen_text_f1_sig.data()), text_f1, reinterpret_cast<const void *>(widescreen_element_reposition_text_f1), &widescreen_element_position_text_f1_fn);
+            auto &widescreen_text_f1_server_ip_position_sig = get_chimera().get_signature("widescreen_text_f1_server_ip_position_sig");
+            auto &widescreen_text_f1_server_name_position_sig = get_chimera().get_signature("widescreen_text_f1_server_name_position_sig");
+
+            if(f1) {
+                f1_server_ip_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_ip_position_sig.data() + 5);
+                f1_server_name_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_name_position_sig.data() + 5);
+                write_function_override(reinterpret_cast<void *>(widescreen_text_f1_sig.data()), text_f1, reinterpret_cast<const void *>(widescreen_element_reposition_text_f1), &widescreen_element_position_text_f1_fn);
+            }
 
             static Hook text_pgcr;
             auto &widescreen_text_pgcr_sig = get_chimera().get_signature("widescreen_text_pgcr_sig");
@@ -407,12 +417,6 @@ namespace Chimera {
             auto &widescreen_screen_effect_sig = get_chimera().get_signature("widescreen_screen_effect_sig");
             write_jmp_call(reinterpret_cast<void *>(widescreen_screen_effect_sig.data()), screen_effect, reinterpret_cast<const void *>(temporarily_unfix_scope_mask), reinterpret_cast<const void *>(temporarily_unfix_scope_mask));
 
-            auto &widescreen_text_f1_server_ip_position_sig = get_chimera().get_signature("widescreen_text_f1_server_ip_position_sig");
-            f1_server_ip_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_ip_position_sig.data() + 5);
-
-            auto &widescreen_text_f1_server_name_position_sig = get_chimera().get_signature("widescreen_text_f1_server_name_position_sig");
-            f1_server_name_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_name_position_sig.data() + 5);
-
             auto &widescreen_console_tabs_sig = get_chimera().get_signature("widescreen_console_tabs_sig");
             console_output_width = reinterpret_cast<std::int32_t *>(widescreen_console_tabs_sig.data() + 0x3A);
             overwrite(widescreen_console_tabs_sig.data() + 0x51 + 1, reinterpret_cast<std::int16_t *>(tabs));
@@ -447,7 +451,11 @@ namespace Chimera {
                 widescreen_menu_text_sig.rollback();
                 widescreen_menu_text_2_sig.rollback();
                 widescreen_text_max_x_sig.rollback();
-                widescreen_text_f1_sig.rollback();
+                if(f1) {
+                    widescreen_text_f1_sig.rollback();
+                    widescreen_text_f1_server_ip_position_sig.rollback();
+                    widescreen_text_f1_server_name_position_sig.rollback();
+                }
                 widescreen_text_pgcr_sig.rollback();
                 widescreen_element_motion_sensor_scaling_sig.rollback();
                 widescreen_text_stare_name_sig.rollback();
@@ -479,8 +487,6 @@ namespace Chimera {
                 widescreen_hud_pickup_icon_sig.rollback();
                 widescreen_text_loading_screen_sig.rollback();
                 widescreen_screen_effect_sig.rollback();
-                widescreen_text_f1_server_ip_position_sig.rollback();
-                widescreen_text_f1_server_name_position_sig.rollback();
                 widescreen_console_tabs_sig.rollback();
                 widescreen_input_text_sig.rollback();
                 widescreen_mouse_sig.rollback();
@@ -534,8 +540,10 @@ namespace Chimera {
             overwrite(console_width, static_cast<std::int32_t>(widescreen_width_480p));
             overwrite(text_max_x, static_cast<std::uint32_t>(widescreen_width_480p));
 
-            overwrite(f1_server_ip_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
-            overwrite(f1_server_name_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
+            if(f1) {
+                overwrite(f1_server_ip_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
+                overwrite(f1_server_name_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
+            }
 
             if(ce) {
                 overwrite(f2_motd_x, static_cast<std::int16_t>(widescreen_width_480p - 640.0f + 625));

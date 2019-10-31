@@ -43,6 +43,16 @@ namespace Chimera {
 
         // If we *can* load Chimera, then do it
         if(find_signatures()) {
+            const char *build_string = *reinterpret_cast<const char **>(this->get_signature("build_string_sig").data() + 1);
+            static const char *expected_version = "01.00.10.0621";
+            if(game_engine() != GAME_ENGINE_DEMO && std::strcmp(build_string, expected_version) != 0) {
+                char error[256] = {};
+                std::snprintf(error, sizeof(error), "Chimera does not support %s. Please update your game to %s.", build_string, expected_version);
+                MessageBox(0, error, "Error", 0);
+                this->p_signatures.clear();
+                return;
+            }
+
             this->get_all_commands();
             initialize_console_hook();
 
