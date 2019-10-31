@@ -8,6 +8,7 @@
 #include "../../event/frame.hpp"
 #include "../../event/tick.hpp"
 #include "../../halo_data/game_engine.hpp"
+#include "../../output/output.hpp"
 
 #include "antenna.hpp"
 #include "camera.hpp"
@@ -78,14 +79,7 @@ namespace Chimera {
         first_person_camera_tick_rate = *reinterpret_cast<float **>(get_chimera().get_signature("fp_cam_tick_rate_sig").data() + 2);
         //nav_point = reinterpret_cast<void(*)()>(get_chimera().get_signature("nav_point_sig").data());
 
-        if(game_engine() == GAME_ENGINE_DEMO) {
-            tick_progress = reinterpret_cast<float *>(0x4BAD0304);
-        }
-        else {
-            tick_progress = reinterpret_cast<float *>(0x40000304);
-        }
-
-        tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 0x1C);
+        tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 304);
 
         add_tick_event(on_tick);
         add_preframe_event(on_preframe);
