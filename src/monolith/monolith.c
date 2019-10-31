@@ -123,19 +123,12 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
 
                 // Terminate if we have to
                 if(!load_dlls()) {
-                    char file_name[MAX_PATH];
-                    DWORD len = GetModuleFileNameA(NULL, file_name, sizeof(file_name));
-                    char haloce[] = "haloce.exe";
-                    BOOL terminate = TRUE;
-                    if(len >= sizeof(haloce)) {
-                        if(string_equal(file_name + len - sizeof(haloce) + 1, haloce)) {
-                            terminate = MessageBox(NULL, "Chimera could not be loaded. Continue running Halo?", "Error", MB_YESNO) == IDNO;
-                        }
-                    }
+                    ExitProcess(133);
+                }
 
-                    if(terminate) {
-                        ExitProcess(133);
-                    }
+                // Check if keystone is loaded. If so, bail.
+                if(GetModuleHandle("keystone.dll")) {
+                    ExitProcess(197);
                 }
             }
             break;
