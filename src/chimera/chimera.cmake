@@ -27,6 +27,7 @@ add_library(chimera STATIC
     src/chimera/fast_load/crc32.c
     src/chimera/fast_load/fast_load.cpp
     src/chimera/fast_load/fast_load.S
+    src/chimera/fix/abolish_safe_mode.cpp
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/blue_32bit_color_fix.cpp

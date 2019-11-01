@@ -18,6 +18,7 @@
 #include "annoyance/registry.hpp"
 #include "master_server/master_server.hpp"
 #include "fast_load/fast_load.hpp"
+#include "fix/abolish_safe_mode.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
 #include "fix/death_reset_time.hpp"
@@ -126,6 +127,9 @@ namespace Chimera {
 
                 // wtf
                 set_up_force_crash_fix();
+
+                // Fuck this
+                set_up_abolish_safe_mode();
             }
             else {
                 enable_output(true);
