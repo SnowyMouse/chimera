@@ -89,6 +89,11 @@ namespace Chimera {
         overwrite(bsp_poly_count_sig.data() + 2, extend_limits_polies_count);
         overwrite(bsp_poly_count_sig.data() + 6, static_cast<std::uint8_t>(0x90));
 
+        if(get_chimera().feature_present("client_bsp_poly_demo")) { //005076AD
+            auto &bsp_poly_count_demo_sig = get_chimera().get_signature("bsp_poly_demo_sig");
+            overwrite(bsp_poly_count_demo_sig.data() + 1, bsp_polies.get());
+        }
+
         SigByte nop_bsp_limit[9] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
         write_code_s(bsp_poly_limit_1_sig.data(), nop_bsp_limit);
         write_code_s(bsp_poly_limit_2_sig.data(), nop_bsp_limit);
