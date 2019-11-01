@@ -53,6 +53,10 @@ namespace Chimera {
             overwrite(default_res + 1, default_width);
             overwrite(default_res + 28, default_height);
             overwrite(default_res + 6, default_refresh_rate);
+
+            // Prevent the LAA patch from overruling this
+            auto *default_res_override = chimera.get_signature("default_resolution_override_demo_sig").data();
+            overwrite(default_res_override + 10, static_cast<std::uint8_t>(0xEB));
         }
 
         // Disable Halo's loading of the profile data
