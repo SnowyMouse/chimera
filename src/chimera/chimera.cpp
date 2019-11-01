@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <cmath>
+#include "annoyance/novideo.hpp"
 #include "bookmark/bookmark.hpp"
 #include "custom_chat/custom_chat.hpp"
 #include "config/config.hpp"
@@ -130,6 +131,9 @@ namespace Chimera {
 
                 // Fuck this
                 set_up_abolish_safe_mode();
+
+                // Remove the video
+                enable_novideo();
             }
             else {
                 enable_output(true);

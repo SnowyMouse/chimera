@@ -9,6 +9,7 @@ include(src/chimera/command/command.cmake)
 add_library(chimera STATIC
     src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/keystone.cpp
+    src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
     src/chimera/bookmark/bookmark.cpp
     src/chimera/command/command.cpp
