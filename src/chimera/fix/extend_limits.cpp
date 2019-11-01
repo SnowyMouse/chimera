@@ -29,7 +29,7 @@ extern "C" {
 }
 
 namespace Chimera {
-    auto bsp_polies = std::make_unique<std::uint32_t []>(BSP_POLY_LIMIT);
+    static auto bsp_polies = std::make_unique<std::uint32_t []>(BSP_POLY_LIMIT);
     void set_up_extend_limits() noexcept {
         // There's a ton of stuff here.
         static const float MAXIMUM_DRAW_DISTANCE = 1026.0F * 1.34F * 1.34F * 1.34F * 1.34F * 1.34F / 1.97F;
@@ -108,13 +108,13 @@ namespace Chimera {
 
         bsp_render_1 = reinterpret_cast<const void *>(bsp_poly_bsp_render_calls_sig.data() + 5 + *reinterpret_cast<std::uintptr_t *>(bsp_poly_bsp_render_calls_sig.data() + 1));
         bsp_render_2 = reinterpret_cast<const void *>(bsp_poly_bsp_render_calls_sig.data() + 10 + *reinterpret_cast<std::uintptr_t *>(bsp_poly_bsp_render_calls_sig.data() + 6));
-        //bsp_render_3 = reinterpret_cast<const void *>(bsp_poly_bsp_render_calls_sig.data() + 15 + *reinterpret_cast<std::uintptr_t *>(bsp_poly_bsp_render_calls_sig.data() + 11));
+        bsp_render_3 = reinterpret_cast<const void *>(bsp_poly_bsp_render_calls_sig.data() + 15 + *reinterpret_cast<std::uintptr_t *>(bsp_poly_bsp_render_calls_sig.data() + 11));
         bsp_render_finally = bsp_poly_bsp_render_calls_sig.data() + 10;
-        SigByte bsp_render_nop[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-        write_code_s(bsp_poly_bsp_render_calls_sig.data(), bsp_render_nop);
+        //SigByte bsp_render_nop[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+        //write_code_s(bsp_poly_bsp_render_calls_sig.data(), bsp_render_nop);
         static Hook bsp_render_hook;
-        const void *old;
-        write_function_override(bsp_poly_bsp_render_calls_sig.data(), bsp_render_hook, reinterpret_cast<const void *>(bsp_render_calls), &old);
+        //const void *old;
+        //write_function_override(bsp_poly_bsp_render_calls_sig.data(), bsp_render_hook, reinterpret_cast<const void *>(bsp_render_calls), &old);
 
         //overwrite(bsp_poly_another_limit_sig.data() + 1, extend_limits_poly_limit);
         //overwrite(bsp_poly_limit_1_sig.data() + 0x7, static_cast<std::uint16_t>(BSP_POLY_LIMIT));
