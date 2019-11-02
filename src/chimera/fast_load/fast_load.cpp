@@ -158,7 +158,7 @@ namespace Chimera {
             const void *original_fn;
             write_function_override(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), hook, reinterpret_cast<const void *>(do_nothing), &original_fn);
 
-            add_pretick_event(do_load_multiplayer_maps<MapIndex>);
+            add_pretick_event(do_load_multiplayer_maps<MapIndexRetail>);
         }
     }
 
@@ -169,7 +169,7 @@ namespace Chimera {
 
         static std::vector<MapIndexType> indices_vector;
 
-        remove_pretick_event(do_load_multiplayer_maps<MapIndex>);
+        remove_pretick_event(do_load_multiplayer_maps<MapIndexType>);
 
         static const char *BLACKLISTED_MAPS[] = {
             "a10",
@@ -292,7 +292,9 @@ namespace Chimera {
                 reinterpret_cast<MapIndexCustomEdition *>(&index)->crc32 = 0xFFFFFFFF;
             }
             index.file_name = names_vector[i].first.get();
-            index.loaded = 1;
+            if(sizeof(index) >= sizeof(MapIndexRetail)) {
+                reinterpret_cast<MapIndexRetail *>(&index)->loaded = 1;
+            }
             index.map_name_index = i < stock_map_count ? i : stock_map_count;
             indices_vector.push_back(index);
         }

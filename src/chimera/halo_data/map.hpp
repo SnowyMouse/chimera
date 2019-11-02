@@ -71,16 +71,19 @@ namespace Chimera {
 
         /** Map name index; 13 = Unknown Level, first 13 maps must be the stock maps in order */
         std::uint32_t map_name_index;
+    };
+    static_assert(sizeof(MapIndex) == 0x8);
 
+    struct MapIndexRetail : MapIndex {
         /** 1 if loaded and valid */
         std::uint8_t loaded;
 
         PAD(0x3);
     };
-    static_assert(sizeof(MapIndex) == 0xC);
+    static_assert(sizeof(MapIndexRetail) == 0xC);
 
     /** This is an individual map index */
-    struct MapIndexCustomEdition : MapIndex {
+    struct MapIndexCustomEdition : MapIndexRetail {
         /** CRC32 checksum for joining/hosting servers */
         std::uint32_t crc32;
     };
