@@ -400,7 +400,8 @@ Override the HUD with the split screen HUD.
 **Usage:** `chimera_split_screen_hud [true/false]`
 
 #### Throttle FPS
-Throttle Halo's frame rate. Set to 0 to disable.
+Throttle Halo's frame rate. Set to 0 to disable. By default, this is set to 300
+on Halo Trial.
 
 **Usage:** `chimera_throttle_fps [FPS]`
 

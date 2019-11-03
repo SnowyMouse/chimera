@@ -407,6 +407,7 @@ namespace Chimera {
             if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
                 chimera->execute_command("chimera_fov auto");
                 chimera->execute_command("chimera_widescreen_fix true");
+                chimera->execute_command("chimera_throttle_fps 300");
             }
 
             // Load the custom chat
