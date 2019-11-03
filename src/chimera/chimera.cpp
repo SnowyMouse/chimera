@@ -59,9 +59,7 @@ namespace Chimera {
             initialize_console_hook();
 
             // Enable fast loading
-            if(this->feature_present("core_fast_load")) {
-                initialize_fast_load();
-            }
+            initialize_fast_load();
 
             // Remove the annoying DRM from the game
             remove_drm();

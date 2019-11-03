@@ -13,6 +13,11 @@ namespace Chimera {
      * @return     path to the map if found
      */
     const char *path_for_map(const char *map) noexcept;
+
+    /**
+     * Reload the map list
+     */
+    void reload_map_list() noexcept;
 }
 
 #endif

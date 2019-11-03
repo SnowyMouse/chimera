@@ -89,17 +89,16 @@ namespace Chimera {
     };
     static_assert(sizeof(MapIndexCustomEdition) == 0x10);
 
-    /**
-     * Get a pointer to all of the map indices
-     * @return pointer to all of the map indices
-     */
-    std::byte *map_indices() noexcept;
+    struct MapList {
+        MapIndex *map_list;
+        std::uint32_t map_count;
+    };
 
     /**
-     * Get the number of maps loaded
-     * @return pointer to all of the maps
+     * Get the map list
+     * @return map list
      */
-    std::uint32_t maps_count() noexcept;
+    MapList &get_map_list() noexcept;
 
     /**
      * Load ui.map

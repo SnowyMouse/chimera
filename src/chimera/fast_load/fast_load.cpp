@@ -10,6 +10,7 @@
 #include "../event/tick.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
+#include "../halo_data/game_engine.hpp"
 
 #include "fast_load.hpp"
 
@@ -94,16 +95,17 @@ namespace Chimera {
     extern "C" void on_get_crc32() noexcept {
         // Get the loading map and all map indices so we can find which map is loading
         static char *loading_map = *reinterpret_cast<char **>(get_chimera().get_signature("loading_map_sig").data() + 1);
-        auto *indices = reinterpret_cast<MapIndexCustomEdition *>(map_indices());
+        auto &map_list = get_map_list();
+        auto *indices = reinterpret_cast<MapIndexCustomEdition *>(map_list.map_list);
 
         // Iterate through each map
-        for(std::size_t i=0;i<maps_count();i++) {
+        for(std::size_t i=0;i<map_list.map_count;i++) {
             if(same_string_case_insensitive(indices[i].file_name, loading_map)) {
                 auto *path = path_for_map(indices[i].file_name);
                 bool map_already_crc = indices[i].crc32 != 0xFFFFFFFF;
 
                 // Do what we need to do
-                if(map_already_crc) {
+                if(map_already_crc || !path) {
                     return;
                 }
 
@@ -122,43 +124,54 @@ namespace Chimera {
         }
     }
 
-    static void on_pretick() {
-        if(*reinterpret_cast<std::uint32_t *>(0x4000026C) == 0) {
-            on_get_crc32();
-        }
-    }
-
-    static void do_nothing() {}
+    void (*function_to_use)() = nullptr;
 
     void initialize_fast_load() noexcept {
-        bool ce = get_chimera().feature_present("core_fast_load_custom_edition");
-        bool retail = get_chimera().feature_present("core_fast_load_retail");
+        auto engine = game_engine();
 
-        if(ce) {
-            // Hijack Halo's map listing function
-            static Hook hook;
-            const void *original_fn;
-            write_function_override(get_chimera().get_signature("load_multiplayer_maps_sig").data(), hook, reinterpret_cast<const void *>(do_load_multiplayer_maps<MapIndexCustomEdition>), &original_fn);
-
-            // Do things
-            if(DEDICATED_SERVER) {
-                add_pretick_event(on_pretick);
-            }
-            else {
+        switch(engine) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION: {
+                // Disable Halo's CRC32ing (drastically speed up loading)
                 auto *get_crc = get_chimera().get_signature("get_crc_sig").data();
                 static unsigned char nop7[7] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
                 overwrite(get_crc, nop7, sizeof(nop7));
                 overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
-            }
-        }
-        else if(retail) {
-            // Hijack Halo's map listing function
-            static Hook hook;
-            const void *original_fn;
-            write_function_override(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), hook, reinterpret_cast<const void *>(do_nothing), &original_fn);
 
-            add_pretick_event(do_load_multiplayer_maps<MapIndexRetail>);
+                // Prevent Halo from loading the map list (speed up loading)
+                overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
+
+                // Load the maps list on the next tick
+                add_tick_event(reload_map_list);
+                function_to_use = do_load_multiplayer_maps<MapIndexCustomEdition>;
+
+                // Stop Halo from freeing the map list on close since it will just segfault if it does that
+                overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
+                break;
+            }
+
+            case GameEngine::GAME_ENGINE_RETAIL: {
+                // Prevent Halo from loading the map list (speed up loading)
+                overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
+
+                // Load the maps list on the next tick
+                add_tick_event(reload_map_list);
+                function_to_use = do_load_multiplayer_maps<MapIndexRetail>;
+
+                // Stop Halo from freeing the map list on close since it will just segfault if it does that
+                overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
+                break;
+            }
+
+            case GameEngine::GAME_ENGINE_DEMO: {
+                // Load the maps list on the next tick
+                add_tick_event(reload_map_list);
+                function_to_use = do_load_multiplayer_maps<MapIndex>;
+
+                // Stop Halo from freeing the map list on close since it will just segfault if it does that
+                overwrite(get_chimera().get_signature("free_map_index_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
+                break;
+            }
         }
     }
 
@@ -166,10 +179,7 @@ namespace Chimera {
         static std::vector<std::pair<std::unique_ptr<char []>, std::size_t>> names_vector;
         static MapIndexType **indices = nullptr;
         static std::uint32_t *count = nullptr;
-
         static std::vector<MapIndexType> indices_vector;
-
-        remove_pretick_event(do_load_multiplayer_maps<MapIndexType>);
 
         static const char *BLACKLISTED_MAPS[] = {
             "a10",
@@ -196,12 +206,10 @@ namespace Chimera {
         }
         else {
             // Find locations
-            std::byte *data_location = *reinterpret_cast<std::byte **>(get_chimera().get_signature("map_index_sig").data() + 10);
-            indices = reinterpret_cast<MapIndexType **>(data_location);
-            count = reinterpret_cast<std::uint32_t *>(data_location + 4);
-
-            // Make sure Halo doesn't free the data, itself.
-            overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
+            auto &map_list = get_map_list();
+            indices = reinterpret_cast<MapIndexType **>(&map_list.map_list);
+            count = reinterpret_cast<std::uint32_t *>(&map_list.map_count);
+            *count = 0;
         }
 
         auto add_map = [](const char *map_name, std::size_t string_length) {
@@ -233,9 +241,12 @@ namespace Chimera {
             return;
         };
 
-        #define ADD_STOCK_MAP(map_name) add_map(map_name, std::strlen(map_name))
+        #define ADD_STOCK_MAP(map_name) if(path_for_map(map_name) != nullptr) { add_map(map_name, std::strlen(map_name)); }
 
-        // First, add the stock maps
+        // First, add the stock maps, adding blood gulch first if the demo
+        if(sizeof(MapIndexType) == sizeof(MapIndex)) {
+            ADD_STOCK_MAP("bloodgulch");
+        }
         ADD_STOCK_MAP("beavercreek");
         ADD_STOCK_MAP("sidewinder");
         ADD_STOCK_MAP("damnation");
@@ -255,7 +266,6 @@ namespace Chimera {
         ADD_STOCK_MAP("infinity");
         ADD_STOCK_MAP("timberland");
         ADD_STOCK_MAP("gephyrophobia");
-        std::uint32_t stock_map_count = *count;
 
         auto add_map_by_path = [&add_map](const char *path) {
             // Next, add new maps
@@ -285,9 +295,10 @@ namespace Chimera {
         std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path);
 
         // Lastly, allocate things
+        indices_vector.clear();
         indices_vector.reserve(*count);
         for(std::size_t i = 0; i < *count; i++) {
-            MapIndexType index = {};
+            MapIndexType &index = indices_vector.emplace_back();
             if(sizeof(index) == sizeof(MapIndexCustomEdition)) {
                 reinterpret_cast<MapIndexCustomEdition *>(&index)->crc32 = 0xFFFFFFFF;
             }
@@ -295,8 +306,14 @@ namespace Chimera {
             if(sizeof(index) >= sizeof(MapIndexRetail)) {
                 reinterpret_cast<MapIndexRetail *>(&index)->loaded = 1;
             }
-            index.map_name_index = i < stock_map_count ? i : stock_map_count;
-            indices_vector.push_back(index);
+
+            // If it's demo, do this
+            if(sizeof(index) == sizeof(MapIndex)) {
+                index.map_name_index = std::strcmp(index.file_name, "bloodgulch") == 0 ? 0x9 : 0x13;
+            }
+            else {
+                index.map_name_index = i < 0x13 ? i : 0x13;
+            }
         }
 
         // Set pointers and such
@@ -308,7 +325,11 @@ namespace Chimera {
         #define RETURN_IF_FOUND(...) std::snprintf(path, sizeof(path), __VA_ARGS__, map); if(PathFileExistsA(path)) return path;
         RETURN_IF_FOUND("maps\\%s.map");
         RETURN_IF_FOUND("%s\\maps\\%s.map", get_chimera().get_path());
-        std::snprintf(path, sizeof(path), "maps\\%s.map", map);
-        return path;
+        return nullptr;
+    }
+
+    void reload_map_list() noexcept {
+        remove_tick_event(reload_map_list);
+        function_to_use();
     }
 }
