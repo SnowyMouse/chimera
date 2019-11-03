@@ -147,19 +147,38 @@ namespace Chimera {
             }
         }
 
-        // Look for the superfeature first
+        // Look for the super feature next
         if(std::strncmp(feature, "client_", 7) == 0) {
-            if(std::strncmp(feature, "client_", 7) == 0) {
-                if(!feature_present("client")) {
-                    return false;
-                }
+            if(!feature_present("client")) {
+                return false;
             }
         }
+        if(std::strncmp(feature, "server_", 7) == 0) {
+            if(!feature_present("server")) {
+                return false;
+            }
+        }
+
+        // Also format feature into feature_<retail / custom_edition / demo>
+        char feature_arch[256];
+        const char *name_str = nullptr;
+        switch(game_engine()) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                name_str = "custom_edition";
+                break;
+            case GameEngine::GAME_ENGINE_RETAIL:
+                name_str = "retail";
+                break;
+            case GameEngine::GAME_ENGINE_DEMO:
+                name_str = "demo";
+                break;
+        }
+        std::snprintf(feature_arch, sizeof(feature_arch), "%s_%s", feature, name_str);
 
         // Check for it now
         bool feature_found = false;
         for(auto &signature : this->p_signatures) {
-            if(std::strcmp(signature.feature(), feature) == 0) {
+            if(std::strcmp(signature.feature(), feature) == 0 || std::strcmp(signature.feature(), feature_arch) == 0) {
                 feature_found = true;
                 if(signature.data() == 0) {
                     return false;
