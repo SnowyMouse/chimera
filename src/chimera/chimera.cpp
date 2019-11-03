@@ -402,6 +402,7 @@ namespace Chimera {
             chimera->execute_command("chimera_interpolate true");
             chimera->execute_command("chimera_diagonals 0.75");
             chimera->execute_command("chimera_auto_center 1");
+            chimera->execute_command("chimera_block_loading_screen 1");
 
             // Load the custom chat
             initialize_custom_chat();

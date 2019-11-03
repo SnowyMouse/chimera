@@ -242,7 +242,8 @@ Cutscenes have a letterbox. You can disable it if you want.
 #### Block loading screen
 When you join a server, you are blinded for a few seconds by a loading screen,
 and this can make you susceptible to being cheaply killed. This disables that
-loading screen.
+loading screen. By default, Chimera disables the loading screen due to this,
+but you can turn it back on if you want.
 
 **Usage:** `chimera_block_loading_screen [true/false]`
 
