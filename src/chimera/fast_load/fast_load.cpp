@@ -241,31 +241,33 @@ namespace Chimera {
             return;
         };
 
-        #define ADD_STOCK_MAP(map_name) if(path_for_map(map_name) != nullptr) { add_map(map_name, std::strlen(map_name)); }
+        #define ADD_STOCK_MAP(map_name) add_map(map_name, std::strlen(map_name))
 
-        // First, add the stock maps, adding blood gulch first if the demo
+        // First, add the stock maps, only adding blood gulch if the demo
         if(sizeof(MapIndexType) == sizeof(MapIndex)) {
             ADD_STOCK_MAP("bloodgulch");
         }
-        ADD_STOCK_MAP("beavercreek");
-        ADD_STOCK_MAP("sidewinder");
-        ADD_STOCK_MAP("damnation");
-        ADD_STOCK_MAP("ratrace");
-        ADD_STOCK_MAP("prisoner");
-        ADD_STOCK_MAP("hangemhigh");
-        ADD_STOCK_MAP("chillout");
-        ADD_STOCK_MAP("carousel");
-        ADD_STOCK_MAP("boardingaction");
-        ADD_STOCK_MAP("bloodgulch");
-        ADD_STOCK_MAP("wizard");
-        ADD_STOCK_MAP("putput");
-        ADD_STOCK_MAP("longest");
-        ADD_STOCK_MAP("icefields");
-        ADD_STOCK_MAP("deathisland");
-        ADD_STOCK_MAP("dangercanyon");
-        ADD_STOCK_MAP("infinity");
-        ADD_STOCK_MAP("timberland");
-        ADD_STOCK_MAP("gephyrophobia");
+        else {
+            ADD_STOCK_MAP("beavercreek");
+            ADD_STOCK_MAP("sidewinder");
+            ADD_STOCK_MAP("damnation");
+            ADD_STOCK_MAP("ratrace");
+            ADD_STOCK_MAP("prisoner");
+            ADD_STOCK_MAP("hangemhigh");
+            ADD_STOCK_MAP("chillout");
+            ADD_STOCK_MAP("carousel");
+            ADD_STOCK_MAP("boardingaction");
+            ADD_STOCK_MAP("bloodgulch");
+            ADD_STOCK_MAP("wizard");
+            ADD_STOCK_MAP("putput");
+            ADD_STOCK_MAP("longest");
+            ADD_STOCK_MAP("icefields");
+            ADD_STOCK_MAP("deathisland");
+            ADD_STOCK_MAP("dangercanyon");
+            ADD_STOCK_MAP("infinity");
+            ADD_STOCK_MAP("timberland");
+            ADD_STOCK_MAP("gephyrophobia");
+        }
 
         auto add_map_by_path = [&add_map](const char *path) {
             // Next, add new maps
