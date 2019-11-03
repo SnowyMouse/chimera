@@ -405,7 +405,7 @@ namespace Chimera {
             chimera->execute_command("chimera_block_loading_screen true");
 
             if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-                chimera->execute_command("chimera_auto_fov auto");
+                chimera->execute_command("chimera_fov auto");
                 chimera->execute_command("chimera_widescreen_fix true");
             }
 
