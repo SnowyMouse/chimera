@@ -176,8 +176,11 @@ objects. You'd need AF enabled externally to do that.
 **Usage:** `chimera_af [true/false]`
 
 #### Auto centering
-Vehicle auto centering is based on frame rate (0). Chimera allows you to either
-fix it by making it based on tick rate (1) or turn it off completely (2).
+In stock Halo, vehicle auto centering is based on frame rate. Chimera allows
+you to either fix it or turn it off completely, as this can be annoying.
+- 0 is Halo's normal behavior
+- 1 is fixed behavior (tick-based)
+- 2 is no auto centering whatsoever
 
 **Usage:** `chimera_auto_center [0/1/2]`
 
