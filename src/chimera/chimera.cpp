@@ -402,7 +402,12 @@ namespace Chimera {
             chimera->execute_command("chimera_interpolate true");
             chimera->execute_command("chimera_diagonals 0.75");
             chimera->execute_command("chimera_auto_center 1");
-            chimera->execute_command("chimera_block_loading_screen 1");
+            chimera->execute_command("chimera_block_loading_screen true");
+
+            if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+                chimera->execute_command("chimera_auto_fov auto");
+                chimera->execute_command("chimera_widescreen_fix true");
+            }
 
             // Load the custom chat
             initialize_custom_chat();

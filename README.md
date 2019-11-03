@@ -323,7 +323,8 @@ Enable the console without command line arguments. This is on by default.
 #### FOV
 Set FOV. End with "v" to lock to a vertical FOV, or use "auto" to set to an
 automatic FOV. Using a vertical FOV over a horizontal one helps prevent the
-game from distorting your field of view when switching aspect ratios.
+game from distorting your field of view when switching aspect ratios. On Halo
+Trial, this feature will be set to "auto" by default.
 
 **Usage:** `chimera_fov [fov]`
 
@@ -417,6 +418,7 @@ Uncap the cinematic frame rate from 30 FPS.
 #### Widescreen fix
 Fix the scaling of HUD, menu, and text elements for wider aspect ratios. This
 may break some maps, and this will not be fixed as fixing one thing will break
-another thing due to the nature of these fixes.
+another thing due to the nature of these fixes. On Halo Trial, this will be on
+by default.
 
 **Usage:** `chimera_widescreen_fix [true/false]`
