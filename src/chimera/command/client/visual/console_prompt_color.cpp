@@ -10,7 +10,12 @@ namespace Chimera {
         // Set the prompt color
         static ConsoleColor *color = nullptr;
         if(!color) {
-            color = *reinterpret_cast<ConsoleColor **>(get_chimera().get_signature("console_prompt_color_sig").data() + 1);
+            if(get_chimera().feature_present("client_console_prompt_color_demo")) {
+                color = reinterpret_cast<ConsoleColor *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("console_prompt_color_demo_sig").data() + 2) - 4);
+            }
+            else {
+                color = *reinterpret_cast<ConsoleColor **>(get_chimera().get_signature("console_prompt_color_sig").data() + 1);
+            }
         }
 
         // If we have 3 arguments, try to get the color
