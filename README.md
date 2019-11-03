@@ -412,7 +412,8 @@ For reference, the game runs at 30 TPS by default.
 **Usage:** `chimera_tps [TPS]`
 
 #### Uncap cinematic
-Uncap the cinematic frame rate from 30 FPS.
+Uncap the cinematic frame rate from 30 FPS. This will be turned on by default
+on Halo Trial.
 
 **Usage:** `chimera_uncap_cinematic [true/false]`
 

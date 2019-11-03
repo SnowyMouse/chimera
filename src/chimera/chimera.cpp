@@ -408,6 +408,7 @@ namespace Chimera {
                 chimera->execute_command("chimera_fov auto");
                 chimera->execute_command("chimera_widescreen_fix true");
                 chimera->execute_command("chimera_throttle_fps 300");
+                chimera->execute_command("chimera_uncap_cinematic true");
             }
 
             // Load the custom chat
