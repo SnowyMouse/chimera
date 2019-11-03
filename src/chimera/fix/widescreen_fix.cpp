@@ -326,7 +326,7 @@ namespace Chimera {
 
             static Hook menu_text;
             auto &widescreen_menu_text_sig = get_chimera().get_signature("widescreen_menu_text_sig");
-            write_function_override(reinterpret_cast<void *>(widescreen_menu_text_sig.data()), menu_text, reinterpret_cast<const void *>(widescreen_element_reposition_menu_text), &widescreen_element_position_menu_text_fn);
+            write_function_override(reinterpret_cast<void *>(widescreen_menu_text_sig.data() + 9), menu_text, reinterpret_cast<const void *>(widescreen_element_reposition_menu_text), &widescreen_element_position_menu_text_fn);
 
             static Hook menu_text_2;
             auto &widescreen_menu_text_2_sig = get_chimera().get_signature("widescreen_menu_text_2_sig");
