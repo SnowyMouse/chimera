@@ -162,12 +162,15 @@ namespace Chimera {
         // Also format feature into feature_<retail / custom_edition / demo>
         char feature_arch[256];
         const char *name_str = nullptr;
+        bool full_version = false;
         switch(game_engine()) {
             case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
                 name_str = "custom_edition";
+                full_version = true;
                 break;
             case GameEngine::GAME_ENGINE_RETAIL:
                 name_str = "retail";
+                full_version = true;
                 break;
             case GameEngine::GAME_ENGINE_DEMO:
                 name_str = "demo";
@@ -175,10 +178,13 @@ namespace Chimera {
         }
         std::snprintf(feature_arch, sizeof(feature_arch), "%s_%s", feature, name_str);
 
+        char feature_arch_2[256];
+        std::snprintf(feature_arch_2, sizeof(feature_arch_2), "%s_%s", feature, full_version ? "full" : "(null)");
+
         // Check for it now
         bool feature_found = false;
         for(auto &signature : this->p_signatures) {
-            if(std::strcmp(signature.feature(), feature) == 0 || std::strcmp(signature.feature(), feature_arch) == 0) {
+            if(std::strcmp(signature.feature(), feature) == 0 || std::strcmp(signature.feature(), feature_arch) == 0 || std::strcmp(signature.feature(), feature_arch_2) == 0) {
                 feature_found = true;
                 if(signature.data() == 0) {
                     return false;
@@ -323,11 +329,17 @@ namespace Chimera {
                     list_missing_sigs_for_feature("core_custom_edition");
                     list_missing_sigs_for_feature("client_custom_edition");
                     list_missing_sigs_for_feature("server_custom_edition");
+                    list_missing_sigs_for_feature("core_full");
+                    list_missing_sigs_for_feature("client_full");
+                    list_missing_sigs_for_feature("server_full");
                     break;
                 case GameEngine::GAME_ENGINE_RETAIL:
                     list_missing_sigs_for_feature("core_retail");
                     list_missing_sigs_for_feature("client_retail");
                     list_missing_sigs_for_feature("server_retail");
+                    list_missing_sigs_for_feature("core_full");
+                    list_missing_sigs_for_feature("client_full");
+                    list_missing_sigs_for_feature("server_full");
                     break;
                 case GameEngine::GAME_ENGINE_DEMO:
                     list_missing_sigs_for_feature("core_demo");
