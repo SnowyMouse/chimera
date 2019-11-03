@@ -297,15 +297,17 @@ namespace Chimera {
 
         APPEND_SPRINTF("Could not load Chimera.\n\n");
 
-        auto list_missing_sigs_for_feature = [&error_buffer_offset](const char *feature) {
+        bool engine_type_missing = false;
+
+        auto list_missing_sigs_for_feature = [&error_buffer_offset, &engine_type_missing](const char *feature) {
             auto missing_sigs = chimera->missing_signatures_for_feature(feature);
-            if(missing_sigs.size() == 0) {
-                APPEND_SPRINTF("Missing signatures from %s.\n      None\n\n", feature);
-            }
-            else {
+            if(missing_sigs.size() != 0) {
                 APPEND_SPRINTF("Missing signatures from %s:\n", feature);
                 for(auto &sig : missing_sigs) {
                     APPEND_SPRINTF("    - %s\n", sig);
+                    if(std::strcmp(sig, "game_engine_sig") == 0) {
+                        engine_type_missing = true;
+                    }
                 }
                 APPEND_SPRINTF("\n");
             }
@@ -314,6 +316,25 @@ namespace Chimera {
         list_missing_sigs_for_feature("core");
         list_missing_sigs_for_feature("client");
         list_missing_sigs_for_feature("server");
+
+        if(!engine_type_missing) {
+            switch(game_engine()) {
+                case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                    list_missing_sigs_for_feature("core_custom_edition");
+                    list_missing_sigs_for_feature("client_custom_edition");
+                    list_missing_sigs_for_feature("server_custom_edition");
+                    break;
+                case GameEngine::GAME_ENGINE_RETAIL:
+                    list_missing_sigs_for_feature("core_retail");
+                    list_missing_sigs_for_feature("client_retail");
+                    list_missing_sigs_for_feature("server_retail");
+                    break;
+                case GameEngine::GAME_ENGINE_DEMO:
+                    list_missing_sigs_for_feature("core_demo");
+                    list_missing_sigs_for_feature("client_demo");
+                    break;
+            }
+        }
 
         return error_buffer;
     }
