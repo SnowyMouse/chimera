@@ -32,7 +32,6 @@ game.
 These are features that are always on.
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
-- [Reduced DRM](#reduced-drm)
 - [Descope fix](#descope-fix)
 - [Fast loading](#fast-loading)
 - [Fast server listing](#fast-server-listing)
@@ -57,17 +56,6 @@ increases:
 - BSP polygon limit boosted to 32767
 - Visible object limit boosted to 1024
 - Draw distance increased to 2250 world units (~6.86 km)
-
-#### Reduced DRM
-Normally, Halo does not allow you to join servers with someone that has the
-same CD key. This was done to prevent people from sharing CD keys. However,
-this protection has shown to not work and, as a result, is purely an hindrance
-to people who have legitimate copies of the game, such as modders. By disabling
-the CD key check, you can locally host a game that lets you join yourself.
-
-Note that this feature does not "crack" the game. You still need a valid Halo
-installation in order to run the installer for the game as well as update the
-game to 1.10.
 
 #### Descope fix
 When you take damage while zoomed in, the game zooms back out automatically.

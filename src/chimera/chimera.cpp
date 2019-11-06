@@ -14,7 +14,6 @@
 #include "signature/hook.hpp"
 #include "signature/signature.hpp"
 #include "chimera.hpp"
-#include "annoyance/drm.hpp"
 #include "annoyance/keystone.hpp"
 #include "annoyance/registry.hpp"
 #include "master_server/master_server.hpp"
@@ -60,9 +59,6 @@ namespace Chimera {
 
             // Enable fast loading
             initialize_fast_load();
-
-            // Remove the annoying DRM from the game
-            remove_drm();
 
             // Load the ini
             chimera->reload_ini();
