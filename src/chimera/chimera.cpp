@@ -63,6 +63,17 @@ namespace Chimera {
             // Load the ini
             chimera->reload_ini();
 
+            // Set the path
+            const char *path = chimera->get_ini()->get_value("halo.path");
+            if(path) {
+                static std::string new_path = path;
+                if(new_path.size() >= MAX_PATH) {
+                    MessageBox(nullptr, "Path is too long", "Error", 0);
+                    std::exit(1);
+                }
+                overwrite(chimera->get_signature("write_path_sig").data() + 2, new_path.data());
+            }
+
             // Fix this
             set_up_fix_leaking_descriptors();
 
