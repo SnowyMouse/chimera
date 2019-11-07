@@ -294,7 +294,9 @@ namespace Chimera {
         add_map_by_path("maps\\*.map");
         char dir[MAX_PATH];
         const char *chimera_path = get_chimera().get_path();
-        std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path);
+        if(std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path) < sizeof(dir)) {
+            add_map_by_path(dir);
+        }
 
         // Lastly, allocate things
         indices_vector.clear();
