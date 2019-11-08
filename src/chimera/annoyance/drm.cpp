@@ -3,7 +3,7 @@
 #include "../signature/signature.hpp"
 
 namespace Chimera {
-    void remove_drm() noexcept {
+    void reduce_drm() noexcept {
         auto &chimera = get_chimera();
 
         if(!chimera.feature_present("core_drm")) {

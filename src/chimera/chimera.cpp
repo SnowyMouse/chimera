@@ -62,8 +62,8 @@ namespace Chimera {
             // Enable fast loading
             initialize_fast_load();
 
-            // Remove the annoying DRM from the game
-            remove_drm();
+            // Make this thing less annoying
+            reduce_drm();
 
             // Load the ini
             chimera->reload_ini();

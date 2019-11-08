@@ -3,9 +3,11 @@
 
 namespace Chimera {
     /**
-     * Remove Halo's annoying DRM (required in order for Chimera's strings.dll to function properly)
+     * Make Halo's annoying DRM less annoying (required in order for Chimera's strings.dll to function properly)
+     *
+     * Note: This does NOT crack the game, as you need a valid CD key to install/update the game.
      */
-    void remove_drm() noexcept;
+    void reduce_drm() noexcept;
 }
 
 #endif
