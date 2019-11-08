@@ -18,6 +18,9 @@ namespace Chimera {
      * This is the header located at the first 2048 bytes of each map file
      */
     struct MapHeader {
+        static const std::uint32_t HEAD_LITERAL = 0x68656164;
+        static const std::uint32_t FOOT_LITERAL = 0x666F6F74;
+
         /** Must be equal to 0x68656164 */
         std::uint32_t head = 0x68656164;
 
@@ -57,6 +60,54 @@ namespace Chimera {
         std::uint32_t foot = 0x666F6F74;
     };
     static_assert(sizeof(MapHeader) == 0x800);
+
+    struct MapHeaderDemo {
+        static const std::uint32_t HEAD_LITERAL = 0x45686564;
+        static const std::uint32_t FOOT_LITERAL = 0x47666F74;
+
+        PAD(0x2);
+
+        /** Game type of map (e.g. multiplayer) */
+        MapGameType game_type;
+
+        PAD(0x2BC);
+
+        /** Must be equal to 0x45686564 */
+        std::uint32_t head = 0x45686564;
+
+        /** File size of tag data in bytes */
+        std::uint32_t tag_data_size;
+
+        /** Unused on PC version of Halo; can be used to extend map name another 32 characters */
+        char build[32];
+
+        PAD(0x2A0);
+
+        /** 7 if retail; 0x261 if Custom Edition; 5 if Xbox */
+        std::uint32_t engine_type;
+
+        /** File name of map excluding extension; typically matches scenario tag name, but not required */
+        char name[32];
+
+        PAD(0x4);
+
+        /** Calculated with CRC32 of BSPs, models, and tag data */
+        std::uint32_t crc32_unused;
+
+        PAD(0x34);
+
+        /** File size in bytes; Halo ignores map files that are >384 MiB */
+        std::uint32_t file_size;
+
+        /** File offset to tag data (which is loaded to 0x40440000 in Halo's memory) */
+        std::uint32_t tag_data_offset;
+
+        /** Must be equal to 0x47666F74 */
+        std::uint32_t foot = 0x47666F74;
+
+        PAD(0x20C);
+    };
+    static_assert(sizeof(MapHeaderDemo) == 0x800);
 
     /**
      * Get the map header of the currently loaded map
