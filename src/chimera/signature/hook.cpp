@@ -137,6 +137,13 @@ namespace Chimera {
                 // idk
                 case 0x89: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(a == 0x06) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 2);
+                        at += 2;
+                        break;
+                    }
+
                     if(a == 0x15) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
@@ -185,7 +192,7 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
-                    else if(a == 0xE5 || a== 0xF8) {
+                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;

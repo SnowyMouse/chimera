@@ -15,4 +15,4 @@ set_target_properties(monolith PROPERTIES OUTPUT_NAME "strings")
 
 # lol
 set_target_properties(monolith PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")
-target_link_libraries(monolith shlwapi chimera)
+target_link_libraries(monolith chimera shlwapi ${CMAKE_CURRENT_SOURCE_DIR}/lib/libinvader.a ${CMAKE_CURRENT_SOURCE_DIR}/lib/libzstd.a)
