@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <sys/stat.h>
 #include "map_loading.hpp"
+#include "laa.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -17,6 +18,10 @@ namespace Invader::Compression {
 namespace Chimera {
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
+
+    std::byte *maps_in_ram_region = nullptr;
+
+    #define CHIMERA_MEMORY_ALLOCATION_SIZE (1024 * 1024 * 1024)
 
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
@@ -210,8 +215,16 @@ namespace Chimera {
             return !(!value || std::strcmp(value, "1") != 0);
         };
 
-        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer") && current_exe_is_laa_patched();
         do_benchmark = is_enabled("memory.benchmark");
+
+        if(do_maps_in_ram) {
+            maps_in_ram_region = reinterpret_cast<std::byte *>(VirtualAlloc(0, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+            if(!maps_in_ram_region) {
+                MessageBox(0, "Failed to allocate 1 GiB for maps in RAM.", "Error", 0);
+                std::exit(1);
+            }
+        }
     }
 
     const char *path_for_map(const char *map) noexcept {
