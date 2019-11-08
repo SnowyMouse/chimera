@@ -170,11 +170,6 @@ namespace Chimera {
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
                 overwrite(get_chimera().get_signature("free_map_index_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
-
-                // For whatever reason, for every single map you have in your maps folder, Halo checks if it's valid every frame when you're listing maps. This obliterates frame rate
-                static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
-                auto *map_check_demo_sig = get_chimera().get_signature("map_check_demo_sig").data();
-                overwrite(map_check_demo_sig, return_1, sizeof(return_1));
                 break;
             }
         }

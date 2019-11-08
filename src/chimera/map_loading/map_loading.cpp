@@ -83,6 +83,11 @@ namespace Chimera {
         static Hook hook2;
         auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
         write_jmp_call(create_file_mov_sig.data(), hook2, reinterpret_cast<const void *>(free_map_handle_bugfix_asm), nullptr);
+
+        // Make Halo not check the maps if they're bullshit
+        static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
+        auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
+        overwrite(map_check_sig, return_1, sizeof(return_1));
     }
 
     const char *path_for_map(const char *map) noexcept {
