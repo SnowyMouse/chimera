@@ -21,7 +21,7 @@ namespace Chimera {
 
     std::byte *maps_in_ram_region = nullptr;
 
-    #define CHIMERA_MEMORY_ALLOCATION_SIZE (1024 * 1024 * 1024)
+    #define CHIMERA_MEMORY_ALLOCATION_SIZE ((1024 + 256) * 1024 * 1024)
 
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
@@ -221,7 +221,7 @@ namespace Chimera {
         if(do_maps_in_ram) {
             maps_in_ram_region = reinterpret_cast<std::byte *>(VirtualAlloc(0, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
             if(!maps_in_ram_region) {
-                MessageBox(0, "Failed to allocate 1 GiB for maps in RAM.", "Error", 0);
+                MessageBox(0, "Failed to allocate 1.25 GiB for map memory buffers.", "Error", 0);
                 std::exit(1);
             }
         }
