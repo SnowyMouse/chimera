@@ -7,6 +7,7 @@ include(src/chimera/command/command.cmake)
 
 # Define the source files
 add_library(chimera STATIC
+    src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/keystone.cpp
     src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
