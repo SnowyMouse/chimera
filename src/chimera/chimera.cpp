@@ -17,6 +17,7 @@
 #include "annoyance/keystone.hpp"
 #include "annoyance/registry.hpp"
 #include "master_server/master_server.hpp"
+#include "map_loading/map_loading.hpp"
 #include "fast_load/fast_load.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
@@ -73,6 +74,10 @@ namespace Chimera {
                 }
                 overwrite(chimera->get_signature("write_path_sig").data() + 2, new_path.data());
             }
+
+            // Set up map loading stuff
+            const char *maps_in_ram = chimera->get_ini()->get_value("memory.enable_map_memory_buffer");
+            set_up_map_loading(maps_in_ram ? *maps_in_ram == '1' : false);
 
             // Fix this
             set_up_fix_leaking_descriptors();

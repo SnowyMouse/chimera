@@ -329,14 +329,6 @@ namespace Chimera {
         *indices = indices_vector.data();
     }
 
-    const char *path_for_map(const char *map) noexcept {
-        static char path[MAX_PATH];
-        #define RETURN_IF_FOUND(...) std::snprintf(path, sizeof(path), __VA_ARGS__, map); if(PathFileExistsA(path)) return path;
-        RETURN_IF_FOUND("maps\\%s.map");
-        RETURN_IF_FOUND("%s\\maps\\%s.map", get_chimera().get_path());
-        return nullptr;
-    }
-
     void reload_map_list() noexcept {
         remove_tick_event(reload_map_list);
         function_to_use();
