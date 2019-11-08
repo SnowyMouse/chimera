@@ -80,8 +80,7 @@ namespace Chimera {
             }
 
             // Set up map loading stuff
-            const char *maps_in_ram = chimera->get_ini()->get_value("memory.enable_map_memory_buffer");
-            set_up_map_loading(maps_in_ram ? *maps_in_ram == '1' : false);
+            set_up_map_loading();
 
             // Fix this
             set_up_fix_leaking_descriptors();

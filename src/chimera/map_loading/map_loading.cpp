@@ -7,12 +7,17 @@
 #include "../output/output.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/map.hpp"
+#include "../config/ini.hpp"
+#include <chrono>
 
 namespace Invader::Compression {
     void decompress_map_file(const char *input, const char *output);
 }
 
 namespace Chimera {
+    static bool do_maps_in_ram = false;
+    static bool do_benchmark = false;
+
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
         CACHE_FILE_DEMO = 0x6,
@@ -160,7 +165,12 @@ namespace Chimera {
                 try {
                     set_tmp_path(new_index);
                     //console_output("Trying to compress %s @ %s -> %s...", map_name, new_path, tmp_path);
+                    auto start = std::chrono::steady_clock::now();
                     Invader::Compression::decompress_map_file(new_path, tmp_path);
+                    auto end = std::chrono::steady_clock::now();
+                    if(do_benchmark) {
+                        console_output("Decompressed %s in %zu milliseconds\n", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+                    }
                     std::strcpy(map_path, tmp_path);
                     //console_output("Decompressed %s -> %s\n", new_path, map_path);
                     compressed_map_to_use.date_modified = mtime;
@@ -181,7 +191,7 @@ namespace Chimera {
     extern "C" void map_loading_asm();
     extern "C" void free_map_handle_bugfix_asm();
 
-    void set_up_map_loading(bool maps_in_ram) {
+    void set_up_map_loading() {
         static Hook hook;
         auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
         write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
@@ -193,6 +203,15 @@ namespace Chimera {
         static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
         auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
         overwrite(map_check_sig, return_1, sizeof(return_1));
+
+        // Get settings
+        auto is_enabled = [](const char *what) -> bool {
+            const char *value = get_chimera().get_ini()->get_value(what);
+            return !(!value || std::strcmp(value, "1") != 0);
+        };
+
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+        do_benchmark = is_enabled("memory.benchmark");
     }
 
     const char *path_for_map(const char *map) noexcept {

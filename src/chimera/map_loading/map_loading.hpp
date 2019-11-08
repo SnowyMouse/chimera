@@ -5,7 +5,7 @@ namespace Chimera {
     /**
      * Set up loading maps outside of the maps directory
      */
-    void set_up_map_loading(bool maps_in_ram);
+    void set_up_map_loading();
 
     /**
      * Get the path for the map
