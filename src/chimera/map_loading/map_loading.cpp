@@ -215,10 +215,14 @@ namespace Chimera {
             return !(!value || std::strcmp(value, "1") != 0);
         };
 
-        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer") && current_exe_is_laa_patched();
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
         do_benchmark = is_enabled("memory.benchmark");
 
         if(do_maps_in_ram) {
+            if(!current_exe_is_laa_patched()) {
+                MessageBox(0, "Map memory buffers requires an large address aware-patched executable.", "Error", 0);
+                std::exit(1);
+            }
             maps_in_ram_region = reinterpret_cast<std::byte *>(VirtualAlloc(0, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
             if(!maps_in_ram_region) {
                 MessageBox(0, "Failed to allocate 1.25 GiB for map memory buffers.", "Error", 0);
