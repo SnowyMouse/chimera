@@ -102,7 +102,7 @@ namespace Chimera {
         // Iterate through each map
         for(std::size_t i=0;i<map_list.map_count;i++) {
             if(same_string_case_insensitive(indices[i].file_name, loading_map)) {
-                auto *path = path_for_map(indices[i].file_name);
+                auto *path = path_for_map(indices[i].file_name, true);
                 bool map_already_crc = indices[i].crc32 != 0xFFFFFFFF;
 
                 // Do what we need to do

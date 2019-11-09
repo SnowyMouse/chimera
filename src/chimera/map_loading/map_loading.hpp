@@ -10,8 +10,9 @@ namespace Chimera {
     /**
      * Get the path for the map
      * @param  map name of the map
+     * @param  tmp get the tmp file path, instead, if available
      * @return     path to the map if found
      */
-    const char *path_for_map(const char *map) noexcept;
+    const char *path_for_map(const char *map, bool tmp = false) noexcept;
 }
 #endif

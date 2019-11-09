@@ -120,13 +120,19 @@ namespace Chimera {
         return header_is_valid_for_this_game(header, compressed, map_name);
     }
 
-    static std::size_t last_loaded_map = 0;
-
     extern "C" void do_free_map_handle_bugfix(HANDLE &handle) {
         if(handle) {
             CloseHandle(handle);
             handle = 0;
         }
+    }
+
+    // Hold my compressed map...
+    static CompressedMapIndex compressed_maps[2] = {};
+    static std::size_t last_loaded_map = 0;
+
+    static void get_tmp_path(const CompressedMapIndex &compressed_map, char *buffer) {
+        std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
     }
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
@@ -140,23 +146,17 @@ namespace Chimera {
             }
 
             if(compressed) {
-                // Hold our compressed maps
-                static CompressedMapIndex compressed_maps[2] = {};
-
                 // Get filesystem data
                 struct stat64 s;
                 stat64(new_path, &s);
                 std::uint64_t mtime = s.st_mtime;
 
                 char tmp_path[MAX_PATH] = {};
-                auto set_tmp_path = [&tmp_path](std::size_t index) {
-                    std::snprintf(tmp_path, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), index);
-                };
 
                 // See if we can find it
                 for(auto &map : compressed_maps) {
                     if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
-                        set_tmp_path(&map - compressed_maps);
+                        get_tmp_path(map, tmp_path);
                         //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
                         last_loaded_map = &map - compressed_maps;
                         std::strncpy(map_path, tmp_path, MAX_PATH);
@@ -168,7 +168,7 @@ namespace Chimera {
                 std::size_t new_index = !last_loaded_map;
                 auto &compressed_map_to_use = compressed_maps[new_index];
                 try {
-                    set_tmp_path(new_index);
+                    get_tmp_path(compressed_maps[new_index], tmp_path);
                     //console_output("Trying to compress %s @ %s -> %s...", map_name, new_path, tmp_path);
                     auto start = std::chrono::steady_clock::now();
                     Invader::Compression::decompress_map_file(new_path, tmp_path);
@@ -180,7 +180,12 @@ namespace Chimera {
                     //console_output("Decompressed %s -> %s\n", new_path, map_path);
                     compressed_map_to_use.date_modified = mtime;
                     std::strncpy(compressed_map_to_use.map_name, map_name, sizeof(compressed_map_to_use.map_name));
-                    last_loaded_map = !last_loaded_map;
+
+                    // Increment loaded maps by 1
+                    last_loaded_map++;
+                    if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
+                        last_loaded_map = 0;
+                    }
                 }
                 catch (std::exception &e) {
                     compressed_map_to_use = {};
@@ -236,8 +241,17 @@ namespace Chimera {
         }
     }
 
-    const char *path_for_map(const char *map) noexcept {
+    const char *path_for_map(const char *map, bool tmp) noexcept {
         static char path[MAX_PATH];
+        if(tmp) {
+            for(auto &compressed_map : compressed_maps) {
+                if(std::strcmp(map,compressed_map.map_name) == 0) {
+                    get_tmp_path(compressed_map, path);
+                    return path;
+                }
+            }
+        }
+
         #define RETURN_IF_FOUND(...) std::snprintf(path, sizeof(path), __VA_ARGS__, map); if(std::filesystem::exists(path)) return path;
         RETURN_IF_FOUND("maps\\%s.map");
         RETURN_IF_FOUND("%s\\maps\\%s.map", get_chimera().get_path());
