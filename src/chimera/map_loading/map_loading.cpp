@@ -44,8 +44,32 @@ namespace Chimera {
         const auto &header_full_version = *reinterpret_cast<const MapHeader *>(header);
         const auto &header_demo_version = *reinterpret_cast<const MapHeaderDemo *>(header);
 
-        bool header_full_version_valid = header_full_version.head == MapHeader::HEAD_LITERAL && header_full_version.foot == MapHeader::FOOT_LITERAL && std::strcmp(header_full_version.name, map_name) == 0;
-        bool header_demo_version_valid = header_demo_version.head == MapHeaderDemo::HEAD_LITERAL && header_demo_version.foot == MapHeaderDemo::FOOT_LITERAL && std::strcmp(header_demo_version.name, map_name) == 0;
+        // Copy everything lowercase
+        char map_name_lowercase[sizeof(header_demo_version.name)] = {};
+        std::size_t l = std::strlen(map_name);
+        if(l >= sizeof(map_name_lowercase)) {
+            return false; // the map is longer than 31 characters, thus it's a meme
+        }
+        for(std::size_t i = 0; i < l; i++) {
+            map_name_lowercase[i] = std::tolower(map_name[l]);
+        }
+
+        // Set everything to lowercase
+        char demo_name[sizeof(header_demo_version.name)] = {};
+        char full_name[sizeof(header_full_version.name)] = {};
+        for(std::size_t i = 0; i < sizeof(demo_name); i++) {
+            demo_name[i] = std::tolower(header_demo_version.name[i]);
+        }
+        for(std::size_t i = 0; i < sizeof(full_name); i++) {
+            full_name[i] = std::tolower(header_demo_version.name[i]);
+        }
+
+        // Blorp
+        demo_name[31] = 0;
+        full_name[31] = 0;
+
+        bool header_full_version_valid = header_full_version.head == MapHeader::HEAD_LITERAL && header_full_version.foot == MapHeader::FOOT_LITERAL && std::strcmp(full_name, map_name_lowercase) == 0;
+        bool header_demo_version_valid = header_demo_version.head == MapHeaderDemo::HEAD_LITERAL && header_demo_version.foot == MapHeaderDemo::FOOT_LITERAL && std::strcmp(demo_name, map_name_lowercase) == 0;
 
         switch(game_engine()) {
             case GAME_ENGINE_DEMO:
