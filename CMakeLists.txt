@@ -3,8 +3,8 @@
 # This code is licensed under the GNU GPL v3.0 or any later version
 # See LICENSE for more information.
 
-# 3.11 or newer
-cmake_minimum_required(VERSION 3.11)
+# 3.12.4 or newer
+cmake_minimum_required(VERSION 3.12.4)
 
 # Require C++17
 set(CMAKE_CXX_STANDARD 17)
