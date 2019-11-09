@@ -71,7 +71,7 @@ namespace Chimera {
                     }
                     return header_full_version_valid;
                 }
-                else if(header_full_version.engine_type == CACHE_FILE_RETAIL_COMPRESSED) {
+                else if(header_full_version.engine_type == CACHE_FILE_CUSTOM_EDITION_COMPRESSED) {
                     if(compressed) {
                         *compressed = true;
                     }
