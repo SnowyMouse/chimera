@@ -19,9 +19,12 @@ namespace Chimera {
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
 
-    std::byte *maps_in_ram_region = nullptr;
+    static std::byte *maps_in_ram_region = nullptr;
+    static std::byte *ui_region = nullptr;
 
-    #define CHIMERA_MEMORY_ALLOCATION_SIZE ((1024 + 256) * 1024 * 1024)
+    static constexpr std::size_t UI_OFFSET = 1024 * 1024 * 1024;
+    static constexpr std::size_t UI_SIZE = 256 * 1024 * 1024;
+    static constexpr std::size_t CHIMERA_MEMORY_ALLOCATION_SIZE = (UI_OFFSET + UI_SIZE);
 
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
@@ -262,6 +265,8 @@ namespace Chimera {
                 MessageBox(0, "Failed to allocate 1.25 GiB for map memory buffers.", "Error", 0);
                 std::exit(1);
             }
+
+            ui_region = maps_in_ram_region + UI_OFFSET;
         }
     }
 
