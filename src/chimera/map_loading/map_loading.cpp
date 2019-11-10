@@ -46,12 +46,12 @@ namespace Chimera {
 
         // Copy everything lowercase
         char map_name_lowercase[sizeof(header_demo_version.name)] = {};
-        std::size_t l = std::strlen(map_name);
-        if(l >= sizeof(map_name_lowercase)) {
+        std::size_t map_name_length = std::strlen(map_name);
+        if(map_name_length >= sizeof(map_name_lowercase)) {
             return false; // the map is longer than 31 characters, thus it's a meme
         }
-        for(std::size_t i = 0; i < l; i++) {
-            map_name_lowercase[i] = std::tolower(map_name[l]);
+        for(std::size_t i = 0; i < map_name_length; i++) {
+            map_name_lowercase[i] = std::tolower(map_name[i]);
         }
 
         // Set everything to lowercase
@@ -61,7 +61,7 @@ namespace Chimera {
             demo_name[i] = std::tolower(header_demo_version.name[i]);
         }
         for(std::size_t i = 0; i < sizeof(full_name); i++) {
-            full_name[i] = std::tolower(header_demo_version.name[i]);
+            full_name[i] = std::tolower(header_full_version.name[i]);
         }
 
         // Blorp
