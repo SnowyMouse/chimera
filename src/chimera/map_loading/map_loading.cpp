@@ -340,7 +340,9 @@ namespace Chimera {
             }
 
             if(!maps_in_ram_region) {
-                MessageBox(0, "Failed to allocate 1.25 GiB for map memory buffers.", "Error", 0);
+                char error_text[256] = {};
+                std::snprintf(error_text, sizeof(error_text), "Failed to allocate %.02f GiB for map memory buffers.", BYTES_TO_MiB(CHIMERA_MEMORY_ALLOCATION_SIZE) / 1024.0F);
+                MessageBox(0, error_text, "Error", 0);
                 std::exit(1);
             }
 
