@@ -166,7 +166,7 @@ namespace Chimera {
         std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
     }
 
-    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
+    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
         static char currently_loaded_map[32] = {};
@@ -285,9 +285,9 @@ namespace Chimera {
                     std::fclose(f);
                 }
 
-                // Load everything from bitmaps.map and sounds.map that isn't indexed
+                // Load everything from bitmaps.map and sounds.map that can fit
                 if(do_maps_in_ram) {
-                    load_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
+                    preload_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
 
                     if(std::strcmp(map_name, "ui") == 0) {
                         ui_was_loaded = true;
@@ -367,18 +367,24 @@ namespace Chimera {
         return nullptr;
     }
 
-    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
+    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
         auto start = std::chrono::steady_clock::now();
 
         // Get tag data info
         std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         std::byte *tag_data;
+        std::uint32_t tag_data_size;
         if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-            tag_data = buffer + reinterpret_cast<MapHeaderDemo *>(buffer)->tag_data_offset;
+            auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
+            tag_data = buffer + header.tag_data_offset;
+            tag_data_size = header.tag_data_size;
         }
         else {
-            tag_data = buffer + reinterpret_cast<MapHeader *>(buffer)->tag_data_offset;
+            auto &header = *reinterpret_cast<MapHeader *>(buffer);
+            tag_data = buffer + header.tag_data_offset;
+            tag_data_size = header.tag_data_size;
         }
+        bool can_load_indexed_tags = (buffer + buffer_used) == (tag_data + tag_data_size) && game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
 
         // Get the header
         #define TRANSLATE_POINTER(pointer, to_type) reinterpret_cast<to_type>(tag_data + reinterpret_cast<std::uintptr_t>(pointer) - tag_data_address)
@@ -396,6 +402,155 @@ namespace Chimera {
 
         std::size_t missed_data = 0;
 
+        struct ResourceHeader {
+            std::uint32_t type;
+            std::uint32_t path_offset;
+            std::uint32_t resource_offset;
+            std::uint32_t resource_count;
+        };
+
+        struct Resource {
+            char path[MAX_PATH];
+            std::uint32_t data_size;
+            std::uint32_t data_offset;
+        };
+
+        auto load_resource_map = [](std::vector<Resource> &resources, std::FILE *file) {
+            struct ResourceInMap {
+                std::uint32_t path_offset;
+                std::uint32_t data_size;
+                std::uint32_t data_offset;
+            };
+
+            ResourceHeader header;
+            std::fread(&header, sizeof(header), 1, file);
+            resources.reserve(header.resource_count);
+
+            // Load resources
+            std::vector<ResourceInMap> resources_in_map(header.resource_count);
+            std::fseek(file, header.resource_offset, SEEK_SET);
+            std::fread(resources_in_map.data(), resources_in_map.size() * sizeof(*resources_in_map.data()), 1, file);
+
+            // Load it all!
+            for(std::size_t r = 0; r < header.resource_count; r++) {
+                auto &resource = resources.emplace_back();
+                resource.data_size = resources_in_map[r].data_size;
+                resource.data_offset = resources_in_map[r].data_offset;
+                std::fseek(file, header.path_offset, SEEK_SET);
+                std::fseek(file, resources_in_map[r].path_offset, SEEK_CUR);
+                std::fread(resource.path, sizeof(resource.path), 1, file);
+            }
+        };
+
+        // Preload any indexed tags, if possible
+        if(can_load_indexed_tags) {
+            std::vector<Resource> bitmaps;
+            std::vector<Resource> sounds;
+
+            load_resource_map(bitmaps, bitmaps_file);
+            load_resource_map(sounds, sounds_file);
+
+            for(std::size_t t = 0; t < header.tag_count; t++) {
+                auto &tag = tag_array[t];
+                if(!tag.indexed) {
+                    continue;
+                }
+                if(tag.primary_class == TagClassInt::TAG_CLASS_BITMAP) {
+                    std::size_t resource_tag_index = reinterpret_cast<std::uint32_t>(tag.data);
+
+                    // If this is screwed up, exit!
+                    if(resource_tag_index > bitmaps.size()) {
+                        std::exit(1);
+                    }
+
+                    auto &resource = bitmaps[resource_tag_index];
+
+                    // All right!
+                    std::size_t new_used = buffer_used + resource.data_size;
+                    if(resource.data_size > buffer_size || new_used > buffer_size) {
+                        missed_data += resource.data_size;
+                        continue;
+                    }
+
+                    auto *baseline = buffer + buffer_used;
+                    std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
+                    tag.data = reinterpret_cast<std::byte *>(baseline_address);
+                    std::fseek(bitmaps_file, resource.data_offset, SEEK_SET);
+                    std::fread(baseline, resource.data_size, 1, bitmaps_file);
+
+                    // Now fix the pointers for sequence data
+                    auto &sequences_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x54);
+                    if(sequences_count) {
+                        auto &sequences_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x58);
+                        sequences_ptr += baseline_address;
+                        auto *sequences = TRANSLATE_POINTER(sequences_ptr, std::byte *);
+                        for(std::uint32_t s = 0; s < sequences_count; s++) {
+                            auto *sequence = sequences + s * 64;
+                            auto &sprites = *reinterpret_cast<std::uint32_t *>(sequence + 0x38);
+                            sprites += baseline_address;
+                        }
+                    }
+
+                    // Fix bitmap data
+                    auto &bitmap_data_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x60);
+                    if(bitmap_data_count) {
+                        auto &bitmap_data_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x64);
+                        bitmap_data_ptr += baseline_address;
+                    }
+
+                    buffer_used = new_used;
+                    tag.indexed = 0;
+                }
+                else if(tag.primary_class == TagClassInt::TAG_CLASS_SOUND) {
+                    std::optional<std::size_t> resource_tag_index;
+                    const char *path = TRANSLATE_POINTER(tag.path, const char *);
+
+                    for(auto &s : sounds) {
+                        if(std::strcmp(path, s.path) == 0) {
+                            resource_tag_index = &s - sounds.data();
+                            break;
+                        }
+                    }
+
+                    // If this is screwed up, exit!
+                    if(!resource_tag_index.has_value()) {
+                        std::exit(1);
+                    }
+
+                    // Load sounds
+                    auto &resource = sounds[*resource_tag_index];
+                    std::size_t new_used = buffer_used + resource.data_size - 0xA4;
+                    if(resource.data_size - 0xA4 > buffer_size || new_used > buffer_size) {
+                        missed_data += resource.data_size;
+                        continue;
+                    }
+
+                    static constexpr std::size_t SOUND_HEADER_SIZE = 0xA4;
+                    auto *baseline = buffer + buffer_used;
+                    std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
+                    std::fseek(sounds_file, resource.data_offset + SOUND_HEADER_SIZE, SEEK_SET);
+                    std::fread(baseline, resource.data_size - SOUND_HEADER_SIZE, 1, sounds_file);
+
+                    auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
+                    auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
+                    *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
+
+                    // Fix the pointers
+                    for(std::size_t p = 0; p < pitch_range_count; p++) {
+                        auto *pitch_range = baseline + p * 72;
+                        *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40) += baseline_address;
+                    }
+
+                    buffer_used = new_used;
+                    tag.indexed = 0;
+                }
+            }
+
+            // Add up the difference
+            reinterpret_cast<MapHeaderDemo *>(buffer)->tag_data_size += (buffer_used - old_used);
+        }
+
+        // Preload all of the assets
         for(std::size_t t = 0; t < header.tag_count; t++) {
             auto &tag = tag_array[t];
             if(tag.indexed) {
