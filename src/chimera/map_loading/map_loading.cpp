@@ -375,11 +375,11 @@ namespace Chimera {
             auto *data = TRANSLATE_POINTER(tag.data, std::byte *);
             if(tag.primary_class == TagClassInt::TAG_CLASS_BITMAP) {
                 auto &bitmap_count = *reinterpret_cast<std::uint32_t *>(data + 0x60);
-                auto *bitmap_data = TRANSLATE_POINTER(data + 0x64, std::byte *);
+                auto *bitmap_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(data + 0x64), std::byte *);
                 for(std::uint32_t b = 0; b < bitmap_count; b++) {
                     auto *bitmap = bitmap_data + b * 48;
                     std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF);
-                    if(!external) {
+                    if(!(external & 1)) {
                         continue;
                     }
 
@@ -388,19 +388,53 @@ namespace Chimera {
                     std::uint32_t &bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
 
                     // Don't add this bitmap if we can't fit it
-                    if(bitmap_size + buffer_used < buffer_size) {
+                    std::size_t new_used = bitmap_size + buffer_used;
+                    if(new_used < buffer_size) {
                         continue;
                     }
 
                     // Read the bitmap data and set the external flag to 0
                     std::fseek(bitmaps_file, bitmap_offset, SEEK_SET);
                     std::fread(buffer + buffer_used, bitmap_size, 1, bitmaps_file);
-                    buffer_used += bitmap_size;
+                    bitmap_offset = buffer_used;
+                    buffer_used = new_used;
                     external ^= 1;
                 }
             }
             else if(tag.primary_class == TagClassInt::TAG_CLASS_SOUND) {
-                //auto &permutation_count = *reinterpret_cast<std::uint32_t *>(data);
+                auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(data + 0x98);
+                auto *pitch_range_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(data + 0x9C), std::byte *);
+
+                for(std::uint32_t r = 0; r < pitch_range_count; r++) {
+                    auto *pitch_range = pitch_range_data + r * 72;
+
+                    auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                    auto *permutation_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(pitch_range + 0x40), std::byte *);
+                    for(std::uint32_t p = 0; p < permutation_count; p++) {
+                        auto *permutation = permutation_data + 124 * p;
+                        std::uint32_t &external = *reinterpret_cast<std::uint32_t *>(permutation + 0x44);
+                        if(!(external & 1)) {
+                            continue;
+                        }
+
+                        // Get metadata
+                        std::uint32_t sound_size = *reinterpret_cast<std::uint32_t *>(permutation + 0x40);
+                        std::uint32_t &sound_offset = *reinterpret_cast<std::uint32_t *>(permutation + 0x48);
+
+                        // Don't add this bitmap if we can't fit it
+                        std::size_t new_used = sound_size + buffer_used;
+                        if(new_used < sound_size) {
+                            continue;
+                        }
+
+                        // Read the sound data and set the external flag to 0
+                        std::fseek(sounds_file, sound_offset, SEEK_SET);
+                        std::fread(buffer + buffer_used, sound_size, 1, sounds_file);
+                        sound_offset = buffer_used;
+                        buffer_used = new_used;
+                        external ^= 1;
+                    }
+                }
             }
         }
 
