@@ -8,6 +8,7 @@
 #include "../output/output.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/map.hpp"
+#include "../halo_data/tag.hpp"
 #include "../config/ini.hpp"
 #include <chrono>
 
@@ -344,6 +345,66 @@ namespace Chimera {
     }
 
     static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size) noexcept {
-        
+        // Get tag data info
+        std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
+        std::byte *tag_data;
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+            tag_data = buffer + reinterpret_cast<MapHeaderDemo *>(buffer)->tag_data_offset;
+        }
+        else {
+            tag_data = buffer + reinterpret_cast<MapHeader *>(buffer)->tag_data_offset;
+        }
+
+        // Get the header
+        #define TRANSLATE_POINTER(pointer, to_type) reinterpret_cast<to_type>(tag_data + reinterpret_cast<std::uintptr_t>(pointer) - tag_data_address)
+
+        // Open bitmaps.map and sounds.map
+        std::FILE *bitmaps_file = std::fopen("maps/bitmaps.map", "rb");
+        std::FILE *sounds_file = std::fopen("maps/sounds.map", "rb");
+        if(!bitmaps_file || !sounds_file) {
+            return;
+        }
+
+        TagDataHeader &header = *reinterpret_cast<TagDataHeader *>(tag_data);
+        auto *tag_array = TRANSLATE_POINTER(header.tag_array, Tag *);
+        for(std::size_t t = 0; t < header.tag_count; t++) {
+            auto &tag = tag_array[t];
+            if(tag.indexed) {
+                continue;
+            }
+            auto *data = TRANSLATE_POINTER(tag.data, std::byte *);
+            if(tag.primary_class == TagClassInt::TAG_CLASS_BITMAP) {
+                auto &bitmap_count = *reinterpret_cast<std::uint32_t *>(data + 0x60);
+                auto *bitmap_data = TRANSLATE_POINTER(data + 0x64, std::byte *);
+                for(std::uint32_t b = 0; b < bitmap_count; b++) {
+                    auto *bitmap = bitmap_data + b * 48;
+                    std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF);
+                    if(!external) {
+                        continue;
+                    }
+
+                    // Get metadata
+                    std::uint32_t bitmap_size = *reinterpret_cast<std::uint32_t *>(bitmap + 0x18);
+                    std::uint32_t &bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
+
+                    // Don't add this bitmap if we can't fit it
+                    if(bitmap_size + buffer_used < buffer_size) {
+                        continue;
+                    }
+
+                    // Read the bitmap data and set the external flag to 0
+                    std::fseek(bitmaps_file, bitmap_offset, SEEK_SET);
+                    std::fread(buffer + buffer_used, bitmap_size, 1, bitmaps_file);
+                    buffer_used += bitmap_size;
+                    external ^= 1;
+                }
+            }
+            else if(tag.primary_class == TagClassInt::TAG_CLASS_SOUND) {
+                //auto &permutation_count = *reinterpret_cast<std::uint32_t *>(data);
+            }
+        }
+
+        std::fclose(bitmaps_file);
+        std::fclose(sounds_file);
     }
 }
