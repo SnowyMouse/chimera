@@ -163,6 +163,8 @@ namespace Chimera {
         std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
     }
 
+    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size) noexcept;
+
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
         const char *new_path = path_for_map(map_name);
         if(new_path) {
@@ -172,6 +174,10 @@ namespace Chimera {
             if(!valid) {
                 std::exit(1);
             }
+
+            std::size_t buffer_used = 0;
+            std::size_t buffer_size = 0;
+            std::byte *buffer = nullptr;
 
             if(compressed) {
                 // Get filesystem data
@@ -204,17 +210,18 @@ namespace Chimera {
 
                     // If we're doing maps in RAM, output directly to the region allowed
                     if(do_maps_in_ram) {
-                        std::size_t size;
                         std::size_t offset;
                         if(std::strcmp(map_name, "ui") == 0) {
-                            size = UI_SIZE;
+                            buffer_size = UI_SIZE;
                             offset = UI_OFFSET;
                         }
                         else {
-                            size = UI_OFFSET;
+                            buffer_size = UI_OFFSET;
                             offset = 0;
                         }
-                        Invader::Compression::decompress_map_file(new_path, maps_in_ram_region + offset, size);
+
+                        buffer = maps_in_ram_region + offset;
+                        buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
                     }
 
                     // Otherwise do a map file
@@ -245,16 +252,14 @@ namespace Chimera {
                     return;
                 }
             }
-
-            else if(!do_maps_in_ram) {
-                std::size_t size;
+            else if(do_maps_in_ram) {
                 std::size_t offset;
                 if(std::strcmp(map_name, "ui") == 0) {
-                    size = UI_SIZE;
+                    buffer_size = UI_SIZE;
                     offset = UI_OFFSET;
                 }
                 else {
-                    size = UI_OFFSET;
+                    buffer_size = UI_OFFSET;
                     offset = 0;
                 }
 
@@ -262,8 +267,14 @@ namespace Chimera {
                 if(!f) {
                     return;
                 }
-                std::fread(maps_in_ram_region + offset, size, 1, f);
+                buffer = maps_in_ram_region + offset;
+                buffer_used = std::fread(buffer, buffer_size, 1, f);
                 std::fclose(f);
+            }
+
+            // Load everything from bitmaps.map and sounds.map that isn't indexed
+            if(do_maps_in_ram) {
+                load_assets_into_memory_buffer(buffer, buffer_used, buffer_size);
             }
 
             std::strcpy(map_path, new_path);
@@ -330,5 +341,9 @@ namespace Chimera {
         RETURN_IF_FOUND("maps\\%s.map");
         RETURN_IF_FOUND("%s\\maps\\%s.map", get_chimera().get_path());
         return nullptr;
+    }
+
+    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size) noexcept {
+        
     }
 }
