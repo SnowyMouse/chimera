@@ -17,6 +17,8 @@ namespace Invader::Compression {
     std::size_t decompress_map_file(const char *input, std::byte *output, std::size_t output_size);
 }
 
+#define BYTES_TO_MiB(bytes) (bytes / 1024.0F / 1024.0F)
+
 namespace Chimera {
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
@@ -164,7 +166,7 @@ namespace Chimera {
         std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
     }
 
-    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size) noexcept;
+    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
         const char *new_path = path_for_map(map_name);
@@ -233,7 +235,7 @@ namespace Chimera {
 
                     // Benchmark
                     if(do_benchmark) {
-                        console_output("Decompressed %s in %zu milliseconds\n", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+                        console_output("Decompressed %s in %zu ms", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
                     }
 
                     // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
@@ -269,13 +271,16 @@ namespace Chimera {
                     return;
                 }
                 buffer = maps_in_ram_region + offset;
-                buffer_used = std::fread(buffer, buffer_size, 1, f);
+                std::fseek(f, 0, SEEK_END);
+                buffer_used = std::ftell(f);
+                std::fseek(f, 0, SEEK_SET);
+                std::fread(buffer, buffer_size, 1, f);
                 std::fclose(f);
             }
 
             // Load everything from bitmaps.map and sounds.map that isn't indexed
             if(do_maps_in_ram) {
-                load_assets_into_memory_buffer(buffer, buffer_used, buffer_size);
+                load_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
             }
 
             std::strcpy(map_path, new_path);
@@ -344,7 +349,9 @@ namespace Chimera {
         return nullptr;
     }
 
-    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size) noexcept {
+    static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
+        auto start = std::chrono::steady_clock::now();
+
         // Get tag data info
         std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         std::byte *tag_data;
@@ -359,6 +366,7 @@ namespace Chimera {
         #define TRANSLATE_POINTER(pointer, to_type) reinterpret_cast<to_type>(tag_data + reinterpret_cast<std::uintptr_t>(pointer) - tag_data_address)
 
         // Open bitmaps.map and sounds.map
+        std::size_t old_used = buffer_used;
         std::FILE *bitmaps_file = std::fopen("maps/bitmaps.map", "rb");
         std::FILE *sounds_file = std::fopen("maps/sounds.map", "rb");
         if(!bitmaps_file || !sounds_file) {
@@ -367,6 +375,9 @@ namespace Chimera {
 
         TagDataHeader &header = *reinterpret_cast<TagDataHeader *>(tag_data);
         auto *tag_array = TRANSLATE_POINTER(header.tag_array, Tag *);
+
+        std::size_t missed_data = 0;
+
         for(std::size_t t = 0; t < header.tag_count; t++) {
             auto &tag = tag_array[t];
             if(tag.indexed) {
@@ -384,12 +395,13 @@ namespace Chimera {
                     }
 
                     // Get metadata
-                    std::uint32_t bitmap_size = *reinterpret_cast<std::uint32_t *>(bitmap + 0x18);
-                    std::uint32_t &bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
+                    std::uint32_t bitmap_size = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
+                    std::uint32_t &bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x18);
 
                     // Don't add this bitmap if we can't fit it
-                    std::size_t new_used = bitmap_size + buffer_used;
-                    if(new_used < buffer_size) {
+                    std::size_t new_used = buffer_used + bitmap_size;
+                    if(bitmap_size > buffer_size || new_used > buffer_size) {
+                        missed_data += bitmap_size;
                         continue;
                     }
 
@@ -407,7 +419,6 @@ namespace Chimera {
 
                 for(std::uint32_t r = 0; r < pitch_range_count; r++) {
                     auto *pitch_range = pitch_range_data + r * 72;
-
                     auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
                     auto *permutation_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(pitch_range + 0x40), std::byte *);
                     for(std::uint32_t p = 0; p < permutation_count; p++) {
@@ -421,9 +432,10 @@ namespace Chimera {
                         std::uint32_t sound_size = *reinterpret_cast<std::uint32_t *>(permutation + 0x40);
                         std::uint32_t &sound_offset = *reinterpret_cast<std::uint32_t *>(permutation + 0x48);
 
-                        // Don't add this bitmap if we can't fit it
-                        std::size_t new_used = sound_size + buffer_used;
-                        if(new_used < sound_size) {
+                        // Don't add this sound if we can't fit it
+                        std::size_t new_used = buffer_used + sound_size;
+                        if(sound_size > buffer_size || new_used > buffer_size) {
+                            missed_data += sound_size;
                             continue;
                         }
 
@@ -440,5 +452,17 @@ namespace Chimera {
 
         std::fclose(bitmaps_file);
         std::fclose(sounds_file);
+
+        auto end = std::chrono::steady_clock::now();
+
+        if(do_benchmark) {
+            if(missed_data) {
+                console_error("Failed to preload %.02f MiB due to insufficient capacity", BYTES_TO_MiB(missed_data));
+            }
+
+            std::size_t total_preloaded = buffer_used - old_used;
+            std::size_t count = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            console_output("Preloaded %.02f MiB from %s in %u ms (%.02f MiB / %.02f MiB - %.01f%%)", BYTES_TO_MiB(total_preloaded), map_name, count, BYTES_TO_MiB(buffer_used), BYTES_TO_MiB(buffer_size), 100.0F * buffer_used / buffer_size);
+        }
     }
 }
