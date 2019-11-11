@@ -169,6 +169,12 @@ namespace Chimera {
     static void load_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
+        static char currently_loaded_map[32] = {};
+        static bool ui_was_loaded = false;
+
+        // If the map is already loaded, go away
+        bool do_not_reload = (do_maps_in_ram && ((std::strcmp(map_name, "ui") == 0 && ui_was_loaded) || (std::strcmp(map_name, currently_loaded_map) == 0)));
+
         const char *new_path = path_for_map(map_name);
         if(new_path) {
             // Check if the map is valid. If not, don't worry about it
@@ -182,105 +188,115 @@ namespace Chimera {
             std::size_t buffer_size = 0;
             std::byte *buffer = nullptr;
 
-            if(compressed) {
-                // Get filesystem data
-                struct stat64 s;
-                stat64(new_path, &s);
-                std::uint64_t mtime = s.st_mtime;
+            if(!do_not_reload) {
+                if(compressed) {
+                    // Get filesystem data
+                    struct stat64 s;
+                    stat64(new_path, &s);
+                    std::uint64_t mtime = s.st_mtime;
 
-                char tmp_path[MAX_PATH] = {};
+                    char tmp_path[MAX_PATH] = {};
 
-                // See if we can find it
-                if(!do_maps_in_ram) {
-                    for(auto &map : compressed_maps) {
-                        if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
-                            get_tmp_path(map, tmp_path);
-                            //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
-                            last_loaded_map = &map - compressed_maps;
-                            std::strncpy(map_path, tmp_path, MAX_PATH);
-                            return;
-                        }
-                    }
-                }
-
-                // Attempt to decompress
-                std::size_t new_index = !last_loaded_map;
-                auto &compressed_map_to_use = compressed_maps[new_index];
-                try {
-                    get_tmp_path(compressed_maps[new_index], tmp_path);
-                    //console_output("Trying to compress %s @ %s -> %s...", map_name, new_path, tmp_path);
-                    auto start = std::chrono::steady_clock::now();
-
-                    // If we're doing maps in RAM, output directly to the region allowed
-                    if(do_maps_in_ram) {
-                        std::size_t offset;
-                        if(std::strcmp(map_name, "ui") == 0) {
-                            buffer_size = UI_SIZE;
-                            offset = UI_OFFSET;
-                        }
-                        else {
-                            buffer_size = UI_OFFSET;
-                            offset = 0;
-                        }
-
-                        buffer = maps_in_ram_region + offset;
-                        buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
-                    }
-
-                    // Otherwise do a map file
-                    else {
-                        Invader::Compression::decompress_map_file(new_path, tmp_path);
-                    }
-                    auto end = std::chrono::steady_clock::now();
-
-                    // Benchmark
-                    if(do_benchmark) {
-                        console_output("Decompressed %s in %zu ms", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
-                    }
-
-                    // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
+                    // See if we can find it
                     if(!do_maps_in_ram) {
-                        std::strcpy(map_path, tmp_path);
-                        last_loaded_map++;
-                        if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
-                            last_loaded_map = 0;
+                        for(auto &map : compressed_maps) {
+                            if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
+                                get_tmp_path(map, tmp_path);
+                                //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
+                                last_loaded_map = &map - compressed_maps;
+                                std::strncpy(map_path, tmp_path, MAX_PATH);
+                                return;
+                            }
                         }
-                        compressed_map_to_use.date_modified = mtime;
-                        std::strncpy(compressed_map_to_use.map_name, map_name, sizeof(compressed_map_to_use.map_name));
+                    }
+
+                    // Attempt to decompress
+                    std::size_t new_index = !last_loaded_map;
+                    auto &compressed_map_to_use = compressed_maps[new_index];
+                    try {
+                        get_tmp_path(compressed_maps[new_index], tmp_path);
+                        //console_output("Trying to compress %s @ %s -> %s...", map_name, new_path, tmp_path);
+                        auto start = std::chrono::steady_clock::now();
+
+                        // If we're doing maps in RAM, output directly to the region allowed
+                        if(do_maps_in_ram) {
+                            std::size_t offset;
+                            if(std::strcmp(map_name, "ui") == 0) {
+                                buffer_size = UI_SIZE;
+                                offset = UI_OFFSET;
+                            }
+                            else {
+                                buffer_size = UI_OFFSET;
+                                offset = 0;
+                            }
+
+                            buffer = maps_in_ram_region + offset;
+                            buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
+                        }
+
+                        // Otherwise do a map file
+                        else {
+                            Invader::Compression::decompress_map_file(new_path, tmp_path);
+                        }
+                        auto end = std::chrono::steady_clock::now();
+
+                        // Benchmark
+                        if(do_benchmark) {
+                            console_output("Decompressed %s in %zu ms", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+                        }
+
+                        // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
+                        if(!do_maps_in_ram) {
+                            std::strcpy(map_path, tmp_path);
+                            last_loaded_map++;
+                            if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
+                                last_loaded_map = 0;
+                            }
+                            compressed_map_to_use.date_modified = mtime;
+                            std::strncpy(compressed_map_to_use.map_name, map_name, sizeof(compressed_map_to_use.map_name));
+                        }
+                    }
+                    catch (std::exception &e) {
+                        compressed_map_to_use = {};
+                        //console_output("Failed to decompress %s @ %s: %s", map_name, new_path, e.what());
+                        return;
                     }
                 }
-                catch (std::exception &e) {
-                    compressed_map_to_use = {};
-                    //console_output("Failed to decompress %s @ %s: %s", map_name, new_path, e.what());
-                    return;
-                }
-            }
-            else if(do_maps_in_ram) {
-                std::size_t offset;
-                if(std::strcmp(map_name, "ui") == 0) {
-                    buffer_size = UI_SIZE;
-                    offset = UI_OFFSET;
-                }
-                else {
-                    buffer_size = UI_OFFSET;
-                    offset = 0;
+                else if(do_maps_in_ram) {
+                    std::size_t offset;
+                    if(std::strcmp(map_name, "ui") == 0) {
+                        buffer_size = UI_SIZE;
+                        offset = UI_OFFSET;
+                    }
+                    else {
+                        buffer_size = UI_OFFSET;
+                        offset = 0;
+                    }
+
+                    std::FILE *f = std::fopen(new_path, "rb");
+                    if(!f) {
+                        return;
+                    }
+                    buffer = maps_in_ram_region + offset;
+                    std::fseek(f, 0, SEEK_END);
+                    buffer_used = std::ftell(f);
+                    std::fseek(f, 0, SEEK_SET);
+                    std::fread(buffer, buffer_size, 1, f);
+                    std::fclose(f);
                 }
 
-                std::FILE *f = std::fopen(new_path, "rb");
-                if(!f) {
-                    return;
-                }
-                buffer = maps_in_ram_region + offset;
-                std::fseek(f, 0, SEEK_END);
-                buffer_used = std::ftell(f);
-                std::fseek(f, 0, SEEK_SET);
-                std::fread(buffer, buffer_size, 1, f);
-                std::fclose(f);
-            }
+                // Load everything from bitmaps.map and sounds.map that isn't indexed
+                if(do_maps_in_ram) {
+                    load_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
 
-            // Load everything from bitmaps.map and sounds.map that isn't indexed
-            if(do_maps_in_ram) {
-                load_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
+                    if(std::strcmp(map_name, "ui") == 0) {
+                        ui_was_loaded = true;
+                    }
+                    else {
+                        std::fill(currently_loaded_map, currently_loaded_map + sizeof(currently_loaded_map), 0);
+                        std::strncpy(currently_loaded_map, map_name, sizeof(currently_loaded_map) - 1);
+                    }
+                }
             }
 
             std::strcpy(map_path, new_path);
