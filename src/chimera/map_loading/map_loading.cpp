@@ -500,7 +500,11 @@ namespace Chimera {
                     auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
                     auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
 
+                    // Set encoding stuff
                     *reinterpret_cast<std::uint32_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x6C);
+
+                    // Set sample rate
+                    *reinterpret_cast<std::uint16_t *>(sound_data + 0x6) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6);
 
                     if(pitch_range_count) {
                         *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
@@ -529,10 +533,6 @@ namespace Chimera {
 
                     buffer_used = new_used;
                     tag.indexed = 0;
-
-                    if(std::strcmp(path, "sound\\sfx\\ui\\cursor") == 0) {
-                        console_output("%s - %08X, %08X", path, &tag, tag_data_address + (reinterpret_cast<std::byte *>(&tag) - tag_data));
-                    }
                 }
             }
 
