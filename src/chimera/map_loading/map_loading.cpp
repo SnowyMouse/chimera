@@ -526,6 +526,17 @@ namespace Chimera {
                                     *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
                                     *reinterpret_cast<std::uint32_t *>(permutation + 0x34) = *reinterpret_cast<std::uint32_t *>(&tag.id);
                                     *reinterpret_cast<std::uint32_t *>(permutation + 0x3C) = *reinterpret_cast<std::uint32_t *>(&tag.id);
+
+                                    auto &mouth_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x54 + 0xC);
+                                    auto &subtitle_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x68 + 0xC);
+
+                                    if(mouth_data) {
+                                        mouth_data += baseline_address;
+                                    }
+
+                                    if(subtitle_data) {
+                                        subtitle_data += baseline_address;
+                                    }
                                 }
                             }
                         }
