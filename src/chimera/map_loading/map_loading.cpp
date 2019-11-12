@@ -1,5 +1,7 @@
+#define _WIN32_WINNT _WIN32_WINNT_WIN7
 #include <filesystem>
 #include <sys/stat.h>
+#include <windows.h>
 #include "map_loading.hpp"
 #include "laa.hpp"
 #include "../chimera.hpp"
@@ -167,9 +169,9 @@ namespace Chimera {
     }
 
     static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
+    static char currently_loaded_map[32] = {};
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
-        static char currently_loaded_map[32] = {};
         static bool ui_was_loaded = false;
 
         // If the map is already loaded, go away
@@ -300,53 +302,6 @@ namespace Chimera {
             }
 
             std::strcpy(map_path, new_path);
-        }
-    }
-
-    extern "C" void map_loading_asm();
-    extern "C" void free_map_handle_bugfix_asm();
-
-    void set_up_map_loading() {
-        static Hook hook;
-        auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
-        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
-        static Hook hook2;
-        auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
-        write_jmp_call(create_file_mov_sig.data(), hook2, reinterpret_cast<const void *>(free_map_handle_bugfix_asm), nullptr);
-
-        // Make Halo not check the maps if they're bullshit
-        static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
-        auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
-        overwrite(map_check_sig, return_1, sizeof(return_1));
-
-        // Get settings
-        auto is_enabled = [](const char *what) -> bool {
-            const char *value = get_chimera().get_ini()->get_value(what);
-            return !(!value || std::strcmp(value, "1") != 0);
-        };
-
-        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
-        do_benchmark = is_enabled("memory.benchmark");
-
-        if(do_maps_in_ram) {
-            if(!current_exe_is_laa_patched()) {
-                MessageBox(0, "Map memory buffers requires an large address aware-patched executable.", "Error", 0);
-                std::exit(1);
-            }
-
-            // Allocate memory, making sure to not do so after the 0x40000000 - 0x50000000 region used for tag data
-            for(auto *m = reinterpret_cast<std::byte *>(0x80000000); m < reinterpret_cast<std::byte *>(0xF0000000) && !maps_in_ram_region; m += 0x10000000) {
-                maps_in_ram_region = reinterpret_cast<std::byte *>(VirtualAlloc(m, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
-            }
-
-            if(!maps_in_ram_region) {
-                char error_text[256] = {};
-                std::snprintf(error_text, sizeof(error_text), "Failed to allocate %.02f GiB for map memory buffers.", BYTES_TO_MiB(CHIMERA_MEMORY_ALLOCATION_SIZE) / 1024.0F);
-                MessageBox(0, error_text, "Error", 0);
-                std::exit(1);
-            }
-
-            ui_region = maps_in_ram_region + UI_OFFSET;
         }
     }
 
@@ -636,6 +591,95 @@ namespace Chimera {
             std::size_t total_preloaded = buffer_used - old_used;
             std::size_t count = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             console_output("Preloaded %.02f MiB from %s in %u ms (%.02f MiB / %.02f MiB - %.01f%%)", BYTES_TO_MiB(total_preloaded), map_name, count, BYTES_TO_MiB(buffer_used), BYTES_TO_MiB(buffer_size), 100.0F * buffer_used / buffer_size);
+        }
+    }
+
+    extern "C" void map_loading_asm();
+    extern "C" void free_map_handle_bugfix_asm();
+
+    extern "C" void on_read_map_file_data_asm();
+    extern "C" int on_read_map_file_data(HANDLE file_descriptor, std::byte *output, std::size_t size, LPOVERLAPPED overlapped) {
+        std::size_t file_offset = overlapped->Offset;
+        char file_name[MAX_PATH + 1] = {};
+        GetFinalPathNameByHandle(file_descriptor, file_name, sizeof(file_name) - 1, 0);
+
+        char *last_backslash = nullptr;
+        char *last_dot = nullptr;
+        for(char &c : file_name) {
+            if(c == '.') {
+                last_dot = &c;
+            }
+            if(c == '\\' || c == '/') {
+                last_backslash = &c;
+            }
+        }
+
+        // Is the path bullshit?
+        if(!last_backslash || !last_dot || last_dot < last_backslash) {
+            return 0;
+        }
+
+        *last_dot = 0;
+        char *map_name = last_backslash + 1;
+
+        // Someone we know?
+        if(std::strcmp(map_name, "ui") == 0) {
+            std::copy(ui_region + file_offset, ui_region + file_offset + size, output);
+            return 1;
+        }
+        else if(std::strcmp(map_name, currently_loaded_map) == 0) {
+            std::copy(maps_in_ram_region + file_offset, maps_in_ram_region + file_offset + size, output);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    void set_up_map_loading() {
+        static Hook hook;
+        auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
+        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
+        static Hook hook2;
+        auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
+        write_jmp_call(create_file_mov_sig.data(), hook2, reinterpret_cast<const void *>(free_map_handle_bugfix_asm), nullptr);
+
+        // Make Halo not check the maps if they're bullshit
+        static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
+        auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
+        overwrite(map_check_sig, return_1, sizeof(return_1));
+
+        // Get settings
+        auto is_enabled = [](const char *what) -> bool {
+            const char *value = get_chimera().get_ini()->get_value(what);
+            return !(!value || std::strcmp(value, "1") != 0);
+        };
+
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+        do_benchmark = is_enabled("memory.benchmark");
+
+        if(do_maps_in_ram) {
+            if(!current_exe_is_laa_patched()) {
+                MessageBox(0, "Map memory buffers requires an large address aware-patched executable.", "Error", 0);
+                std::exit(1);
+            }
+
+            // Allocate memory, making sure to not do so after the 0x40000000 - 0x50000000 region used for tag data
+            for(auto *m = reinterpret_cast<std::byte *>(0x80000000); m < reinterpret_cast<std::byte *>(0xF0000000) && !maps_in_ram_region; m += 0x10000000) {
+                maps_in_ram_region = reinterpret_cast<std::byte *>(VirtualAlloc(m, CHIMERA_MEMORY_ALLOCATION_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+            }
+
+            if(!maps_in_ram_region) {
+                char error_text[256] = {};
+                std::snprintf(error_text, sizeof(error_text), "Failed to allocate %.02f GiB for map memory buffers.", BYTES_TO_MiB(CHIMERA_MEMORY_ALLOCATION_SIZE) / 1024.0F);
+                MessageBox(0, error_text, "Error", 0);
+                std::exit(1);
+            }
+
+            ui_region = maps_in_ram_region + UI_OFFSET;
+
+            static Hook read_cache_file_data_hook;
+            auto &read_map_file_data_sig = get_chimera().get_signature("read_map_file_data_sig");
+            write_jmp_call(read_map_file_data_sig.data(), read_cache_file_data_hook, reinterpret_cast<const void *>(on_read_map_file_data_asm), nullptr);
         }
     }
 }

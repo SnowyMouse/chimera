@@ -16,3 +16,17 @@ _map_loading_asm:
     call _do_map_loading_handling
     add esp, 8
     ret
+
+.globl _on_read_map_file_data_asm
+_on_read_map_file_data_asm:
+    push esi
+    push ebx
+    push ebp
+    push eax
+    call _on_read_map_file_data
+    add esp, 0x10
+    cmp eax, 0
+    je _on_read_map_file_data_asm_end
+    mov dword ptr [esp+0x14], 0
+    _on_read_map_file_data_asm_end:
+    ret
