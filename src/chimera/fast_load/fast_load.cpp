@@ -33,6 +33,8 @@ namespace Chimera {
         return false;
     }
 
+    extern std::byte *maps_in_ram_region;
+
     static std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
         std::uint32_t crc = 0;
         std::uint32_t current_offset = 0;
@@ -47,7 +49,12 @@ namespace Chimera {
         };
 
         auto read = [&f, &current_offset](void *where, std::size_t size) {
-            std::fread(where, size, 1, f);
+            if(f) {
+                std::fread(where, size, 1, f);
+            }
+            else {
+                std::copy(maps_in_ram_region + current_offset, maps_in_ram_region + size + current_offset, reinterpret_cast<std::byte *>(where));
+            }
             current_offset += size;
         };
 
@@ -111,14 +118,27 @@ namespace Chimera {
                 }
 
                 // Load the header
-                std::FILE *f = std::fopen(path, "rb");
-                if(!f) {
-                    return;
-                }
+                std::FILE *f = nullptr;
+
                 MapHeader header;
-                std::fread(&header, sizeof(header), 1, f);
+                if(!maps_in_ram_region) {
+                    std::fopen(path, "rb");
+                    if(!f) {
+                        return;
+                    }
+                    std::fread(&header, sizeof(header), 1, f);
+                }
+                else {
+                    header = *reinterpret_cast<MapHeader *>(maps_in_ram_region);
+                }
+
                 indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
-                std::fclose(f);
+
+                // Close if open
+                if(f) {
+                    std::fclose(f);
+                    f = nullptr;
+                }
 
                 return;
             }

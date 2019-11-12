@@ -25,7 +25,7 @@ namespace Chimera {
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
 
-    static std::byte *maps_in_ram_region = nullptr;
+    std::byte *maps_in_ram_region = nullptr;
     static std::byte *ui_region = nullptr;
 
     static constexpr std::size_t UI_OFFSET = 1024 * 1024 * 1024;
@@ -622,7 +622,6 @@ namespace Chimera {
         *last_dot = 0;
         char *map_name = last_backslash + 1;
 
-        // Someone we know?
         if(std::strcmp(map_name, "ui") == 0) {
             std::copy(ui_region + file_offset, ui_region + file_offset + size, output);
             return 1;
