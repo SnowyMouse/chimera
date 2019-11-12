@@ -3,6 +3,7 @@
 
 #include "../../halo_data/object.hpp"
 #include "../../halo_data/camera.hpp"
+#include "../../halo_data/player.hpp"
 #include "camera.hpp"
 
 #include "../../signature/signature.hpp"
@@ -70,7 +71,20 @@ namespace Chimera {
         extern float interpolation_tick_progress;
         interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
 
-        if(type != CameraType::CAMERA_FIRST_PERSON) {
+        // If we're in a vehicle, interpolate the rotation
+        bool vehicle_first_person = false;
+        if(type == CameraType::CAMERA_FIRST_PERSON) {
+            auto *player = PlayerTable::get_player_table().get_client_player();
+            if(player) {
+                auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
+                if(object) {
+                    vehicle_first_person = !object->parent.is_null();
+                }
+            }
+        }
+
+        // Don't interpolate rotation if in first person unless we're in a vehicle
+        if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person) {
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
         }
