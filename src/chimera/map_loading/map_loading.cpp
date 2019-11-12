@@ -440,9 +440,12 @@ namespace Chimera {
                         sequences_ptr += baseline_address;
                         auto *sequences = TRANSLATE_POINTER(sequences_ptr, std::byte *);
                         for(std::uint32_t s = 0; s < sequences_count; s++) {
-                            auto *sequence = sequences + s * 64;
-                            auto &sprites = *reinterpret_cast<std::uint32_t *>(sequence + 0x38);
-                            sprites += baseline_address;
+                            auto *sequence = sequences + s * 0x40;
+                            auto &sprites_count = *reinterpret_cast<std::uint32_t *>(sequence + 0x34);
+                            if(sprites_count) {
+                                auto &sprites = *reinterpret_cast<std::uint32_t *>(sequence + 0x38);
+                                sprites += baseline_address;
+                            }
                         }
                     }
 
@@ -451,6 +454,11 @@ namespace Chimera {
                     if(bitmap_data_count) {
                         auto &bitmap_data_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x64);
                         bitmap_data_ptr += baseline_address;
+                        auto *bitmap_data = TRANSLATE_POINTER(bitmap_data_ptr, std::byte *);
+                        for(std::size_t d = 0; d < bitmap_data_count; d++) {
+                            auto *bitmap = bitmap_data + d * 0x30 - 0x10;
+                            *reinterpret_cast<TagID *>(bitmap) = tag.id;
+                        }
                     }
 
                     buffer_used = new_used;
@@ -492,8 +500,19 @@ namespace Chimera {
 
                     // Fix the pointers
                     for(std::size_t p = 0; p < pitch_range_count; p++) {
-                        auto *pitch_range = baseline + p * 72;
-                        *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40) += baseline_address;
+                        auto *pitch_range = baseline + p * 0x48;
+                        auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                        auto &permutation_ptr = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40);
+
+                        if(permutation_count) {
+                            permutation_ptr += baseline_address;
+                            auto *permutations = TRANSLATE_POINTER(permutation_ptr, std::byte *);
+                            for(std::size_t r = 0; r < permutation_count; r++) {
+                                auto *permutation = permutations + r * 0x7C;
+                                *reinterpret_cast<TagID *>(permutation + 0x34) = tag.id;
+                                *reinterpret_cast<TagID *>(permutation + 0x3C) = tag.id;
+                            }
+                        }
                     }
 
                     buffer_used = new_used;
@@ -502,7 +521,8 @@ namespace Chimera {
             }
 
             // Add up the difference
-            reinterpret_cast<MapHeaderDemo *>(buffer)->tag_data_size += (buffer_used - old_used);
+            std::size_t bytes_added = (buffer_used - old_used);
+            reinterpret_cast<MapHeader *>(buffer)->tag_data_size += bytes_added;
         }
 
         // Preload all of the assets
@@ -546,11 +566,11 @@ namespace Chimera {
                 auto *pitch_range_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(data + 0x9C), std::byte *);
 
                 for(std::uint32_t r = 0; r < pitch_range_count; r++) {
-                    auto *pitch_range = pitch_range_data + r * 72;
+                    auto *pitch_range = pitch_range_data + r * 0x48;
                     auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
                     auto *permutation_data = TRANSLATE_POINTER(*reinterpret_cast<std::uint32_t *>(pitch_range + 0x40), std::byte *);
                     for(std::uint32_t p = 0; p < permutation_count; p++) {
-                        auto *permutation = permutation_data + 124 * p;
+                        auto *permutation = permutation_data + 0x7C * p;
                         std::uint32_t &external = *reinterpret_cast<std::uint32_t *>(permutation + 0x44);
                         if(!(external & 1)) {
                             continue;
