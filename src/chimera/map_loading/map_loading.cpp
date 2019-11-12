@@ -482,41 +482,57 @@ namespace Chimera {
 
                     // Load sounds
                     auto &resource = sounds[*resource_tag_index];
-                    std::size_t new_used = buffer_used + resource.data_size - 0xA4;
-                    if(resource.data_size - 0xA4 > buffer_size || new_used > buffer_size) {
-                        missed_data += resource.data_size;
+                    static constexpr std::size_t SOUND_HEADER_SIZE = 0xA4;
+                    std::size_t bytes_to_read = resource.data_size - SOUND_HEADER_SIZE;
+                    std::size_t new_used = buffer_used + bytes_to_read;
+                    if(bytes_to_read > buffer_size || new_used > buffer_size) {
+                        missed_data += bytes_to_read;
                         continue;
                     }
 
-                    static constexpr std::size_t SOUND_HEADER_SIZE = 0xA4;
                     auto *baseline = buffer + buffer_used;
                     std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
-                    std::fseek(sounds_file, resource.data_offset + SOUND_HEADER_SIZE, SEEK_SET);
-                    std::fread(baseline, resource.data_size - SOUND_HEADER_SIZE, 1, sounds_file);
+                    std::fseek(sounds_file, resource.data_offset, SEEK_SET);
+                    std::byte base_sound_data[SOUND_HEADER_SIZE];
+                    std::fread(base_sound_data, sizeof(base_sound_data), 1, sounds_file);
+                    std::fread(baseline, bytes_to_read, 1, sounds_file);
 
                     auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
                     auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
-                    *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
 
-                    // Fix the pointers
-                    for(std::size_t p = 0; p < pitch_range_count; p++) {
-                        auto *pitch_range = baseline + p * 0x48;
-                        auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
-                        auto &permutation_ptr = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40);
+                    *reinterpret_cast<std::uint32_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x6C);
 
-                        if(permutation_count) {
-                            permutation_ptr += baseline_address;
-                            auto *permutations = TRANSLATE_POINTER(permutation_ptr, std::byte *);
-                            for(std::size_t r = 0; r < permutation_count; r++) {
-                                auto *permutation = permutations + r * 0x7C;
-                                *reinterpret_cast<TagID *>(permutation + 0x34) = tag.id;
-                                *reinterpret_cast<TagID *>(permutation + 0x3C) = tag.id;
+                    if(pitch_range_count) {
+                        *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
+
+                        // Fix the pointers
+                        for(std::size_t p = 0; p < pitch_range_count; p++) {
+                            auto *pitch_range = baseline + p * 0x48;
+                            auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                            auto &permutation_ptr = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40);
+                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
+                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
+
+                            if(permutation_count) {
+                                permutation_ptr += baseline_address;
+                                auto *permutations = TRANSLATE_POINTER(permutation_ptr, std::byte *);
+                                for(std::size_t r = 0; r < permutation_count; r++) {
+                                    auto *permutation = permutations + r * 0x7C;
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x34) = *reinterpret_cast<std::uint32_t *>(&tag.id);
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x3C) = *reinterpret_cast<std::uint32_t *>(&tag.id);
+                                }
                             }
                         }
                     }
 
                     buffer_used = new_used;
                     tag.indexed = 0;
+
+                    if(std::strcmp(path, "sound\\sfx\\ui\\cursor") == 0) {
+                        console_output("%s - %08X, %08X", path, &tag, tag_data_address + (reinterpret_cast<std::byte *>(&tag) - tag_data));
+                    }
                 }
             }
 
