@@ -456,7 +456,7 @@ namespace Chimera {
                         bitmap_data_ptr += baseline_address;
                         auto *bitmap_data = TRANSLATE_POINTER(bitmap_data_ptr, std::byte *);
                         for(std::size_t d = 0; d < bitmap_data_count; d++) {
-                            auto *bitmap = bitmap_data + d * 0x30 - 0x10;
+                            auto *bitmap = bitmap_data + d * 0x30;
                             *reinterpret_cast<TagID *>(bitmap + 0x20) = tag.id;
                         }
                     }
