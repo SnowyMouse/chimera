@@ -97,7 +97,6 @@ void HACMapDownloader::dispatch() {
         return;
     }
 
-    #ifndef TEST_EXTRACTION_ONLY
     this->output_file_handle = std::fopen(this->output_file.data(), "wb");
 
     // If we failed to open, give up and close, unlocking the mutex
@@ -126,7 +125,6 @@ void HACMapDownloader::dispatch() {
 
     // 10 second timeout
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
-    #endif
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
