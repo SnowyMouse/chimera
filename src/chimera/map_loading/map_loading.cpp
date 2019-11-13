@@ -322,6 +322,9 @@ namespace Chimera {
         return nullptr;
     }
 
+    extern std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept;
+    std::uint32_t maps_in_ram_crc32;
+
     static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
         auto start = std::chrono::steady_clock::now();
 
@@ -329,7 +332,9 @@ namespace Chimera {
         std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         std::byte *tag_data;
         std::uint32_t tag_data_size;
-        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+        auto engine = game_engine();
+
+        if(engine == GameEngine::GAME_ENGINE_DEMO) {
             auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
             tag_data = buffer + header.tag_data_offset;
             tag_data_size = header.tag_data_size;
@@ -338,6 +343,11 @@ namespace Chimera {
             auto &header = *reinterpret_cast<MapHeader *>(buffer);
             tag_data = buffer + header.tag_data_offset;
             tag_data_size = header.tag_data_size;
+
+            // Calculate the CRC32 if we aren't a UI file
+            if(engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION && buffer == maps_in_ram_region) {
+                maps_in_ram_crc32 = ~calculate_crc32_of_map_file(nullptr, header);
+            }
         }
         bool can_load_indexed_tags = (buffer + buffer_used) == (tag_data + tag_data_size) && game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
 

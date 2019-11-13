@@ -35,7 +35,7 @@ namespace Chimera {
 
     extern std::byte *maps_in_ram_region;
 
-    static std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
+    std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
         std::uint32_t crc = 0;
         std::uint32_t current_offset = 0;
 
@@ -99,6 +99,8 @@ namespace Chimera {
 
         return crc;
     }
+    
+    extern std::uint32_t maps_in_ram_crc32;
 
     extern "C" void on_get_crc32() noexcept {
         // Get the loading map and all map indices so we can find which map is loading
@@ -127,19 +129,17 @@ namespace Chimera {
                         return;
                     }
                     std::fread(&header, sizeof(header), 1, f);
+                    indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
+
+                    // Close if open
+                    if(f) {
+                        std::fclose(f);
+                        f = nullptr;
+                    }
                 }
                 else {
-                    header = *reinterpret_cast<MapHeader *>(maps_in_ram_region);
+                    indices[i].crc32 = maps_in_ram_crc32;
                 }
-
-                indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
-
-                // Close if open
-                if(f) {
-                    std::fclose(f);
-                    f = nullptr;
-                }
-
                 return;
             }
         }

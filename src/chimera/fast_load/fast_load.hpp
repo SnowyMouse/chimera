@@ -1,6 +1,9 @@
 #ifndef CHIMERA_FAST_LOAD_HPP
 #define CHIMERA_FAST_LOAD_HPP
 
+#include <cstdio>
+#include <cstdint>
+
 namespace Chimera {
     /**
      * Initialize fast loading
