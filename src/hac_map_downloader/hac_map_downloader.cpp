@@ -124,7 +124,7 @@ void HACMapDownloader::dispatch() {
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 
     // 10 second timeout
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;

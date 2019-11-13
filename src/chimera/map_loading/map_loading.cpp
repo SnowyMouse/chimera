@@ -12,6 +12,8 @@
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
 #include "../config/ini.hpp"
+#include "../event/frame.hpp"
+#include "../../hac_map_downloader/hac_map_downloader.hpp"
 #include <chrono>
 
 namespace Invader::Compression {
@@ -691,6 +693,49 @@ namespace Chimera {
         return 0;
     }
 
+    std::unique_ptr<HACMapDownloader> map_downloader;
+    static void download_frame() {
+        switch(map_downloader->get_status()) {
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
+                console_output("Wait a minute...");
+                break;
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
+                console_output("Map download starting...");
+                break;
+            case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
+                auto dlnow = map_downloader->get_downloaded_size();
+                auto dltotal = map_downloader->get_total_size();
+
+                char download_speed_buffer[32];
+
+                auto download_speed = map_downloader->get_download_speed();
+                if(download_speed > 1000) {
+                    std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%.01f MB/s", download_speed / 1000.0F);
+                }
+                else {
+                    std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%zu kB/s", download_speed);
+                }
+
+                char full_buffer[80];
+                std::snprintf(full_buffer, sizeof(full_buffer), "Progress: %7.02f / %7.02f MiB (%4.01f%%, %s)", dlnow / 1024.0F / 1024.0F, dltotal / 1024.0F / 1024.0F, static_cast<float>(dlnow) / dltotal * 100.0F, download_speed_buffer);
+                console_output("%s", full_buffer);
+                break;
+            }
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE:
+                console_output("Done!");
+                break;
+            default: {
+                console_output("Failed!");
+                break;
+            }
+        }
+
+        if(map_downloader->is_finished()) {
+            delete map_downloader.release();
+            remove_preframe_event(download_frame);
+        }
+    }
+
     extern "C" void on_map_load_multiplayer_asm() noexcept;
     extern "C" {
         std::byte *on_map_load_multiplayer_fail;
@@ -699,7 +744,14 @@ namespace Chimera {
         if(path_for_map(map)) {
             return 0;
         }
+
         console_output("Failed to load %s", map);
+
+        char path[MAX_PATH];
+        std::snprintf(path, sizeof(path), "%s\\maps\\%s.map", get_chimera().get_path(), map);
+        map_downloader = std::make_unique<HACMapDownloader>(map, path);
+        map_downloader->dispatch();
+        add_preframe_event(download_frame);
         return 1;
     }
 
