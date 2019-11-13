@@ -27,7 +27,23 @@ _on_read_map_file_data_asm:
     call _on_read_map_file_data
     add esp, 0x10
     cmp eax, 0
-    je _on_read_map_file_data_asm_end
+    je on_read_map_file_data_asm_end
     mov dword ptr [esp+0x14], 0 ;# set the size to 0 if the function returns 1. yes this is janky and I'm proud
-    _on_read_map_file_data_asm_end:
+    on_read_map_file_data_asm_end:
+    ret
+
+.globl _on_map_load_multiplayer_asm
+_on_map_load_multiplayer_asm:
+    mov eax, dword ptr [esp+0x28]
+    lea eax, [eax+0x14]
+    push eax
+    call _on_map_load_multiplayer
+    add esp, 4
+    cmp eax, 0
+    je on_map_load_multiplayer_asm_end
+    add esp, 4
+    popad
+    popfd
+    push [_on_map_load_multiplayer_fail]
+    on_map_load_multiplayer_asm_end:
     ret

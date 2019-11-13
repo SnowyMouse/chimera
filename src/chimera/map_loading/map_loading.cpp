@@ -691,6 +691,18 @@ namespace Chimera {
         return 0;
     }
 
+    extern "C" void on_map_load_multiplayer_asm() noexcept;
+    extern "C" {
+        std::byte *on_map_load_multiplayer_fail;
+    }
+    extern "C" int on_map_load_multiplayer(const char *map) noexcept {
+        if(path_for_map(map)) {
+            return 0;
+        }
+        console_output("Failed to load %s", map);
+        return 1;
+    }
+
     void set_up_map_loading() {
         static Hook hook;
         auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
@@ -737,5 +749,11 @@ namespace Chimera {
             auto &read_map_file_data_sig = get_chimera().get_signature("read_map_file_data_sig");
             write_jmp_call(read_map_file_data_sig.data(), read_cache_file_data_hook, reinterpret_cast<const void *>(on_read_map_file_data_asm), nullptr);
         }
+
+        // Now do map downloading
+        static Hook map_load_multiplayer_hook;
+        auto &map_load_multiplayer_sig = get_chimera().get_signature("map_load_multiplayer_sig");
+        write_jmp_call(map_load_multiplayer_sig.data(), map_load_multiplayer_hook, reinterpret_cast<const void *>(on_map_load_multiplayer_asm));
+        on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
     }
 }
