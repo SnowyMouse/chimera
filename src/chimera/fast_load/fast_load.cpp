@@ -99,7 +99,7 @@ namespace Chimera {
 
         return crc;
     }
-    
+
     extern std::uint32_t maps_in_ram_crc32;
 
     extern "C" void on_get_crc32() noexcept {
@@ -290,7 +290,9 @@ namespace Chimera {
             ADD_STOCK_MAP("gephyrophobia");
         }
 
-        auto add_map_by_path = [&add_map](const char *path) {
+        std::vector<std::string> maps;
+
+        auto add_map_by_path = [&maps](const char *path) {
             // Next, add new maps
             WIN32_FIND_DATA find_file_data;
             auto handle = FindFirstFile(path, &find_file_data);
@@ -307,7 +309,18 @@ namespace Chimera {
                 }
 
                 // Add it maybe
-                add_map(find_file_data.cFileName, len);
+                bool added = false;
+                std::string name(find_file_data.cFileName, len);
+                for(std::size_t m = 0; m < maps.size(); m++) {
+                    if(maps[m] > name) {
+                        maps.insert(maps.begin() + m, name);
+                        added = true;
+                        break;
+                    }
+                }
+                if(!added) {
+                    maps.emplace_back(std::move(name));
+                }
                 ok = FindNextFile(handle, &find_file_data);
             }
         };
@@ -317,6 +330,11 @@ namespace Chimera {
         const char *chimera_path = get_chimera().get_path();
         if(static_cast<std::size_t>(std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path)) < sizeof(dir)) {
             add_map_by_path(dir);
+        }
+
+        // Add the map list
+        for(auto &map : maps) {
+            add_map(map.data(), map.size());
         }
 
         // Lastly, allocate things
