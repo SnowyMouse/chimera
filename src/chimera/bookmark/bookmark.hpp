@@ -9,6 +9,7 @@ namespace Chimera {
     struct Bookmark {
         char ip_address[64];
         char server_name[64];
+        char password[64];
     };
 
     /**

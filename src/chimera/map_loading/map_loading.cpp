@@ -10,11 +10,13 @@
 #include "../output/output.hpp"
 #include "../output/draw_text.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../halo_data/script.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
 #include "../config/ini.hpp"
 #include "../event/frame.hpp"
 #include "../../hac_map_downloader/hac_map_downloader.hpp"
+#include "../bookmark/bookmark.hpp"
 #include <chrono>
 
 namespace Invader::Compression {
@@ -696,6 +698,14 @@ namespace Chimera {
 
     std::unique_ptr<HACMapDownloader> map_downloader;
     char download_temp_file[MAX_PATH];
+
+    static char connect_command[256];
+
+    static void initiate_connection() {
+        remove_preframe_event(initiate_connection);
+        execute_script(connect_command);
+    }
+
     static void download_frame() {
         char output[128];
 
@@ -742,15 +752,22 @@ namespace Chimera {
                 apply_text(std::string(progress_buffer), x + 370, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
                 break;
             }
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE:
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
                 std::snprintf(output, sizeof(output), "Done!");
-                console_output("Download complete.");
+                console_output("Download complete. Reconnecting...");
 
                 char to_path[MAX_PATH];
                 std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().data());
 
                 std::filesystem::rename(download_temp_file, to_path);
+
+                auto &latest_connection = get_latest_connection();
+                std::snprintf(connect_command, sizeof(connect_command), "connect \"%s\" \"%s\"", latest_connection.ip_address, latest_connection.password);
+                execute_script(connect_command);
+
+                add_preframe_event(initiate_connection);
                 break;
+            }
             default: {
                 std::snprintf(output, sizeof(output), "Download failed");
                 console_output("Download failed.");
