@@ -7,8 +7,9 @@ namespace Chimera {
     /**
      * Execute the script
      * @param script script to execute
+     * @param lower  have Halo lowercase the string
      */
-    void execute_script(const char *script) noexcept;
+    void execute_script(const char *script, bool lower = false) noexcept;
 }
 
 #endif
