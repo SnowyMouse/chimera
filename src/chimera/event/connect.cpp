@@ -9,7 +9,7 @@ extern "C" {
 }
 
 namespace Chimera {
-    static void enable_camera_hook();
+    static void enable_connect_hook();
 
     static std::vector<Event<ConnectEventFunction>> preconnect_events;
 
@@ -18,7 +18,7 @@ namespace Chimera {
         remove_preconnect_event(function);
 
         // Enable camera hook if not enabled
-        enable_camera_hook();
+        enable_connect_hook();
 
         // Add the event
         preconnect_events.emplace_back(Event<ConnectEventFunction> { function, priority });
@@ -33,16 +33,18 @@ namespace Chimera {
         }
     }
 
-    extern "C" bool on_preconnect(std::uint32_t &ip, std::uint16_t &port) {
+    extern "C" bool on_preconnect(std::uint32_t &ip, std::uint16_t &port, char16_t *password) {
+        char password_char8[9] = {};
+        std::copy(password, password + sizeof(password_char8) - 1, password_char8);
         bool allow = true;
-        call_in_order_allow(preconnect_events, allow, ip, port);
+        call_in_order_allow(preconnect_events, allow, ip, port, password_char8);
         return allow;
     }
 
     /**
-     * Enable the camera hook if it's not already enabled.
+     * Enable the connect hook if it's not already enabled.
      */
-    static void enable_camera_hook() {
+    static void enable_connect_hook() {
         // Enable if not already enabled.
         static bool enabled = false;
         if(enabled) {

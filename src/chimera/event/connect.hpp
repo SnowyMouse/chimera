@@ -6,7 +6,7 @@
 #include "event.hpp"
 
 namespace Chimera {
-    using ConnectEventFunction = bool (*)(std::uint32_t &ip, std::uint16_t &port);
+    using ConnectEventFunction = bool (*)(std::uint32_t &ip, std::uint16_t &port, const char *password);
 
     /**
      * Add or replace a preconnect event. This event occurs before a connection is made.

@@ -15,11 +15,12 @@ namespace Chimera {
         return latest_connection;
     }
 
-    static bool on_connect(std::uint32_t &ip, std::uint16_t &port) {
+    static bool on_connect(std::uint32_t &ip, std::uint16_t &port, const char *password) {
         // Prepare the bookmark
         std::uint8_t *ip_chars = reinterpret_cast<std::uint8_t *>(&ip);
         Bookmark x = {};
         std::snprintf(x.ip_address, sizeof(x.ip_address), "%i.%i.%i.%i:%i", ip_chars[3], ip_chars[2], ip_chars[1], ip_chars[0], port);
+        std::snprintf(x.password, sizeof(x.password), "%s", password);
 
         // See if it's already in the history. If so, remove it
         auto history = load_bookmarks_file("history.txt");
