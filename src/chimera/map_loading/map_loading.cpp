@@ -694,6 +694,7 @@ namespace Chimera {
     }
 
     std::unique_ptr<HACMapDownloader> map_downloader;
+    char download_temp_file[MAX_PATH];
     static void download_frame() {
         switch(map_downloader->get_status()) {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
@@ -723,6 +724,11 @@ namespace Chimera {
             }
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE:
                 console_output("Done!");
+
+                char to_path[MAX_PATH];
+                std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().data());
+
+                std::filesystem::rename(download_temp_file, to_path);
                 break;
             default: {
                 console_output("Failed!");
@@ -745,12 +751,13 @@ namespace Chimera {
             return 0;
         }
 
-        console_output("Failed to load %s", map);
+        console_output("Failed to load %s. Attempting to download...", map);
 
         char path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%s\\maps\\%s.map", get_chimera().get_path(), map);
+        std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
         map_downloader = std::make_unique<HACMapDownloader>(map, path);
         map_downloader->dispatch();
+        std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);
         return 1;
     }
