@@ -735,8 +735,8 @@ namespace Chimera {
 
                 // Draw the progress
                 char progress_buffer[80];
-                std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f", dlnow / 1024.0F / 1024.0F);
-                apply_text(std::string(progress_buffer), x + 300, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f ", dlnow / 1024.0F / 1024.0F);
+                apply_text(std::string(progress_buffer), x + 270, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "/ %.02f MiB - %0.02f %%", dltotal / 1024.0F / 1024.0F, 100.0F * dlnow / dltotal);
                 apply_text(std::string(progress_buffer), x + 370, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
