@@ -12,6 +12,7 @@
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/script.hpp"
 #include "../halo_data/map.hpp"
+#include "../fast_load/fast_load.hpp"
 #include "../halo_data/tag.hpp"
 #include "../config/ini.hpp"
 #include "../event/frame.hpp"
@@ -763,6 +764,8 @@ namespace Chimera {
                 std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().data());
 
                 std::filesystem::rename(download_temp_file, to_path);
+
+                reload_map_list();
 
                 auto &latest_connection = get_latest_connection();
                 std::snprintf(connect_command, sizeof(connect_command), "connect \"%s\" \"%s\"", latest_connection.ip_address, latest_connection.password);
