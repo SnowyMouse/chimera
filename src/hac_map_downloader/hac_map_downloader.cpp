@@ -14,7 +14,7 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     unsigned int repo = 1;
     do {
         char url[255];
-        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=7z&map=%s", repo, downloader->map.data());
+        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s", repo, downloader->map.data());
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
         downloader->download_started = Clock::now();
         result = curl_easy_perform(downloader->curl);
