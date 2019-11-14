@@ -709,10 +709,10 @@ namespace Chimera {
     }
 
     static void download_frame() {
-        char output[128];
+        char output[128] = {};
 
-        std::int16_t x = -320 + 50;
-        std::int16_t width = 640;
+        std::int16_t x = -320 + 20;
+        std::int16_t width = ((640 / 2) - (640 / 2 + x)) * 2;
         std::int16_t y = 210;
         std::int16_t height = 240 - y;
         auto font = get_generic_font(GenericFont::FONT_CONSOLE);
@@ -734,8 +734,21 @@ namespace Chimera {
                 auto dlnow = map_downloader->get_downloaded_size();
                 auto dltotal = map_downloader->get_total_size();
 
-                char download_speed_buffer[64];
+                // Draw the progress
+                apply_text("Transferred:", x, y, 100, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                char progress_buffer[80];
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f ", dlnow / 1024.0F / 1024.0F);
+                apply_text(std::string(progress_buffer), x + 100, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "/ %.02f MiB", dltotal / 1024.0F / 1024.0F);
+                apply_text(std::string(progress_buffer), x + 200, y, 150, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "%0.02f %%", 100.0F * dlnow / dltotal);
+                apply_text(std::string(progress_buffer), x + 350, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
+
+
+
+                char download_speed_buffer[64];
                 auto download_speed = map_downloader->get_download_speed();
                 if(download_speed > 1000) {
                     std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%.01f MB/s", download_speed / 1000.0F);
@@ -743,17 +756,8 @@ namespace Chimera {
                 else {
                     std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%zu kB/s", download_speed);
                 }
+                apply_text(download_speed_buffer, x + 450, y, 150, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
-                // Draw the speed
-                std::snprintf(output, sizeof(output), "Downloading... %s", download_speed_buffer);
-
-                // Draw the progress
-                char progress_buffer[80];
-                std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f ", dlnow / 1024.0F / 1024.0F);
-                apply_text(std::string(progress_buffer), x + 270, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
-
-                std::snprintf(progress_buffer, sizeof(progress_buffer), "/ %.02f MiB - %0.02f %%", dltotal / 1024.0F / 1024.0F, 100.0F * dlnow / dltotal);
-                apply_text(std::string(progress_buffer), x + 370, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
                 break;
             }
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
@@ -778,17 +782,19 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Canceling download...");
                 break;
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
-                std::snprintf(output, sizeof(output), "Download canceled");
+                std::snprintf(output, sizeof(output), "Download canceled!");
                 break;
             default: {
-                std::snprintf(output, sizeof(output), "Download failed");
-                console_output("Download failed.");
+                std::snprintf(output, sizeof(output), "Download failed!");
+                console_output("Download failed!");
                 break;
             }
         }
 
         // Draw the progress text
-        apply_text(output, x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+        if(*output) {
+            apply_text(output, x, y, width, height, color, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+        }
 
         if(map_downloader->is_finished()) {
             delete map_downloader.release();
@@ -815,7 +821,7 @@ namespace Chimera {
         // Change the server status text
         static Hook hook1, hook2;
         char text_string8[sizeof(download_text_string) / sizeof(*download_text_string)] = {};
-        std::snprintf(text_string8, sizeof(text_string8), "Downloading %s.map", map);
+        std::snprintf(text_string8, sizeof(text_string8), "Downloading %s.map...", map);
         std::copy(text_string8, text_string8 + sizeof(text_string8), download_text_string);
 
         auto &server_join_progress_text_sig = get_chimera().get_signature("server_join_progress_text_sig");
