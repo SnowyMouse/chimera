@@ -110,21 +110,21 @@ void HACMapDownloader::dispatch() {
     this->curl = curl_easy_init();
 
     // Set our callbacks
-    curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, HACMapDownloaderCallback::progress_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HACMapDownloaderCallback::write_callback);
+    curl_easy_setopt(this->curl, CURLOPT_XFERINFOFUNCTION, HACMapDownloaderCallback::progress_callback);
+    curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, HACMapDownloaderCallback::write_callback);
 
     // Set the data passed to the callbacks so our class can be updated
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
+    curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this);
+    curl_easy_setopt(this->curl, CURLOPT_PROGRESSDATA, this);
 
     // Enable progress bar
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(this->curl, CURLOPT_NOPROGRESS, 0);
 
     // Fail on error
-    curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+    curl_easy_setopt(this->curl, CURLOPT_FAILONERROR, 1);
 
     // 10 second timeout
-    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, 10L);
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
