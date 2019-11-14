@@ -730,12 +730,10 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Connecting to repo...");
                 break;
             case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
-                std::snprintf(output, sizeof(output), "Downloading...");
-
                 auto dlnow = map_downloader->get_downloaded_size();
                 auto dltotal = map_downloader->get_total_size();
 
-                char download_speed_buffer[32];
+                char download_speed_buffer[64];
 
                 auto download_speed = map_downloader->get_download_speed();
                 if(download_speed > 1000) {
@@ -746,7 +744,7 @@ namespace Chimera {
                 }
 
                 // Draw the speed
-                apply_text(std::string(download_speed_buffer), x + 150, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                std::snprintf(output, sizeof(output), "Downloading... %s", download_speed_buffer);
 
                 // Draw the progress
                 char progress_buffer[80];
