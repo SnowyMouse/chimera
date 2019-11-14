@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <chrono>
+#include <thread>
 
 /**
  * Map downloading class
@@ -16,13 +17,20 @@ public:
         DOWNLOAD_STAGE_STARTING,
         DOWNLOAD_STAGE_DOWNLOADING,
         DOWNLOAD_STAGE_COMPLETE,
-        DOWNLOAD_STAGE_FAILED
+        DOWNLOAD_STAGE_FAILED,
+        DOWNLOAD_STAGE_CANCELING,
+        DOWNLOAD_STAGE_CANCELED
     };
 
     /**
      * Begin the download
      */
     void dispatch();
+
+    /**
+     * Abort the download
+     */
+    void cancel() noexcept;
 
     /**
      * Get the current download status
@@ -43,12 +51,6 @@ public:
     std::size_t get_total_size() noexcept;
 
     /**
-     * Get a vector holding all of the map data
-     * @return pointer to a vector holding map data or nullptr if the download was not successful
-     */
-    const std::vector<std::byte> *get_map_data() noexcept;
-
-    /**
      * Get whether or not the download is finished
      * @return true if the download is finished
      */
@@ -59,6 +61,12 @@ public:
      * @return download speed in kilobytes per second
      */
     std::size_t get_download_speed() noexcept;
+
+    /**
+     * Get the map name
+     * @return map name
+     */
+    const std::string &get_map() const noexcept;
 
     HACMapDownloader(const char *map, const char *output_file);
     ~HACMapDownloader();
@@ -88,12 +96,6 @@ private:
     /** Current status of the download */
     DownloadStage status = DOWNLOAD_STAGE_NOT_STARTED;
 
-    /**
-     * Dispatch thread that does the map downloading
-     * @param downloader downloader reference
-     */
-    static void dispatch_thread(HACMapDownloader *downloader);
-
     /** Buffer for holding data */
     std::vector<std::byte> buffer;
 
@@ -111,6 +113,21 @@ private:
 
     /** Callback class */
     class HACMapDownloaderCallback;
+
+    /** Dispatch thread that does map downloading */
+    std::thread dispatch_thread;
+
+    /**
+     * Dispatch thread function that does the map downloading
+     * @param downloader downloader reference
+     */
+    static void dispatch_thread_function(HACMapDownloader *downloader);
+
+    /**
+     * Check if finished without locking
+     * @return true if finished
+     */
+    bool is_finished_no_mutex() const noexcept;
 };
 
 #endif

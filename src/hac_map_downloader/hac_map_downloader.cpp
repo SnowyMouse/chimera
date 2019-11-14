@@ -4,10 +4,11 @@
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
+#include <filesystem>
 
 #include "hac_map_downloader.hpp"
 
-void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
+void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     // Set the URL
     CURLcode result;
     unsigned int repo = 1;
@@ -18,6 +19,15 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
         downloader->download_started = Clock::now();
         result = curl_easy_perform(downloader->curl);
         repo++;
+
+        // Cancel?
+        downloader->mutex.lock();
+        if(downloader->status == DownloadStage::DOWNLOAD_STAGE_CANCELING) {
+            curl_easy_cleanup(downloader->curl);
+            downloader->curl = nullptr;
+            return;
+        }
+        downloader->mutex.unlock();
     }
     while(result != CURLcode::CURLE_COULDNT_RESOLVE_HOST && result != CURLcode::CURLE_OK);
 
@@ -33,6 +43,7 @@ void HACMapDownloader::dispatch_thread(HACMapDownloader *downloader) {
 
     // Close the file handle
     std::fclose(downloader->output_file_handle);
+    downloader->output_file_handle = nullptr;
 
     downloader->status = DOWNLOAD_STAGE_COMPLETE;
     downloader->mutex.unlock();
@@ -62,6 +73,13 @@ public:
     // When we've received data, put it in here
     static size_t write_callback(const std::byte *ptr, std::size_t, std::size_t nmemb, HACMapDownloader *userdata) {
         userdata->mutex.lock();
+
+        // If we're canceling, stop
+        if(userdata->status == HACMapDownloader::DOWNLOAD_STAGE_CANCELING) {
+            userdata->mutex.unlock();
+            return 0;
+        }
+
         userdata->status = HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
         if(userdata->buffer_used + nmemb > userdata->buffer.size()) {
             std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->output_file_handle);
@@ -86,6 +104,33 @@ public:
         return 0;
     }
 };
+
+const std::string &HACMapDownloader::get_map() const noexcept {
+    return this->map;
+}
+
+void HACMapDownloader::cancel() noexcept {
+    this->mutex.lock();
+    bool not_finished = false;
+    if(!this->is_finished_no_mutex()) {
+        this->status = HACMapDownloader::DOWNLOAD_STAGE_CANCELING;
+        not_finished = true;
+    }
+    this->mutex.unlock();
+
+    // If we aren't finished, then set the status to canceled and delete things
+    this->dispatch_thread.join();
+    if(not_finished) {
+        this->mutex.lock();
+        this->status = DOWNLOAD_STAGE_CANCELED;
+        if(this->output_file_handle) {
+            std::fclose(this->output_file_handle);
+            this->output_file_handle = nullptr;
+        }
+        std::filesystem::remove(this->output_file);
+        this->mutex.unlock();
+    }
+}
 
 // Set up stuff
 void HACMapDownloader::dispatch() {
@@ -137,10 +182,11 @@ void HACMapDownloader::dispatch() {
     this->downloaded_size = 0;
     this->total_size = 0;
 
+    // Make the thread happen
+    this->dispatch_thread = std::thread(HACMapDownloader::dispatch_thread_function, this);
+
     // Unlock
     this->mutex.unlock();
-
-    std::thread(HACMapDownloader::dispatch_thread, this).detach();
 }
 
 HACMapDownloader::DownloadStage HACMapDownloader::get_status() noexcept {
@@ -164,17 +210,21 @@ std::size_t HACMapDownloader::get_total_size() noexcept {
     return return_value;
 }
 
+bool HACMapDownloader::is_finished_no_mutex() const noexcept {
+    return this->status == DOWNLOAD_STAGE_COMPLETE || this->status == DOWNLOAD_STAGE_FAILED || this->status == DOWNLOAD_STAGE_NOT_STARTED || this->status == DOWNLOAD_STAGE_CANCELED;
+}
+
 bool HACMapDownloader::is_finished() noexcept {
     auto m = this->mutex.try_lock();
     if(!m) {
         return false;
     }
-    bool finished = this->status == DOWNLOAD_STAGE_COMPLETE || this->status == DOWNLOAD_STAGE_FAILED || this->status == DOWNLOAD_STAGE_NOT_STARTED;
+    bool finished = this->is_finished_no_mutex();
     this->mutex.unlock();
     return finished;
 }
 
 HACMapDownloader::HACMapDownloader(const char *map, const char *output_file) : map(map), output_file(output_file) {}
 HACMapDownloader::~HACMapDownloader() {
-    while(!this->is_finished());
+    this->cancel();
 }
