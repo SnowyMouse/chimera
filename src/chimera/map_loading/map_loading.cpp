@@ -17,6 +17,7 @@
 #include "../event/frame.hpp"
 #include "../../hac_map_downloader/hac_map_downloader.hpp"
 #include "../bookmark/bookmark.hpp"
+#include "../halo_data/multiplayer.hpp"
 #include <chrono>
 
 namespace Invader::Compression {
@@ -717,6 +718,10 @@ namespace Chimera {
 
         ColorARGB color { 1.0F, 1.0F, 1.0F, 1.0F };
 
+        if(server_type() == SERVER_NONE) {
+            map_downloader->cancel();
+        }
+
         switch(map_downloader->get_status()) {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
                 std::snprintf(output, sizeof(output), "Wait a minute...");
@@ -753,7 +758,7 @@ namespace Chimera {
                 break;
             }
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
-                std::snprintf(output, sizeof(output), "Done!");
+                std::snprintf(output, sizeof(output), "Reconnecting...");
                 console_output("Download complete. Reconnecting...");
 
                 char to_path[MAX_PATH];
@@ -768,6 +773,12 @@ namespace Chimera {
                 add_preframe_event(initiate_connection);
                 break;
             }
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELING:
+                std::snprintf(output, sizeof(output), "Canceling download...");
+                break;
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
+                std::snprintf(output, sizeof(output), "Download canceled");
+                break;
             default: {
                 std::snprintf(output, sizeof(output), "Download failed");
                 console_output("Download failed.");

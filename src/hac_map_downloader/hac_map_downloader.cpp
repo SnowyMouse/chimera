@@ -27,7 +27,6 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
             downloader->curl = nullptr;
             return;
         }
-        downloader->mutex.unlock();
     }
     while(result != CURLcode::CURLE_COULDNT_RESOLVE_HOST && result != CURLcode::CURLE_OK);
 
@@ -111,6 +110,10 @@ const std::string &HACMapDownloader::get_map() const noexcept {
 
 void HACMapDownloader::cancel() noexcept {
     this->mutex.lock();
+    if(this->status == DOWNLOAD_STAGE_CANCELED) {
+        this->mutex.unlock();
+        return;
+    }
     bool not_finished = false;
     if(!this->is_finished_no_mutex()) {
         this->status = HACMapDownloader::DOWNLOAD_STAGE_CANCELING;
@@ -121,7 +124,6 @@ void HACMapDownloader::cancel() noexcept {
     // If we aren't finished, then set the status to canceled and delete things
     this->dispatch_thread.join();
     if(not_finished) {
-        this->mutex.lock();
         this->status = DOWNLOAD_STAGE_CANCELED;
         if(this->output_file_handle) {
             std::fclose(this->output_file_handle);
