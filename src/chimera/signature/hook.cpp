@@ -314,7 +314,7 @@ namespace Chimera {
         }
     }
 
-    void write_jmp_call(void *jmp_at, Hook &hook, const void *call_before, const void *call_after) {
+    void write_jmp_call(void *jmp_at, Hook &hook, const void *call_before, const void *call_after, bool pushad_pushfd) {
         // Rollback the hook if not already done so
         hook.rollback();
 
@@ -328,7 +328,8 @@ namespace Chimera {
         get_instructions(jmp_at_byte, bytes, offsets, 5);
 
         // Calculate how much data we'll need. (size of bytes plus 9 bytes per call [5 for the call and 4 for pushad/popad and pushfd/popfd])
-        std::size_t size = bytes.size() + (call_before ? 9 : 0) + (call_after ? 9 : 0) + 5;
+        std::size_t added_pushad_bytes = pushad_pushfd ? 4 : 0;
+        std::size_t size = bytes.size() + (call_before ? 5 + added_pushad_bytes : 0) + (call_after ? 5 + added_pushad_bytes : 0) + 5;
 
         // Back up the original bytes
         hook.original_bytes.insert(hook.original_bytes.end(), jmp_at_byte, jmp_at_byte + bytes.size());
@@ -352,26 +353,30 @@ namespace Chimera {
         }
 
         // Let's do dis
-        auto add_call = [](const void *where, std::byte *data) {
-            // pushfd
-            *reinterpret_cast<std::uint8_t *>(data + 0) = 0x9C;
-            // pushad
-            *reinterpret_cast<std::uint8_t *>(data + 1) = 0x60;
+        auto add_call = [&pushad_pushfd](const void *where, std::byte *data) {
+            std::size_t call_offset = pushad_pushfd ? 2 : 0;
+
+            if(pushad_pushfd) {
+                // pushfd
+                *reinterpret_cast<std::uint8_t *>(data + 0) = 0x9C;
+                // pushad
+                *reinterpret_cast<std::uint8_t *>(data + 1) = 0x60;
+
+                // popad
+                *reinterpret_cast<std::uint8_t *>(data + 7) = 0x61;
+                // popfd
+                *reinterpret_cast<std::uint8_t *>(data + 8) = 0x9D;
+            }
 
             // call
-            *reinterpret_cast<std::uint8_t *>(data + 2) = 0xE8;
-            *reinterpret_cast<std::uintptr_t *>(data + 3) = reinterpret_cast<const std::byte *>(where) - (data + 2 + 5);
-
-            // popad
-            *reinterpret_cast<std::uint8_t *>(data + 7) = 0x61;
-            // popfd
-            *reinterpret_cast<std::uint8_t *>(data + 8) = 0x9D;
+            *reinterpret_cast<std::uint8_t *>(data + call_offset) = 0xE8;
+            *reinterpret_cast<std::uintptr_t *>(data + call_offset + 1) = reinterpret_cast<const std::byte *>(where) - (data + call_offset + 5);
         };
 
         // Add the first call
         if(call_before) {
             add_call(reinterpret_cast<const std::uint8_t *>(call_before), hook_data);
-            hook_data += 9;
+            hook_data += 5 + added_pushad_bytes;
         }
 
         // Copy the original instructions
@@ -399,7 +404,7 @@ namespace Chimera {
         // Add the other call
         if(call_after) {
             add_call(reinterpret_cast<const std::uint8_t *>(call_after), hook_data);
-            hook_data += 9;
+            hook_data += 5 + added_pushad_bytes;
         }
 
         // Add the jmp instruction to exit this hook

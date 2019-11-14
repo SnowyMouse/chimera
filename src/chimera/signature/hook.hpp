@@ -31,12 +31,13 @@ namespace Chimera {
 
     /**
      * Write an x86 jmp instruction over the given instruction, copying the original instruction to a hook.
-     * @param jmp_at      This is a pointer to the instruction to overwrite.
-     * @param hook        This is the hook to write the changes to.
-     * @param call_before This is the function to call before the original instruction is run.
-     * @param call_after  This is the function to call after the original instruction is run and just before returning to Halo's code.
+     * @param jmp_at             This is a pointer to the instruction to overwrite.
+     * @param hook               This is the hook to write the changes to.
+     * @param call_before        This is the function to call before the original instruction is run.
+     * @param call_after         This is the function to call after the original instruction is run and just before returning to Halo's code.
+     * @param bool pushad_pushfd Use pushad/pushfd
      */
-    void write_jmp_call(void *jmp_at, Hook &hook, const void *call_before = nullptr, const void *call_after = nullptr);
+    void write_jmp_call(void *jmp_at, Hook &hook, const void *call_before = nullptr, const void *call_after = nullptr, bool pushad_pushfd = true);
 
     /**
      * Override the given function with a function.

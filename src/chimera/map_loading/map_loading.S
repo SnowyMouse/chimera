@@ -47,3 +47,9 @@ _on_map_load_multiplayer_asm:
     push [_on_map_load_multiplayer_fail]
     on_map_load_multiplayer_asm_end:
     ret
+
+.globl _on_server_join_text_asm
+_on_server_join_text_asm:
+    lea eax, _download_text_string
+    mov [esp+0x4], eax
+    ret

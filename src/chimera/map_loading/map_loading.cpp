@@ -8,6 +8,7 @@
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../output/output.hpp"
+#include "../output/draw_text.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
@@ -696,14 +697,26 @@ namespace Chimera {
     std::unique_ptr<HACMapDownloader> map_downloader;
     char download_temp_file[MAX_PATH];
     static void download_frame() {
+        char output[128];
+
+        std::int16_t x = -320 + 50;
+        std::int16_t width = 640;
+        std::int16_t y = 210;
+        std::int16_t height = 240 - y;
+        auto font = get_generic_font(GenericFont::FONT_CONSOLE);
+
+        ColorARGB color { 1.0F, 1.0F, 1.0F, 1.0F };
+
         switch(map_downloader->get_status()) {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
-                console_output("Wait a minute...");
+                std::snprintf(output, sizeof(output), "Wait a minute...");
                 break;
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
-                console_output("Map download starting...");
+                std::snprintf(output, sizeof(output), "Connecting to repo...");
                 break;
             case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
+                std::snprintf(output, sizeof(output), "Downloading...");
+
                 auto dlnow = map_downloader->get_downloaded_size();
                 auto dltotal = map_downloader->get_total_size();
 
@@ -717,13 +730,21 @@ namespace Chimera {
                     std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%zu kB/s", download_speed);
                 }
 
-                char full_buffer[80];
-                std::snprintf(full_buffer, sizeof(full_buffer), "Progress: %7.02f / %7.02f MiB (%4.01f%%, %s)", dlnow / 1024.0F / 1024.0F, dltotal / 1024.0F / 1024.0F, static_cast<float>(dlnow) / dltotal * 100.0F, download_speed_buffer);
-                console_output("%s", full_buffer);
+                // Draw the speed
+                apply_text(std::string(download_speed_buffer), x + 150, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+
+                // Draw the progress
+                char progress_buffer[80];
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f", dlnow / 1024.0F / 1024.0F);
+                apply_text(std::string(progress_buffer), x + 300, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+
+                std::snprintf(progress_buffer, sizeof(progress_buffer), "/ %.02f MiB - %0.02f %%", dltotal / 1024.0F / 1024.0F, 100.0F * dlnow / dltotal);
+                apply_text(std::string(progress_buffer), x + 370, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
                 break;
             }
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE:
-                console_output("Done!");
+                std::snprintf(output, sizeof(output), "Done!");
+                console_output("Download complete.");
 
                 char to_path[MAX_PATH];
                 std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().data());
@@ -731,27 +752,52 @@ namespace Chimera {
                 std::filesystem::rename(download_temp_file, to_path);
                 break;
             default: {
-                console_output("Failed!");
+                std::snprintf(output, sizeof(output), "Download failed");
+                console_output("Download failed.");
                 break;
             }
         }
 
+        // Draw the progress text
+        apply_text(output, x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+
         if(map_downloader->is_finished()) {
             delete map_downloader.release();
             remove_preframe_event(download_frame);
+            get_chimera().get_signature("server_join_progress_text_sig").rollback();
+            get_chimera().get_signature("server_join_established_text_sig").rollback();
+            get_chimera().get_signature("esrb_text_sig").rollback();
         }
     }
 
     extern "C" void on_map_load_multiplayer_asm() noexcept;
     extern "C" {
         std::byte *on_map_load_multiplayer_fail;
+        char16_t download_text_string[64] = {};
     }
+
+    extern "C" void on_server_join_text_asm() noexcept;
+
     extern "C" int on_map_load_multiplayer(const char *map) noexcept {
         if(path_for_map(map)) {
             return 0;
         }
 
-        console_output("Failed to load %s. Attempting to download...", map);
+        // Change the server status text
+        static Hook hook1, hook2;
+        char text_string8[sizeof(download_text_string) / sizeof(*download_text_string)] = {};
+        std::snprintf(text_string8, sizeof(text_string8), "Downloading %s.map", map);
+        std::copy(text_string8, text_string8 + sizeof(text_string8), download_text_string);
+
+        auto &server_join_progress_text_sig = get_chimera().get_signature("server_join_progress_text_sig");
+        write_jmp_call(server_join_progress_text_sig.data() + 10, hook1, reinterpret_cast<const void *>(on_server_join_text_asm), nullptr, false);
+
+        auto &server_join_established_text_sig = get_chimera().get_signature("server_join_established_text_sig");
+        write_jmp_call(server_join_established_text_sig.data() + 5, hook2, reinterpret_cast<const void *>(on_server_join_text_asm), nullptr, false);
+
+        auto &esrb_text_sig = get_chimera().get_signature("esrb_text_sig");
+        overwrite(esrb_text_sig.data() + 5, static_cast<std::int16_t>(0x7FFF));
+        overwrite(esrb_text_sig.data() + 5 + 7, static_cast<std::int16_t>(0x7FFF));
 
         char path[MAX_PATH];
         std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
