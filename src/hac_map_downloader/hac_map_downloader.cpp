@@ -229,7 +229,11 @@ bool HACMapDownloader::is_finished() noexcept {
     return finished;
 }
 
-HACMapDownloader::HACMapDownloader(const char *map, const char *output_file) : map(map), output_file(output_file) {}
+HACMapDownloader::HACMapDownloader(const char *map, const char *output_file) : map(map), output_file(output_file) {
+    for(char &c : this->map) {
+        c = std::tolower(c);
+    }
+}
 HACMapDownloader::~HACMapDownloader() {
     this->cancel();
 }
