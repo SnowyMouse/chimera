@@ -813,7 +813,11 @@ namespace Chimera {
 
     extern "C" void on_server_join_text_asm() noexcept;
 
-    extern "C" int on_map_load_multiplayer(const char *map) noexcept {
+    extern "C" int on_map_load_multiplayer(char *map) noexcept {
+        for(char *c = map; *c; c++) {
+            *c = std::tolower(*c);
+        }
+
         if(path_for_map(map)) {
             return 0;
         }
