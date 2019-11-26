@@ -37,16 +37,23 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     curl_easy_cleanup(downloader->curl);
     downloader->curl = nullptr;
 
-    // Write the last data
-    std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->output_file_handle);
-    downloader->buffer_used = 0;
-    downloader->buffer.clear();
+    // If we were successful, do it
+    if(result == CURLcode::CURLE_OK) {
+        // Write the last data
+        std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->output_file_handle);
+        downloader->buffer_used = 0;
+        downloader->buffer.clear();
 
-    // Close the file handle
-    std::fclose(downloader->output_file_handle);
-    downloader->output_file_handle = nullptr;
+        // Close the file handle
+        std::fclose(downloader->output_file_handle);
+        downloader->output_file_handle = nullptr;
 
-    downloader->status = DOWNLOAD_STAGE_COMPLETE;
+        downloader->status = DOWNLOAD_STAGE_COMPLETE;
+    }
+    else {
+        downloader->status = DOWNLOAD_STAGE_FAILED;
+    }
+
     downloader->mutex.unlock();
 }
 

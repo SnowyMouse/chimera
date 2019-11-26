@@ -787,6 +787,8 @@ namespace Chimera {
             default: {
                 std::snprintf(output, sizeof(output), "Download failed!");
                 console_output("Download failed!");
+                std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
+                add_preframe_event(initiate_connection);
                 break;
             }
         }
