@@ -124,7 +124,7 @@ namespace Chimera {
 
                 MapHeader header;
                 if(!maps_in_ram_region) {
-                    std::fopen(path, "rb");
+                    f = std::fopen(path, "rb");
                     if(!f) {
                         return;
                     }
