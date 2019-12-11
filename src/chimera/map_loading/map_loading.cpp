@@ -901,5 +901,11 @@ namespace Chimera {
         auto &map_load_multiplayer_sig = get_chimera().get_signature("map_load_multiplayer_sig");
         write_jmp_call(map_load_multiplayer_sig.data(), map_load_multiplayer_hook, reinterpret_cast<const void *>(on_map_load_multiplayer_asm));
         on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
+
+        // Make the meme go away
+        static Hook land_of_fun_hook;
+        auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
+        static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
+        write_code_s(preload_map_sig, mov_eax_1);
     }
 }
