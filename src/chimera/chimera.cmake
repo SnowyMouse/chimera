@@ -14,6 +14,7 @@ add_library(chimera STATIC
     src/chimera/annoyance/registry.cpp
     src/chimera/bookmark/bookmark.cpp
     src/chimera/command/command.cpp
+    src/chimera/command/hotkey.cpp
     src/chimera/config/config.cpp
     src/chimera/config/ini.cpp
     src/chimera/console/console.cpp
@@ -67,6 +68,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/effect.cpp
     src/chimera/halo_data/flag.cpp
     src/chimera/halo_data/game_engine.cpp
+    src/chimera/halo_data/keyboard.cpp
     src/chimera/halo_data/light.cpp
     src/chimera/halo_data/map.cpp
     src/chimera/halo_data/map.S
