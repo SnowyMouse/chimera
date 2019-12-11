@@ -9,6 +9,7 @@
 namespace Chimera {
     static bool vsync = false;
     extern "C" void on_set_video_mode_initially() noexcept;
+    extern "C" void on_windowed_check_force_windowed() noexcept;
 
     void set_up_video_mode() noexcept {
         auto &chimera = get_chimera();
@@ -65,6 +66,14 @@ namespace Chimera {
         // And lastly, intercept Halo setting resolution
         static Hook set_hook;
         write_jmp_call(chimera.get_signature("default_resolution_set_sig").data(), set_hook, reinterpret_cast<const void *>(on_set_video_mode_initially));
+
+        // Also, windowed mode
+        auto *windowed_mode = ini->get_value("video_mode.windowed");
+        if(windowed_mode && *windowed_mode == '1') {
+            static Hook hook;
+            auto *windowed_sig = chimera.get_signature("windowed_sig").data();
+            write_jmp_call(windowed_sig, hook, reinterpret_cast<const void *>(on_windowed_check_force_windowed), nullptr, false);
+        }
     }
 
     extern "C" void set_vsync_setting_initially(std::byte *data) noexcept {

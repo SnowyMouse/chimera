@@ -8,3 +8,8 @@ _on_set_video_mode_initially:
     call _set_vsync_setting_initially
     add esp, 4
     ret
+
+.globl _on_windowed_check_force_windowed
+_on_windowed_check_force_windowed:
+    mov eax, 1
+    ret
