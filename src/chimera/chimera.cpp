@@ -36,6 +36,7 @@
 #include "fix/custom_map_lobby_fix.hpp"
 #include "halo_data/game_engine.hpp"
 #include "halo_data/main_menu_music.hpp"
+#include "halo_data/port.hpp"
 #include "config/ini.hpp"
 
 namespace Chimera {
@@ -151,6 +152,9 @@ namespace Chimera {
 
                 // Maybe disable main menu music?
                 block_main_menu_music_if_needed();
+
+                // Do this
+                set_ports();
             }
             else {
                 enable_output(true);
