@@ -227,7 +227,9 @@ namespace Chimera {
         // Bookmark
         ADD_COMMAND("chimera_bookmark_list", "chimera_category_bookmark", "client", bookmark_list_command, false, 0, 0);
         ADD_COMMAND("chimera_bookmark_add", "chimera_category_bookmark", "client", bookmark_add_command, false, 0, 2);
+        ADD_COMMAND("chimera_bookmark_connect", "chimera_category_bookmark", "client", bookmark_connect_command, false, 1, 1);
         ADD_COMMAND("chimera_bookmark_delete", "chimera_category_bookmark", "client", bookmark_delete_command, false, 0, 1);
         ADD_COMMAND("chimera_history_list", "chimera_category_bookmark", "client", history_list_command, false, 0, 0);
+        ADD_COMMAND("chimera_history_connect", "chimera_category_bookmark", "client", history_connect_command, false, 1, 1);
     }
 }

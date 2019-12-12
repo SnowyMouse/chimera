@@ -9,6 +9,7 @@
 #include <fstream>
 #include "../event/connect.hpp"
 #include "../output/output.hpp"
+#include "../halo_data/script.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../localization/localization.hpp"
 #include <mutex>
@@ -443,5 +444,47 @@ namespace Chimera {
         }
 
         return success;
+    }
+
+    static void join_bookmark(const Bookmark &bookmark) {
+        char connect_command[256];
+        std::snprintf(connect_command, sizeof(connect_command), "connect %s%s%s:%u \"%s\"", bookmark.brackets ? "[" : "", bookmark.address, bookmark.brackets ? "]" : "", bookmark.port, bookmark.password);
+        execute_script(connect_command);
+    }
+
+    bool bookmark_connect_command(int, const char **argv) {
+        auto bookmarks = load_bookmarks_file("bookmark.txt");
+        std::size_t index;
+        try {
+            index = static_cast<std::size_t>(std::stoul(*argv));
+        }
+        catch(std::exception &) {
+            console_error(localize("chimera_bookmark_error_invalid"));
+            return false;
+        }
+        if(index < 1 || index > bookmarks.size()) {
+            console_error(localize("chimera_bookmark_error_invalid"));
+            return false;
+        }
+        join_bookmark(bookmarks[index - 1]);
+        return true;
+    }
+
+    bool history_connect_command(int, const char **argv) {
+        auto history = load_bookmarks_file("history.txt");
+        std::size_t index;
+        try {
+            index = static_cast<std::size_t>(std::stoul(*argv));
+        }
+        catch(std::exception &) {
+            console_error(localize("chimera_bookmark_error_invalid"));
+            return false;
+        }
+        if(index < 1 || index > history.size()) {
+            console_error(localize("chimera_bookmark_error_invalid"));
+            return false;
+        }
+        join_bookmark(history[index - 1]);
+        return true;
     }
 }
