@@ -772,7 +772,7 @@ namespace Chimera {
                 reload_map_list();
 
                 auto &latest_connection = get_latest_connection();
-                std::snprintf(connect_command, sizeof(connect_command), "connect \"%s\" \"%s\"", latest_connection.ip_address, latest_connection.password);
+                std::snprintf(connect_command, sizeof(connect_command), "connect \"%s:%u\" \"%s\"", latest_connection.address, latest_connection.port, latest_connection.password);
                 execute_script(connect_command);
 
                 add_preframe_event(initiate_connection);

@@ -7,9 +7,10 @@
 
 namespace Chimera {
     struct Bookmark {
-        char ip_address[64];
-        char server_name[64];
-        char password[64];
+        char address[64];
+        std::uint16_t port;
+        char password[9];
+        bool brackets;
     };
 
     /**

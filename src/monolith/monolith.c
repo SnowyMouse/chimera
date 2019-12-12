@@ -115,9 +115,14 @@ static BOOL load_dlls() {
 
 // DLL entry point
 BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
+    static WSADATA fun = {};
+
     switch(reason) {
         case DLL_PROCESS_ATTACH:
             {
+                // Do this
+                WSAStartup(MAKEWORD(2,2), &fun);
+
                 // Enable DEP
                 SetProcessDEPPolicy(PROCESS_DEP_ENABLE);
 
@@ -134,6 +139,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
             break;
         case DLL_PROCESS_DETACH:
             unload_dlls();
+
+            WSACleanup();
+
             break;
     }
     return TRUE;

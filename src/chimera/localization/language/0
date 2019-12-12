@@ -22,6 +22,7 @@ chimera_custom_chat_from_all                                                    
 chimera_custom_chat_from_team                                                   ^%s%s^;^; (team): %s
 chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehicle): %s
 
+chimera_category_bookmark                                                       bookmark
 chimera_category_controller                                                     controller
 chimera_category_core                                                           core
 chimera_category_custom_chat                                                    custom_chat
@@ -51,6 +52,7 @@ chimera_block_loading_screen_command_help                                       
 chimera_block_mouse_acceleration_command_help                                   Disable mouse acceleration.
 chimera_block_server_ip_command_help                                            Hide the server IP.
 chimera_block_zoom_blur_command_help                                            Disable scope blur.
+chimera_bookmark_command_busy                                                   A server list is already being queried. Wait until that is finished and try again.
 chimera_chat_block_ips_command_help                                             Hide IPs from being shown in messages.
 chimera_chat_block_server_messages_command_help                                 Hide server messages.
 chimera_chat_color_help_command_help                                            Display a list of chat colors when inputting chat messages.
