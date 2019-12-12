@@ -395,7 +395,7 @@ namespace Chimera {
             };
 
             ResourceHeader header;
-            if(std::fread(&header, sizeof(header), 1, file) != sizeof(header)) {
+            if(std::fread(&header, sizeof(header), 1, file) != 1) {
                 return;
             }
             resources.reserve(header.resource_count);
