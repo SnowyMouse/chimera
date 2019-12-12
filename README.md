@@ -1,6 +1,11 @@
 # Chimera
 Chimera is a mod for Halo: Combat Evolved for the PC.
 
+## Table of contents
+- [Installation](#installation)
+- [Mod support](#mod-support)
+- [Features](#features)
+
 ## Installation
 Here is the installation procedure for installing Chimera:
 
@@ -22,16 +27,22 @@ for this is because they modify the game in similar ways, resulting in them
 conflicting with one another. Supporting just one of these mods would mean
 extra development time that I don't have. Sorry.
 
+That said, you can create a mods folder and drop in binary mods in there.
+
 ## Features
 Chimera provides a number of features and enhancements to the base Halo game.
 To ensure the base game is preserved as much as possible, most features are not
 turned on by default, and the ones that are only exist to enhance or fix the
 game.
+- [Passive features](#passive-features)
+- [Ini features](#ini-features)
+- [Commands](#commands)
 
 ### Passive features
 These are features that are always on.
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
+- [Compressed maps](#compressed-maps)
 - [Reduced DRM](#reduced-drm)
 - [Descope fix](#descope-fix)
 - [Fast loading](#fast-loading)
@@ -57,6 +68,14 @@ increases:
 - BSP polygon limit boosted to 32767
 - Visible object limit boosted to 1024
 - Draw distance increased to 2250 world units (~6.86 km)
+
+#### Compressed maps
+Chimera supports [Invader](https://github.com/Kavawuvi/invader)-compressed
+maps. This allows you to take advantage of the blazingly fast zstd compression
+algorithm, drastically cutting down map size.
+
+If [maps in RAM](#memory-settings) is enabled, compressed maps will be
+decompressed directly into RAM. Otherwise, temp files will be used.
 
 #### Reduced DRM
 Normally, Halo does not allow you to join servers with someone that has the
@@ -119,6 +138,56 @@ The Keystone chat is crashy and broken. Chimera adds a replacement chat.
 Chimera fixes a bug where, if the GPU is an NVIDIA graphics card, it uses alpha
 blended camo instead of the liquid camo shader.
 
+### Ini features
+Chimera has a very customizable chimera.ini text file that you can use to
+further tweak your game.
+
+Note that .ini comments start with a `;` and some features are commented out
+(disabled) like so: `;enabled=1`. This is so if you want to enable a feature,
+you simply have to remove the semicolon.
+
+Below are the features you can take advantage of.
+- [Halo settings](#halo-settings)
+- [Memory settings](#memory-settings)
+- [Video mode](#video-mode)
+- [Custom chat settings](#custom-chat-settings)
+- [Hotkeys](#hotkeys)
+
+#### Halo settings
+These features exist to prevent the need to use arguments for the Halo
+executable.
+- `path` (changes the profile path location)
+- `main_menu_music` (disables the music in the main menu)
+- `server_port` (set the default server port)
+- `client_port` (set the default client port)
+
+#### Memory settings
+This feature exists to allow you to take advantage larger amounts of RAM,
+reducing hiccups and stutters, especially on slower storage. However, you will
+need an LAA-patched executable to use this feature.
+- `enable_map_memory_buffer` (enables loading maps directly into RAM)
+- `benchmark` (shows a benchmark whenever a map is loaded)
+
+#### Video mode
+These settings allow you to change Halo's video settings without requiring
+vidmode. You can even use refresh rates in excess of 120 Hz.
+- `enabled` (enables the feature)
+- `width` (default width in pixels)
+- `height` (default height in pixels)
+- `refresh_rate` (refresh rate in Hertz)
+- `vsync` (enable double buffer vSync to reduce tearing)
+- `windowed` (display Halo in a window)
+
+#### Custom chat settings
+This allows you to customize the different colors, positioning, and timings of
+Chimera's chat. When we said it was a custom chat, we meant it. See the
+included chimera.ini file for more information on these settings.
+
+#### Hotkeys
+This allows you to execute Chimera commands, Halo commands, or Halo scripts
+when the key combination is invoked. See the included chimera.ini file for more
+information on these settings.
+
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
 these features are off by default.
@@ -137,6 +206,12 @@ these features are off by default.
 - [Block mouse acceleration](#block-mouse-acceleration)
 - [Block server IP](#block-server-ip)
 - [Block zoom blur](#block-zoom-blur)
+- [Bookmark add](#bookmark-add)
+- [Bookmark delete](#bookmark-delete)
+- [Bookmark connect](#bookmark-connect)
+- [Bookmark list](#bookmark-list)
+- [History connect](#history-connect)
+- [History list](#history-list)
 - [Budget](#budget)
 - [Chat: Block IPs](#chat-block-ips)
 - [Chat: Block server messages](#chat-block-server-messages)
@@ -267,6 +342,39 @@ Halo's zoom blur looks like ass on high resolutions. This feature removes it
 without requiring you to use DisableAlphaRenderTargets or safe mode.
 
 **Usage:** `chimera_block_zoom_blur [true/false]`
+
+#### Bookmark add
+Add a server to the server bookmarks list. If no server details are given, then
+the last server joined is added. You can use a domain name in place of an IP.
+
+**Usage:** `chimera_bookmark_add [ip:port [password]]`
+
+#### Bookmark delete
+Delete a server from the server bookmarks list. Either an index or an ip:port
+can be used. If no server details are given, then the last server joined is
+deleted.
+
+**Usage:** `chimera_bookmark_delete [ip:port | index]`
+
+#### Bookmark connect
+Connect to a server in the bookmarks list.
+
+**Usage:** `chimera_bookmark_connect <index>`
+
+#### Bookmark list
+List and query all bookmarked servers.
+
+**Usage:** `chimera_bookmark_list`
+
+#### History connect
+Connect to a server in the recent server list.
+
+**Usage:** `chimera_history_connect <index>`
+
+#### History list
+List and query all recent servers.
+
+**Usage:** `chimera_history_list`
 
 #### Budget
 Show the different budgets in Halo, including object limit and BSP polygon
