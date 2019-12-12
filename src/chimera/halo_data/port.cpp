@@ -30,13 +30,13 @@ namespace Chimera {
         try {
             auto *client_port_setting = get_chimera().get_ini()->get_value("halo.client_port");
             if(client_port_setting) {
-                get_client_port_a() = static_cast<std::uint16_t>(std::atoi(client_port_setting));
+                get_client_port_a() = static_cast<std::uint16_t>(std::stoi(client_port_setting));
                 write_code_s(set_port_sig + 6, NOP_CODE);
             }
 
             auto *server_port_setting = get_chimera().get_ini()->get_value("halo.server_port");
             if(server_port_setting) {
-                get_server_port_a() = static_cast<std::uint16_t>(std::atoi(server_port_setting));
+                get_server_port_a() = static_cast<std::uint16_t>(std::stoi(server_port_setting));
                 write_code_s(set_port_sig, NOP_CODE);
             }
         }

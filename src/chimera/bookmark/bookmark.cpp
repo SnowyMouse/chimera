@@ -5,6 +5,7 @@
 #include "../event/frame.hpp"
 #include <windows.h>
 #include <cstring>
+#include <optional>
 #include <fstream>
 #include "../event/connect.hpp"
 #include "../output/output.hpp"
@@ -20,6 +21,54 @@ namespace Chimera {
 
     const Bookmark &get_latest_connection() noexcept {
         return latest_connection;
+    }
+
+    static std::optional<Bookmark> parse_bookmark(const char *line) {
+        Bookmark b = {};
+        std::size_t line_length = std::strlen(line);
+
+        // Get the address
+        std::size_t i;
+        std::string address;
+        std::size_t address_length = 0;
+        for(i = 0; i < sizeof(b.address) - 1 && i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ':'; i++, address_length++);
+        if(address_length < 2) {
+            return std::nullopt;
+        }
+        else if(line[0] == '[' && line[address_length - 1] == ']') {
+            address = std::string(line + 1, address_length - 1);
+            b.brackets = true;
+        }
+        else {
+            address = std::string(line, address_length);
+        }
+        std::strncpy(b.address, address.data(), sizeof(b.address) - 1);
+
+        // Now the port
+        if(line[i++] == ':') {
+            std::size_t port_length = 0;
+            for(i = 0; i < line_length && line[i] != '\r' && line[i] != '\n'; i++, port_length++);
+            try {
+                b.port = static_cast<std::uint16_t>(std::stoi(std::string(line + address_length + 1, port_length)));
+            }
+            catch(std::exception &) {
+                return std::nullopt;
+            }
+        }
+        else {
+            return std::nullopt;
+        }
+
+        // Lastly, the password (if present)
+        if(line[i++] == ' ') {
+            std::size_t s;
+            for(s = 0; s < sizeof(b.password) - 1 && i < line_length && line[i] != '\r' && line[i] != '\n'; i++, s++) {
+                b.password[s] = line[i];
+            }
+            b.password[s] = 0;
+        }
+
+        return b;
     }
 
     static bool on_connect(std::uint32_t &ip, std::uint16_t &port, const char *password) {
@@ -67,49 +116,10 @@ namespace Chimera {
         std::string line;
         std::vector<Bookmark> bookmarks;
         while(std::getline(f, line)) {
-            Bookmark b = {};
-
-            // Get the address
-            std::size_t i;
-            std::string address;
-            std::size_t address_length = 0;
-            for(i = 0; i < sizeof(b.address) - 1 && i < line.size() && line[i] != '\r' && line[i] != '\n' && line[i] != ':'; i++, address_length++);
-            if(address_length < 2) {
-                continue;
+            auto parsed_bookmark = parse_bookmark(line.data());
+            if(parsed_bookmark.has_value()) {
+                bookmarks.push_back(*parsed_bookmark);
             }
-            else if(line[0] == '[' && line[address_length - 1] == ']') {
-                address = line.substr(1, address_length - 1);
-                b.brackets = true;
-            }
-            else {
-                address = line.substr(0, address_length);
-            }
-            std::strncpy(b.address, address.data(), sizeof(b.address) - 1);
-
-            // Now the port
-            if(line[i++] == ':') {
-                std::size_t port_length = 0;
-                for(i = 0; i < line.size() && line[i] != '\r' && line[i] != '\n'; i++, port_length++);
-                try {
-                    b.port = static_cast<std::uint16_t>(std::stoi(line.substr(address_length + 1, port_length)));
-                }
-                catch(std::exception &) {
-                    continue;
-                }
-            }
-            else {
-                continue;
-            }
-
-            // Lastly, the password (if present)
-            if(line[i++] == ' ') {
-                std::size_t s;
-                for(s = 0; s < sizeof(b.password) - 1 && i < line.size() && line[i] != '\r' && line[i] != '\n'; i++, s++) {
-                    b.password[s] = line[i];
-                }
-                b.password[s] = 0;
-            }
-            bookmarks.push_back(b);
         }
         return bookmarks;
     }
@@ -312,7 +322,7 @@ namespace Chimera {
         remove_preframe_event(show_list);
     }
 
-    bool history_list_command(int argc, const char **argv) {
+    bool history_list_command(int, const char **) {
         if(!querying.try_lock()) {
             console_error(localize("chimera_bookmark_list_command_busy"));
             return false;
@@ -323,7 +333,7 @@ namespace Chimera {
         return true;
     }
 
-    bool bookmark_list_command(int argc, const char **argv) {
+    bool bookmark_list_command(int, const char **) {
         if(!querying.try_lock()) {
             console_error(localize("chimera_bookmark_list_command_busy"));
             return false;
@@ -332,5 +342,106 @@ namespace Chimera {
         add_preframe_event(show_list);
         std::thread(query_list, load_bookmarks_file("bookmark.txt")).detach();
         return true;
+    }
+
+    bool bookmark_add_command(int argc, const char **argv) {
+        auto bookmarks = load_bookmarks_file("bookmark.txt");
+        Bookmark new_bookmark = {};
+        if(argc == 0) {
+            auto history = load_bookmarks_file("history.txt");
+            if(history.size() == 0) {
+                console_error(localize("chimera_bookmark_add_no_recent_servers"));
+                return false;
+            }
+            new_bookmark = history[0];
+        }
+        else {
+            auto potential_bookmark = parse_bookmark(*argv);
+            if(!potential_bookmark.has_value()) {
+                console_error(localize("chimera_bookmark_error_invalid"));
+                return false;
+            }
+            new_bookmark = *potential_bookmark;
+
+            // If we have a password, add that too
+            if(argc == 2) {
+                if(std::strlen(argv[1]) < sizeof(new_bookmark.password)) {
+                    std::strncpy(new_bookmark.password, argv[1], sizeof(new_bookmark.password) - 1);
+                }
+                else {
+                    console_error(localize("chimera_bookmark_error_password_too_long"));
+                    return false;
+                }
+            }
+        }
+
+        // Simply replace if found
+        for(std::size_t b = 0; b < bookmarks.size(); b++) {
+            auto &bookmark = bookmarks[b];
+            if(std::strcmp(bookmark.address, new_bookmark.address) == 0 && bookmark.port == new_bookmark.port) {
+                bookmark = new_bookmark;
+                console_output(localize("chimera_bookmark_add_success"), bookmark.brackets ? "[" : "", bookmark.address, bookmark.brackets ? "]" : "", bookmark.port, b);
+                return true;
+            }
+        }
+
+        bookmarks.emplace_back(new_bookmark);
+        console_output(localize("chimera_bookmark_add_success"), new_bookmark.brackets ? "[" : "", new_bookmark.address, new_bookmark.brackets ? "]" : "", new_bookmark.port, bookmarks.size());
+        save_bookmarks_file("bookmark.txt", bookmarks);
+
+        return true;
+    }
+
+    bool bookmark_delete_command(int argc, const char **argv) {
+        auto bookmarks = load_bookmarks_file("bookmark.txt");
+        Bookmark delete_bookmark = {};
+        if(argc == 0) {
+            auto history = load_bookmarks_file("history.txt");
+            if(history.size() == 0) {
+                console_error(localize("chimera_bookmark_add_no_recent_servers"));
+                return false;
+            }
+            delete_bookmark = history[0];
+        }
+        else {
+            try {
+                std::size_t index = static_cast<std::size_t>(std::stoul(*argv));
+                if(index > bookmarks.size() || index < 1) {
+                    console_error(localize("chimera_bookmark_error_not_found"));
+                    return false;
+                }
+                delete_bookmark = bookmarks[index - 1];
+            }
+            catch(std::exception &) {
+                auto potential_bookmark = parse_bookmark(*argv);
+                if(!potential_bookmark.has_value()) {
+                    console_error(localize("chimera_bookmark_error_invalid"));
+                    return false;
+                }
+                delete_bookmark = *potential_bookmark;
+            }
+        }
+
+        // Remove
+        bool success = false;
+
+        // Delete if found
+        for(std::size_t b = 0; b < bookmarks.size(); b++) {
+            auto &bookmark = bookmarks[b];
+            if(std::strcmp(bookmark.address, delete_bookmark.address) == 0 && bookmark.port == delete_bookmark.port) {
+                success = true;
+                console_output(localize("chimera_bookmark_delete_success"), bookmark.brackets ? "[" : "", bookmark.address, bookmark.brackets ? "]" : "", bookmark.port);
+                bookmarks.erase(bookmarks.begin() + b);
+                b--;
+            }
+        }
+        if(success) {
+            save_bookmarks_file("bookmark.txt", bookmarks);
+        }
+        else {
+            console_error(localize("chimera_bookmark_error_not_found"));
+        }
+
+        return success;
     }
 }
