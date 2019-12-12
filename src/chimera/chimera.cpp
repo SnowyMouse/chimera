@@ -395,12 +395,8 @@ namespace Chimera {
             }
             this->p_path += "chimera\\";
 
-            // Do things if we successfully made a directory
-            if(CreateDirectory(this->p_path.data(), nullptr)) {
-                // Create directories like lua
-            }
-
-            // Get the path to where we download maps
+            // Make directories
+            CreateDirectory(this->p_path.data(), nullptr);
             char maps_directory[MAX_PATH];
             std::snprintf(maps_directory, sizeof(maps_directory), "%s\\maps", this->p_path.data());
             CreateDirectory(maps_directory, nullptr);
