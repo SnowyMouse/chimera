@@ -262,7 +262,7 @@ namespace Chimera {
         querying.unlock();
 
         // Show the results
-        console_output("Name|tGame|tPlayers|tPing");
+        console_output(localize("chimera_bookmark_list_header"));
         std::size_t q = 0;
         std::size_t success = 0;
         for(auto &p : finished_packets) {
@@ -289,23 +289,23 @@ namespace Chimera {
                     break;
                 }
                 case QueryPacketDone::Error::FAILED_TO_RESOLVE:
-                    console_output(ConsoleColor { 1.0F, 1.0F, 0.5F, 0.5F }, "%zu. %s%s%s:%zu|tError: Failed to resolve", q, p.b.brackets ? "[" : "", p.b.address, p.b.brackets ? "]" : "", p.b.port);
+                    console_output(ConsoleColor { 1.0F, 1.0F, 0.5F, 0.5F }, "%zu. %s%s%s:%zu|t%s", q, p.b.brackets ? "[" : "", p.b.address, p.b.brackets ? "]" : "", p.b.port, localize("chimera_bookmark_list_error_failed_to_resolve"));
                     break;
                 case QueryPacketDone::Error::TIMED_OUT:
-                    console_output(ConsoleColor { 1.0F, 1.0F, 0.5F, 0.5F }, "%zu. %s%s%s:%zu|tError: Timed out", q, p.b.brackets ? "[" : "", p.b.address, p.b.brackets ? "]" : "", p.b.port);
+                    console_output(ConsoleColor { 1.0F, 1.0F, 0.5F, 0.5F }, "%zu. %s%s%s:%zu|t%s", q, p.b.brackets ? "[" : "", p.b.address, p.b.brackets ? "]" : "", p.b.port, localize("chimera_bookmark_list_error_timed_out"));
                     break;
             }
         }
-        console_output("Queried %zu / %zu server%s", success, q, q == 1 ? "" : "s");
 
         remove_preframe_event(show_list);
     }
 
     bool history_list_command(int argc, const char **argv) {
         if(!querying.try_lock()) {
-            console_error(localize("chimera_bookmark_command_busy"));
+            console_error(localize("chimera_bookmark_list_command_busy"));
             return false;
         }
+        console_output(localize("chimera_history_list_command_querying"));
         add_preframe_event(show_list);
         std::thread(query_list, load_bookmarks_file("history.txt")).detach();
         return true;
@@ -313,9 +313,10 @@ namespace Chimera {
 
     bool bookmark_list_command(int argc, const char **argv) {
         if(!querying.try_lock()) {
-            console_error(localize("chimera_bookmark_command_busy"));
+            console_error(localize("chimera_bookmark_list_command_busy"));
             return false;
         }
+        console_output(localize("chimera_bookmark_list_command_querying"));
         add_preframe_event(show_list);
         std::thread(query_list, load_bookmarks_file("bookmark.txt")).detach();
         return true;

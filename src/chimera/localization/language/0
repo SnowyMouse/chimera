@@ -52,7 +52,12 @@ chimera_block_loading_screen_command_help                                       
 chimera_block_mouse_acceleration_command_help                                   Disable mouse acceleration.
 chimera_block_server_ip_command_help                                            Hide the server IP.
 chimera_block_zoom_blur_command_help                                            Disable scope blur.
-chimera_bookmark_command_busy                                                   A server list is already being queried. Wait until that is finished and try again.
+chimera_bookmark_list_command_busy                                              A server list is already being queried. Wait until that is finished and try again.
+chimera_bookmark_list_header                                                    Name|tGame|tPlayers|tPing
+chimera_bookmark_list_error_failed_to_resolve                                   Error: Failed to resolve
+chimera_bookmark_list_error_timed_out                                           Error: Timed out
+chimera_bookmark_list_command_querying                                          Querying bookmarks...
+chimera_history_list_command_querying                                           Querying recent servers...
 chimera_chat_block_ips_command_help                                             Hide IPs from being shown in messages.
 chimera_chat_block_server_messages_command_help                                 Hide server messages.
 chimera_chat_color_help_command_help                                            Display a list of chat colors when inputting chat messages.
