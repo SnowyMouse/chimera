@@ -686,13 +686,20 @@ namespace Chimera {
         }
 
         *last_dot = 0;
-        char *map_name = last_backslash + 1;
+        const char *map_name = last_backslash + 1;
 
+        if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0) {
+            return 0;
+        }
         if(std::strcmp(map_name, "ui") == 0) {
             std::copy(ui_region + file_offset, ui_region + file_offset + size, output);
             return 1;
         }
-        else if(std::strcmp(map_name, currently_loaded_map) == 0) {
+        else {
+            if(std::strcmp(map_name, currently_loaded_map) != 0) {
+                static char fuck_you[8192] = {};
+                do_map_loading_handling(fuck_you, map_name);
+            }
             std::copy(maps_in_ram_region + file_offset, maps_in_ram_region + file_offset + size, output);
             return 1;
         }
@@ -852,9 +859,19 @@ namespace Chimera {
     }
 
     void set_up_map_loading() {
-        static Hook hook;
-        auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
-        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
+        // Get settings
+        auto is_enabled = [](const char *what) -> bool {
+            const char *value = get_chimera().get_ini()->get_value(what);
+            return !(!value || std::strcmp(value, "1") != 0);
+        };
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+
+        if(do_maps_in_ram) {
+            static Hook hook;
+            auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
+            write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
+        }
+
         static Hook hook2;
         auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
         write_jmp_call(create_file_mov_sig.data(), hook2, reinterpret_cast<const void *>(free_map_handle_bugfix_asm), nullptr);
@@ -864,13 +881,6 @@ namespace Chimera {
         auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
         overwrite(map_check_sig, return_1, sizeof(return_1));
 
-        // Get settings
-        auto is_enabled = [](const char *what) -> bool {
-            const char *value = get_chimera().get_ini()->get_value(what);
-            return !(!value || std::strcmp(value, "1") != 0);
-        };
-
-        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
         do_benchmark = is_enabled("memory.benchmark");
 
         if(do_maps_in_ram) {
@@ -905,9 +915,9 @@ namespace Chimera {
         on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
 
         // Make the meme go away
-        static Hook land_of_fun_hook;
-        auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
-        static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
-        write_code_s(preload_map_sig, mov_eax_1);
+        // static Hook land_of_fun_hook;
+        // auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
+        // static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
+        // write_code_s(preload_map_sig, mov_eax_1);
     }
 }
