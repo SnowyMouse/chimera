@@ -8,6 +8,7 @@
 #include <fstream>
 #include "../event/connect.hpp"
 #include "../output/output.hpp"
+#include "../halo_data/resolution.hpp"
 #include "../localization/localization.hpp"
 #include <mutex>
 #include <thread>
@@ -262,22 +263,27 @@ namespace Chimera {
         querying.unlock();
 
         // Show the results
-        console_output(localize("chimera_bookmark_list_header"));
+        auto &resolution = get_resolution();
+        bool can_use_tabs = static_cast<float>(resolution.width) / resolution.height > (4.05F / 3.0F);
+        if(can_use_tabs) {
+            console_output(localize("chimera_bookmark_list_header"));
+        }
         std::size_t q = 0;
         std::size_t success = 0;
+
         for(auto &p : finished_packets) {
             q++;
             switch(p.error) {
                 case QueryPacketDone::Error::NONE: {
-                    float red = 0.5F;
-                    float green = 0.5F;
+                    float red = 0.0F;
+                    float green = 0.0F;
 
-                    if(p.ping < 30) {
+                    if(p.ping < 20) {
                         green = 1.0F;
                     }
-                    else if(p.ping < 90) {
-                        green = 1.0F - (p.ping - 30) / 60.0F / 2.0F;
-                        red = 0.5F + (p.ping - 30) / 60.0F / 2.0F;
+                    else if(p.ping < 120) {
+                        green = 1.0F - (p.ping - 20) / 100.0F;
+                        red = 0.2F + (p.ping - 20) / 100.0F * 0.8F;
                     }
                     else {
                         red = 1.0F;
@@ -285,7 +291,13 @@ namespace Chimera {
 
                     success++;
 
-                    console_output(ConsoleColor { 1.0F, red, green, 0.75F }, "%zu. %s|t%s / %s|t%s / %s|t%zu ms", q, p.get_data_for_key("gamevariant"), p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
+                    if(can_use_tabs) {
+                        console_output(ConsoleColor { 1.0F, red, green, 0.25F }, "%zu. %s|t%s|t%s|t%s / %s|r%zu ms", q, p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), p.get_data_for_key("gamevariant"), p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
+                    }
+                    else {
+                        console_output(ConsoleColor { 1.0F, red, green, 0.25F }, "%zu. %s (%s; %s / %s) - %zu ms", q, p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
+                    }
+
                     break;
                 }
                 case QueryPacketDone::Error::FAILED_TO_RESOLVE:

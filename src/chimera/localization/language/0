@@ -10,8 +10,6 @@ chimera_error_too_many_arguments                                                
 chimera_error_must_be_host                                                      You have to be the host to do that.
 chimera_error_player_not_found                                                  Player %s was not found.
 
-chimera_error_failed_allocation                                                 Chimera: Failed to allocate memory. Compressed maps and map downloading will not work.
-
 chimera_warning_command_will_take_effect_on_next_load                           This command will take effect on next load.
 
 chimera_custom_chat_to_all                                                      All
@@ -53,7 +51,7 @@ chimera_block_mouse_acceleration_command_help                                   
 chimera_block_server_ip_command_help                                            Hide the server IP.
 chimera_block_zoom_blur_command_help                                            Disable scope blur.
 chimera_bookmark_list_command_busy                                              A server list is already being queried. Wait until that is finished and try again.
-chimera_bookmark_list_header                                                    Name|tGame|tPlayers|tPing
+chimera_bookmark_list_header                                                    Name|tMap|tGametype|tPlayers|rPing
 chimera_bookmark_list_error_failed_to_resolve                                   Error: Failed to resolve
 chimera_bookmark_list_error_timed_out                                           Error: Timed out
 chimera_bookmark_list_command_querying                                          Querying bookmarks...
