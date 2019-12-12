@@ -864,13 +864,10 @@ namespace Chimera {
             const char *value = get_chimera().get_ini()->get_value(what);
             return !(!value || std::strcmp(value, "1") != 0);
         };
-        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
 
-        if(do_maps_in_ram) {
-            static Hook hook;
-            auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
-            write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
-        }
+        static Hook hook;
+        auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
+        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
 
         static Hook hook2;
         auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
@@ -882,6 +879,7 @@ namespace Chimera {
         overwrite(map_check_sig, return_1, sizeof(return_1));
 
         do_benchmark = is_enabled("memory.benchmark");
+        do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
 
         if(do_maps_in_ram) {
             if(!current_exe_is_laa_patched()) {
@@ -915,9 +913,11 @@ namespace Chimera {
         on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
 
         // Make the meme go away
-        // static Hook land_of_fun_hook;
-        // auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
-        // static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
-        // write_code_s(preload_map_sig, mov_eax_1);
+        if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            static Hook land_of_fun_hook;
+            auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
+            static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
+            write_code_s(preload_map_sig, mov_eax_1);
+        }
     }
 }
