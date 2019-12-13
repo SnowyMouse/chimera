@@ -222,7 +222,7 @@ namespace Chimera {
 
         PAD(0x4);
 
-        /** Player aiming thingy; updated every remote_player_position_baseliine_update_rate ticks */
+        /** Player aiming thingy; updated every remote_player_position_baseline_update_rate ticks */
         Point3D update_aiming;
 
         PAD(0x10);

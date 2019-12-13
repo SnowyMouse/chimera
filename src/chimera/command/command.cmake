@@ -30,6 +30,8 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp
     ${COMMAND_DIR}/client/mouse/mouse_sensitivity.cpp
+    ${COMMAND_DIR}/client/spectate/spectate.cpp
+    ${COMMAND_DIR}/client/spectate/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp
     ${COMMAND_DIR}/client/visual/auto_center.cpp
     ${COMMAND_DIR}/client/visual/block_camera_shake.cpp

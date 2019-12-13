@@ -23,7 +23,7 @@ namespace Chimera {
         // Keep adding instructions until we have what we need.
         while(bytes.size() < minimum_size) {
             switch(*reinterpret_cast<const std::uint8_t *>(at)) {
-                // jmp <relative offset>
+                // jmp <relative offset> or movsx
                 case 0x0F: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     if(op1 == 0x84) {
@@ -32,9 +32,27 @@ namespace Chimera {
                         at += 6;
                         break;
                     }
+                    else if(op1 == 0xBF) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
                     else {
                         std::terminate();
                     }
+                }
+
+                // cmp ecx, something
+                case 0x3B: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(op1 == 0xCD) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 2);
+                        at += 2;
+                        break;
+                    }
+                    std::terminate();
                 }
 
 
