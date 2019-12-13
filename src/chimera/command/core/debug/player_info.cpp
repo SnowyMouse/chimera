@@ -13,10 +13,6 @@ namespace Chimera {
         auto &player_table = PlayerTable::get_player_table();
         Player *player;
         if(argc) {
-            if(server_type() == ServerType::SERVER_DEDICATED) {
-                console_error(localize("chimera_error_must_be_host"));
-                return false;
-            }
             player = player_table.get_player_by_rcon_id(std::stoi(*argv) - 1);
         }
         else {
