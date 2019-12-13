@@ -53,7 +53,7 @@ chimera_block_zoom_blur_command_help                                            
 chimera_bookmark_add_command_help                                               Add a bookmark, optionally with the given connect parameters. If no parameters are given,\nthe latest connection is used.
 chimera_bookmark_add_no_recent_servers                                          You haven't joined any servers recently.
 chimera_bookmark_add_success                                                    Added %s%s%s:%u to bookmarks (%zu)
-chimera_bookmark_connect_help                                                   Connect to the server at the given index.
+chimera_bookmark_connect_help                                                   Connect to the bookmarked server at the given index.
 chimera_bookmark_delete_command_help                                            Delete a bookmark, either by bookmark index or by ip:port.
 chimera_bookmark_delete_success                                                 Deleted %s%s%s:%u from bookmarks
 chimera_bookmark_list_command_busy                                              A server list is already being queried. Wait until that is finished and try again.

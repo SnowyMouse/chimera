@@ -23,6 +23,24 @@ chimera_category_mouse                                                          
 chimera_category_visual                                                         visual
 
 chimera_af_command_help                                                         Habilita el filtrado anisotrópico.
+chimera_bookmark_add_command_help                                               Agregar un marcador, opcionalmente con los parámetros de conexión dados. Si no se proporcionan parámetros,\n se utiliza la última conexión.
+chimera_bookmark_add_no_recent_servers                                          No se ha unido a ningún servidor recientemente.
+chimera_bookmark_add_success                                                    Se agregó %s%s%s:%u a los marcadores (%zu)
+chimera_bookmark_connect_help                                                   Conéctese al servidor marcado en el índice seleccionado.
+chimera_bookmark_delete_command_help                                            Elimine un marcador, ya sea por el índice del marcador o por ip:puerto.
+chimera_bookmark_delete_success                                                 Se eliminó %s%s%s:%u de los marcadores.
+chimera_bookmark_error_invalid                                                  Se ha especificado un marcador no válido.
+chimera_bookmark_error_password_too_long                                        Las contraseñas no deben exceder los ocho (8) caracteres.
+chimera_bookmark_error_not_found                                                No existe tal marcador.
+chimera_bookmark_list_command_help                                              Muestra todos los marcadores.
+chimera_bookmark_list_command_busy                                              Ya se está consultando la lista de servidores. Espere hasta que termine e intente nuevamente.
+chimera_bookmark_list_header                                                    Nombre|tMapa|tPartida|tJugadores|rLatencia
+chimera_bookmark_list_error_failed_to_resolve                                   Error: No se pudo resolver la solicitud.
+chimera_bookmark_list_error_timed_out                                           Error: Se terminó el tiempo de la solicitud.
+chimera_bookmark_list_command_querying                                          Consultando marcadores favoritos...
+chimera_history_connect_help                                                    Conéctese al servidor con el índice dado.
+chimera_history_list_command_help                                               Muestra todos los servidores recientes.
+chimera_history_list_command_querying                                           Consultando servidores recientes...
 chimera_block_buffering_command_help                                            Deshabilita el buffering. Puede mejorar la respuesta de entrada del mouse.
 chimera_block_buffering_command_warning                                         ¡La deshabilitación del buffering ya está activada (probablemente a través de config.txt)!
 chimera_block_camera_shake_command_help                                         Deshabilita la sacudida de cámara al recibir daños.
