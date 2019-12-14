@@ -29,6 +29,9 @@ namespace Chimera {
     // If true, don't undo the camera (interpolation was skipped this frame)
     static bool skip;
 
+    // Used to force first person rotation interpolation
+    extern bool spectate_enabled;
+
     void interpolate_camera_before() noexcept {
         // Check if a tick has passed. If so, copy data to the current interpolation buffer.
         auto type = camera_type();
@@ -84,7 +87,7 @@ namespace Chimera {
         }
 
         // Don't interpolate rotation if in first person unless we're in a vehicle
-        if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person) {
+        if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person || spectate_enabled) {
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
         }

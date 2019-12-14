@@ -1,4 +1,6 @@
 #include <optional>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include "../../command.hpp"
 #include "../../../signature/signature.hpp"
@@ -8,6 +10,9 @@
 #include "../../../localization/localization.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
+#include "../../../halo_data/camera.hpp"
+#include "../../../event/camera.hpp"
+#include "../../../math_trig/math_trig.hpp"
 #include "../../../event/frame.hpp"
 
 namespace Chimera {
@@ -18,6 +23,8 @@ namespace Chimera {
         void spectate_swap_esi_asm() noexcept;
     }
 
+    bool spectate_enabled = false;
+
     static PlayerID player_being_spectated;
     bool spectate_command(int argc, const char **argv);
 
@@ -26,12 +33,16 @@ namespace Chimera {
         get_chimera().execute_command("chimera_spectate 0");
     }
 
-    static void set_object_id(const ObjectID &object_id) {
-        static std::optional<ObjectID *> object_id_addr;
-        if(!object_id_addr.has_value()) {
-            object_id_addr = reinterpret_cast<ObjectID *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("spectate_fp_camera_position_sig").data() + 2) + 0x10);
+    static std::byte *get_player_data() {
+        static std::optional<std::byte *> player_data;
+        if(!player_data.has_value()) {
+            player_data = **reinterpret_cast<std::byte ***>(get_chimera().get_signature("spectate_fp_camera_position_sig").data() + 2);
         }
-        **object_id_addr = object_id;
+        return *player_data;
+    }
+
+    static void set_object_id(const ObjectID &object_id) {
+        *reinterpret_cast<ObjectID *>(get_player_data() + 0x10) = object_id;
     }
 
     static void set_object_id_to_target() {
@@ -59,10 +70,32 @@ namespace Chimera {
         }
     }
 
+    static void on_precamera() noexcept {
+        auto *player = PlayerTable::get_player_table().get_player(player_being_spectated);
+        if(!player || player->object_id.is_null()) {
+            return;
+        }
+
+        auto *object = reinterpret_cast<UnitDynamicObject *>(ObjectTable::get_object_table().get_dynamic_object(player->object_id));
+        if(!object) {
+            return;
+        }
+
+        float *xyz = reinterpret_cast<float *>(get_player_data() + 0x1C);
+        float pitch = std::asin(object->aim.z);
+        float cos_pitch = std::cos(pitch);
+        float yaw = M_PI / 2 - std::asin(object->aim.x / cos_pitch);
+        if(object->aim.y < 0.0F) {
+            yaw *= -1.0F;
+        }
+
+        xyz[0] = yaw;
+        xyz[1] = pitch;
+    }
+
     bool spectate_command(int, const char **argv) {
         // Get the index maybe
         int index;
-        static bool enabled = false;
         try {
             index = std::stoul(*argv);
         }
@@ -83,7 +116,7 @@ namespace Chimera {
         // If index is 0, disable
         if(index == 0) {
             console_output("off");
-            if(enabled) {
+            if(spectate_enabled) {
                 spectate_armor_color_sig.rollback();
                 spectate_motion_sensor_sig.rollback();
                 spectate_fp_animation_1_sig.rollback();
@@ -93,6 +126,7 @@ namespace Chimera {
                 spectate_reticle_team_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
+                remove_precamera_event(on_precamera);
                 auto *player = PlayerTable::get_player_table().get_client_player();
                 ObjectID id_to_set_to;
                 if(player) {
@@ -103,7 +137,7 @@ namespace Chimera {
                 }
                 set_object_id(id_to_set_to);
 
-                enabled = false;
+                spectate_enabled = false;
             }
             return true;
         }
@@ -119,8 +153,9 @@ namespace Chimera {
             static constexpr SigByte nop7[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
             //static constexpr SigByte nop7[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 
-            if(!enabled) {
+            if(!spectate_enabled) {
                 add_preframe_event(set_object_id_to_target);
+                add_precamera_event(on_precamera, EVENT_PRIORITY_BEFORE);
 
                 static Hook spectate_reticle_team;
                 auto *spectate_reticle_team_data = spectate_reticle_team_sig.data();
@@ -158,7 +193,7 @@ namespace Chimera {
                 write_jmp_call(spectate_fp_weapon_data, spectate_fp_weapon, reinterpret_cast<const void *>(spectate_swap_eax_asm), nullptr, false);
             }
 
-            enabled = true;
+            spectate_enabled = true;
 
             console_output(localize("chimera_spectate_command_now_spectating"), player->name);
         }
