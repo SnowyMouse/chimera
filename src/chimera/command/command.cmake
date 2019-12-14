@@ -9,6 +9,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/debug/devmode.cpp
     ${COMMAND_DIR}/core/debug/player_info.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
+    ${COMMAND_DIR}/core/server/player_list.cpp
     ${COMMAND_DIR}/client/controller/aim_assist.cpp
     ${COMMAND_DIR}/client/controller/auto_uncrouch.cpp
     ${COMMAND_DIR}/client/controller/auto_uncrouch.S
@@ -30,8 +31,8 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp
     ${COMMAND_DIR}/client/mouse/mouse_sensitivity.cpp
-    ${COMMAND_DIR}/client/spectate/spectate.cpp
-    ${COMMAND_DIR}/client/spectate/spectate.S
+    ${COMMAND_DIR}/client/server/spectate.cpp
+    ${COMMAND_DIR}/client/server/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp
     ${COMMAND_DIR}/client/visual/auto_center.cpp
     ${COMMAND_DIR}/client/visual/block_camera_shake.cpp
