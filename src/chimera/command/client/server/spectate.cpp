@@ -5,6 +5,7 @@
 #include "../../../signature/hook.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
+#include "../../../localization/localization.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
 #include "../../../event/frame.hpp"
@@ -63,10 +64,10 @@ namespace Chimera {
         int index;
         static bool enabled = false;
         try {
-            index = std::stoi(*argv);
+            index = std::stoul(*argv);
         }
         catch(std::exception &) {
-            console_error("Invalid player index");
+            console_error(localize("chimera_error_takes_player_number"));
             return false;
         }
 
@@ -159,10 +160,10 @@ namespace Chimera {
 
             enabled = true;
 
-            console_output("Spectating %S", player->name);
+            console_output(localize("chimera_spectate_command_now_spectating"), player->name);
         }
         else {
-            console_error("Player not present");
+            console_error(localize("chimera_error_player_not_found"), *argv);
         }
 
         return true;

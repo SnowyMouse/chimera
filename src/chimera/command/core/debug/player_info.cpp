@@ -13,7 +13,15 @@ namespace Chimera {
         auto &player_table = PlayerTable::get_player_table();
         Player *player;
         if(argc) {
-            player = player_table.get_player_by_rcon_id(std::stoi(*argv) - 1);
+            int index;
+            try {
+                index = std::stoul(*argv) - 1;
+            }
+            catch(std::exception &) {
+                console_error(localize("chimera_error_takes_player_number"));
+                return false;
+            }
+            player = player_table.get_player_by_rcon_id(index);
         }
         else {
             player = player_table.get_client_player();

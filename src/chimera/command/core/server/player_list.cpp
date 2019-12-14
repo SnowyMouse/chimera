@@ -12,7 +12,7 @@ namespace Chimera {
         auto *old_prefix = output_prefix;
         output_prefix = nullptr;
 
-        for(std::size_t i = 0; i < 16; i++) {
+        for(std::size_t i = 0; i < 256; i++) {
             auto *player = player_table.get_player_by_rcon_id(i);
             if(player) {
                 player_present = true;
@@ -46,7 +46,7 @@ namespace Chimera {
         }
         output_prefix = old_prefix;
         if(!player_present) {
-            console_output(localize("chimera_player_list_none_found"));
+            console_output(localize("chimera_player_list_command_none_found"));
         }
         return true;
     }
