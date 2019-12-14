@@ -17,36 +17,36 @@ namespace Chimera {
             if(player) {
                 player_present = true;
                 char team[256] = {};
-                ConsoleColor color = { 1.0F, 0.5F, 0.7F, 0.8F };
+                ConsoleColor color = { 1.0F, 0.5F, 0.8F, 0.6F };
                 if(is_team()) {
                     switch(player->team) {
                         case 0:
-                            std::strncpy(team, " (Red team)", sizeof(team));
+                            std::snprintf(team, sizeof(team), " (%s)", localize("chimera_color_red"));
                             color.r = 1.0F;
                             color.g = 0.4F;
                             color.b = 0.4F;
                             break;
                         case 1:
-                            std::strncpy(team, " (Blue team)", sizeof(team));
+                            std::snprintf(team, sizeof(team), " (%s)", localize("chimera_color_blue"));
                             color.r = 0.4F;
                             color.g = 0.4F;
                             color.b = 1.0F;
                             break;
                         default:
                             unsigned int team_int = player->team;
-                            std::strncpy(team, " (Team #%u)", team_int);
+                            std::strncpy(team, " (%u)", team_int);
                             color.r = 0.4F;
                             color.g = 1.0F;
                             color.b = 0.4F;
                             break;
                     }
                 }
-                console_output(color, "%zu. %S%s", i, player->name, team);
+                console_output(color, "%zu. %S%s", i + 1, player->name, team);
             }
         }
         output_prefix = old_prefix;
         if(!player_present) {
-            console_output("There are no players online.");
+            console_output(localize("chimera_player_list_none_found"));
         }
         return true;
     }

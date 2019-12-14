@@ -15,6 +15,8 @@ chimera_warning_command_will_take_effect_on_next_load                           
 chimera_custom_chat_to_all                                                      All
 chimera_custom_chat_to_team                                                     Team
 chimera_custom_chat_to_vehicle                                                  Vehicle
+chimera_color_red                                                               red
+chimera_color_blue                                                              blue
 
 chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
 chimera_custom_chat_from_team                                                   ^%s%s^;^; (team): %s
@@ -97,6 +99,8 @@ chimera_model_detail_command_help                                               
 chimera_mouse_sensitivity_command_help                                          Change mouse sensitivity.
 chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical
 chimera_player_info_help                                                        Show information for a player by rcon index or yourself if none is given.
+chimera_player_list_help                                                        List players in the server.
+chimera_player_list_none_found                                                  There are no players in the server.
 chimera_set_name_help                                                           Set your name.
 chimera_show_coordinates_help                                                   Display your coordinates.
 chimera_show_fps_help                                                           Display your frame rate.
