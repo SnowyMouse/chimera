@@ -21,6 +21,8 @@ namespace Chimera {
         void spectate_swap_ecx_asm() noexcept;
         void spectate_swap_ebx_object_id_asm() noexcept;
         void spectate_swap_esi_asm() noexcept;
+
+        BaseDynamicObject *spectate_object_addr_eax_asm() noexcept;
     }
 
     bool spectate_enabled = false;
@@ -43,6 +45,18 @@ namespace Chimera {
 
     static void set_object_id(const ObjectID &object_id) {
         *reinterpret_cast<ObjectID *>(get_player_data() + 0x10) = object_id;
+    }
+
+    extern "C" BaseDynamicObject *spectate_get_player_object_addr() noexcept {
+        auto &table = PlayerTable::get_player_table();
+        auto *player = table.get_player(player_being_spectated);
+        auto &otable = ObjectTable::get_object_table();
+        if(player) {
+            return otable.get_dynamic_object(player->object_id);
+        }
+        else {
+            return nullptr;
+        }
     }
 
     static void set_object_id_to_target() {
@@ -112,6 +126,7 @@ namespace Chimera {
         auto &spectate_fp_weapon_sig = get_chimera().get_signature("spectate_fp_weapon_sig");
         auto &spectate_fp_hide_player_sig = get_chimera().get_signature("spectate_fp_hide_player_sig");
         auto &spectate_reticle_team_sig = get_chimera().get_signature("spectate_reticle_team_sig");
+        auto &spectate_hud_sig = get_chimera().get_signature("spectate_hud_sig");
 
         // If index is 0, disable
         if(index == 0) {
@@ -124,6 +139,7 @@ namespace Chimera {
                 spectate_fp_weapon_sig.rollback();
                 spectate_fp_hide_player_sig.rollback();
                 spectate_reticle_team_sig.rollback();
+                spectate_hud_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
                 remove_precamera_event(on_precamera);
@@ -150,8 +166,8 @@ namespace Chimera {
 
             static constexpr SigByte nop3[] = { 0x90, 0x90, 0x90 };
             static constexpr SigByte nop4[] = { 0x90, 0x90, 0x90, 0x90 };
+            static constexpr SigByte nop5[] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
             static constexpr SigByte nop7[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-            //static constexpr SigByte nop7[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 
             if(!spectate_enabled) {
                 add_preframe_event(set_object_id_to_target);
@@ -191,6 +207,14 @@ namespace Chimera {
                 auto *spectate_fp_weapon_data = spectate_fp_weapon_sig.data();
                 write_code_s(spectate_fp_weapon_data, nop3);
                 write_jmp_call(spectate_fp_weapon_data, spectate_fp_weapon, reinterpret_cast<const void *>(spectate_swap_eax_asm), nullptr, false);
+
+                static Hook spectate_hud;
+                auto *spectate_hud_data = spectate_hud_sig.data();
+                write_code_s(spectate_hud_data + 0x08, nop3);
+                write_code_s(spectate_hud_data + 0x15, nop5);
+                write_code_s(spectate_hud_data + 0x1A, nop3);
+                write_code_s(spectate_hud_data + 0x1D, nop4);
+                write_jmp_call(spectate_hud_data + 0x15, spectate_hud, reinterpret_cast<const void *>(spectate_object_addr_eax_asm), nullptr, false);
             }
 
             spectate_enabled = true;
