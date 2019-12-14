@@ -194,8 +194,8 @@ namespace Chimera {
         ADD_COMMAND("chimera_throttle_fps", "chimera_category_enhancement", "client", throttle_fps_command, true, 0, 1);
 
         // Server
-        ADD_COMMAND("chimera_spectate", "chimera_category_server", "client_spectate", spectate_command, true, 1, 1);
-        ADD_COMMAND("chimera_player_list", "chimera_category_server", "core", player_list_command, true, 0, 0);
+        ADD_COMMAND("chimera_spectate", "chimera_category_server", "client_spectate", spectate_command, false, 1, 1);
+        ADD_COMMAND("chimera_player_list", "chimera_category_server", "core", player_list_command, false, 0, 0);
 
         // Visuals
         ADD_COMMAND("chimera_af", "chimera_category_visual", "client_af", af_command, true, 0, 1);
