@@ -66,7 +66,7 @@ namespace Chimera {
         }
         else {
             add_preframe_event(force_unset_everything);
-            return 0xFFFFFFFF;
+            return table.get_client_player()->get_full_id().whole_id;
         }
     }
 
