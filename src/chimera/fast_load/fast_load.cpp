@@ -172,7 +172,7 @@ namespace Chimera {
             }
 
             case GameEngine::GAME_ENGINE_RETAIL: {
-                // Prevent Halo from loading the map list (speed up loading)
+                // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
@@ -185,6 +185,9 @@ namespace Chimera {
             }
 
             case GameEngine::GAME_ENGINE_DEMO: {
+                // Meme Halo into showing custom maps
+                overwrite(get_chimera().get_signature("load_multiplayer_maps_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
+
                 // Load the maps list on the next tick
                 add_tick_event(reload_map_list);
                 function_to_use = do_load_multiplayer_maps<MapIndex>;
