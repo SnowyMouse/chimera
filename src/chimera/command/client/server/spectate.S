@@ -23,6 +23,19 @@ _spectate_swap_eax_object_id_asm:
     popfd
     ret
 
+.globl _spectate_swap_edx_object_id_asm
+_spectate_swap_edx_object_id_asm:
+    pushfd
+    pushad
+    call _spectate_get_object_id
+    cmp eax, 0xFFFFFFFF
+    je ssedx_oid_do_nothing
+    mov [esp+0x14], eax
+    ssedx_oid_do_nothing:
+    popad
+    popfd
+    ret
+
 .globl _spectate_swap_ecx_asm
 _spectate_swap_ecx_asm:
     pushfd

@@ -19,6 +19,7 @@ namespace Chimera {
     extern "C" {
         std::uint32_t spectate_swap_eax_asm() noexcept;
         void spectate_swap_eax_object_id_asm() noexcept;
+        void spectate_swap_edx_object_id_asm() noexcept;
         void spectate_swap_ecx_asm() noexcept;
         void spectate_swap_esi_asm() noexcept;
 
@@ -139,6 +140,7 @@ namespace Chimera {
         auto &spectate_reticle_team_sig = get_chimera().get_signature("spectate_reticle_team_sig");
         auto &spectate_hud_sig = get_chimera().get_signature("spectate_hud_sig");
         auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
+        auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
 
         // If index is 0, disable
         if(index == 0) {
@@ -153,6 +155,7 @@ namespace Chimera {
                 spectate_reticle_team_sig.rollback();
                 spectate_hud_sig.rollback();
                 spectate_grenade_hud_sig.rollback();
+                spectate_health_hud_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
                 remove_precamera_event(on_precamera);
@@ -232,6 +235,10 @@ namespace Chimera {
                 static Hook spectate_grenade_hud;
                 auto *spectate_grenade_hud_data = spectate_grenade_hud_sig.data();
                 write_jmp_call(spectate_grenade_hud_data, spectate_grenade_hud, reinterpret_cast<const void *>(spectate_swap_eax_object_id_asm), nullptr, false);
+
+                static Hook spectate_health_hud;
+                auto *spectate_health_hud_data = spectate_health_hud_sig.data();
+                write_jmp_call(spectate_health_hud_data, spectate_health_hud, reinterpret_cast<const void *>(spectate_swap_edx_object_id_asm), nullptr, false);
             }
 
             spectate_enabled = true;

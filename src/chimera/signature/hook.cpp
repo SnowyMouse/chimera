@@ -43,6 +43,14 @@ namespace Chimera {
                     }
                 }
 
+                // and <value>
+                case 0x25: {
+                    offsets.push_back(at - at_start);
+                    bytes.insert(bytes.end(), at, at + 5);
+                    at += 5;
+                    break;
+                }
+
                 // cmp ecx, something
                 case 0x3B: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
@@ -210,7 +218,7 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
-                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3) {
+                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
