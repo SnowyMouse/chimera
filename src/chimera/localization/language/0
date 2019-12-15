@@ -116,5 +116,8 @@ chimera_simple_score_screen_command_help                                        
 chimera_split_screen_hud_command_help                                           Use the split screen HUD.
 chimera_spectate_command_help                                                   Change your perspective to another player's perspective.
 chimera_spectate_command_now_spectating                                         Now spectating %S
+chimera_spectate_next_command_help                                              Switch to the next player.
+chimera_spectate_next_command_nobody_to_spectate                                There is nobody else you can spectate.
+chimera_spectate_previous_command_help                                          Switch to the previous player.
 chimera_throttle_fps_help                                                       Throttle Halo's frame rate.
 chimera_uncap_cinematic_command_help                                            Disable the 30 FPS lock in cutscenes.

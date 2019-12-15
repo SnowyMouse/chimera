@@ -31,6 +31,7 @@ namespace Chimera {
 
     bool spectate_enabled = false;
 
+    static unsigned long rcon_id_being_spectated;
     static PlayerID player_being_spectated;
     bool spectate_command(int argc, const char **argv);
 
@@ -160,9 +161,8 @@ namespace Chimera {
 
     bool spectate_command(int, const char **argv) {
         // Get the index maybe
-        int index;
         try {
-            index = std::stoul(*argv);
+            rcon_id_being_spectated = std::stoul(*argv);
         }
         catch(std::exception &) {
             console_error(localize("chimera_error_takes_player_number"));
@@ -182,7 +182,7 @@ namespace Chimera {
         auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
 
         // If index is 0, disable
-        if(index == 0) {
+        if(rcon_id_being_spectated == 0) {
             console_output("off");
             if(spectate_enabled) {
                 spectate_armor_color_sig.rollback();
@@ -215,7 +215,7 @@ namespace Chimera {
 
         // Get the player if needed
         auto &player_table = PlayerTable::get_player_table();
-        Player *player = player_table.get_player_by_rcon_id(index - 1);
+        Player *player = player_table.get_player_by_rcon_id(rcon_id_being_spectated - 1);
         if(player) {
             player_being_spectated = player->get_full_id();
 
@@ -289,5 +289,55 @@ namespace Chimera {
         }
 
         return true;
+    }
+
+    bool spectate_next_command(int, const char **) {
+        auto &player_table = PlayerTable::get_player_table();
+        if(!spectate_enabled) {
+            rcon_id_being_spectated = 1;
+        }
+        unsigned long i = rcon_id_being_spectated + 1;
+        while(true) {
+            if(i >= UINT8_MAX) {
+                i = 1;
+            }
+            Player *player = player_table.get_player_by_rcon_id(i - 1);
+            if(i == rcon_id_being_spectated && (!player || spectate_enabled)) {
+                console_error(localize("chimera_spectate_next_command_nobody_to_spectate"));
+                return false;
+            }
+            if(player) {
+                char arg[256];
+                const char *arg_ptr = arg;
+                std::snprintf(arg, sizeof(arg), "%lu", i);
+                return spectate_command(1, &arg_ptr);
+            }
+            i++;
+        }
+    }
+
+    bool spectate_previous_command(int, const char **) {
+        auto &player_table = PlayerTable::get_player_table();
+        if(!spectate_enabled) {
+            rcon_id_being_spectated = 1;
+        }
+        unsigned long i = rcon_id_being_spectated - 1;
+        while(true) {
+            if(i == 0) {
+                i = UINT8_MAX - 1;
+            }
+            Player *player = player_table.get_player_by_rcon_id(i - 1);
+            if(i == rcon_id_being_spectated && (!player || spectate_enabled)) {
+                console_error(localize("chimera_spectate_next_command_nobody_to_spectate"));
+                return false;
+            }
+            if(player) {
+                char arg[256];
+                const char *arg_ptr = arg;
+                std::snprintf(arg, sizeof(arg), "%lu", i);
+                return spectate_command(1, &arg_ptr);
+            }
+            i--;
+        }
     }
 }

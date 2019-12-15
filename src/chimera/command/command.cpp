@@ -195,6 +195,8 @@ namespace Chimera {
 
         // Server
         ADD_COMMAND("chimera_spectate", "chimera_category_server", "client_spectate", spectate_command, false, 1, 1);
+        ADD_COMMAND("chimera_spectate_next", "chimera_category_server", "client_spectate", spectate_next_command, false, 0, 0);
+        ADD_COMMAND("chimera_spectate_previous", "chimera_category_server", "client_spectate", spectate_previous_command, false, 0, 0);
         ADD_COMMAND("chimera_player_list", "chimera_category_server", "core", player_list_command, false, 0, 0);
 
         // Visuals
