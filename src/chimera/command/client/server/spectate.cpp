@@ -53,7 +53,15 @@ namespace Chimera {
         auto *player = table.get_player(player_being_spectated);
         auto &otable = ObjectTable::get_object_table();
         if(player) {
-            return otable.get_dynamic_object(player->object_id);
+            auto &object_id = player->object_id;
+            auto *object = otable.get_dynamic_object(object_id);
+            if(object) {
+                auto *parent = reinterpret_cast<UnitDynamicObject *>(otable.get_dynamic_object(object->parent));
+                if(parent && (parent->type == ObjectType::OBJECT_TYPE_BIPED || parent->type == ObjectType::OBJECT_TYPE_VEHICLE) && parent->gunner == object_id) {
+                    return parent;
+                }
+            }
+            return object;
         }
         else {
             return nullptr;
