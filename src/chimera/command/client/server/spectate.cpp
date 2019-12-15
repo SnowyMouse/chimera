@@ -40,7 +40,7 @@ namespace Chimera {
         get_chimera().execute_command("chimera_spectate 0");
     }
 
-    static std::byte *get_player_data() {
+    static std::byte *get_player_data() noexcept {
         static std::optional<std::byte *> player_data;
         if(!player_data.has_value()) {
             player_data = **reinterpret_cast<std::byte ***>(get_chimera().get_signature("spectate_fp_camera_position_sig").data() + 2);
@@ -48,8 +48,12 @@ namespace Chimera {
         return *player_data;
     }
 
-    static void set_object_id(const ObjectID &object_id) {
-        *reinterpret_cast<ObjectID *>(get_player_data() + 0x10) = object_id;
+    static ObjectID &get_object_id() noexcept {
+        return *reinterpret_cast<ObjectID *>(get_player_data() + 0x10);
+    }
+
+    static void set_object_id(const ObjectID &object_id) noexcept {
+        get_object_id() = object_id;
     }
 
     extern "C" BaseDynamicObject *spectate_get_player_object_addr() noexcept {
@@ -118,6 +122,12 @@ namespace Chimera {
 
                     auto large_font = get_generic_font(GenericFont::FONT_LARGE);
                     apply_text(std::string(dead_text), -320, 60, 640, 480, color, large_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+
+                    auto old_object_id = player->last_object_id;
+                    auto *old_object = ObjectTable::get_object_table().get_dynamic_object(old_object_id);
+                    if(old_object && old_object->type == ObjectType::OBJECT_TYPE_BIPED) {
+                        id_to_set_to = old_object_id;
+                    }
                 }
 
                 color.alpha = 0.8F;
@@ -130,6 +140,7 @@ namespace Chimera {
         else {
             id_to_set_to.whole_id = 0xFFFFFFFF;
         }
+
         set_object_id(id_to_set_to);
     }
 
@@ -310,53 +321,54 @@ namespace Chimera {
         return true;
     }
 
-    bool spectate_next_command(int, const char **) {
+    static bool team_only = true;
+
+    bool cycle_spectate(int increment) {
         auto &player_table = PlayerTable::get_player_table();
         if(!spectate_enabled) {
             rcon_id_being_spectated = 1;
         }
-        unsigned long i = rcon_id_being_spectated + 1;
+        unsigned long i = rcon_id_being_spectated + increment;
+        std::optional<std::uint8_t> team_to_ignore = team_only && is_team() ? std::optional<std::uint8_t>(player_table.get_client_player()->team) : std::nullopt;
         while(true) {
-            if(i >= UINT8_MAX) {
-                i = 1;
+            if(increment > 0) {
+                if(i >= UINT8_MAX) {
+                    i = 1;
+                }
+            }
+            else {
+                if(i == 0) {
+                    i = UINT8_MAX - 1;
+                }
             }
             Player *player = player_table.get_player_by_rcon_id(i - 1);
             if(i == rcon_id_being_spectated && (!player || spectate_enabled)) {
                 console_error(localize("chimera_spectate_next_command_nobody_to_spectate"));
                 return false;
             }
-            if(player) {
+            if(player && (!team_to_ignore.has_value() || player->team == team_to_ignore)) {
                 char arg[256];
                 const char *arg_ptr = arg;
                 std::snprintf(arg, sizeof(arg), "%lu", i);
                 return spectate_command(1, &arg_ptr);
             }
-            i++;
+            i += increment;
         }
     }
 
+    bool spectate_next_command(int, const char **) {
+        return cycle_spectate(1);
+    }
+
     bool spectate_previous_command(int, const char **) {
-        auto &player_table = PlayerTable::get_player_table();
-        if(!spectate_enabled) {
-            rcon_id_being_spectated = 1;
+        return cycle_spectate(-1);
+    }
+
+    bool spectate_team_only_command(int argc, const char **argv) {
+        if(argc == 1) {
+            team_only = STR_TO_BOOL(argv[0]);
         }
-        unsigned long i = rcon_id_being_spectated - 1;
-        while(true) {
-            if(i == 0) {
-                i = UINT8_MAX - 1;
-            }
-            Player *player = player_table.get_player_by_rcon_id(i - 1);
-            if(i == rcon_id_being_spectated && (!player || spectate_enabled)) {
-                console_error(localize("chimera_spectate_next_command_nobody_to_spectate"));
-                return false;
-            }
-            if(player) {
-                char arg[256];
-                const char *arg_ptr = arg;
-                std::snprintf(arg, sizeof(arg), "%lu", i);
-                return spectate_command(1, &arg_ptr);
-            }
-            i--;
-        }
+        console_output(BOOL_TO_STR(team_only));
+        return true;
     }
 }
