@@ -7,6 +7,9 @@
 #include "../../../signature/hook.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
+#include "../../../output/draw_text.hpp"
+#include "../../../halo_data/multiplayer.hpp"
+#include "../../../console/console.hpp"
 #include "../../../localization/localization.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
@@ -69,11 +72,39 @@ namespace Chimera {
     }
 
     static void set_object_id_to_target() {
+        if(server_type() == ServerType::SERVER_NONE) {
+            force_unset_everything();
+            return;
+        }
+
         auto &table = PlayerTable::get_player_table();
         ObjectID id_to_set_to;
         auto *player = table.get_player(player_being_spectated);
         if(player) {
             id_to_set_to = player->object_id;
+
+            // Show some text if the player doesn't have the console out
+            if(!get_console_open()) {
+                ColorARGB color;
+                color.alpha = 0.8F;
+                color.red = 1.0F;
+                color.green = 1.0F;
+                color.blue = 1.0F;
+
+                if(id_to_set_to.is_null()) {
+                    char dead_text[256];
+                    if(player->respawn_time > 0) {
+                        unsigned int seconds = (player->respawn_time / 30);
+                        std::snprintf(dead_text, sizeof(dead_text), "Respawning... %zu", seconds);
+                    }
+                    else {
+                        std::snprintf(dead_text, sizeof(dead_text), "Waiting for space to clear");
+                    }
+                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, get_generic_font(GenericFont::FONT_LARGE), FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+                }
+
+                apply_text(std::wstring(player->name), -320, 210, 640, 480, color, get_generic_font(GenericFont::FONT_SMALL), FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+            }
         }
         else {
             add_preframe_event(force_unset_everything);
