@@ -74,13 +74,18 @@ namespace Chimera {
 
     static void set_object_id_to_target() {
         if(server_type() == ServerType::SERVER_NONE) {
-            force_unset_everything();
-            return;
+            add_preframe_event(force_unset_everything);
         }
 
         auto &table = PlayerTable::get_player_table();
         ObjectID id_to_set_to;
         auto *player = table.get_player(player_being_spectated);
+
+        if(!spectate_enabled || !player) {
+            player = table.get_client_player();
+            add_preframe_event(force_unset_everything);
+        }
+
         if(player) {
             id_to_set_to = player->object_id;
 
@@ -108,7 +113,6 @@ namespace Chimera {
             }
         }
         else {
-            add_preframe_event(force_unset_everything);
             id_to_set_to.whole_id = 0xFFFFFFFF;
         }
         set_object_id(id_to_set_to);
