@@ -237,6 +237,7 @@ namespace Chimera {
         auto &spectate_hud_sig = get_chimera().get_signature("spectate_hud_sig");
         auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
         auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
+        auto &spectate_turning_sig = get_chimera().get_signature("spectate_turning_sig");
 
         // If index is 0, disable
         if(rcon_id_being_spectated == 0) {
@@ -252,6 +253,7 @@ namespace Chimera {
                 spectate_hud_sig.rollback();
                 spectate_grenade_hud_sig.rollback();
                 spectate_health_hud_sig.rollback();
+                spectate_turning_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
                 remove_precamera_event(on_precamera);
@@ -340,6 +342,8 @@ namespace Chimera {
                 static Hook spectate_health_hud;
                 auto *spectate_health_hud_data = spectate_health_hud_sig.data();
                 write_jmp_call(spectate_health_hud_data, spectate_health_hud, reinterpret_cast<const void *>(spectate_swap_edx_object_id_asm), nullptr, false);
+
+                overwrite(spectate_turning_sig.data(), static_cast<std::uint8_t>(0xEB));
             }
 
             spectate_enabled = true;
