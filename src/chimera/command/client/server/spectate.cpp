@@ -98,18 +98,33 @@ namespace Chimera {
                 color.blue = 1.0F;
 
                 if(id_to_set_to.is_null()) {
+                    float seconds = static_cast<unsigned int>(player->respawn_time) / 30.0F;
+
                     char dead_text[256];
-                    if(player->respawn_time > 0) {
-                        unsigned int seconds = (player->respawn_time / 30);
-                        std::snprintf(dead_text, sizeof(dead_text), "%u", seconds);
+                    if(seconds > 0) {
+                        std::snprintf(dead_text, sizeof(dead_text), "%.0f", seconds);
                     }
                     else {
                         std::snprintf(dead_text, sizeof(dead_text), "Waiting for space to clear");
                     }
-                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, get_generic_font(GenericFont::FONT_LARGE), FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+
+                    // Change the alpha based on the respawn time
+                    float ratio = seconds / 5.0F;
+                    if(ratio > 1.0F) {
+                        ratio = 1.0F;
+                    }
+
+                    color.alpha = 1.0F - ratio * 0.5F;
+
+                    auto large_font = get_generic_font(GenericFont::FONT_LARGE);
+                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, large_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
                 }
 
-                apply_text(std::wstring(player->name), -320, 210, 640, 480, color, get_generic_font(GenericFont::FONT_SMALL), FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+                color.alpha = 0.8F;
+
+                auto small_font = get_generic_font(GenericFont::FONT_SMALL);
+                auto height = font_pixel_height(small_font);
+                apply_text(std::wstring(player->name), -320, 240 - height * 2, 640, 480, color, small_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
             }
         }
         else {
