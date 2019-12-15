@@ -321,7 +321,7 @@ namespace Chimera {
         return true;
     }
 
-    static bool team_only = true;
+    static bool team_only = false;
 
     bool cycle_spectate(int increment) {
         auto &player_table = PlayerTable::get_player_table();
