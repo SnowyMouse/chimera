@@ -94,6 +94,18 @@ namespace Chimera {
                     break;
                 }
 
+                // push 0x00000000-0xFFFFFFFF
+                case 0x69: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(op1 == 0xFF) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 6);
+                        at += 6;
+                        break;
+                    }
+                    std::terminate();
+                }
+
                 // push 0x00-0xFF
                 case 0x6A: {
                     offsets.push_back(at - at_start);

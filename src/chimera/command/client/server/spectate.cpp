@@ -14,6 +14,7 @@
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
 #include "../../../halo_data/camera.hpp"
+#include "../../../halo_data/game_engine.hpp"
 #include "../../../event/camera.hpp"
 #include "../../../math_trig/math_trig.hpp"
 #include "../../../event/frame.hpp"
@@ -23,6 +24,7 @@ namespace Chimera {
         std::uint32_t spectate_swap_eax_asm() noexcept;
         void spectate_swap_eax_object_id_asm() noexcept;
         void spectate_swap_edx_object_id_asm() noexcept;
+        void spectate_swap_ecx_weapon_object_id_asm() noexcept;
         void spectate_swap_ecx_asm() noexcept;
         void spectate_swap_esi_asm() noexcept;
 
@@ -73,6 +75,29 @@ namespace Chimera {
         }
         else {
             return nullptr;
+        }
+    }
+
+    extern "C" std::uint32_t spectate_get_player_weapon_id() noexcept {auto &table = PlayerTable::get_player_table();
+        auto *player = table.get_player(player_being_spectated);
+        auto &otable = ObjectTable::get_object_table();
+        if(player) {
+            auto &object_id = player->object_id;
+            auto *object = reinterpret_cast<UnitDynamicObject *>(otable.get_dynamic_object(object_id));
+            if(object && object->type == ObjectType::OBJECT_TYPE_BIPED) {
+                if(object->weapon_slot < 4) {
+                    return object->weapons[object->weapon_slot].whole_id;
+                }
+                else {
+                    return 0xFFFFFFFF;
+                }
+            }
+            else {
+                return 0xFFFFFFFF;
+            }
+        }
+        else {
+            return 0xFFFFFFFF;
         }
     }
 
@@ -200,13 +225,15 @@ namespace Chimera {
         }
 
         // Hooks and stuff
-        auto &spectate_armor_color_sig = get_chimera().get_signature("spectate_armor_color_sig");
+        bool demo = game_engine() == GameEngine::GAME_ENGINE_DEMO;
+
+        auto &spectate_armor_color_sig = get_chimera().get_signature(demo ? "spectate_armor_color_demo_sig" : "spectate_armor_color_full_sig");
         auto &spectate_motion_sensor_sig = get_chimera().get_signature("spectate_motion_sensor_sig");
         auto &spectate_fp_animation_1_sig = get_chimera().get_signature("spectate_fp_animation_1_sig");
         auto &spectate_fp_animation_2_sig = get_chimera().get_signature("spectate_fp_animation_2_sig");
-        auto &spectate_fp_weapon_sig = get_chimera().get_signature("spectate_fp_weapon_sig");
+        auto &spectate_fp_weapon_sig = get_chimera().get_signature(demo ? "spectate_fp_weapon_demo_sig" : "spectate_fp_weapon_full_sig");
         auto &spectate_fp_hide_player_sig = get_chimera().get_signature("spectate_fp_hide_player_sig");
-        auto &spectate_reticle_team_sig = get_chimera().get_signature("spectate_reticle_team_sig");
+        auto &spectate_reticle_team_sig = get_chimera().get_signature(demo ? "spectate_reticle_team_demo_sig" : "spectate_reticle_team_full_sig");
         auto &spectate_hud_sig = get_chimera().get_signature("spectate_hud_sig");
         auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
         auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
@@ -290,7 +317,12 @@ namespace Chimera {
 
                 static Hook spectate_fp_weapon;
                 auto *spectate_fp_weapon_data = spectate_fp_weapon_sig.data();
-                write_code_s(spectate_fp_weapon_data, nop3);
+                if(demo) {
+                    write_code_s(spectate_fp_weapon_data, nop4);
+                }
+                else {
+                    write_code_s(spectate_fp_weapon_data, nop3);
+                }
                 write_jmp_call(spectate_fp_weapon_data, spectate_fp_weapon, reinterpret_cast<const void *>(spectate_swap_eax_asm), nullptr, false);
 
                 static Hook spectate_hud;
