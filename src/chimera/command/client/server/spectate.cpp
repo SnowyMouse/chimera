@@ -325,32 +325,46 @@ namespace Chimera {
 
     bool cycle_spectate(int increment) {
         auto &player_table = PlayerTable::get_player_table();
+        unsigned long i;
         if(!spectate_enabled) {
             rcon_id_being_spectated = 1;
+            i = rcon_id_being_spectated;
         }
-        unsigned long i = rcon_id_being_spectated + increment;
+        else {
+            i = rcon_id_being_spectated + increment;
+        }
+
+        int looped = 0;
         std::optional<std::uint8_t> team_to_ignore = team_only && is_team() ? std::optional<std::uint8_t>(player_table.get_client_player()->team) : std::nullopt;
         while(true) {
             if(increment > 0) {
                 if(i >= UINT8_MAX) {
                     i = 1;
+                    looped++;
                 }
             }
             else {
                 if(i == 0) {
                     i = UINT8_MAX - 1;
+                    looped++;
                 }
             }
-            Player *player = player_table.get_player_by_rcon_id(i - 1);
-            if(i == rcon_id_being_spectated && (!player || spectate_enabled)) {
+
+            // If we've wrapped around twice, give up
+            if(looped == 2) {
                 console_error(localize("chimera_spectate_next_command_nobody_to_spectate"));
                 return false;
             }
-            if(player && (!team_to_ignore.has_value() || player->team == team_to_ignore)) {
-                char arg[256];
-                const char *arg_ptr = arg;
-                std::snprintf(arg, sizeof(arg), "%lu", i);
-                return spectate_command(1, &arg_ptr);
+
+            // Otherwise, make sure we aren't spectating who we're already spectating
+            if(!spectate_enabled || i != rcon_id_being_spectated) {
+                Player *player = player_table.get_player_by_rcon_id(i - 1);
+                if(player && (!team_to_ignore.has_value() || player->team == team_to_ignore)) {
+                    char arg[256];
+                    const char *arg_ptr = arg;
+                    std::snprintf(arg, sizeof(arg), "%lu", i);
+                    return spectate_command(1, &arg_ptr);
+                }
             }
             i += increment;
         }
