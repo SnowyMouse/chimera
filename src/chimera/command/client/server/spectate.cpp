@@ -18,8 +18,8 @@
 namespace Chimera {
     extern "C" {
         std::uint32_t spectate_swap_eax_asm() noexcept;
+        void spectate_swap_eax_object_id_asm() noexcept;
         void spectate_swap_ecx_asm() noexcept;
-        void spectate_swap_ebx_object_id_asm() noexcept;
         void spectate_swap_esi_asm() noexcept;
 
         BaseDynamicObject *spectate_object_addr_eax_asm() noexcept;
@@ -84,6 +84,17 @@ namespace Chimera {
         }
     }
 
+    extern "C" std::uint32_t spectate_get_object_id() noexcept {
+        auto &table = PlayerTable::get_player_table();
+        auto *player = table.get_player(player_being_spectated);
+        if(player) {
+            return player->object_id.whole_id;
+        }
+        else {
+            return 0xFFFFFFFF;
+        }
+    }
+
     static void on_precamera() noexcept {
         auto *player = PlayerTable::get_player_table().get_player(player_being_spectated);
         if(!player || player->object_id.is_null()) {
@@ -127,6 +138,7 @@ namespace Chimera {
         auto &spectate_fp_hide_player_sig = get_chimera().get_signature("spectate_fp_hide_player_sig");
         auto &spectate_reticle_team_sig = get_chimera().get_signature("spectate_reticle_team_sig");
         auto &spectate_hud_sig = get_chimera().get_signature("spectate_hud_sig");
+        auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
 
         // If index is 0, disable
         if(index == 0) {
@@ -140,6 +152,7 @@ namespace Chimera {
                 spectate_fp_hide_player_sig.rollback();
                 spectate_reticle_team_sig.rollback();
                 spectate_hud_sig.rollback();
+                spectate_grenade_hud_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
                 remove_precamera_event(on_precamera);
@@ -215,6 +228,10 @@ namespace Chimera {
                 write_code_s(spectate_hud_data + 0x1A, nop3);
                 write_code_s(spectate_hud_data + 0x1D, nop4);
                 write_jmp_call(spectate_hud_data + 0x15, spectate_hud, reinterpret_cast<const void *>(spectate_object_addr_eax_asm), nullptr, false);
+
+                static Hook spectate_grenade_hud;
+                auto *spectate_grenade_hud_data = spectate_grenade_hud_sig.data();
+                write_jmp_call(spectate_grenade_hud_data, spectate_grenade_hud, reinterpret_cast<const void *>(spectate_swap_eax_object_id_asm), nullptr, false);
             }
 
             spectate_enabled = true;
