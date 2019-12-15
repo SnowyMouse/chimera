@@ -101,7 +101,7 @@ namespace Chimera {
                     char dead_text[256];
                     if(player->respawn_time > 0) {
                         unsigned int seconds = (player->respawn_time / 30);
-                        std::snprintf(dead_text, sizeof(dead_text), "Respawning... %zu", seconds);
+                        std::snprintf(dead_text, sizeof(dead_text), "%u", seconds);
                     }
                     else {
                         std::snprintf(dead_text, sizeof(dead_text), "Waiting for space to clear");
