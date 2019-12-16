@@ -31,6 +31,7 @@
 #include "fix/leak_descriptors.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
+#include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
 #include "fix/custom_map_lobby_fix.hpp"
@@ -159,6 +160,9 @@ namespace Chimera {
 
                 // Chu
                 set_up_hotkeys();
+
+                // Memes
+                set_up_uncompressed_sound_fix();
             }
             else {
                 enable_output(true);

@@ -13,6 +13,7 @@ add_library(chimera STATIC
     src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
     src/chimera/bookmark/bookmark.cpp
+    src/chimera/chimera.cpp
     src/chimera/command/command.cpp
     src/chimera/command/hotkey.cpp
     src/chimera/config/config.cpp
@@ -54,6 +55,7 @@ add_library(chimera STATIC
     src/chimera/fix/model_detail.S
     src/chimera/fix/nav_numbers.cpp
     src/chimera/fix/sun_fix.cpp
+    src/chimera/fix/uncompressed_sound_fix.cpp
     src/chimera/fix/video_mode.cpp
     src/chimera/fix/video_mode.S
     src/chimera/fix/widescreen_element_reposition_hud.S
@@ -96,7 +98,6 @@ add_library(chimera STATIC
     src/chimera/signature/hook.cpp
     src/chimera/signature/signature.cpp
     src/chimera/signature/hac/codefinder.cpp
-    src/chimera/chimera.cpp
     src/chimera/version.rc
     ${COMMAND_FILES}
 
