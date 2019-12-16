@@ -14,6 +14,7 @@
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
 #include "../../../halo_data/camera.hpp"
+#include "../../../halo_data/script.hpp"
 #include "../../../halo_data/game_engine.hpp"
 #include "../../../event/camera.hpp"
 #include "../../../math_trig/math_trig.hpp"
@@ -119,46 +120,44 @@ namespace Chimera {
             id_to_set_to = player->object_id;
 
             // Show some text if the player doesn't have the console out
-            if(!get_console_open()) {
-                ColorARGB color;
-                color.alpha = 0.8F;
-                color.red = 1.0F;
-                color.green = 1.0F;
-                color.blue = 1.0F;
+            ColorARGB color;
+            color.alpha = 0.8F;
+            color.red = 1.0F;
+            color.green = 1.0F;
+            color.blue = 1.0F;
 
-                if(id_to_set_to.is_null()) {
-                    float seconds = static_cast<unsigned int>(player->respawn_time) / 30.0F;
+            if(id_to_set_to.is_null()) {
+                float seconds = static_cast<unsigned int>(player->respawn_time) / 30.0F;
 
-                    char dead_text[256];
-                    if(seconds > 0) {
-                        std::snprintf(dead_text, sizeof(dead_text), "%.0f", seconds);
-                    }
-                    else {
-                        std::snprintf(dead_text, sizeof(dead_text), "Waiting for space to clear");
-                    }
-
-                    // Change the alpha based on the respawn time
-                    float ratio = seconds / 5.0F;
-                    if(ratio > 1.0F) {
-                        ratio = 1.0F;
-                    }
-
-                    color.alpha = 1.0F - ratio * 0.5F;
-
-                    auto large_font = get_generic_font(GenericFont::FONT_LARGE);
-                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, large_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
-
-                    auto old_object_id = player->last_object_id;
-                    auto *old_object = ObjectTable::get_object_table().get_dynamic_object(old_object_id);
-                    if(old_object && old_object->type == ObjectType::OBJECT_TYPE_BIPED) {
-                        id_to_set_to = old_object_id;
-                    }
+                char dead_text[256];
+                if(seconds > 0) {
+                    std::snprintf(dead_text, sizeof(dead_text), "%.0f", seconds);
+                }
+                else {
+                    std::snprintf(dead_text, sizeof(dead_text), "Waiting for space to clear");
                 }
 
-                color.alpha = 0.8F;
+                // Change the alpha based on the respawn time
+                float ratio = seconds / 5.0F;
+                if(ratio > 1.0F) {
+                    ratio = 1.0F;
+                }
 
-                auto small_font = get_generic_font(GenericFont::FONT_SMALL);
-                auto height = font_pixel_height(small_font);
+                color.alpha = 1.0F - ratio * 0.5F;
+
+                auto large_font = get_generic_font(GenericFont::FONT_LARGE);
+
+                if(!get_console_open()) {
+                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, large_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+                }
+            }
+
+            color.alpha = 0.8F;
+
+            auto small_font = get_generic_font(GenericFont::FONT_SMALL);
+            auto height = font_pixel_height(small_font);
+
+            if(!get_console_open()) {
                 apply_text(std::wstring(player->name), -320, 240 - height * 2, 640, 480, color, small_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
             }
         }
@@ -238,6 +237,8 @@ namespace Chimera {
         auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
         auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
         auto &spectate_turning_sig = get_chimera().get_signature("spectate_turning_sig");
+        auto &spectate_death_cam_sig = get_chimera().get_signature("spectate_death_cam_sig");
+        auto &spectate_cull_effects_sig = get_chimera().get_signature("spectate_cull_effects_sig");
 
         // If index is 0, disable
         if(rcon_id_being_spectated == 0) {
@@ -254,6 +255,8 @@ namespace Chimera {
                 spectate_grenade_hud_sig.rollback();
                 spectate_health_hud_sig.rollback();
                 spectate_turning_sig.rollback();
+                spectate_death_cam_sig.rollback();
+                spectate_cull_effects_sig.rollback();
 
                 remove_preframe_event(set_object_id_to_target);
                 remove_precamera_event(on_precamera);
@@ -281,6 +284,7 @@ namespace Chimera {
             static constexpr SigByte nop3[] = { 0x90, 0x90, 0x90 };
             static constexpr SigByte nop4[] = { 0x90, 0x90, 0x90, 0x90 };
             static constexpr SigByte nop5[] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
+            static constexpr SigByte nop6[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
             static constexpr SigByte nop7[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 
             if(!spectate_enabled) {
@@ -342,6 +346,16 @@ namespace Chimera {
                 static Hook spectate_health_hud;
                 auto *spectate_health_hud_data = spectate_health_hud_sig.data();
                 write_jmp_call(spectate_health_hud_data, spectate_health_hud, reinterpret_cast<const void *>(spectate_swap_edx_object_id_asm), nullptr, false);
+
+                static Hook spectate_death_cam;
+                auto *spectate_death_cam_data = spectate_death_cam_sig.data();
+                write_code_s(spectate_death_cam_data, nop6);
+                write_code_s(spectate_death_cam_data + 6, nop4);
+                write_jmp_call(spectate_death_cam_data, spectate_death_cam, reinterpret_cast<const void *>(spectate_swap_eax_asm), nullptr, false);
+
+                static constexpr SigByte cull_effect_disable[] = { 0xB0, 0x01, 0x90 };
+                auto *spectate_cull_effects_data = spectate_cull_effects_sig.data();
+                write_code_s(spectate_cull_effects_data, cull_effect_disable);
 
                 overwrite(spectate_turning_sig.data(), static_cast<std::uint8_t>(0xEB));
             }
