@@ -851,7 +851,22 @@ namespace Chimera {
 
         char path[MAX_PATH];
         std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
-        map_downloader = std::make_unique<HACMapDownloader>(map, path);
+        const char *game_engine_str;
+        switch(game_engine()) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                game_engine_str = "halom";
+                break;
+            case GameEngine::GAME_ENGINE_RETAIL:
+                game_engine_str = "halor";
+                break;
+            case GameEngine::GAME_ENGINE_DEMO:
+                game_engine_str = "halod";
+                break;
+            default:
+                game_engine_str = nullptr;
+        }
+
+        map_downloader = std::make_unique<HACMapDownloader>(map, path, game_engine_str);
         map_downloader->dispatch();
         std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);

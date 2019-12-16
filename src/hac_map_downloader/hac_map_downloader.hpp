@@ -68,7 +68,7 @@ public:
      */
     const std::string &get_map() const noexcept;
 
-    HACMapDownloader(const char *map, const char *output_file);
+    HACMapDownloader(const char *map, const char *output_file, const char *game_engine);
     ~HACMapDownloader();
 
 private:
@@ -83,6 +83,9 @@ private:
 
     /** Post! */
     std::string post_fields;
+
+    /** Game engine */
+    std::string game_engine;
 
     /** File to write to as we download */
     std::FILE *output_file_handle;

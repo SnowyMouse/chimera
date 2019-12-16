@@ -14,7 +14,7 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     unsigned int repo = 1;
     do {
         char url[255];
-        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s", repo, downloader->map.data());
+        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, downloader->map.data(), downloader->game_engine.data());
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
         downloader->download_started = Clock::now();
         result = curl_easy_perform(downloader->curl);
@@ -236,7 +236,7 @@ bool HACMapDownloader::is_finished() noexcept {
     return finished;
 }
 
-HACMapDownloader::HACMapDownloader(const char *map, const char *output_file) : map(map), output_file(output_file) {
+HACMapDownloader::HACMapDownloader(const char *map, const char *output_file, const char *game_engine) : map(map), output_file(output_file), game_engine(game_engine) {
     for(char &c : this->map) {
         c = std::tolower(c);
     }

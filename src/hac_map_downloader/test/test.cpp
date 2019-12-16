@@ -2,12 +2,12 @@
 #include "../hac_map_downloader.hpp"
 
 int main(int argc, const char **argv) {
-    if(argc != 3) {
-        std::printf("Usage: %s <map name> <tmp path>\n", argv[0]);
+    if(argc != 4) {
+        std::printf("Usage: %s <map name> <tmp path> <engine>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    HACMapDownloader downloader(argv[1], argv[2]);
+    HACMapDownloader downloader(argv[1], argv[2], argv[3]);
     downloader.dispatch();
 
     for(;;) {
