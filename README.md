@@ -53,6 +53,7 @@ These are features that are always on.
 - [Sun fix](#sun-fix)
 - [Custom chat](#custom-chat)
 - [NVIDIA camo fix](#nvidia-camo-fix)
+- [Map downloading](#map-downloading)
 
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
@@ -138,6 +139,12 @@ The Keystone chat is crashy and broken. Chimera adds a replacement chat.
 Chimera fixes a bug where, if the GPU is an NVIDIA graphics card, it uses alpha
 blended camo instead of the liquid camo shader.
 
+#### Map downloading
+Chimera will automatically attempt to download maps off of the
+[HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that
+is playing a map you don't have. These maps are stored under `chimera/maps` in
+your Halo profiles folder.
+
 ### Ini features
 Chimera has a very customizable chimera.ini text file that you can use to
 further tweak your game.
@@ -190,7 +197,8 @@ information on these settings.
 
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
-these features are off by default.
+these features are off by default. Commands are stored in preferences.txt in
+the chimera folder created by Chimera.
 - [Aim assist](#aim-assist)
 - [Anisotropic filtering](#anisotropic-filtering)
 - [Auto centering](#auto-centering)
@@ -227,11 +235,16 @@ these features are off by default.
 - [Model detail](#model-detail)
 - [Mouse sensitivity](#mouse-sensitivity)
 - [Player info](#player-info)
+- [Player list](#player-list)
 - [Set name](#set-name)
 - [Show coordinates](#show-coordinates)
 - [Show FPS](#show-fps)
 - [Shrink empty weapons](#shrink-empty-weapons)
 - [Split screen HUD](#split-screen-hud)
+- [Spectate](#spectate)
+- [Spectate back](#spectate-back)
+- [Spectate forward](#spectate-forward)
+- [Spectate team only](#spectate-team-only)
 - [Throttle FPS](#throttle-fps)
 - [TPS](#tps)
 - [Uncap cinematic](#uncap-cinematic)
@@ -477,10 +490,14 @@ Halo | Horizontal | Vertical
 **Usage:** `chimera_mouse_sensitivity [off | <horizontal> <vertical>]`
 
 #### Player info
-Show player info for the given player. This does not work outside of client
-hosted games.
+Show player info for the given player.
 
 **Usage:** `chimera_player_info <player>`
+
+#### Player list
+List player indices.
+
+**Usage:** `chimera_player_list`
 
 #### Set name
 Set your in-game name.
@@ -506,6 +523,27 @@ Make empty weapons appear smaller so they're easier to spot.
 Override the HUD with the split screen HUD.
 
 **Usage:** `chimera_split_screen_hud [true/false]`
+
+#### Spectate
+Spectate a specific player. Use `0` to disable spectating.
+
+**Usage:** `chimera_spectate <index>`
+
+#### Spectate next
+Spectate the next player. This is intended to be used with hotkeys.
+
+**Usage:** `chimera_spectate_next`
+
+#### Spectate previous
+Spectate the previous player. This is intended to be used with hotkeys.
+
+**Usage:** `chimera_spectate_back`
+
+#### Spectate team only
+Set whether or not chimera_spectate_next or chimera_spectate_previous selects
+players not on the same team. This has no effect on non-team games.
+
+**Usage:** `chimera_spectate_team_only <enabled>`
 
 #### Throttle FPS
 Throttle Halo's frame rate. Set to 0 to disable. By default, this is set to 300
