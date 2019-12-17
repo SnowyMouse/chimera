@@ -175,7 +175,11 @@ namespace Chimera {
         }
         else {
             add_preframe_event(force_unset_everything);
-            return table.get_client_player()->get_full_id().whole_id;
+            auto *client_player = table.get_client_player();
+            if(!client_player) {
+                return 0xFFFFFFFF;
+            }
+            return client_player->get_full_id().whole_id;
         }
     }
 
