@@ -206,7 +206,10 @@ namespace Chimera {
         float min_x = element.corners[CORNER_TOP_LEFT].x;
         float max_x = element.corners[CORNER_TOP_RIGHT].x;
 
-        if(min_x <= 1.0f && max_x >= 639.0f) {
+        float min_y = element.corners[CORNER_TOP_LEFT].y;
+        float max_y = element.corners[CORNER_BOTTOM_LEFT].y;
+
+        if(min_x <= 1.0f && max_x >= 639.0f && min_y <= 1.0F && max_y >= 479.0f) {
             element.corners[CORNER_TOP_RIGHT].x += increase;
             element.corners[CORNER_BOTTOM_RIGHT].x += increase;
             return;
