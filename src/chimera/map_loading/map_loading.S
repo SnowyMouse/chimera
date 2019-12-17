@@ -19,8 +19,8 @@ _map_loading_asm:
 
 .globl _map_loading_server_asm
 _map_loading_server_asm:
-    push dword ptr [esp+0x2C]
-    push dword ptr [esp+0x2C]
+    push dword ptr [esp+0x28]
+    push dword ptr [esp+0x30]
     call _do_map_loading_handling
     add esp, 8
     ret
