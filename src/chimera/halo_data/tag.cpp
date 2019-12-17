@@ -52,7 +52,7 @@ namespace Chimera {
     std::byte *get_tag_data_address() noexcept {
         static std::optional<std::byte *> address;
         if(!address.has_value()) {
-            address = *reinterpret_cast<std::byte **>(get_chimera().get_signature("tag_data_address_sig").data() + 0x6);
+            address = **reinterpret_cast<std::byte ***>(get_chimera().get_signature("tag_data_address_sig").data() + 0x2);
         }
         return address.value();
     }
