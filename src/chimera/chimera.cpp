@@ -457,4 +457,8 @@ namespace Chimera {
         }
         enable_output(true);
     }
+
+    const std::vector<Command> &Chimera::get_commands() const noexcept {
+        return this->p_commands;
+    }
 }

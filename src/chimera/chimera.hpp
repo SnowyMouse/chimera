@@ -94,6 +94,12 @@ namespace Chimera {
          */
         void set_language(Language language) noexcept;
 
+        /**
+         * Get a vector of all of the commands
+         * @return all of the commands
+         */
+        const std::vector<Command> &get_commands() const noexcept;
+
         /** Construct a Chimera */
         Chimera();
 

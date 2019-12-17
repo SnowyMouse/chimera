@@ -6,6 +6,7 @@
 #include "../event/command.hpp"
 #include "../event/tick.hpp"
 #include "../output/output.hpp"
+#include "../halo_data/game_engine.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "console.hpp"
 
@@ -17,11 +18,85 @@ namespace Chimera {
 
     extern std::vector<Event<CommandEventFunction>> command_events;
 
+    struct CommandEntry {
+        std::uint32_t type; // 4 = server stuff
+        const char *name;
+        void *code_execute;
+        void *code_execute_2;
+        const char *help_text;
+        const char *help_parameters;
+        std::uint32_t more_stuff;
+    };
+
+    static CommandEntry ***entries;
+    static std::uint32_t *entry_count;
+    static CommandEntry **old_entries;
+    static std::uint32_t old_entry_count;
+
+    static std::vector<CommandEntry *> new_entries_list;
+    static std::vector<std::unique_ptr<CommandEntry>> new_entries_added;
+
+    static void on_tab_completion_start() noexcept {
+        auto &chimera_commands = get_chimera().get_commands();
+
+        old_entry_count = *entry_count;
+        old_entries = *entries;
+
+        new_entries_list = std::vector<CommandEntry *>(old_entries, old_entries + old_entry_count);
+        for(auto &command : chimera_commands) {
+            if(!get_chimera().feature_present(command.feature())) {
+                continue;
+            }
+
+            auto &new_command = new_entries_added.emplace_back(std::make_unique<CommandEntry>());
+            new_command->type = 4;
+            new_command->name = command.name();
+            new_command->help_text = "see README.md";
+            new_command->help_parameters = nullptr;
+            new_command->more_stuff = 0x15;
+            new_entries_list.emplace_back(new_command.get());
+        }
+
+        overwrite(entry_count, static_cast<std::uint32_t>(new_entries_list.size()));
+        overwrite(entries, new_entries_list.data());
+    }
+
+    static void on_tab_completion_end() noexcept {
+        overwrite(entry_count, old_entry_count);
+        overwrite(entries, old_entries);
+
+        new_entries_list.clear();
+        new_entries_added.clear();
+    }
+
     void initialize_console_hook() {
         static Hook hook;
         const auto &sig = get_chimera().get_signature("console_call_sig");
         write_jmp_call(sig.data(), hook, reinterpret_cast<const void *>(read_command));
         console_text = *reinterpret_cast<char **>(sig.data() - 4);
+
+        static Hook on_tab_completion_hook;
+        const auto on_tab_completion_sig = get_chimera().get_signature("on_tab_completion_sig");
+        write_jmp_call(on_tab_completion_sig.data(), on_tab_completion_hook, reinterpret_cast<const void *>(on_tab_completion_start), reinterpret_cast<const void *>(on_tab_completion_end));
+
+        bool non_custom = game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION;
+        const char *sig_to_use;
+        switch(game_engine()) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                sig_to_use = "command_list_custom_edition_sig";
+                break;
+            case GameEngine::GAME_ENGINE_RETAIL:
+                sig_to_use = "command_list_retail_sig";
+                break;
+            case GameEngine::GAME_ENGINE_DEMO:
+                sig_to_use = "command_list_demo_sig";
+                break;
+            default:
+                std::terminate();
+        }
+        auto *command_list_data = get_chimera().get_signature(sig_to_use).data();
+        entries = reinterpret_cast<CommandEntry ***>(command_list_data + 1);
+        entry_count = reinterpret_cast<std::uint32_t *>(command_list_data + 5 + (non_custom ? 4 : 1));
     }
 
     // Disable Halo's error message that occurs when an invalid command is used.
