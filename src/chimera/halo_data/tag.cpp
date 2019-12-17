@@ -1,6 +1,7 @@
 #include "../output/output.hpp"
 #include "tag.hpp"
 #include "../chimera.hpp"
+#include "game_engine.hpp"
 #include "../signature/signature.hpp"
 #include <optional>
 
@@ -52,7 +53,12 @@ namespace Chimera {
     std::byte *get_tag_data_address() noexcept {
         static std::optional<std::byte *> address;
         if(!address.has_value()) {
-            address = **reinterpret_cast<std::byte ***>(get_chimera().get_signature("tag_data_address_sig").data() + 0x2);
+            switch(game_engine()) {
+                case GameEngine::GAME_ENGINE_DEMO:
+                    return reinterpret_cast<std::byte *>(0x4BF10000);
+                default:
+                    return reinterpret_cast<std::byte *>(0x40440000);
+            }
         }
         return address.value();
     }
