@@ -241,7 +241,7 @@ namespace Chimera {
         auto &spectate_grenade_hud_sig = get_chimera().get_signature("spectate_grenade_hud_sig");
         auto &spectate_health_hud_sig = get_chimera().get_signature("spectate_health_hud_sig");
         auto &spectate_turning_sig = get_chimera().get_signature("spectate_turning_sig");
-        auto &spectate_death_cam_sig = get_chimera().get_signature("spectate_death_cam_sig");
+        auto &spectate_death_cam_sig = get_chimera().get_signature(demo ? "spectate_death_cam_demo_sig" : "spectate_death_camo_full_sig");
         auto &spectate_cull_effects_sig = get_chimera().get_signature("spectate_cull_effects_sig");
 
         // If index is 0, disable
