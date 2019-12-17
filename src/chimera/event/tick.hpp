@@ -2,6 +2,7 @@
 #define CHIMERA_TICK_EVENT_HPP
 
 #include "../event/event.hpp"
+#include <cstdint>
 
 namespace Chimera {
     /**
@@ -41,6 +42,12 @@ namespace Chimera {
      * @return Return the effective tick rate of the game.
      */
     float effective_tick_rate() noexcept;
+
+    /**
+     * Get the current tick count
+     * @return tick count
+     */
+    std::int32_t get_tick_count() noexcept;
 }
 
 #endif

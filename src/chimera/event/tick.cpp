@@ -76,12 +76,26 @@ namespace Chimera {
     }
 
     float tick_rate() noexcept {
-        static const auto *tick_ptr = *reinterpret_cast<float **>(get_chimera().get_signature("tick_rate_sig").data() + 2);
+        static float *tick_ptr = nullptr;
+        if(!tick_ptr) {
+            tick_ptr = *reinterpret_cast<float **>(get_chimera().get_signature("tick_rate_sig").data() + 2);
+        }
         return *tick_ptr;
     }
 
     float effective_tick_rate() noexcept {
-        static const auto *game_speed_ptr = reinterpret_cast<float *>(**reinterpret_cast<char ***>(get_chimera().get_signature("game_speed_sig").data() + 1) + 0x18);
+        static const float *game_speed_ptr = nullptr;
+        if(!game_speed_ptr) {
+            game_speed_ptr = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("game_speed_sig").data() + 1) + 0x18);
+        }
         return *game_speed_ptr * tick_rate();
+    }
+
+    std::int32_t get_tick_count() noexcept {
+        static std::int32_t *tick_count = nullptr;
+        if(!tick_count) {
+            tick_count = reinterpret_cast<std::int32_t *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_counter_sig").data() + 1) + 0xC);
+        }
+        return *tick_count;
     }
 }

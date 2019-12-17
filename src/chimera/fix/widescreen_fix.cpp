@@ -10,6 +10,7 @@
 #include "../event/tick.hpp"
 #include "../output/output.hpp"
 
+#include "../halo_data/tag.hpp"
 #include "../halo_data/resolution.hpp"
 
 extern "C" {
@@ -438,7 +439,6 @@ namespace Chimera {
 
             if(new_setting) {
                 add_tick_event(on_tick);
-                on_tick();
             }
             else {
                 remove_tick_event(on_tick);
@@ -525,6 +525,26 @@ namespace Chimera {
 
         // Change instructions if we need them to be changed
         widescreen_width_480p = aspect_ratio * 480.0f;
+
+        if(get_tick_count() == 0) {
+            auto jason_jones_tag = [](const char *tag_path) {
+                auto *tag = get_tag(tag_path, TagClassInt::TAG_CLASS_UI_WIDGET_DEFINITION);
+                if(!tag) {
+                    return;
+                }
+                std::int16_t &bounds_top = *reinterpret_cast<std::int16_t *>(tag->data + 0x24);
+                std::int16_t &bounds_left = *reinterpret_cast<std::int16_t *>(tag->data + 0x26);
+                std::int16_t &bounds_bottom = *reinterpret_cast<std::int16_t *>(tag->data + 0x28);
+                std::int16_t &bounds_right = *reinterpret_cast<std::int16_t *>(tag->data + 0x2A);
+
+                if(bounds_top == 0 && bounds_bottom == 480 && bounds_left == 0 && bounds_right == 640) {
+                    bounds_bottom = 478;
+                }
+            };
+            jason_jones_tag("ui\\shell\\main_menu\\multiplayer_type_select\\join_game\\join_game_items_list");
+            jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\controls_setup\\controls_options_menu");
+            jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\gamepad_setup\\gamepad_setup_options");
+        }
 
         if(*console_width != static_cast<std::int32_t>(widescreen_width_480p)) {
             overwrite(scope_width, widescreen_width_480p);
