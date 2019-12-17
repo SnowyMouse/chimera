@@ -9,10 +9,17 @@ _free_map_handle_bugfix_asm:
     add esp, 4
     ret
 
-;# fix a resource file leak (mainly with the trial version of the game)
 .globl _map_loading_asm
 _map_loading_asm:
     push dword ptr [esp+0x38]
+    push dword ptr [esp+0x2C]
+    call _do_map_loading_handling
+    add esp, 8
+    ret
+
+.globl _map_loading_server_asm
+_map_loading_server_asm:
+    push dword ptr [esp+0x2C]
     push dword ptr [esp+0x2C]
     call _do_map_loading_handling
     add esp, 8

@@ -661,6 +661,7 @@ namespace Chimera {
     }
 
     extern "C" void map_loading_asm();
+    extern "C" void map_loading_server_asm();
     extern "C" void free_map_handle_bugfix_asm();
 
     extern "C" void on_read_map_file_data_asm();
@@ -882,7 +883,7 @@ namespace Chimera {
 
         static Hook hook;
         auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
-        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(map_loading_asm));
+        write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(get_chimera().feature_present("core_client") ? map_loading_asm : map_loading_server_asm));
 
         static Hook hook2;
         auto &create_file_mov_sig = get_chimera().get_signature("create_file_mov_sig");
