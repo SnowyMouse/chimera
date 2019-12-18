@@ -48,7 +48,15 @@ _chat_out_asm:
     mov edx, [esp+0x2C]
     mov esi, [esp+0x2C]
     push [esp+0x2C]
-    push [esp]
+    sub esp, 4
+
+    pushfd
+    pushad
+    call _chat_get_local_rcon_id
+    mov [esp+0x24], eax
+    popad
+    popfd
+
     call dword ptr chat_out_addr
     add esp, 8
 

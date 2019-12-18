@@ -37,6 +37,16 @@ namespace Chimera {
     static void load_chat_settings();
     static const wchar_t *special_name_color(const wchar_t *name);
 
+    extern "C" std::uint32_t chat_get_local_rcon_id() noexcept {
+        auto *player = PlayerTable::get_player_table().get_client_player();
+        if(player) {
+            return player->machine_index;
+        }
+        else {
+            return 0xFFFFFFFF;
+        }
+    }
+
     // Initialize the stuff
     void initialize_custom_chat() noexcept {
         // First, make this function do nothing
