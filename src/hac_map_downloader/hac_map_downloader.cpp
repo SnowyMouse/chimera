@@ -12,9 +12,18 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     // Set the URL
     CURLcode result;
     unsigned int repo = 1;
+    std::string map_formatted;
+    for(char &c : downloader->map) {
+        if(c == ' ') {
+            map_formatted += "%20";
+        }
+        else {
+            map_formatted += c;
+        }
+    }
     do {
         char url[255];
-        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, downloader->map.data(), downloader->game_engine.data());
+        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, map_formatted.data(), downloader->game_engine.data());
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
         downloader->download_started = Clock::now();
         result = curl_easy_perform(downloader->curl);
