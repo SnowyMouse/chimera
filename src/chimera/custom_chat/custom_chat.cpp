@@ -38,9 +38,14 @@ namespace Chimera {
     static const wchar_t *special_name_color(const wchar_t *name);
 
     extern "C" std::uint32_t chat_get_local_rcon_id() noexcept {
+        auto *list = ServerInfoPlayerList::get_server_info_player_list();
         auto *player = PlayerTable::get_player_table().get_client_player();
-        if(player) {
-            return player->machine_index;
+        if(!list || !player) {
+            return 0xFFFFFFFF;
+        }
+        auto *local_player = list->get_player(player->get_full_id());
+        if(local_player) {
+            return local_player - list->players;
         }
         else {
             return 0xFFFFFFFF;
