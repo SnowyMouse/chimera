@@ -3,7 +3,7 @@
 
 int main(int argc, const char **argv) {
     if(argc != 4) {
-        std::printf("Usage: %s <map name> <tmp path> <engine>\n", argv[0]);
+        std::printf("Usage: %s <map name> <tmp file> <engine>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -48,5 +48,10 @@ int main(int argc, const char **argv) {
         }
     }
 
-    std::printf("%-80s\n", "Done! Successfully downloaded the map!");
+    if(downloader.get_status() == HACMapDownloader::DOWNLOAD_STAGE_FAILED) {
+        std::printf("%-80s\n", "Failed to download the map!");
+    }
+    else {
+        std::printf("%-80s\n", "Done! Successfully downloaded the map!");
+    }
 }

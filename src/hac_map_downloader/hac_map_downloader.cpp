@@ -159,7 +159,7 @@ void HACMapDownloader::dispatch() {
     this->mutex.lock();
     if(this->curl) {
         this->mutex.unlock();
-        std::terminate();
+        throw std::exception();
         return;
     }
 
