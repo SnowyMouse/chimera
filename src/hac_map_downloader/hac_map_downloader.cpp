@@ -14,11 +14,13 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     unsigned int repo = 1;
     std::string map_formatted;
     for(char &c : downloader->map) {
-        if(c == ' ') {
-            map_formatted += "%20";
+        if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+            map_formatted += c;
         }
         else {
-            map_formatted += c;
+            char code[4];
+            std::snprintf(code, sizeof(code), "%%%02X", c);
+            map_formatted += code;
         }
     }
     do {
