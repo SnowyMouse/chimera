@@ -56,7 +56,10 @@ namespace Chimera {
                 help_text = command_entries[i]->help_text;
                 for(char &h : help_text) {
                     if(h == ',') {
-                        h = '~';
+                        h = '/';
+                    }
+                    if(h == '\n' || h == '\r') {
+                        h = ' ';
                     }
                 }
             }
@@ -66,7 +69,10 @@ namespace Chimera {
                 help_parameters = command_entries[i]->help_parameters;
                 for(char &h : help_parameters) {
                     if(h == ',') {
-                        h = '~';
+                        h = '/';
+                    }
+                    if(h == '\n' || h == '\r') {
+                        h = ' ';
                     }
                 }
             }
