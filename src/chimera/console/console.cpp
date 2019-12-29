@@ -10,6 +10,8 @@
 #include "../halo_data/multiplayer.hpp"
 #include "console.hpp"
 
+#include <fstream>
+
 namespace Chimera {
     static std::string rcon_password;
     static bool rcon_command_used_recently = false;
@@ -35,6 +37,69 @@ namespace Chimera {
 
     static std::vector<CommandEntry *> new_entries_list;
     static std::vector<std::unique_ptr<CommandEntry>> new_entries_added;
+
+    void script_command_dump_command(int, const char **) noexcept {
+        std::size_t command_entry_count = *entry_count;
+        auto *command_entries = *entries;
+
+        char path[MAX_PATH];
+        std::snprintf(path, sizeof(path), "%sscript_command_dump.csv", get_chimera().get_path());
+
+        char line[512];
+        #define DUMP_FMT "%zu,%s,%s,%s\n"
+        std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
+        o << "Index,Command,Parameters,Help\n";
+
+        for(std::size_t i = 0; i < command_entry_count; i++) {
+            std::string help_text;
+            const char *help_text_start = command_entries[i]->help_text;
+
+            while(help_text_start && *help_text_start) {
+                char text[2] = {};
+                char c = *(help_text_start++);
+                if(c == '\r') {
+                    continue;
+                }
+                else if(c == '\n') {
+                    c = ';';
+                }
+                else if(c == ',' || c == '\\') {
+                    help_text += "\\";
+                }
+                text[0] = c;
+                help_text += text;
+                help_text_start++;
+            }
+
+            std::string help_parameters;
+            const char *help_parameters_start = command_entries[i]->help_parameters;
+
+            while(help_parameters_start && *help_parameters_start) {
+                char text[2] = {};
+                char c = *(help_parameters_start++);
+                if(c == '\r') {
+                    continue;
+                }
+                else if(c == '\n') {
+                    c = ';';
+                }
+                else if(c == ',' || c == '\\') {
+                    help_text += "\\";
+                }
+                text[0] = c;
+                help_text += text;
+                help_parameters_start++;
+            }
+
+            std::snprintf(line, sizeof(line), DUMP_FMT, i, command_entries[i]->name, help_parameters.data(), help_text.data());
+            o << line;
+        }
+
+        o.flush();
+        o.close();
+
+        console_output("Dumped %zu command%s", command_entry_count, command_entry_count == 1 ? "" : "s");
+    }
 
     static void on_tab_completion_start() noexcept {
         auto &chimera_commands = get_chimera().get_commands();
