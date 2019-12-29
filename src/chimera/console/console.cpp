@@ -52,43 +52,23 @@ namespace Chimera {
 
         for(std::size_t i = 0; i < command_entry_count; i++) {
             std::string help_text;
-            const char *help_text_start = command_entries[i]->help_text;
-
-            while(help_text_start && *help_text_start) {
-                char text[2] = {};
-                char c = *(help_text_start++);
-                if(c == '\r') {
-                    continue;
+            if(command_entries[i]->help_text) {
+                help_text = command_entries[i]->help_text;
+                for(char &h : help_text) {
+                    if(h == ',') {
+                        h = '~';
+                    }
                 }
-                else if(c == '\n') {
-                    c = ';';
-                }
-                else if(c == ',' || c == '\\') {
-                    help_text += "\\";
-                }
-                text[0] = c;
-                help_text += text;
-                help_text_start++;
             }
 
             std::string help_parameters;
-            const char *help_parameters_start = command_entries[i]->help_parameters;
-
-            while(help_parameters_start && *help_parameters_start) {
-                char text[2] = {};
-                char c = *(help_parameters_start++);
-                if(c == '\r') {
-                    continue;
+            if(command_entries[i]->help_parameters) {
+                help_parameters = command_entries[i]->help_parameters;
+                for(char &h : help_parameters) {
+                    if(h == ',') {
+                        h = '~';
+                    }
                 }
-                else if(c == '\n') {
-                    c = ';';
-                }
-                else if(c == ',' || c == '\\') {
-                    help_text += "\\";
-                }
-                text[0] = c;
-                help_text += text;
-                help_parameters_start++;
             }
 
             std::snprintf(line, sizeof(line), DUMP_FMT, i, command_entries[i]->name, help_parameters.data(), help_text.data());
