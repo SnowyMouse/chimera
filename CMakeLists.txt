@@ -28,6 +28,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_DATE=\\\"${TODAY}\\\"")
 # No errors pls
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -Wall -pedantic -Wextra -masm=intel -Wold-style-cast")
 
+# Include stuff
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 # Chimera
 #
 # The mod we've all been waiting for
