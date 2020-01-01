@@ -124,7 +124,7 @@ target_include_directories(chimera
 )
 
 # Set the name
-target_link_libraries(chimera shlwapi hac_map_downloader ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcurl.a ws2_32)
+target_link_libraries(chimera shlwapi hac_map_downloader ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")
