@@ -1,10 +1,14 @@
 # Chimera
-Chimera is a mod for Halo: Combat Evolved for the PC.
+Chimera is a mod for Halo: Combat Evolved for the PC. It is licensed under
+version 3.0 of the GNU General Public License. See LICENSE for more
+information.
 
 ## Table of contents
 - [Installation](#installation)
+- [System requirements](#system-requirements)
 - [Mod support](#mod-support)
 - [Features](#features)
+- [FAQ](#faq)
 
 ## Installation
 Here is the installation procedure for installing Chimera:
@@ -570,3 +574,48 @@ another thing due to the nature of these fixes. On Halo Trial, this will be on
 by default.
 
 **Usage:** `chimera_widescreen_fix [true/false]`
+
+## FAQ
+
+### Will Chimera run on my system?
+Chimera isn't too taxing, especially on modern systems, but it can make Halo
+harder to run if you're on very ancient hardware.
+
+There are the hard requirements:
+
+- OS (if on Windows): Windows 7 or newer
+- Wine (if on Linux): Wine 4.0 or newer\*
+
+\*We test on the latest wine-staging 5.0 version, but 4.0 should work.
+
+If your PC does not at least meet the above requirements, Chimera may fail to
+run properly due to the underlying API being older.
+
+There are the recommendations for running Chimera optimally:
+
+- CPU (Intel): Intel Core i3-2100 (3.1 GHz) or better
+- CPU (AMD): AMD FX 6100 (3.3 GHz) or better
+- RAM: 8 GiB or more\*
+- GPU (Nvidia): Nvidia GeForce 8500 GT
+- GPU (AMD): ATI Radeon HD 5670 or better
+- GPU (Intel): *see Nvidia and AMD requirements*
+
+\* Halo, even with Chimera, is 32-bit, so it won't technically use more than
+4 GiB, but 8 GiB is recommended so Chimera has enough RAM.
+
+The newest of the above requirements is the AMD CPU (FX 6100) which was
+released in the year 2011 - over seven years ago at the time of writing this
+sentence.
+
+### Can I use Chimera under a license besides GNU GPL version 3?
+Short answer: Probably not.
+
+Long answer: It's not impossible. You would first need to ask *all* of the
+developers of upstream Chimera for permission. Chimera, however, also depends
+on [Invader](https://github.com/Kavawuvi/invader) for map compression, and this
+is licensed under the GPL as well. So, you'd have to either remove the Invader
+dependency (thus no map compression - required for map downloading!) or ask
+*all* of the developers of upstream Invader for permission, too.
+
+### What is the password to the archive?
+Read PASSWORD.txt.
