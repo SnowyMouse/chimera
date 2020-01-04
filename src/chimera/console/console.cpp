@@ -21,14 +21,18 @@ namespace Chimera {
     extern std::vector<Event<CommandEventFunction>> command_events;
 
     struct CommandEntry {
-        std::uint32_t type; // 4 = server stuff
+        std::uint32_t return_type; // 4 = server stuff
         const char *name;
         void *code_execute;
         void *code_execute_2;
         const char *help_text;
         const char *help_parameters;
-        std::uint32_t more_stuff;
+        std::uint16_t more_stuff;
+        std::uint16_t parameter_count;
+        //std::uint32_t parameters[];
     };
+    static_assert(sizeof(CommandEntry) == 0x1C);
+
 
     static CommandEntry ***entries;
     static std::uint32_t *entry_count;
@@ -46,39 +50,18 @@ namespace Chimera {
         std::snprintf(path, sizeof(path), "%sscript_command_dump.csv", get_chimera().get_path());
 
         char line[512];
-        #define DUMP_FMT "%zu,%s,%s,%s\n"
+        #define DUMP_FMT "%s,%zu,%zu"
         std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
-        o << "Index,Command,Parameters,Help\n";
+        o << "Command,Return Type,Parameter Count,Parameter(s)\n";
 
         for(std::size_t i = 0; i < command_entry_count; i++) {
-            std::string help_text;
-            if(command_entries[i]->help_text) {
-                help_text = command_entries[i]->help_text;
-                for(char &h : help_text) {
-                    if(h == ',') {
-                        h = '/';
-                    }
-                    if(h == '\n' || h == '\r') {
-                        h = ' ';
-                    }
-                }
-            }
-
-            std::string help_parameters;
-            if(command_entries[i]->help_parameters) {
-                help_parameters = command_entries[i]->help_parameters;
-                for(char &h : help_parameters) {
-                    if(h == ',') {
-                        h = '/';
-                    }
-                    if(h == '\n' || h == '\r') {
-                        h = ' ';
-                    }
-                }
-            }
-
-            std::snprintf(line, sizeof(line), DUMP_FMT, i, command_entries[i]->name, help_parameters.data(), help_text.data());
+            std::snprintf(line, sizeof(line), DUMP_FMT, command_entries[i]->name, command_entries[i]->return_type, command_entries[i]->parameter_count);
             o << line;
+            const auto *parameters = reinterpret_cast<const std::uint16_t *>(command_entries[i] + 1);
+            for(std::size_t x = 0; x < command_entries[i]->parameter_count; x++) {
+                o << "," << static_cast<std::uint16_t>(parameters[x]);
+            }
+            o << "\n";
         }
 
         o.flush();
@@ -100,7 +83,7 @@ namespace Chimera {
             }
 
             auto &new_command = new_entries_added.emplace_back(std::make_unique<CommandEntry>());
-            new_command->type = 4;
+            new_command->return_type = 4;
             new_command->name = command.name();
             new_command->help_text = "see README.md";
             new_command->help_parameters = nullptr;
