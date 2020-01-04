@@ -97,7 +97,7 @@ namespace Chimera {
             auto *global_entries = *entries_global;
 
             for(std::size_t i = 0; i < global_entry_count; i++) {
-                o << "    { \"name\": \"" << global_entries[i]->name << "\", \"type\": " << global_entries[i]->value_type << ", \"default\": ";
+                o << "    { \"name\": \"" << global_entries[i]->name << "\", \"type\": " << global_entries[i]->value_type << ", \"value\": ";
 
                 if(global_entries[i]->default_value) {
                     switch(global_entries[i]->value_type) {
