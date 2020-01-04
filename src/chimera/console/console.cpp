@@ -108,13 +108,13 @@ namespace Chimera {
                             o << *reinterpret_cast<const float *>(global_entries[i]->default_value);
                             break;
                         case 7:
-                            o << *reinterpret_cast<const std::uint16_t *>(global_entries[i]->default_value);
+                            o << *reinterpret_cast<const std::int16_t *>(global_entries[i]->default_value);
                             break;
                         case 9:
                             o << "\"" << *reinterpret_cast<const char *>(global_entries[i]->default_value) << "\"";
                             break;
                         default:
-                            o << *reinterpret_cast<const std::uint32_t *>(global_entries[i]->default_value);
+                            o << *reinterpret_cast<const std::int32_t *>(global_entries[i]->default_value);
                             break;
                     }
                 }
