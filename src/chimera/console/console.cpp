@@ -36,7 +36,8 @@ namespace Chimera {
     struct GlobalEntry {
         const char *name;
         std::uint32_t value_type;
-        std::uint32_t unknown[2];
+        const void *default_value;
+        std::uint32_t unknown;
     };
     static_assert(sizeof(GlobalEntry) == 0x10);
 
@@ -96,7 +97,32 @@ namespace Chimera {
             auto *global_entries = *entries_global;
 
             for(std::size_t i = 0; i < global_entry_count; i++) {
-                o << "    { \"name\": \"" << global_entries[i]->name << "\", \"type\": " << global_entries[i]->value_type << " }";
+                o << "    { \"name\": \"" << global_entries[i]->name << "\", \"type\": " << global_entries[i]->value_type << ", \"default\": ";
+
+                if(global_entries[i]->default_value) {
+                    switch(global_entries[i]->value_type) {
+                        case 5:
+                            o << (*reinterpret_cast<const std::uint8_t *>(global_entries[i]->default_value) ? "true" : "false");
+                            break;
+                        case 6:
+                            o << *reinterpret_cast<const float *>(global_entries[i]->default_value);
+                            break;
+                        case 7:
+                            o << *reinterpret_cast<const std::uint16_t *>(global_entries[i]->default_value);
+                            break;
+                        case 9:
+                            o << "\"" << *reinterpret_cast<const char *>(global_entries[i]->default_value) << "\"";
+                            break;
+                        default:
+                            o << *reinterpret_cast<const std::uint32_t *>(global_entries[i]->default_value);
+                            break;
+                    }
+                }
+                else {
+                    o << "null";
+                }
+
+                o << " }";
                 if(i + 1 != global_entry_count) {
                     o << ",";
                 }
