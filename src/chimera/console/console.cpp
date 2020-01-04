@@ -47,27 +47,33 @@ namespace Chimera {
         auto *command_entries = *entries;
 
         char path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%sscript_command_dump.csv", get_chimera().get_path());
+        std::snprintf(path, sizeof(path), "%sscript_command_dump.json", get_chimera().get_path());
 
-        char line[512];
-        #define DUMP_FMT "%s,%zu,%zu"
         std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
-        o << "Command,Return Type,Parameter Count,Parameter(s)\n";
+        o << "[\n";
 
         for(std::size_t i = 0; i < command_entry_count; i++) {
-            std::snprintf(line, sizeof(line), DUMP_FMT, command_entries[i]->name, command_entries[i]->return_type, command_entries[i]->parameter_count);
-            o << line;
+            o << "    { \"name\": \"" << command_entries[i]->name << "\", \"return\": " << command_entries[i]->return_type;
             const auto *parameters = reinterpret_cast<const std::uint16_t *>(command_entries[i] + 1);
+            o << ", \"parameters\": [";
             for(std::size_t x = 0; x < command_entries[i]->parameter_count; x++) {
-                o << "," << static_cast<std::uint16_t>(parameters[x]);
+                o << static_cast<std::uint16_t>(parameters[x]);
+                if(x + 1 != command_entries[i]->parameter_count) {
+                    o << ",";
+                }
+            }
+            o << "] }";
+            if(i + 1 != command_entry_count) {
+                o << ",";
             }
             o << "\n";
         }
 
+        o << "]\n";
         o.flush();
         o.close();
 
-        console_output("Dumped %zu command%s", command_entry_count, command_entry_count == 1 ? "" : "s");
+        console_output("Dumped %zu command%s to %s", command_entry_count, command_entry_count == 1 ? "" : "s", path);
     }
 
     static void on_tab_completion_start() noexcept {
