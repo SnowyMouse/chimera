@@ -33,8 +33,17 @@ namespace Chimera {
     };
     static_assert(sizeof(CommandEntry) == 0x1C);
 
+    struct GlobalEntry {
+        const char *name;
+        std::uint32_t value_type;
+        std::uint32_t unknown[2];
+    };
+    static_assert(sizeof(GlobalEntry) == 0x10);
 
-    static CommandEntry ***entries;
+    static GlobalEntry ***entries_global = nullptr;
+    static std::uint32_t *entry_count_global = nullptr;
+
+    static CommandEntry ***entries = nullptr;
     static std::uint32_t *entry_count;
     static CommandEntry **old_entries;
     static std::uint32_t old_entry_count;
@@ -43,37 +52,63 @@ namespace Chimera {
     static std::vector<std::unique_ptr<CommandEntry>> new_entries_added;
 
     void script_command_dump_command(int, const char **) noexcept {
-        std::size_t command_entry_count = *entry_count;
-        auto *command_entries = *entries;
-
         char path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%sscript_command_dump.json", get_chimera().get_path());
 
-        std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
-        o << "[\n";
+        if(entries) {
+            std::size_t command_entry_count = *entry_count;
+            auto *command_entries = *entries;
 
-        for(std::size_t i = 0; i < command_entry_count; i++) {
-            o << "    { \"name\": \"" << command_entries[i]->name << "\", \"return\": " << command_entries[i]->return_type;
-            const auto *parameters = reinterpret_cast<const std::uint16_t *>(command_entries[i] + 1);
-            o << ", \"parameters\": [";
-            for(std::size_t x = 0; x < command_entries[i]->parameter_count; x++) {
-                o << static_cast<std::uint16_t>(parameters[x]);
-                if(x + 1 != command_entries[i]->parameter_count) {
+            std::snprintf(path, sizeof(path), "%sscript_command_dump.json", get_chimera().get_path());
+
+            std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
+            o << "[\n";
+
+            for(std::size_t i = 0; i < command_entry_count; i++) {
+                o << "    { \"name\": \"" << command_entries[i]->name << "\", \"return\": " << command_entries[i]->return_type;
+                const auto *parameters = reinterpret_cast<const std::uint16_t *>(command_entries[i] + 1);
+                o << ", \"parameters\": [";
+                for(std::size_t x = 0; x < command_entries[i]->parameter_count; x++) {
+                    o << static_cast<std::uint16_t>(parameters[x]);
+                    if(x + 1 != command_entries[i]->parameter_count) {
+                        o << ",";
+                    }
+                }
+                o << "] }";
+                if(i + 1 != command_entry_count) {
                     o << ",";
                 }
+                o << "\n";
             }
-            o << "] }";
-            if(i + 1 != command_entry_count) {
-                o << ",";
-            }
-            o << "\n";
+
+            o << "]\n";
+            o.flush();
+            o.close();
+
+            console_output("Dumped %zu command%s to %s", command_entry_count, command_entry_count == 1 ? "" : "s", path);
         }
 
-        o << "]\n";
-        o.flush();
-        o.close();
+        if(entries_global) {
+            std::snprintf(path, sizeof(path), "%sglobal_command_dump.json", get_chimera().get_path());
+            std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
+            o << "[\n";
 
-        console_output("Dumped %zu command%s to %s", command_entry_count, command_entry_count == 1 ? "" : "s", path);
+            std::size_t global_entry_count = *entry_count_global;
+            auto *global_entries = *entries_global;
+
+            for(std::size_t i = 0; i < global_entry_count; i++) {
+                o << "    { \"name\": \"" << global_entries[i]->name << "\", \"type\": " << global_entries[i]->value_type << " }";
+                if(i + 1 != global_entry_count) {
+                    o << ",";
+                }
+                o << "\n";
+            }
+
+            o << "]\n";
+            o.flush();
+            o.close();
+
+            console_output("Dumped %zu global%s to %s", global_entry_count, global_entry_count == 1 ? "" : "s", path);
+        }
     }
 
     static void on_tab_completion_start() noexcept {
@@ -122,9 +157,13 @@ namespace Chimera {
         bool non_custom = game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION;
         const char *sig_to_use;
         switch(game_engine()) {
-            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION: {
                 sig_to_use = "command_list_custom_edition_sig";
+                auto *global_list_data = get_chimera().get_signature("global_list_custom_edition_sig").data();
+                entries_global = reinterpret_cast<GlobalEntry ***>(global_list_data + 1);
+                entry_count_global = reinterpret_cast<std::uint32_t *>(global_list_data + 6);
                 break;
+            }
             case GameEngine::GAME_ENGINE_RETAIL:
                 sig_to_use = "command_list_retail_sig";
                 break;
