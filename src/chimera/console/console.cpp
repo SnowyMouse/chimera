@@ -89,7 +89,7 @@ namespace Chimera {
         }
 
         if(entries_global) {
-            std::snprintf(path, sizeof(path), "%sglobal_command_dump.json", get_chimera().get_path());
+            std::snprintf(path, sizeof(path), "%sscript_global_dump.json", get_chimera().get_path());
             std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
             o << "[\n";
 
