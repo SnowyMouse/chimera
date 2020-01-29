@@ -46,6 +46,7 @@ add_library(chimera STATIC
     src/chimera/fix/interpolate/camera.cpp
     src/chimera/fix/interpolate/flag.cpp
     src/chimera/fix/interpolate/fp.cpp
+    src/chimera/fix/interpolate/fp_interp_amount.S
     src/chimera/fix/interpolate/interpolate.cpp
     src/chimera/fix/interpolate/light.cpp
     src/chimera/fix/interpolate/object.cpp
