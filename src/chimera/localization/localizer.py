@@ -75,7 +75,7 @@ if __name__ == '__main__':
                 if key not in localization_file:
                     localization_file[key] = line
                 else:
-                    eprint("Error: Localization file {} has duplicate key {}".format(loc, key))
+                    eprint("Error: Localization file {} has duplicate key {}".format(len(localization), key))
                     exit(1)
 
         localization.append(localization_file)

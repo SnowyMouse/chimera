@@ -86,7 +86,7 @@ chimera_chat_block_ips_command_help                                             
 chimera_chat_block_server_messages_command_help                                 Oculta los mensajes del servidor.
 chimera_chat_color_help_command_help                                            Muestra una lista de los colores del chat al ingresar mensajes en éste.
 chimera_fov_command_help                                                        Establece el campo de visión. Usa \"auto\" para FOV automático o el sufijo \"v\" para bloquearlo a un FOV vertical.
-chimera_player_info_command_help                                                Muestra información para un jugador por el índice del rcon, o de ti mismo si no se da ninguno.
+chimera_player_info_command_help                                                Muestra información sobre un jugador mediante indice de rcon o a usted mismo si no se proporciona ningun número.
 chimera_set_name_help                                                           Establece tu nombre.
 chimera_show_coordinates_help                                                   Muestra tus coordenadas en el mapa.
 chimera_show_fps_help                                                           Muestra tu velocidad de fotogramas actual.
@@ -113,3 +113,15 @@ chimera_model_detail_command_help                                               
 chimera_shrink_empty_weapons_help                                               Miniaturiza las armas vacias en el suelo.
 chimera_simple_score_screen_command_help                                        Muestra una tabla de puntuacion simplificada y más clásica.
 chimera_split_screen_hud_command_help                                           Usa el HUD de pantalla dividida como HUD principal.
+
+chimera_category_server                                                         servidor
+chimera_color_red                                                               rojo
+chimera_color_blue                                                              azul
+chimera_error_takes_player_number                                               Este comando toma el número de un jugador de chimera_players.
+chimera_player_list_command_help                                                Muestra a los jugadores del servidor en una lista.
+chimera_player_list_command_none_found                                          No hay jugadores en el servidor.
+chimera_spectate_command_help                                                   Cambia tu perspectiva a la perspectiva de otro jugador.
+chimera_spectate_command_now_spectating                                         Observando a %S
+chimera_spectate_next_command_help                                              Cambia al siguiente jugador.
+chimera_spectate_next_command_nobody_to_spectate                                No hay nadie más a quien puedas observar.
+chimera_spectate_previous_command_help                                          Cambia al jugador anterior.
