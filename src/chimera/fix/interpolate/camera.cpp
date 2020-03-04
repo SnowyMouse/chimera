@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cstring>
-#include <cmath>
 
 #include "../../halo_data/object.hpp"
 #include "../../halo_data/camera.hpp"
@@ -16,10 +15,6 @@ namespace Chimera {
         ObjectID followed_object;
         CameraData data;
     };
-
-    extern "C" {
-        float fp_interp_amount[3] = {};
-    }
 
     // Camera data
     static InterpolatedCamera camera_buffers[2];
@@ -95,12 +90,6 @@ namespace Chimera {
         if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person || spectate_enabled) {
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
-        }
-
-        else if(type == CameraType::CAMERA_FIRST_PERSON) {
-            data.position.x = current_tick->data.position.x + fp_interp_amount[0];
-            data.position.y = current_tick->data.position.y + fp_interp_amount[1];
-            data.position.z = previous_tick->data.position.z + (current_tick->data.position.z - previous_tick->data.position.z) * interpolation_tick_progress;
         }
     }
 

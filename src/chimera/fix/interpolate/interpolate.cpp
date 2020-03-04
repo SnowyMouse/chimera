@@ -20,8 +20,6 @@
 
 #include "interpolate.hpp"
 
-extern "C" void on_fp_interp_amount();
-
 namespace Chimera {
     // This is the progress since the last tick (updated every frame).
     float interpolation_tick_progress = 0;
@@ -79,7 +77,6 @@ namespace Chimera {
         static auto *fp_interp_ptr = get_chimera().get_signature("fp_interp_sig").data();
         static Hook fp_interp_hook;
         first_person_camera_tick_rate = *reinterpret_cast<float **>(get_chimera().get_signature("fp_cam_tick_rate_sig").data() + 2);
-
         //nav_point = reinterpret_cast<void(*)()>(get_chimera().get_signature("nav_point_sig").data());
 
         tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 304);
@@ -90,16 +87,10 @@ namespace Chimera {
         add_precamera_event(interpolate_camera_before);
         add_camera_event(interpolate_camera_after);
         write_jmp_call(fp_interp_ptr, fp_interp_hook, reinterpret_cast<const void *>(interpolate_fp_before), reinterpret_cast<const void *>(interpolate_fp_after));
-
-        static Hook fp_interp_amount_hook;
-        constexpr const SigByte all_the_nops[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90  };
-        write_code_s(get_chimera().get_signature("fp_interp_amount_sig").data(), all_the_nops);
-        write_jmp_call(get_chimera().get_signature("fp_interp_amount_sig").data(), fp_interp_amount_hook, reinterpret_cast<const void *>(on_fp_interp_amount), nullptr, false);
     }
 
     void disable_interpolation() noexcept {
         get_chimera().get_signature("fp_interp_sig").rollback();
-        get_chimera().get_signature("fp_interp_amount_sig").rollback();
         remove_tick_event(on_tick);
         remove_preframe_event(on_preframe);
         remove_frame_event(on_frame);
