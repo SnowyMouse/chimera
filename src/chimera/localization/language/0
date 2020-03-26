@@ -120,4 +120,8 @@ chimera_spectate_next_command_help                                              
 chimera_spectate_next_command_nobody_to_spectate                                There is nobody else you can spectate.
 chimera_spectate_previous_command_help                                          Switch to the previous player.
 chimera_throttle_fps_help                                                       Throttle Halo's frame rate.
+chimera_teleport_help                                                           Teleport to a player or coordinates.
+chimera_teleport_invalid_arguments                                              Invalid arguments were given.
+chimera_teleport_dead                                                           Failed to teleport: target is not alive
+chimera_teleport_dead_self                                                      Failed to teleport: you are not alive
 chimera_uncap_cinematic_command_help                                            Disable the 30 FPS lock in cutscenes.

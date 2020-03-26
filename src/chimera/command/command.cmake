@@ -8,6 +8,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/chimera/signature_info.cpp
     ${COMMAND_DIR}/core/debug/devmode.cpp
     ${COMMAND_DIR}/core/debug/player_info.cpp
+    ${COMMAND_DIR}/core/debug/teleport.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
     ${COMMAND_DIR}/core/server/player_list.cpp
     ${COMMAND_DIR}/client/controller/aim_assist.cpp
