@@ -9,6 +9,11 @@ namespace Chimera {
      * @param threads number of threads (0 - 127)
      */
     void set_master_server_connection_threads(std::int8_t threads) noexcept;
+
+    /**
+     * Fix the master server stuff
+     */
+    void set_up_demo_master_server() noexcept;
 }
 
 #endif

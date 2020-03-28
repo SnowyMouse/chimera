@@ -128,6 +128,11 @@ namespace Chimera {
                     set_up_custom_map_lobby_fix();
                 }
 
+                // Fix some demo stuff
+                if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+                    set_up_demo_master_server();
+                }
+
                 // Last I checked, not even MCC has this fixed lol.
                 set_up_sun_fix();
 
