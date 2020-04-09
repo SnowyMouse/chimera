@@ -161,30 +161,30 @@ namespace Chimera {
     /**
      * Instantiate the Chimera mod
      */
-    CHIMERA_EXTERN void instantiate_chimera();
+    extern "C" void instantiate_chimera();
 
     /**
      * Destroy the Chimera mod
      */
-    CHIMERA_EXTERN void destroy_chimera();
+    extern "C" void destroy_chimera();
 
     /**
      * Check if all features are valid.
      * @return 0 on failure, 1 on success
      */
-    CHIMERA_EXTERN int find_signatures();
+    extern "C" int find_signatures();
 
     /**
      * List all missing signatures
      * @return NULL if there are no missing signatures or an error message with all signatures missing
      */
-    CHIMERA_EXTERN const char *signature_errors();
+    extern "C" const char *signature_errors();
 
     /**
      * Determine the type of Halo executable being used
      * @return 0 if not Halo or unknown, 1 if client, 2 if server
      */
-    CHIMERA_EXTERN int halo_type();
+    int halo_type();
 
     #define DEDICATED_SERVER (halo_type() == 2)
 

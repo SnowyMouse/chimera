@@ -317,21 +317,21 @@ namespace Chimera {
         return *chimera;
     }
 
-    CHIMERA_EXTERN void instantiate_chimera() {
+    extern "C" void instantiate_chimera() {
         chimera = new Chimera();
     }
 
-    CHIMERA_EXTERN void destroy_chimera() {
+    extern "C" void destroy_chimera() {
         delete chimera;
     }
 
     #define SECONDARY_FEATURE (halo_type() == 2 ? "server" : "client")
 
-    CHIMERA_EXTERN int find_signatures() {
+    extern "C" int find_signatures() {
         return chimera->feature_present("client") || chimera->feature_present("server");
     }
 
-    CHIMERA_EXTERN const char *signature_errors() {
+    extern "C" const char *signature_errors() {
         static char error_buffer[65536];
 
         std::size_t error_buffer_offset = 0;
@@ -387,7 +387,7 @@ namespace Chimera {
         return error_buffer;
     }
 
-    CHIMERA_EXTERN int halo_type() {
+    int halo_type() {
         return chimera->feature_present("client") ? 1 : chimera->feature_present("server") ? 2 : 0;
     }
 
