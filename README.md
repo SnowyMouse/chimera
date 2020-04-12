@@ -249,6 +249,7 @@ the chimera folder created by Chimera.
 - [Spectate back](#spectate-back)
 - [Spectate forward](#spectate-forward)
 - [Spectate team only](#spectate-team-only)
+- [Teleport](#teleport)
 - [Throttle FPS](#throttle-fps)
 - [TPS](#tps)
 - [Uncap cinematic](#uncap-cinematic)
@@ -548,6 +549,12 @@ Set whether or not chimera_spectate_next or chimera_spectate_previous selects
 players not on the same team. This has no effect on non-team games.
 
 **Usage:** `chimera_spectate_team_only <enabled>`
+
+#### Teleport
+Teleport you or, if you're hosting a server, someone else to the given X/Y/Z
+coordinates.
+
+**Usage:** `chimera_teleport [#] <x> <y> <z>`
 
 #### Throttle FPS
 Throttle Halo's frame rate. Set to 0 to disable. By default, this is set to 300
