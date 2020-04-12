@@ -72,7 +72,6 @@ namespace Chimera {
         // Interpolate the camera
         auto &data = camera_data();
         extern float interpolation_tick_progress;
-        interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
 
         // If we're in a vehicle, interpolate the rotation
         bool vehicle_first_person = false;
@@ -88,8 +87,14 @@ namespace Chimera {
 
         // Don't interpolate rotation if in first person unless we're in a vehicle
         if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person || spectate_enabled) {
+            interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
+        }
+
+        // Otherwise, only interpolate Z in case of elevators or Halo's glitchy crouching
+        else {
+            data.position.z = previous_tick->data.position.z + (current_tick->data.position.z - previous_tick->data.position.z) * interpolation_tick_progress;
         }
     }
 
