@@ -57,6 +57,7 @@ These are features that are always on.
 - [Sun fix](#sun-fix)
 - [Custom chat](#custom-chat)
 - [NVIDIA camo fix](#nvidia-camo-fix)
+- [Contrail fix](#contrail-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -142,6 +143,9 @@ The Keystone chat is crashy and broken. Chimera adds a replacement chat.
 #### NVIDIA camo fix
 Chimera fixes a bug where, if the GPU is an NVIDIA graphics card, it uses alpha
 blended camo instead of the liquid camo shader.
+
+#### Contrail fix
+Chimera fixes a bug where contrails are bugged at high frame rates.
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the

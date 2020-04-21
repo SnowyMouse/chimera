@@ -31,6 +31,7 @@
 #include "fix/leak_descriptors.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
+#include "fix/contrail_fix.hpp"
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
@@ -144,6 +145,7 @@ namespace Chimera {
 
                 // lol
                 set_up_nav_numbers_fix();
+                set_up_contrail_fix();
 
                 // More lol
                 set_up_blue_32bit_color_fix();

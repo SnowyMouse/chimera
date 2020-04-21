@@ -35,6 +35,8 @@ add_library(chimera STATIC
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/blue_32bit_color_fix.cpp
+    src/chimera/fix/contrail_fix.cpp
+    src/chimera/fix/contrail_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp
