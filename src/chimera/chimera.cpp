@@ -29,6 +29,7 @@
 #include "fix/fov_fix.hpp"
 #include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
+#include "fix/motion_sensor_fix.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/contrail_fix.hpp"
@@ -146,6 +147,7 @@ namespace Chimera {
                 // lol
                 set_up_nav_numbers_fix();
                 set_up_contrail_fix();
+                set_up_motion_sensor_fix();
 
                 // More lol
                 set_up_blue_32bit_color_fix();

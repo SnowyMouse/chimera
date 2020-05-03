@@ -9,14 +9,14 @@
         test al, al
 
         ;# If nonzero, we can update
-        jnz _do_the_thing
+        jnz do_the_thing
         pop eax
 
         ;# Nope? Okay
         ret
 
         ;# Let's do this!
-        _do_the_thing:
+        do_the_thing:
 
         ;# First, move zero to our _can_update_contrail value
         xor eax, eax

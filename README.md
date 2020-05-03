@@ -58,6 +58,7 @@ These are features that are always on.
 - [Custom chat](#custom-chat)
 - [NVIDIA camo fix](#nvidia-camo-fix)
 - [Contrail fix](#contrail-fix)
+- [Motion sensor fix](#motion-sensor-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -146,6 +147,9 @@ blended camo instead of the liquid camo shader.
 
 #### Contrail fix
 Chimera fixes a bug where contrails are bugged at high frame rates.
+
+#### Motion sensor fix
+Chimera fixes a bug where the motion sensor fade is incorrect at >30 FPS
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
