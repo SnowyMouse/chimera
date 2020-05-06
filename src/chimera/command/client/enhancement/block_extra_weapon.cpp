@@ -151,4 +151,17 @@ namespace Chimera {
 
         return true;
     }
+
+    bool unblock_all_extra_weapons_command(int, const char **) {
+        if(blocked_ids.size()) {
+            console_output(localize("chimera_unblock_all_extra_weapons_success"));
+            blocked_ids.clear();
+            remove_pretick_event(on_pretick);
+            return true;
+        }
+        else {
+            console_error(localize("chimera_unblock_all_extra_weapons_fail"));
+            return false;
+        }
+    }
 }

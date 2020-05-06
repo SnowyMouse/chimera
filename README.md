@@ -262,6 +262,7 @@ the chimera folder created by Chimera.
 - [Throttle FPS](#throttle-fps)
 - [TPS](#tps)
 - [Uncap cinematic](#uncap-cinematic)
+- [Unblock all extra weapons](#unblock-all-extra-weapons)
 - [Widescreen fix](#widescreen-fix)
 
 #### Aim assist
@@ -318,7 +319,9 @@ can disable it if you want.
 **Usage:** `chimera_block_camera_shake [true/false]`
 
 #### Block extra weapon
-Block your currently held weapon if you have more than two weapons.
+Block your currently held weapon if you have more than two weapons. Unblock
+weapons with [Unblock all extra weapons](#unblock-all-extra-weapons). This will
+last until the next game.
 
 **Usage:** `chimera_block_extra_weapon`
 
@@ -581,6 +584,11 @@ Set the game's tick rate. This will not work outside of client hosted games.
 For reference, the game runs at 30 TPS by default.
 
 **Usage:** `chimera_tps [TPS]`
+
+#### Unblock all extra weapons
+Unblock all weapons blocked with [Block extra weapon](#block-extra-weapon)
+
+**Usage:** `chimera_unblock_all_extra_weapons`
 
 #### Uncap cinematic
 Uncap the cinematic frame rate from 30 FPS. This will be turned on by default

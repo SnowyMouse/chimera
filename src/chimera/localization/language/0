@@ -52,6 +52,9 @@ chimera_block_extra_weapon_error_cannot_get_weapon                              
 chimera_block_extra_weapon_error_not_enough_weapons                             You need to be holding at least 3 unblocked weapons.
 chimera_block_extra_weapon_error_weapon_already_blocked                         Your held weapon is already blocked.
 chimera_block_extra_weapon_help                                                 Block the weapon you're holding (must be holding at least 3 weapons)
+chimera_unblock_all_extra_weapons_fail                                          No weapons were blocked.
+chimera_unblock_all_extra_weapons_help                                          Unblock all extra weapons.
+chimera_unblock_all_extra_weapons_success                                       All weapons were unblocked.
 chimera_block_gametype_indicator_command_help                                   Hide the gametype indicator.
 chimera_block_gametype_rules_command_help                                       Disable gametype rules at the start of a game.
 chimera_block_hold_f1_command_help                                              Disable the Hold \"F1\" for score prompt.
