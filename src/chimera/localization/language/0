@@ -47,6 +47,11 @@ chimera_block_all_bullshit_help                                                 
 chimera_block_buffering_command_help                                            Disable buffering. May improve mouse input.
 chimera_block_buffering_command_warning                                         Disable Buffering is already enabled (likely via config.txt)!
 chimera_block_camera_shake_command_help                                         Disable camera shaking from damage.
+chimera_block_extra_weapon_error_cannot_get_object                              Failed to read your object (you are dead)
+chimera_block_extra_weapon_error_cannot_get_weapon                              Failed to read the weapon
+chimera_block_extra_weapon_error_not_enough_weapons                             You need to be holding at least 3 unblocked weapons.
+chimera_block_extra_weapon_error_weapon_already_blocked                         Your held weapon is already blocked.
+chimera_block_extra_weapon_help                                                 Block the weapon you're holding (must be holding at least 3 weapons)
 chimera_block_gametype_indicator_command_help                                   Hide the gametype indicator.
 chimera_block_gametype_rules_command_help                                       Disable gametype rules at the start of a game.
 chimera_block_hold_f1_command_help                                              Disable the Hold \"F1\" for score prompt.
