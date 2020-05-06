@@ -16,14 +16,6 @@
 
 namespace Chimera {
     static std::vector<std::uint16_t> blocked_ids;
-    extern "C" {
-        std::uint32_t swap_weapon_fn;
-    }
-
-    extern "C" void swap_weapon(std::uint32_t object_id);
-    extern "C" void sw_param_test(std::uint32_t a, std::uint32_t b) {
-        console_output("%u %u", a, b);
-    }
 
     static std::byte *get_player_data() noexcept {
         static std::optional<std::byte *> player_data;
@@ -152,8 +144,6 @@ namespace Chimera {
             console_error(localize("chimera_block_extra_weapon_error_weapon_already_blocked"));
             return false;
         }
-
-        swap_weapon_fn = reinterpret_cast<std::uint32_t>(get_chimera().get_signature("swap_weapon_sig").data());
 
         blocked_ids.emplace_back(weapon->tag_id.index.index);
         console_output("Blocked %s", get_tag(weapon->tag_id)->path);
