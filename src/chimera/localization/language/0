@@ -36,7 +36,7 @@ chimera_category_visual                                                         
 chimera_about_command_credits_header                                            Credits
 chimera_about_command_credits                                                   DEVELOPMENT\n    Kavawuvi - Chimera lead developer\n    Vaporeon - Chat color palette, Testing\nSPANISH TRANSLATION\n    MrChromed\n    Rock Candy\nTESTING\n    SteamFox
 chimera_about_command_license_header                                            License
-chimera_about_command_license                                                   Copyright (C) 2019 Kavawuvi\n\nThis software is licensed under the GNU General Public License version 3 or\nlater. See https://www.gnu.org/licenses/ for more information.
+chimera_about_command_license                                                   Copyright (C) 2019-20 Kavawuvi\n\nThis software is licensed under the GNU General Public License version 3 or\nlater. See https://www.gnu.org/licenses/ for more information.
 chimera_about_command_help                                                      List information about this mod.
 chimera_af_command_help                                                         Enable anisotropic filtering.
 chimera_aim_assist_command_help                                                 Enable aim assist.
