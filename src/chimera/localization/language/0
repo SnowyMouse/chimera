@@ -131,5 +131,7 @@ chimera_throttle_fps_help                                                       
 chimera_teleport_help                                                           Teleport to a player or coordinates.
 chimera_teleport_invalid_arguments                                              Invalid arguments were given.
 chimera_teleport_dead                                                           Failed to teleport: target is not alive
-chimera_teleport_dead_self                                                      Failed to teleport: you are not alive
+chimera_teleport_dead_self                                                      Failed to teleport: teleported player is not alive
+chimera_teleport_success_mp                                                     Teleported %S to %f %f %f
+chimera_teleport_success_sp                                                     Teleported to %f %f %f
 chimera_uncap_cinematic_command_help                                            Disable the 30 FPS lock in cutscenes.

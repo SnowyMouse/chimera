@@ -18,3 +18,6 @@ chimera_custom_chat_from_vehicle                                                
 chimera_command_error_no_such_category_or_command                               VAP! *flicks away %s with tailfin*
 chimera_language_command_error_invalid_language                                 VAP! *flicks away %s with tailfin*
 chimera_signature_info_command_error                                            VAP! *flicks away %s with tailfin*
+
+chimera_teleport_success_mp                                                     *flicks %S to %f %f %f*
+chimera_teleport_success_sp                                                     *flicks you to %f %f %f*

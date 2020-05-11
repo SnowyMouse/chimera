@@ -569,9 +569,9 @@ players not on the same team. This has no effect on non-team games.
 
 #### Teleport
 Teleport you or, if you're hosting a server, someone else to the given X/Y/Z
-coordinates.
+coordinates or player.
 
-**Usage:** `chimera_teleport [#] <x> <y> <z>`
+**Usage:** `chimera_teleport [#] <<#> | <x> <y> <z>>`
 
 #### Throttle FPS
 Throttle Halo's frame rate. Set to 0 to disable. By default, this is set to 300

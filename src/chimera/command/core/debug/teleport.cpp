@@ -15,54 +15,76 @@ namespace Chimera {
         float x, y, z;
         auto &player_table = PlayerTable::get_player_table();
         auto &object_table = ObjectTable::get_object_table();
-        try {
-            if(argc == 1) {
-                // Get the player
-                Player *player;
-                int index;
-                try {
-                    index = std::stoul(*argv) - 1;
-                }
-                catch(std::exception &) {
-                    console_error(localize("chimera_error_takes_player_number"));
-                    return false;
-                }
-                player = player_table.get_player_by_rcon_id(index);
 
-                // If the player does not exist show an error
-                if(!player) {
-                    console_error(localize("chimera_error_player_not_found"), argc ? *argv : nullptr);
-                    return false;
-                }
-
-                // Is the player alive?
-                auto *object = object_table.get_dynamic_object(player->object_id);
-                if(!object) {
-                    console_error(localize("chimera_teleport_dead"));
-                    return false;
-                }
-
-                x = object->center_position.x;
-                y = object->center_position.y;
-                z = object->center_position.z;
+        // Teleport to specific coordinates
+        if(argc == 3 || argc == 4) {
+            try {
+                x = std::stof(argv[argc - 3]);
+                y = std::stof(argv[argc - 2]);
+                z = std::stof(argv[argc - 1]);
             }
-            else if(argc == 3) {
-                x = std::stof(argv[0]);
-                y = std::stof(argv[1]);
-                z = std::stof(argv[2]);
-            }
-            else {
+            catch(std::exception &) {
                 console_error(localize("chimera_teleport_invalid_arguments"));
                 return false;
             }
         }
-        catch(std::exception &) {
+
+        // Teleport to a player
+        else if(argc == 1 || argc == 2) {
+            // Get the player
+            Player *player;
+            int index;
+            try {
+                index = std::stoul(argv[argc - 1]) - 1;
+            }
+            catch(std::exception &) {
+                console_error(localize("chimera_error_takes_player_number"));
+                return false;
+            }
+            player = player_table.get_player_by_rcon_id(index);
+
+            // If the player does not exist show an error
+            if(!player) {
+                console_error(localize("chimera_error_player_not_found"), argc ? *argv : nullptr);
+                return false;
+            }
+
+            // Is the player alive?
+            auto *object = object_table.get_dynamic_object(player->object_id);
+            if(!object) {
+                console_error(localize("chimera_teleport_dead"));
+                return false;
+            }
+
+            x = object->center_position.x;
+            y = object->center_position.y;
+            z = object->center_position.z;
+        }
+
+        else {
             console_error(localize("chimera_teleport_invalid_arguments"));
             return false;
         }
 
         // Get the player
-        Player *local_player = player_table.get_client_player();
+        Player *local_player;
+
+        // What player are we teleporting?
+        if(argc == 1 || argc == 3) {
+            local_player = player_table.get_client_player();
+        }
+        else {
+            int index;
+            try {
+                index = std::stoul(argv[0]) - 1;
+            }
+            catch(std::exception &) {
+                console_error(localize("chimera_error_takes_player_number"));
+                return false;
+            }
+            local_player = player_table.get_player_by_rcon_id(index);
+        }
+
         if(!local_player) {
             console_error(localize("chimera_teleport_dead_self"));
             return false;
@@ -89,6 +111,13 @@ namespace Chimera {
         player_object->position.x = x;
         player_object->position.y = y;
         player_object->position.z = z;
+
+        if(server_type() == ServerType::SERVER_NONE) {
+            console_output(localize("chimera_teleport_success_sp"), x, y, z);
+        }
+        else {
+            console_output(localize("chimera_teleport_success_mp"), local_player->name, x, y, z);
+        }
 
         return true;
     }
