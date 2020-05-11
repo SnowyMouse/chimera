@@ -663,6 +663,7 @@ namespace Chimera {
     extern "C" void map_loading_asm();
     extern "C" void map_loading_server_asm();
     extern "C" void free_map_handle_bugfix_asm();
+    extern "C" int on_check_if_map_is_bullshit_asm();
 
     extern "C" void on_read_map_file_data_asm();
     extern "C" int on_read_map_file_data(HANDLE file_descriptor, std::byte *output, std::size_t size, LPOVERLAPPED overlapped) {
@@ -890,9 +891,10 @@ namespace Chimera {
         write_jmp_call(create_file_mov_sig.data(), hook2, reinterpret_cast<const void *>(free_map_handle_bugfix_asm), nullptr);
 
         // Make Halo not check the maps if they're bullshit
-        static unsigned char return_1[6] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 };
-        auto *map_check_sig = get_chimera().get_signature("map_check_sig").data();
-        overwrite(map_check_sig, return_1, sizeof(return_1));
+        static Hook hook3;
+        const void *fn;
+        auto *map_check_data = get_chimera().get_signature("map_check_sig").data();
+        write_function_override(map_check_data, hook3, reinterpret_cast<const void *>(on_check_if_map_is_bullshit_asm), &fn);
 
         do_benchmark = is_enabled("memory.benchmark");
         do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");

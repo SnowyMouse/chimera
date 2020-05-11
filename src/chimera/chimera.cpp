@@ -65,8 +65,6 @@ namespace Chimera {
             this->get_all_commands();
             initialize_console_hook();
 
-            bool server = this->feature_present("server");
-
             // Make this thing less annoying
             reduce_drm();
 
@@ -87,6 +85,9 @@ namespace Chimera {
             // Enable fast loading
             initialize_fast_load();
 
+            // Set up map loading
+            set_up_map_loading();
+
             // Fix this
             set_up_fix_leaking_descriptors();
 
@@ -96,9 +97,6 @@ namespace Chimera {
                 const char *value_true = "true";
                 camo_fix_command(1, &value_true);
                 add_preframe_event(initial_tick);
-
-                // Set up map loading if we're on the client
-                set_up_map_loading();
 
                 // Set up this hook
                 set_up_rcon_message_hook();

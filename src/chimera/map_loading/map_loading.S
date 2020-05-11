@@ -60,3 +60,9 @@ _on_server_join_text_asm:
     lea eax, _download_text_string
     mov [esp+0x4], eax
     ret
+
+.globl _on_check_if_map_is_bullshit_asm
+_on_check_if_map_is_bullshit_asm:
+    mov eax, 1
+    mov ecx, 1
+    ret
