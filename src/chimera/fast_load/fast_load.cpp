@@ -7,11 +7,13 @@
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
+#include "../event/frame.hpp"
 #include "../event/tick.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../map_loading/map_loading.hpp"
+#include "../output/output.hpp"
 
 #include "fast_load.hpp"
 
@@ -147,6 +149,12 @@ namespace Chimera {
 
     void (*function_to_use)() = nullptr;
 
+    static void on_get_crc32_first_tick() {
+        if(get_tick_count() == 0) {
+            on_get_crc32();
+        }
+    }
+
     void initialize_fast_load() noexcept {
         auto engine = game_engine();
 
@@ -159,11 +167,16 @@ namespace Chimera {
                 overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
 
+                // Do bullshit every frame
+                if(get_chimera().feature_present("server")) {
+                    add_pretick_event(on_get_crc32_first_tick);
+                }
+
                 // Prevent Halo from loading the map list (speed up loading)
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
-                add_tick_event(reload_map_list);
+                add_frame_event(reload_map_list);
                 function_to_use = do_load_multiplayer_maps<MapIndexCustomEdition>;
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
@@ -176,7 +189,7 @@ namespace Chimera {
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
-                add_tick_event(reload_map_list);
+                add_frame_event(reload_map_list);
                 function_to_use = do_load_multiplayer_maps<MapIndexRetail>;
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
@@ -189,7 +202,7 @@ namespace Chimera {
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
-                add_tick_event(reload_map_list);
+                add_frame_event(reload_map_list);
                 function_to_use = do_load_multiplayer_maps<MapIndex>;
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
@@ -367,7 +380,7 @@ namespace Chimera {
     }
 
     void reload_map_list() noexcept {
-        remove_tick_event(reload_map_list);
+        remove_frame_event(reload_map_list);
         function_to_use();
     }
 }
