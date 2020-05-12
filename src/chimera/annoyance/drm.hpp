@@ -8,6 +8,11 @@ namespace Chimera {
      * Note: This does NOT crack the game, as you need a valid CD key to install/update the game.
      */
     void reduce_drm() noexcept;
+
+    /**
+     * Set the CD hash
+     */
+    void set_cd_hash() noexcept;
 }
 
 #endif

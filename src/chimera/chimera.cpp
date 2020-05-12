@@ -119,6 +119,8 @@ namespace Chimera {
                     enable_multiple_instance();
                 }
 
+                set_cd_hash();
+
                 // Speed up getting connections from the master server
                 set_master_server_connection_threads(50);
 
