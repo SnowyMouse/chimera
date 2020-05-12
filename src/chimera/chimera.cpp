@@ -452,7 +452,6 @@ namespace Chimera {
         remove_preframe_event(initial_tick);
         if(chimera->feature_present("client")) {
             auto *optimal = chimera->get_ini()->get_value("halo.optimal_defaults");
-            chimera->execute_command("chimera_enable_console true");
 
             // Set default settings
             if(optimal && std::strcmp(optimal, "1") == 0) {
@@ -467,6 +466,12 @@ namespace Chimera {
                 chimera->execute_command("chimera_widescreen_fix true");
                 chimera->execute_command("chimera_throttle_fps 300");
                 chimera->execute_command("chimera_uncap_cinematic true");
+            }
+
+            // Set console enabled
+            auto *console = chimera->get_ini()->get_value("halo.console");
+            if(console && std::strcmp(console, "1") == 0) {
+                set_console_enabled(true);
             }
 
             // Load the custom chat

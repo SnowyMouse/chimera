@@ -175,10 +175,13 @@ Below are the features you can take advantage of.
 #### Halo settings
 These features exist to modify how Halo is initialized.
 - `path` (changes the profile path location)
-- `main_menu_music` (disables the music in the main menu)
 - `server_port` (set the default server port)
 - `client_port` (set the default client port)
+- `console` (enable console)
+- `main_menu_music` (disables the music in the main menu)
 - `background_playback` (allow Halo to play in the background)
+- `multiple_instances` (allow Halo to spawn in multiple instances)
+- `hash` (set a custom hash or `%` for a random one)
 
 #### Memory settings
 This feature exists to allow you to take advantage larger amounts of RAM,
@@ -241,7 +244,6 @@ the chimera folder created by Chimera.
 - [Deadzones](#deadzones)
 - [Devmode](#devmode)
 - [Diagonals](#diagonals)
-- [Enable console](#enable-console)
 - [FOV](#fov)
 - [HUD kill feed](#hud-kill-feed)
 - [Language](#language)
@@ -266,8 +268,8 @@ the chimera folder created by Chimera.
 - [Widescreen fix](#widescreen-fix)
 
 #### Aim assist
-Halo's aim assist was broken in the PC release. Chimera fixes it. By default,
-this feature is on. It only works for analog sticks, though.
+Halo's aim assist was broken in the PC release. Chimera fixes it. It only works
+for analog sticks, though.
 
 **Usage:** `chimera_aim_assist [true/false]`
 
@@ -352,16 +354,14 @@ Cutscenes have a letterbox. You can disable it if you want.
 #### Block loading screen
 When you join a server, you are blinded for a few seconds by a loading screen,
 and this can make you susceptible to being cheaply killed. This disables that
-loading screen. By default, Chimera disables the loading screen due to this,
-but you can turn it back on if you want.
+loading screen.
 
 **Usage:** `chimera_block_loading_screen [true/false]`
 
 #### Block mouse acceleration
 Halo uses raw input, thus it bypasses the mouse acceleration setting of your
 operating system (unless you run the game in Wine). However, Halo adds its own
-mouse acceleration on top of direct input. You can disable this if you want. By
-default, mouse acceleration is blocked.
+mouse acceleration on top of direct input.
 
 **Usage:** `chimera_block_mouse_acceleration [true/false]`
 
@@ -442,7 +442,7 @@ Set the console input color.
 #### Deadzones
 Set deadzones for analog input.
 
-**Usage:** `chimera_deadzones [deadzones]`
+**Usage:** `chimera_deadzones [0-1]`
 
 #### Devmode
 Enable devmode commands without blocking you from multiplayer or requiring any
@@ -451,35 +451,27 @@ command line arguments.
 **Usage:** `chimera_devmode [true/false]`
 
 #### Diagonals
-Set the diagonals for moving with an analog stick. By default, this is set to
-0.75, as Halo's default diagonals make it difficult to move with an analog
-stick. This is because Halo converts it to digital input, as the netcode does
-not support analog movement.
+Set the diagonals for moving with an analog stick. This is because Halo converts
+it to digital input, as the netcode does not support analog movement. A good
+value is 0.75.
 
-**Usage:** `chimera_diagonals [true/false]`
-
-#### Enable console
-Enable the console without command line arguments. This is on by default.
-
-**Usage:** `chimera_enable_console [true/false]`
+**Usage:** `chimera_diagonals [0-1]`
 
 #### FOV
 Set FOV. End with "v" to lock to a vertical FOV, or use "auto" to set to an
 automatic FOV. Using a vertical FOV over a horizontal one helps prevent the
-game from distorting your field of view when switching aspect ratios. On Halo
-Trial, this feature will be set to "auto" by default.
+game from distorting your field of view when switching aspect ratios.
 
-**Usage:** `chimera_fov [fov]`
+**Usage:** `chimera_fov [degrees]`
 
 #### HUD kill feed
-Put the kill feed in the HUD. Halo puts it in the chat, normally. This feature
-is on by default.
+Put the kill feed in the HUD. Halo puts it in the chat, normally.
 
 **Usage:** `chimera_hud_kill_feed [true/false]`
 
 #### Language
 Chimera is localized for both English and, thanks to help from the community,
-Spanish. By default, it is English.
+Spanish.
 
 **Usage:** `chimera_language [en/es]`
 
@@ -487,8 +479,7 @@ Spanish. By default, it is English.
 Change the model detail. Higher values increase LODs. This will not make models
 extra detailed. Instead, it will change the threshold for when higher LODs
 appear. Extremely high values will cause the aforementioned "4K headless chief"
-glitch, except at any vertical resolution this time. By default, this is set to
-1.0.
+glitch, except at any vertical resolution this time.
 
 **Usage:** `chimera_model_detail [detail]`
 
@@ -574,14 +565,12 @@ coordinates or player.
 **Usage:** `chimera_teleport [#] <<#> | <x> <y> <z>>`
 
 #### Throttle FPS
-Throttle Halo's frame rate. Set to 0 to disable. By default, this is set to 300
-on Halo Trial.
+Throttle Halo's frame rate. Set to 0 to disable.
 
 **Usage:** `chimera_throttle_fps [FPS]`
 
 #### TPS
 Set the game's tick rate. This will not work outside of client hosted games.
-For reference, the game runs at 30 TPS by default.
 
 **Usage:** `chimera_tps [TPS]`
 
@@ -591,16 +580,14 @@ Unblock all weapons blocked with [Block extra weapon](#block-extra-weapon)
 **Usage:** `chimera_unblock_all_extra_weapons`
 
 #### Uncap cinematic
-Uncap the cinematic frame rate from 30 FPS. This will be turned on by default
-on Halo Trial.
+Uncap the cinematic frame rate from 30 FPS.
 
 **Usage:** `chimera_uncap_cinematic [true/false]`
 
 #### Widescreen fix
 Fix the scaling of HUD, menu, and text elements for wider aspect ratios. This
 may break some maps, and this will not be fixed as fixing one thing will break
-another thing due to the nature of these fixes. On Halo Trial, this will be on
-by default.
+another thing due to the nature of these fixes.
 
 **Usage:** `chimera_widescreen_fix [true/false]`
 

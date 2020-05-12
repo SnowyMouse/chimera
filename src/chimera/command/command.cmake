@@ -27,7 +27,6 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/block_all_bullshit.cpp
     ${COMMAND_DIR}/client/enhancement/block_buffering.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.cpp
-    ${COMMAND_DIR}/client/enhancement/enable_console.cpp
     ${COMMAND_DIR}/client/enhancement/hud_kill_feed.cpp
     ${COMMAND_DIR}/client/enhancement/set_name.cpp
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
