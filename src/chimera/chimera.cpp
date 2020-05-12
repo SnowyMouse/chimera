@@ -466,6 +466,9 @@ namespace Chimera {
                 chimera->execute_command("chimera_widescreen_fix true");
                 chimera->execute_command("chimera_throttle_fps 300");
                 chimera->execute_command("chimera_uncap_cinematic true");
+                if(chimera->feature_present("client_af")) {
+                    chimera->execute_command("chimera_af true");
+                }
             }
 
             // Set console enabled
