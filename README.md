@@ -59,6 +59,7 @@ These are features that are always on.
 - [NVIDIA camo fix](#nvidia-camo-fix)
 - [Contrail fix](#contrail-fix)
 - [Motion sensor fix](#motion-sensor-fix)
+- [Auto center fix](#auto-center-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -151,6 +152,10 @@ Chimera fixes a bug where contrails are bugged at high frame rates.
 #### Motion sensor fix
 Chimera fixes a bug where the motion sensor fade is incorrect at >30 FPS
 
+#### Auto center fix
+Chimera fixes a bug where the game does auto look centering based on frame rate.
+This would result in vehicles being difficult to handle at high frame rates.
+
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
 [HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that
@@ -216,9 +221,9 @@ these features are off by default. Commands are stored in preferences.txt in
 the chimera folder created by Chimera.
 - [Aim assist](#aim-assist)
 - [Anisotropic filtering](#anisotropic-filtering)
-- [Auto centering](#auto-centering)
 - [Auto uncrouching](#auto-uncrouching)
 - [Block all bullshit](#block-all-bullshit)
+- [Block auto center](#block-auto-center)
 - [Block buffering](#block-buffering)
 - [Block camera shaking](#block-camera-shaking)
 - [Block extra weapon](#block-extra-weapon)
@@ -280,15 +285,6 @@ objects. You'd need AF enabled externally to do that.
 
 **Usage:** `chimera_af [true/false]`
 
-#### Auto centering
-In stock Halo, vehicle auto centering is based on frame rate. Chimera allows
-you to either fix it or turn it off completely, as this can be annoying.
-- 0 is Halo's normal behavior
-- 1 is fixed behavior (tick-based)
-- 2 is no auto centering whatsoever
-
-**Usage:** `chimera_auto_center [0/1/2]`
-
 #### Auto uncrouching
 When on the ground, the game disabled crouching if the player was running at
 full speed. You can re-enable this behavior if you want.
@@ -307,6 +303,11 @@ This feature runs the following commands:
 - `chimera_block_mouse_acceleration 1`
 
 **Usage:** `chimera_block_all_bullshit`
+
+#### Block auto center
+Set whether or not auto centering in vehicles is disabled.
+
+**Usage:** `chimera_block_auto_center [true/false]`
 
 #### Block buffering
 This feature is known to reduce input lag, and it works like the feature in

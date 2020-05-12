@@ -22,6 +22,7 @@
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
 #include "fast_load/fast_load.hpp"
+#include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
@@ -126,6 +127,9 @@ namespace Chimera {
 
                 // Fix maps that go above some of Halo's limits
                 set_up_extend_limits();
+
+                // Fix this broken stuff
+                set_up_auto_center_fix();
 
                 // Set video mode
                 set_up_video_mode();
@@ -460,7 +464,6 @@ namespace Chimera {
                 chimera->execute_command("chimera_aim_assist true");
                 chimera->execute_command("chimera_interpolate true");
                 chimera->execute_command("chimera_diagonals 0.75");
-                chimera->execute_command("chimera_auto_center 1");
                 chimera->execute_command("chimera_block_loading_screen true");
                 chimera->execute_command("chimera_fov auto");
                 chimera->execute_command("chimera_widescreen_fix true");

@@ -37,6 +37,7 @@ add_library(chimera STATIC
     src/chimera/fix/abolish_safe_mode.cpp
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
+    src/chimera/fix/auto_center.cpp
     src/chimera/fix/blue_32bit_color_fix.cpp
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S

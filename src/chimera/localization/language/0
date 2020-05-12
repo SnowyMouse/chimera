@@ -40,10 +40,9 @@ chimera_about_command_license                                                   
 chimera_about_command_help                                                      List information about this mod.
 chimera_af_command_help                                                         Enable anisotropic filtering.
 chimera_aim_assist_command_help                                                 Enable aim assist.
-chimera_auto_center_command_help                                                Set auto centering behavior. 0 = pc behavior, 1 = xbox behavior, 2 = no auto centering
-chimera_auto_center_command_invalid_setting                                     Setting must be between 0 and 2.
 chimera_auto_uncrouch_help                                                      Use Xbox-style crouch mechanics, uncrouching when at full speed and on the ground.
 chimera_block_all_bullshit_help                                                 Disable various things that most people may find annoying.
+chimera_block_auto_center_command_help                                          Set whether auto centering is disabled.
 chimera_block_buffering_command_help                                            Disable buffering. May improve mouse input.
 chimera_block_buffering_command_warning                                         Disable Buffering is already enabled (likely via config.txt)!
 chimera_block_camera_shake_command_help                                         Disable camera shaking from damage.
