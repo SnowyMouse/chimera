@@ -142,6 +142,10 @@ namespace Chimera {
         return *reinterpret_cast<std::uint16_t *>(tag_data + 0x4) + *reinterpret_cast<std::uint16_t *>(tag_data + 0x6);
     }
 
+    template <typename C> static void get_dimensions_template(std::int32_t &width, std::int32_t &height, const C *text) {
+
+    }
+
     template<typename T> std::int16_t text_pixel_length_t(const T *text, const TagID &font) {
         struct Character {
             std::uint16_t character;
@@ -150,31 +154,43 @@ namespace Chimera {
         };
         static_assert(sizeof(Character) == 0x14);
 
-        std::int16_t length = 0;
-
-        // Get the widths of all the characters in the tag
+        // Get the tag
         auto *tag = get_tag(font);
 
+        // If it's not loaded, don't care
         if(tag->indexed && reinterpret_cast<std::uintptr_t>(tag->data) < 65536) {
             return 0;
         }
+        std::int16_t length = 0;
 
         auto tag_chars_count = *reinterpret_cast<std::uint32_t *>(tag->data + 0x7C);
         auto *tag_chars = *reinterpret_cast<Character **>(tag->data + 0x7C + 4);
 
-        // Get the lengths of all of the characters
-        char lengths[65536] = {};
-        for(std::size_t i = 0; i < tag_chars_count; i++) {
-            lengths[tag_chars[i].character] = tag_chars[i].character_width;
-        }
-
         while(*text != 0) {
             auto old_length = length;
-            length += lengths[static_cast<std::uint16_t>(*text)];
 
-            // If overflow, no point continuing.
-            if(old_length > length) {
-                return old_length;
+            int char_length = 0;
+            for(std::size_t i = 0; i < tag_chars_count; i++) {
+                bool same = false;
+                if(sizeof(T) == 1) {
+                    same = *reinterpret_cast<const std::uint8_t *>(text) == tag_chars[i].character;
+                }
+                else {
+                    same = *text == tag_chars[i].character;
+                }
+                if(same) {
+                    char_length = tag_chars[i].character_width;
+                    break;
+                }
+            }
+
+            if(char_length > 0) {
+                length += char_length;
+
+                // If overflow, no point continuing.
+                if(old_length > length) {
+                    return old_length;
+                }
             }
 
             text++;
