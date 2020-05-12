@@ -10,6 +10,7 @@ add_library(chimera STATIC
     src/chimera/map_loading/laa.cpp
     src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/keystone.cpp
+    src/chimera/annoyance/multi_instance.cpp
     src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
     src/chimera/annoyance/tab_out_video.cpp

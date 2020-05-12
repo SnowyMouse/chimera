@@ -17,6 +17,7 @@
 #include "chimera.hpp"
 #include "annoyance/drm.hpp"
 #include "annoyance/keystone.hpp"
+#include "annoyance/multi_instance.hpp"
 #include "annoyance/registry.hpp"
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
@@ -110,6 +111,12 @@ namespace Chimera {
                 auto *bg_playback = chimera->get_ini()->get_value("halo.background_playback");
                 if(bg_playback && std::strcmp(bg_playback, "1") == 0) {
                     enable_tab_out_video();
+                }
+
+                // And this!
+                auto *multi_instance = chimera->get_ini()->get_value("halo.multiple_instances");
+                if(multi_instance && std::strcmp(multi_instance, "1") == 0) {
+                    enable_multiple_instance();
                 }
 
                 // Speed up getting connections from the master server
