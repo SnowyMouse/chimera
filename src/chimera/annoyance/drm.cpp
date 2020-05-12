@@ -3,6 +3,7 @@
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "../output/output.hpp"
+#include <time.h>
 
 namespace Chimera {
     void reduce_drm() noexcept {
@@ -39,9 +40,20 @@ namespace Chimera {
     extern "C" void fun_cd_key_hash_gen_asm(std::uint8_t *key) noexcept {
         auto *hash = get_chimera().get_ini()->get_value("halo.hash");
         if(hash) {
-            std::memset(key, '0', 32);
-            auto len = std::strlen(hash);
-            std::memcpy(reinterpret_cast<char *>(key), hash, len > 32 ? 32 : len);
+            #define HASH_LENGTH 32
+
+            if(std::strcmp(hash, "%") == 0) {
+                srand(time(nullptr));
+                char characters[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+                for(std::size_t i = 0; i < HASH_LENGTH; i++) {
+                    key[i] = characters[rand() % sizeof(characters)];
+                }
+            }
+            else {
+                std::memset(key, '0', HASH_LENGTH);
+                auto len = std::strlen(hash);
+                std::memcpy(reinterpret_cast<char *>(key), hash, len > HASH_LENGTH ? HASH_LENGTH : len);
+            }
         }
     }
 }
