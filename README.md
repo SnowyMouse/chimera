@@ -172,6 +172,7 @@ you simply have to remove the semicolon.
 
 Below are the features you can take advantage of.
 - [Halo settings](#halo-settings)
+- [Scoreboard settings](#scoreboard-settings)
 - [Memory settings](#memory-settings)
 - [Video mode](#video-mode)
 - [Custom chat settings](#custom-chat-settings)
@@ -187,6 +188,10 @@ These features exist to modify how Halo is initialized.
 - `background_playback` (allow Halo to play in the background)
 - `multiple_instances` (allow Halo to spawn in multiple instances)
 - `hash` (set a custom hash or `%` for a random one)
+
+#### Scoreboard
+This exists to manipulate the scoreboard
+- `font` (change the font)
 
 #### Memory settings
 This feature exists to allow you to take advantage larger amounts of RAM,

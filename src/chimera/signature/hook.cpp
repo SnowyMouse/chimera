@@ -74,13 +74,21 @@ namespace Chimera {
                     at += 1;
                     break;
 
-                // mov [reg]
                 case 0x66: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    auto op2 = *reinterpret_cast<const std::uint8_t *>(at + 2);
+                    // mov [reg]
                     if(op1 == 0x89) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;
+                        break;
+                    }
+                    // mov word ptr [reg+op4]
+                    else if(op1 == 0xC7 && op2 == 0x44) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 7);
+                        at += 7;
                         break;
                     }
                     std::terminate();
@@ -224,7 +232,7 @@ namespace Chimera {
                 case 0x8B: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     auto b = *reinterpret_cast<const std::uint8_t *>(at + 2);
-                    if(a == 0x6C && b == 0x24) {
+                    if((a == 0x6C || a == 0x4C || a == 0x44) && b == 0x24) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
@@ -234,6 +242,12 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
+                        break;
+                    }
+                    else if(a == 0x50) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
                         break;
                     }
                     else if(a == 0x93 || a == 0x0D) {

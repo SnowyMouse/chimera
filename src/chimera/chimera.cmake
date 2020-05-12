@@ -90,9 +90,10 @@ add_library(chimera STATIC
     src/chimera/halo_data/player.cpp
     src/chimera/halo_data/port.cpp
     src/chimera/halo_data/resolution.cpp
-    src/chimera/halo_data/server.cpp
     src/chimera/halo_data/script.cpp
     src/chimera/halo_data/script.S
+    src/chimera/halo_data/scoreboard_font.S
+    src/chimera/halo_data/server.cpp
     src/chimera/halo_data/tag.cpp
     src/chimera/localization/localization.cpp
     src/chimera/map_loading/map_loading.cpp
