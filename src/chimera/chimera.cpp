@@ -451,17 +451,18 @@ namespace Chimera {
     void initial_tick() {
         remove_preframe_event(initial_tick);
         if(chimera->feature_present("client")) {
-            // Set default settings
-            chimera->execute_command("chimera_block_mouse_acceleration true");
-            chimera->execute_command("chimera_hud_kill_feed true");
+            auto *optimal = chimera->get_ini()->get_value("halo.optimal_defaults");
             chimera->execute_command("chimera_enable_console true");
-            chimera->execute_command("chimera_aim_assist true");
-            chimera->execute_command("chimera_interpolate true");
-            chimera->execute_command("chimera_diagonals 0.75");
-            chimera->execute_command("chimera_auto_center 1");
-            chimera->execute_command("chimera_block_loading_screen true");
 
-            if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+            // Set default settings
+            if(optimal && std::strcmp(optimal, "1") == 0) {
+                chimera->execute_command("chimera_block_mouse_acceleration true");
+                chimera->execute_command("chimera_hud_kill_feed true");
+                chimera->execute_command("chimera_aim_assist true");
+                chimera->execute_command("chimera_interpolate true");
+                chimera->execute_command("chimera_diagonals 0.75");
+                chimera->execute_command("chimera_auto_center 1");
+                chimera->execute_command("chimera_block_loading_screen true");
                 chimera->execute_command("chimera_fov auto");
                 chimera->execute_command("chimera_widescreen_fix true");
                 chimera->execute_command("chimera_throttle_fps 300");
