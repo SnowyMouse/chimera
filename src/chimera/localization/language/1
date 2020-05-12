@@ -77,7 +77,6 @@ chimera_about_command_license_header                                            
 chimera_about_command_license                                                   Copyright (C) 2019-20 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3 o\nsuperior. Visita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
-chimera_block_auto_center_command_help                                          Establece el comportamiento del auto-centrado. 0 = Comportamiento de PC, 1 = Comportamiento de Xbox, 2 = Sin auto-centrado.
 chimera_block_all_bullshit_help                                                 Deshabilita varias cosas que la mayoría de la gente puede encontrar molestas.
 chimera_category_controller                                                     Mando.
 chimera_category_custom_chat                                                    chat_custom.
