@@ -12,6 +12,7 @@ add_library(chimera STATIC
     src/chimera/annoyance/keystone.cpp
     src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
+    src/chimera/annoyance/tab_out_video.cpp
     src/chimera/bookmark/bookmark.cpp
     src/chimera/chimera.cpp
     src/chimera/command/command.cpp

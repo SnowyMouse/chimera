@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cmath>
 #include "annoyance/novideo.hpp"
+#include "annoyance/tab_out_video.hpp"
 #include "bookmark/bookmark.hpp"
 #include "custom_chat/custom_chat.hpp"
 #include "config/config.hpp"
@@ -104,6 +105,12 @@ namespace Chimera {
                 // Prevent some annoying DLLs and checks from being loaded
                 remove_keystone();
                 remove_registry_checks();
+
+                // Do this!
+                auto *bg_playback = chimera->get_ini()->get_value("halo.background_playback");
+                if(bg_playback && std::strcmp(bg_playback, "1") == 0) {
+                    enable_tab_out_video();
+                }
 
                 // Speed up getting connections from the master server
                 set_master_server_connection_threads(50);

@@ -173,12 +173,12 @@ Below are the features you can take advantage of.
 - [Hotkeys](#hotkeys)
 
 #### Halo settings
-These features exist to prevent the need to use arguments for the Halo
-executable.
+These features exist to modify how Halo is initialized.
 - `path` (changes the profile path location)
 - `main_menu_music` (disables the music in the main menu)
 - `server_port` (set the default server port)
 - `client_port` (set the default client port)
+- `background_playback` (allow Halo to play in the background)
 
 #### Memory settings
 This feature exists to allow you to take advantage larger amounts of RAM,
