@@ -18,6 +18,10 @@ namespace Chimera {
         if(font == GenericFont::FONT_CONSOLE) {
             return *reinterpret_cast<TagID *>(interface_bitmaps + 0x10 + 0xC);
         }
+        // System font
+        else if(font == GenericFont::FONT_SYSTEM) {
+            return *reinterpret_cast<TagID *>(interface_bitmaps + 0x00 + 0xC);
+        }
 
         // Get HUD globals which has the remaining two fonts.
         auto *hud_globals = get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0x60 + 0xC));
@@ -27,6 +31,22 @@ namespace Chimera {
         else {
             return *reinterpret_cast<TagID *>(hud_globals->data + 0x58 + 0xC);
         }
+    }
+
+    GenericFont generic_font_from_string(const char *str) noexcept {
+        if(std::strcmp(str, "console") == 0) {
+            return GenericFont::FONT_CONSOLE;
+        }
+        else if(std::strcmp(str, "system") == 0) {
+            return GenericFont::FONT_SYSTEM;
+        }
+        else if(std::strcmp(str, "small") == 0) {
+            return GenericFont::FONT_SMALL;
+        }
+        else if(std::strcmp(str, "large") == 0) {
+            return GenericFont::FONT_LARGE;
+        }
+        return GenericFont::FONT_CONSOLE;
     }
 
     struct Text {

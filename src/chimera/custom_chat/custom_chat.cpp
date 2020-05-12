@@ -864,22 +864,9 @@ namespace Chimera {
         LOAD_IF_POSSIBLE_SETTING(chat_message_anchor, get_anchor)
         LOAD_IF_POSSIBLE_SETTING(chat_input_anchor, get_anchor)
 
-        auto get_font = [](const char *anchor) {
-            if(std::strcmp(anchor, "console") == 0) {
-                return GenericFont::FONT_CONSOLE;
-            }
-            else if(std::strcmp(anchor, "small") == 0) {
-                return GenericFont::FONT_SMALL;
-            }
-            else if(std::strcmp(anchor, "large") == 0) {
-                return GenericFont::FONT_LARGE;
-            }
-            return GenericFont::FONT_CONSOLE;
-        };
-
-        LOAD_IF_POSSIBLE_SETTING(server_message_font, get_font)
-        LOAD_IF_POSSIBLE_SETTING(chat_message_font, get_font)
-        LOAD_IF_POSSIBLE_SETTING(chat_input_font, get_font)
+        LOAD_IF_POSSIBLE_SETTING(server_message_font, generic_font_from_string)
+        LOAD_IF_POSSIBLE_SETTING(chat_message_font, generic_font_from_string)
+        LOAD_IF_POSSIBLE_SETTING(chat_input_font, generic_font_from_string)
 
         LOAD_IF_POSSIBLE_SETTING(slide_time_length, std::stof)
         LOAD_IF_POSSIBLE_SETTING(time_up, std::stof)

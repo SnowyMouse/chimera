@@ -15,12 +15,22 @@ namespace Chimera {
         /** Fonts used for console */
         FONT_CONSOLE,
 
+        /** Fonts used for system (e.g. menu text) */
+        FONT_SYSTEM,
+
         /** Fonts used for small text */
         FONT_SMALL,
 
         /** Fonts used for large text */
         FONT_LARGE
     };
+
+    /**
+     * Get a generic font from the string
+     * @param  str string value
+     * @return     generic font
+     */
+    GenericFont generic_font_from_string(const char *str) noexcept;
 
     enum FontAlignment : std::int16_t {
         ALIGN_LEFT = 0,
