@@ -30,6 +30,7 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
+#include "fix/inverted_flag.hpp"
 #include "fix/fov_fix.hpp"
 #include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
@@ -140,6 +141,9 @@ namespace Chimera {
 
                 // And this should get fixed, too. Holy shit.
                 set_up_descope_fix();
+
+                // More broken stuff. More broken fixes.
+                set_up_inverted_flag_fix();
 
                 // Why is this broken?
                 if(chimera->feature_present("client_widescreen_custom_edition")) {

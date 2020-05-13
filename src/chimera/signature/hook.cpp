@@ -23,6 +23,13 @@ namespace Chimera {
         // Keep adding instructions until we have what we need.
         while(bytes.size() < minimum_size) {
             switch(*reinterpret_cast<const std::uint8_t *>(at)) {
+                // add eax, <val>
+                case 0x05:
+                    offsets.push_back(at - at_start);
+                    bytes.insert(bytes.end(), at, at + 5);
+                    at += 5;
+                    break;
+
                 // jmp <relative offset> or movsx
                 case 0x0F: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);

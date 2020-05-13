@@ -48,6 +48,8 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.S
     src/chimera/fix/force_crash.cpp
     src/chimera/fix/fov_fix.cpp
+    src/chimera/fix/inverted_flag.cpp
+    src/chimera/fix/inverted_flag.S
     src/chimera/fix/interpolate/antenna.cpp
     src/chimera/fix/interpolate/camera.cpp
     src/chimera/fix/interpolate/flag.cpp

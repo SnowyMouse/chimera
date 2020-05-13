@@ -60,6 +60,8 @@ These are features that are always on.
 - [Contrail fix](#contrail-fix)
 - [Motion sensor fix](#motion-sensor-fix)
 - [Auto center fix](#auto-center-fix)
+- [Fog fix](#fog-fix)
+- [Model detail fix](#model-detail-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -151,6 +153,12 @@ Chimera fixes a bug where contrails are bugged at high frame rates.
 
 #### Motion sensor fix
 Chimera fixes a bug where the motion sensor fade is incorrect at >30 FPS
+
+#### Fog fix
+Fog in maps such as Assault on the Control Room's sky fog now works as intended.
+
+#### Model detail fix
+The "detail after reflection" flag in model shaders now works as intended.
 
 #### Auto center fix
 Chimera fixes a bug where the game does auto look centering based on frame rate.
