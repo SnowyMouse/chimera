@@ -232,7 +232,7 @@ namespace Chimera {
                 case 0x8B: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     auto b = *reinterpret_cast<const std::uint8_t *>(at + 2);
-                    if((a == 0x6C || a == 0x4C || a == 0x44) && b == 0x24) {
+                    if((a == 0x6C || a == 0x4C || a == 0x44 || a == 0x54) && b == 0x24) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
@@ -244,7 +244,7 @@ namespace Chimera {
                         at += 2;
                         break;
                     }
-                    else if(a == 0x50) {
+                    else if(a == 0x50 || a == 0x40) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

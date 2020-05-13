@@ -23,3 +23,14 @@ _get_scoreboard_font_edx_asm:
     popfd
     popad
     ret
+
+;# Get the name font into the eax register
+.globl _get_name_font_eax_asm
+_get_name_font_eax_asm:
+    pushad
+    pushfd
+    call _get_name_font
+    mov [esp+0x20], eax
+    popfd
+    popad
+    ret

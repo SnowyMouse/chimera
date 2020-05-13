@@ -3,46 +3,11 @@
 #include "../../../signature/signature.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
-#include "../../../output/draw_text.hpp"
 #include "../../../config/ini.hpp"
 #include "../../../halo_data/game_engine.hpp"
+#include "../../../halo_data/hud_fonts.hpp"
 
 namespace Chimera {
-    GenericFont g;
-
-    extern "C" void get_scoreboard_font_esi_asm() noexcept;
-    extern "C" void get_scoreboard_font_edx_asm() noexcept;
-    extern "C" std::uint32_t get_scoreboard_font() {
-        return get_generic_font(g).whole_id;
-    }
-
-    void set_up_scoreboard_font() noexcept {
-        auto &chimera = get_chimera();
-        auto *ini = chimera.get_ini();
-
-
-        // Get the generic font set (if it is set)
-        auto *font = ini->get_value("scoreboard.font");
-        if(!font) {
-            return;
-        }
-
-        g = generic_font_from_string(font);
-        static Hook hook;
-
-        // Non-trial
-        if(chimera.feature_present("client_score_screen")) {
-            auto &ss_elements_sig_b = chimera.get_signature("ss_elements_sig_b");
-            write_jmp_call(ss_elements_sig_b.data(), hook, reinterpret_cast<const void *>(get_scoreboard_font_esi_asm), nullptr, false);
-        }
-
-        // Trial
-        else if(chimera.feature_present("client_score_screen_font_demo")) {
-            auto &ss_elements_font_demo_sig = chimera.get_signature("ss_elements_font_demo_sig");
-            write_jmp_call(ss_elements_font_demo_sig.data(), hook, nullptr, reinterpret_cast<const void *>(get_scoreboard_font_edx_asm), false);
-        }
-    }
-
     bool simple_score_screen_command(int argc, const char **argv) {
         static bool simple_score_screen_active = false;
         if(argc == 1) {

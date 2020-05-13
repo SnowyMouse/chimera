@@ -173,8 +173,9 @@ you simply have to remove the semicolon.
 Below are the features you can take advantage of.
 - [Halo settings](#halo-settings)
 - [Scoreboard settings](#scoreboard-settings)
+- [Name settings](#name-settings)
 - [Memory settings](#memory-settings)
-- [Video mode](#video-mode)
+- [Video mode settings](#video-mode-settings)
 - [Custom chat settings](#custom-chat-settings)
 - [Hotkeys](#hotkeys)
 
@@ -189,8 +190,12 @@ These features exist to modify how Halo is initialized.
 - `multiple_instances` (allow Halo to spawn in multiple instances)
 - `hash` (set a custom hash or `%` for a random one)
 
-#### Scoreboard
+#### Scoreboard settings
 This exists to manipulate the scoreboard
+- `font` (change the font)
+
+#### Name settings
+This exists to manipulate the names shown when looking at players.
 - `font` (change the font)
 
 #### Memory settings
@@ -200,7 +205,7 @@ need an LAA-patched executable to use this feature.
 - `enable_map_memory_buffer` (enables loading maps directly into RAM)
 - `benchmark` (shows a benchmark whenever a map is loaded)
 
-#### Video mode
+#### Video mode settings
 These settings allow you to change Halo's video settings without requiring
 vidmode. You can even use refresh rates in excess of 120 Hz.
 - `enabled` (enables the feature)

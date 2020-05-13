@@ -10,7 +10,7 @@
 #include "console/console.hpp"
 #include "event/frame.hpp"
 #include "halo_data/path.hpp"
-#include "halo_data/scoreboard_font.hpp"
+#include "halo_data/hud_fonts.hpp"
 #include "output/draw_text.hpp"
 #include "output/output.hpp"
 #include "signature/hook.hpp"
@@ -167,6 +167,7 @@ namespace Chimera {
 
                 // Someone might want this set of course
                 set_up_scoreboard_font();
+                set_up_name_font();
 
                 // lol
                 set_up_nav_numbers_fix();
