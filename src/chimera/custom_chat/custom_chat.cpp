@@ -169,9 +169,12 @@ namespace Chimera {
     static TextAnchor chat_input_anchor = TextAnchor::ANCHOR_TOP_LEFT;
     static GenericFont chat_input_font = GenericFont::FONT_SMALL;
 
-    static float slide_time_length = 0.0F;
-    static float time_up = 5.0F;
-    static float fade_out_time = 1.0F;
+    static float chat_slide_time_length = 0.25F;
+    static float server_slide_time_length = 0.0F;
+    static float chat_time_up = 5.0F;
+    static float server_time_up = 5.0F;
+    static float chat_fade_out_time = 1.0F;
+    static float server_fade_out_time = 1.0F;
 
     static std::size_t chat_message_scroll = 0;
     static bool block_ips = false;
@@ -195,7 +198,7 @@ namespace Chimera {
     }
 
     static void on_custom_chat_frame() noexcept {
-        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font_type) {
+        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font_type, float slide_time_length, float time_up, float fade_out_time) {
             // Define the font
             auto font = get_generic_font(font_type);
             std::uint16_t line_height = font_pixel_height(font);
@@ -217,6 +220,7 @@ namespace Chimera {
             // Find out if we have a brand new one
             float first_time_alive = array[0].time_since_creation();
             std::size_t new_count = 0;
+
             if(first_time_alive < slide_time_length) {
                 // Find how many are also new
                 new_count = 1;
@@ -277,10 +281,10 @@ namespace Chimera {
         bool console_is_open = get_console_open();
 
         if((!console_is_open || !server_message_hide_on_console) && !server_messages_blocked()) {
-            handle_messages(server_messages, server_message_x, server_message_y, server_message_w, chat_input_open ? server_message_h_chat_open : server_message_h, server_message_anchor, chat_input_open, 0, server_message_font);
+            handle_messages(server_messages, server_message_x, server_message_y, server_message_w, chat_input_open ? server_message_h_chat_open : server_message_h, server_message_anchor, chat_input_open, 0, server_message_font, server_slide_time_length, server_time_up, server_fade_out_time);
         }
         if(!console_is_open || !chat_message_hide_on_console) {
-            handle_messages(chat_messages, chat_message_x, chat_message_y, chat_message_w, chat_input_open ? chat_message_h_chat_open : chat_message_h, chat_message_anchor, chat_input_open, chat_message_scroll, chat_message_font);
+            handle_messages(chat_messages, chat_message_x, chat_message_y, chat_message_w, chat_input_open ? chat_message_h_chat_open : chat_message_h, chat_message_anchor, chat_input_open, chat_message_scroll, chat_message_font, chat_slide_time_length, chat_time_up, chat_fade_out_time);
         }
 
         // Handle chat input
@@ -868,13 +872,35 @@ namespace Chimera {
         LOAD_IF_POSSIBLE_SETTING(chat_message_font, generic_font_from_string)
         LOAD_IF_POSSIBLE_SETTING(chat_input_font, generic_font_from_string)
 
-        LOAD_IF_POSSIBLE_SETTING(slide_time_length, std::stof)
-        LOAD_IF_POSSIBLE_SETTING(time_up, std::stof)
-        LOAD_IF_POSSIBLE_SETTING(fade_out_time, std::stof)
+        // Load these values
+        LOAD_IF_POSSIBLE_SETTING(chat_slide_time_length, std::stof)
+        LOAD_IF_POSSIBLE_SETTING(server_slide_time_length, std::stof)
+        LOAD_IF_POSSIBLE_SETTING(chat_time_up, std::stof)
+        LOAD_IF_POSSIBLE_SETTING(server_time_up, std::stof)
+        LOAD_IF_POSSIBLE_SETTING(chat_fade_out_time, std::stof)
+        LOAD_IF_POSSIBLE_SETTING(server_fade_out_time, std::stof)
 
-        slide_time_length = std::max(0.0F, slide_time_length);
-        time_up = std::max(0.00000001F, time_up);
-        fade_out_time = std::max(0.00000001F, fade_out_time);
+        #define OVERRIDE_IF_POSSIBLE(setting, chat, server) { \
+            std::optional<float> setting; \
+            LOAD_IF_POSSIBLE_SETTING(setting, std::stof); \
+            if(setting.has_value()) { \
+                chat = *setting; \
+                server = *setting; \
+            } \
+        }
+
+        OVERRIDE_IF_POSSIBLE(slide_time_length, chat_slide_time_length, server_slide_time_length)
+        OVERRIDE_IF_POSSIBLE(time_up, chat_time_up, server_time_up)
+        OVERRIDE_IF_POSSIBLE(fade_out_time, chat_fade_out_time, server_fade_out_time)
+
+        chat_slide_time_length = std::max(0.0F, chat_slide_time_length);
+        server_slide_time_length = std::max(0.0F, server_slide_time_length);
+
+        chat_time_up = std::max(0.0F, chat_time_up);
+        server_time_up = std::max(0.0F, server_time_up);
+
+        chat_fade_out_time = std::max(0.0F, chat_fade_out_time);
+        server_fade_out_time = std::max(0.0F, server_fade_out_time);
     }
 
     static const wchar_t *special_name_color(const wchar_t *name) {
