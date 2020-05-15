@@ -110,9 +110,7 @@ namespace Chimera {
                 remove_registry_checks();
 
                 // Disable this crashy piece of shit that some asshole at Microsoft thought was a good idea to put in a game
-                if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
-                    remove_keystone();
-                }
+                remove_keystone();
 
                 // Do this!
                 if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {
@@ -489,9 +487,7 @@ namespace Chimera {
             }
 
             // Load the custom chat
-            if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
-                initialize_custom_chat();
-            }
+            initialize_custom_chat();
 
             // Fix console fade
             setup_console_fade_fix();
