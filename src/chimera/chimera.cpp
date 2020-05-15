@@ -109,6 +109,11 @@ namespace Chimera {
                 // Prevent some annoying registry checks that just make the game slower
                 remove_registry_checks();
 
+                // Disable this crashy piece of shit that some asshole at Microsoft thought was a good idea to put in a game
+                if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
+                    remove_keystone();
+                }
+
                 // Do this!
                 if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {
                     enable_tab_out_video();
@@ -485,7 +490,6 @@ namespace Chimera {
 
             // Load the custom chat
             if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
-                remove_keystone();
                 initialize_custom_chat();
             }
 
