@@ -3,6 +3,8 @@ Chimera is a mod for Halo: Combat Evolved for the PC. It is licensed under
 version 3.0 of the GNU General Public License. See LICENSE for more
 information.
 
+The official repository is hosted at https://github.com/Kavawuvi/chimera
+
 ## Table of contents
 - [Installation](#installation)
 - [System requirements](#system-requirements)
