@@ -19,11 +19,11 @@
 #include "../config/ini.hpp"
 #include "../localization/localization.hpp"
 #include "../console/console.hpp"
+#include "../halo_data/chat.hpp"
 
 extern "C" void on_multiplayer_message(const wchar_t *message);
 extern "C" void on_chat_message(const wchar_t *message);
 extern "C" void on_chat_button(int channel);
-extern "C" void chat_out_asm(int channel, const wchar_t *message);
 extern "C" void on_kill_feed(wchar_t *a, std::uint32_t b, wchar_t *c);
 const void *kill_feed_message;
 
@@ -645,7 +645,7 @@ namespace Chimera {
                     if(std::strlen(chat_input_buffer) && server_type() != ServerType::SERVER_NONE) {
                         wchar_t chat_data[sizeof(chat_input_buffer)];
                         std::copy(chat_input_buffer, chat_input_buffer + sizeof(chat_input_buffer), chat_data);
-                        chat_out_asm(chat_input_channel, chat_data);
+                        chat_out(chat_input_channel, chat_data);
                     }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();

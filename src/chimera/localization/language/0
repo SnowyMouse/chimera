@@ -7,6 +7,7 @@ chimera_error_command_unavailable                                               
 chimera_error_not_enough_arguments                                              %s: Not enough arguments were specified. Expected at least %zu
 chimera_error_too_many_arguments                                                %s: Too many arguments were specified. Expected at most %zu
 
+chimera_error_must_be_in_a_server                                               You have to be in a server to do that.
 chimera_error_must_be_host                                                      You have to be the host to do that.
 chimera_error_player_not_found                                                  Player %s was not found.
 chimera_error_takes_player_number                                               This command takes a player number from chimera_players.
@@ -109,6 +110,8 @@ chimera_mouse_sensitivity_command_setting                                       
 chimera_player_info_command_help                                                Show information for a player by rcon index or yourself if none is given.
 chimera_player_list_command_help                                                List players in the server.
 chimera_player_list_command_none_found                                          There are no players in the server.
+chimera_send_chat_message_help                                                  Send a chat message on the given channel.
+chimera_send_chat_message_invalid_channel                                       Invalid channel number %i
 chimera_set_name_help                                                           Set your name.
 chimera_show_coordinates_help                                                   Display your coordinates.
 chimera_show_fps_help                                                           Display your frame rate.

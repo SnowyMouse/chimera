@@ -22,6 +22,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/custom_chat/chat_color_help.cpp
     ${COMMAND_DIR}/client/debug/budget.cpp
     ${COMMAND_DIR}/client/debug/load_ui_map.cpp
+    ${COMMAND_DIR}/client/debug/send_chat_message.cpp
     ${COMMAND_DIR}/client/debug/show_coordinates.cpp
     ${COMMAND_DIR}/client/debug/show_fps.cpp
     ${COMMAND_DIR}/client/enhancement/block_all_bullshit.cpp
