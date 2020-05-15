@@ -134,15 +134,15 @@ namespace Chimera {
     ////////////////////////////////////////////////////////////////////////////
     // Server messages
     ////////////////////////////////////////////////////////////////////////////
-    static ColorARGB server_message_color = {0.65, 0.25, 0.9, 0.25};
-    static std::uint16_t server_message_x = 310;
-    static std::uint16_t server_message_y = 30;
-    static std::uint16_t server_message_w = 300;
-    static std::uint16_t server_message_h = 80;
+    static ColorARGB server_message_color = {0.5F, 0.45F, 0.72F, 1.0F};
+    static std::uint16_t server_message_x = 400;
+    static std::uint16_t server_message_y = 60;
+    static std::uint16_t server_message_w = 390;
+    static std::uint16_t server_message_h = 380;
     static std::uint16_t server_message_h_chat_open = 160;
     static TextAnchor server_message_anchor = TextAnchor::ANCHOR_TOP_RIGHT;
     static bool server_message_hide_on_console = false;
-    static GenericFont server_message_font = GenericFont::FONT_CONSOLE;
+    static GenericFont server_message_font = GenericFont::FONT_LARGE;
 
     ////////////////////////////////////////////////////////////////////////////
     // Chat messages
@@ -238,7 +238,7 @@ namespace Chimera {
 
             if(scroll == 0) {
                 // Increase the y value by how many new lines are coming in multiplied by the slide timing, but only if we're not scrolling
-                y_offset += (new_count * line_height) - (first_time_alive / slide_time_length) * (new_count * line_height);
+                y_offset += (new_count * line_height) - (slide_time_length == 0.0F ? 1.0F : first_time_alive / slide_time_length) * (new_count * line_height);
             }
 
             for(std::size_t i = scroll; i < max_lines_iteration + scroll; i++) {
@@ -262,7 +262,7 @@ namespace Chimera {
                     color.alpha *= 1.0 - (time_alive - (time_up - fade_out_time)) / fade_out_time;
                 }
                 if(time_alive < slide_time_length) {
-                    color.alpha *= time_alive / slide_time_length;
+                    color.alpha *= slide_time_length == 0.0F ? 1.0F : time_alive / slide_time_length;
                 }
 
                 // Print the damn thing
@@ -872,7 +872,7 @@ namespace Chimera {
         LOAD_IF_POSSIBLE_SETTING(time_up, std::stof)
         LOAD_IF_POSSIBLE_SETTING(fade_out_time, std::stof)
 
-        slide_time_length = std::max(0.00000001F, slide_time_length);
+        slide_time_length = std::max(0.0F, slide_time_length);
         time_up = std::max(0.00000001F, time_up);
         fade_out_time = std::max(0.00000001F, fade_out_time);
     }
