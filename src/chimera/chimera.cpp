@@ -106,8 +106,7 @@ namespace Chimera {
                 // Set up this hook
                 set_up_rcon_message_hook();
 
-                // Prevent some annoying DLLs and checks from being loaded
-                remove_keystone();
+                // Prevent some annoying registry checks that just make the game slower
                 remove_registry_checks();
 
                 // Do this!
@@ -486,6 +485,7 @@ namespace Chimera {
 
             // Load the custom chat
             if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
+                remove_keystone();
                 initialize_custom_chat();
             }
 
