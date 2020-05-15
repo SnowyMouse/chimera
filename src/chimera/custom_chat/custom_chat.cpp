@@ -871,6 +871,10 @@ namespace Chimera {
         LOAD_IF_POSSIBLE_SETTING(slide_time_length, std::stof)
         LOAD_IF_POSSIBLE_SETTING(time_up, std::stof)
         LOAD_IF_POSSIBLE_SETTING(fade_out_time, std::stof)
+
+        slide_time_length = std::max(0.00000001F, slide_time_length);
+        time_up = std::max(0.00000001F, time_up);
+        fade_out_time = std::max(0.00000001F, fade_out_time);
     }
 
     static const wchar_t *special_name_color(const wchar_t *name) {
