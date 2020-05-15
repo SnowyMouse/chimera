@@ -187,8 +187,10 @@ namespace Chimera {
                 // Fuck this
                 set_up_abolish_safe_mode();
 
-                // Remove the video
-                enable_novideo();
+                // Remove the video on start/end
+                if(!chimera->get_ini()->get_value_bool("halo.intro_videos").value_or(false)) {
+                    enable_novideo();
+                }
 
                 // Maybe disable main menu music?
                 block_main_menu_music_if_needed();
