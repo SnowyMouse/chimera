@@ -1,5 +1,7 @@
 #include <fstream>
 #include "ini.hpp"
+#include "../command/command.hpp"
+#include <cstring>
 
 namespace Chimera {
     const char *Ini::get_value(const char *key) const noexcept {
@@ -9,6 +11,14 @@ namespace Chimera {
             }
         }
         return nullptr;
+    }
+
+    std::optional<bool> Ini::get_value_bool(const char *key) const noexcept {
+        auto *v = this->get_value(key);
+        if(!v) {
+            return std::nullopt;
+        }
+        return STR_TO_BOOL(v);
     }
 
     void Ini::set_value(const char *key, const char *value) noexcept {

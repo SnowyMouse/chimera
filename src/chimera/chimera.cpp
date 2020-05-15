@@ -111,14 +111,12 @@ namespace Chimera {
                 remove_registry_checks();
 
                 // Do this!
-                auto *bg_playback = chimera->get_ini()->get_value("halo.background_playback");
-                if(bg_playback && std::strcmp(bg_playback, "1") == 0) {
+                if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {
                     enable_tab_out_video();
                 }
 
                 // And this!
-                auto *multi_instance = chimera->get_ini()->get_value("halo.multiple_instances");
-                if(multi_instance && std::strcmp(multi_instance, "1") == 0) {
+                if(chimera->get_ini()->get_value_bool("halo.multiple_instances").value_or(false)) {
                     enable_multiple_instance();
                 }
 
@@ -464,10 +462,8 @@ namespace Chimera {
     void initial_tick() {
         remove_preframe_event(initial_tick);
         if(chimera->feature_present("client")) {
-            auto *optimal = chimera->get_ini()->get_value("halo.optimal_defaults");
-
             // Set default settings
-            if(optimal && std::strcmp(optimal, "1") == 0) {
+            if(chimera->get_ini()->get_value_bool("halo.optimal_defaults").value_or(false)) {
                 chimera->execute_command("chimera_block_mouse_acceleration true");
                 chimera->execute_command("chimera_hud_kill_feed true");
                 chimera->execute_command("chimera_aim_assist true");
@@ -484,13 +480,14 @@ namespace Chimera {
             }
 
             // Set console enabled
-            auto *console = chimera->get_ini()->get_value("halo.console");
-            if(console && std::strcmp(console, "1") == 0) {
+            if(chimera->get_ini()->get_value_bool("halo.console").value_or(false)) {
                 set_console_enabled(true);
             }
 
             // Load the custom chat
-            initialize_custom_chat();
+            if(!chimera->get_ini()->get_value_bool("custom_chat.disabled").value_or(false)) {
+                initialize_custom_chat();
+            }
 
             // Fix console fade
             setup_console_fade_fix();

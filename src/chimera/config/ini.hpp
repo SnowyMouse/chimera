@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <istream>
+#include <optional>
 
 namespace Chimera {
     class Ini {
@@ -13,6 +14,13 @@ namespace Chimera {
          * @return     pointer to the value if found, or nullptr if not
          */
         const char *get_value(const char *key) const noexcept;
+
+        /**
+         * Get the value by name
+         * @param  key name of the value
+         * @return     boolean value of the key or nullopt if not set
+         */
+        std::optional<bool> get_value_bool(const char *key) const noexcept;
 
         /**
          * Set the value
