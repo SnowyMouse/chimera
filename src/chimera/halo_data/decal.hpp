@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_DECAL_HPP
 #define CHIMERA_DECAL_HPP
 

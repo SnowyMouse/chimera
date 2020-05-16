@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_FIX_DEATH_RESET_TIME_HPP
 #define CHIMERA_FIX_DEATH_RESET_TIME_HPP
 

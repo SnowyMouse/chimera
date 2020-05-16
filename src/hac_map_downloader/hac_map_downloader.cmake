@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 add_library(hac_map_downloader STATIC
     src/hac_map_downloader/hac_map_downloader.cpp
 )

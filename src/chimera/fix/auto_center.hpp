@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_AUTO_CENTER_HPP
 #define CHIMERA_AUTO_CENTER_HPP
 

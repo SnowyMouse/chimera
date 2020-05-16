@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef MATH_TRIG_HPP
 #define MATH_TRIG_HPP
 

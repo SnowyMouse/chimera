@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_MAIN_MENU_MUSIC_HPP
 #define CHIMERA_MAIN_MENU_MUSIC_HPP
 

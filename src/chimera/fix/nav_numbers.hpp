@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_NAV_NUMBERS_HPP
 #define CHIMERA_NAV_NUMBERS_HPP
 

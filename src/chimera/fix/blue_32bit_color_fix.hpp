@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_BLUE_32BIT_COLOR_FIX_HPP
 #define CHIMERA_BLUE_32BIT_COLOR_FIX_HPP
 

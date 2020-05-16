@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_VIDEO_MODE_HPP
 #define CHIMERA_VIDEO_MODE_HPP
 

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_FOV_FIX
 #define CHIMERA_FOV_FIX
 

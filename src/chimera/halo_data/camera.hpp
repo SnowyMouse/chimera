@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_CAMERA_HALO_DATA_HPP
 #define CHIMERA_CAMERA_HALO_DATA_HPP
 

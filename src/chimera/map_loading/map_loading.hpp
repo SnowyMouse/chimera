@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_MAP_LOADING_HPP
 #define CHIMERA_MAP_LOADING_HPP
 

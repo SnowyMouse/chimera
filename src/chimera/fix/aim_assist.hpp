@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_AIM_ASSIST_HPP
 #define CHIMERA_AIM_ASSIST_HPP
 

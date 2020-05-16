@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_CUSTOM_CHAT_HPP
 #define CHIMERA_CUSTOM_CHAT_HPP
 namespace Chimera {

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_FORCE_CRASH_HPP
 #define CHIMERA_FORCE_CRASH_HPP
 

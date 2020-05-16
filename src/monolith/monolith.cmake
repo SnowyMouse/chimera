@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 # Define the source files
 add_library(monolith MODULE
     src/monolith/monolith.c

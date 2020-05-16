@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 # Set some default values
 set(CHIMERA_GIT_COMMIT_COUNT 0)
 set(CHIMERA_GIT_COMMIT "\"unknown\"")

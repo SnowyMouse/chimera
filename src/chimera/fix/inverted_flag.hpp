@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef CHIMERA_INVERTED_FLAG_FIX_HPP
 #define CHIMERA_INVERTED_FLAG_FIX_HPP
 

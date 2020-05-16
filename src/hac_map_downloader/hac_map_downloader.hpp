@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef HAC_MAP_DOWNLOADER_HPP
 #define HAC_MAP_DOWNLOADER_HPP
 
