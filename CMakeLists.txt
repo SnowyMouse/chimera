@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.12.4)
 
 project(Chimera
-    VERSION 1.0.50
+    VERSION 1.0.0
     DESCRIPTION "Mod for Halo Combat Evolved"
     LANGUAGES C CXX
 )
