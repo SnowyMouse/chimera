@@ -11,7 +11,7 @@ namespace Chimera {
         output_prefix = nullptr;
 
         // Print each line
-        print_section("About", "Chimera " CHIMERA_VERSION_STRING);
+        print_section("Version", "Chimera " CHIMERA_VERSION_STRING);
         print_section(localize("chimera_about_command_credits_header"), localize("chimera_about_command_credits"));
         print_section(localize("chimera_about_command_license_header"), localize("chimera_about_command_license"));
 
