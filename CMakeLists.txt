@@ -1,6 +1,4 @@
-# Copyright (c) 2018 Kavawuvi
-#
-# This code is licensed under the GNU GPL v3. See LICENSE for more information.
+# SPDX-License-Identifier: GPL-3.0-only
 
 # 3.12.4 or newer
 cmake_minimum_required(VERSION 3.12.4)

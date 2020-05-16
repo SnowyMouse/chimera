@@ -1,12 +1,3 @@
-/**
- * Monolith Mod Loader
- *
- * Copyright (c) 2019 Kavawuvi
- *
- * This software is licensed under the GNU General Public License version 3 or
- * later. For more information, see LICENSE.
- */
-
 #define MODS_PATH "mods\\"
 
 #include <w32api.h>
