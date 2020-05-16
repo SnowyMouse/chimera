@@ -1,7 +1,6 @@
 # Copyright (c) 2018 Kavawuvi
 #
-# This code is licensed under the GNU GPL v3.0 or any later version
-# See LICENSE for more information.
+# This code is licensed under the GNU GPL v3. See LICENSE for more information.
 
 # 3.12.4 or newer
 cmake_minimum_required(VERSION 3.12.4)
