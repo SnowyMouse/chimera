@@ -15,7 +15,7 @@ BEGIN
             VALUE "FileDescription",  "Chimera version " CHIMERA_VERSION_STRING
             VALUE "FileVersion",      CHIMERA_VERSION_STRING
             VALUE "InternalName",     "chimera"
-            VALUE "OriginalFilename", "chimera.dll"
+            VALUE "OriginalFilename", "strings.dll"
             VALUE "ProductName",      "Chimera"
             VALUE "ProductVersion",   CHIMERA_VERSION_STRING
         END
