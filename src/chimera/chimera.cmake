@@ -157,7 +157,3 @@ set_source_files_properties(src/chimera/localization/localization.cpp PROPERTIES
 
 # Ignore this warning
 set_source_files_properties(src/chimera/custom_chat/custom_chat.cpp PROPERTIES COMPILE_FLAGS "-Wno-format")
-
-# Set definition for source file
-string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S" UTC)
-target_compile_definitions(chimera PUBLIC -DBUILD_TIMESTAMP=\"${BUILD_TIMESTAMP}\")
