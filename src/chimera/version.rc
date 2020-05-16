@@ -1,8 +1,8 @@
 #include "version.hpp"
 
 1 VERSIONINFO
-FILEVERSION      CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,0,CHIMERA_VERSION_BUILD
-PRODUCTVERSION   CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,0,CHIMERA_VERSION_BUILD
+FILEVERSION      CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,CHIMERA_VERSION_PATCH,CHIMERA_GIT_COMMIT_COUNT
+PRODUCTVERSION   CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,CHIMERA_VERSION_PATCH,CHIMERA_GIT_COMMIT_COUNT
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
@@ -10,7 +10,7 @@ BEGIN
         BEGIN
             VALUE "Comments",         "It's still not finished"
             VALUE "CompanyName",      "Kavawuvi ^v^"
-            VALUE "FileDescription",  "Chimera version " CHIMERA_VERSION_STRING " (alpha)"
+            VALUE "FileDescription",  "Chimera version " CHIMERA_VERSION_STRING
             VALUE "FileVersion",      CHIMERA_VERSION_STRING
             VALUE "InternalName",     "chimera"
             VALUE "OriginalFilename", "chimera.dll"

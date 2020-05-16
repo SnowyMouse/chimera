@@ -5,6 +5,14 @@
 
 include(src/chimera/command/command.cmake)
 
+# Include version script
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/version.hpp"
+    COMMAND "${CMAKE_COMMAND}" "-DGIT_EXECUTABLE=${GIT_EXECUTABLE}" "-DGIT_DIR=${CMAKE_CURRENT_SOURCE_DIR}/.git" "-DOUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/version.hpp" -DPROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR} -DPROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR} -DPROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH} -DIN_GIT_REPO=${IN_GIT_REPO} -P ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/version.cmake
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/.git/refs/heads/${CHIMERA_GIT_BRANCH}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/version.cmake"
+)
+
 # Define the source files
 add_library(chimera STATIC
     src/chimera/map_loading/laa.cpp
@@ -112,6 +120,7 @@ add_library(chimera STATIC
     src/chimera/signature/hook.cpp
     src/chimera/signature/signature.cpp
     src/chimera/signature/hac/codefinder.cpp
+    src/chimera/version.hpp
     src/chimera/version.rc
     ${COMMAND_FILES}
 

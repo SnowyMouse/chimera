@@ -6,6 +6,12 @@
 # 3.12.4 or newer
 cmake_minimum_required(VERSION 3.12.4)
 
+project(Chimera
+    VERSION 1.0.8
+    DESCRIPTION "Mod for Halo Combat Evolved"
+    LANGUAGES C CXX
+)
+
 # Require C++17
 set(CMAKE_CXX_STANDARD 17)
 
@@ -14,6 +20,25 @@ enable_language(CXX C)
 
 # We need Python for building things
 find_package(PythonInterp 3.7 REQUIRED)
+
+# We should have git, too, but it's not 100% required
+find_package(Git)
+
+# If we have Git, try to see if we are in a git repo
+if(${GIT_FOUND})
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} --git-dir '${CMAKE_CURRENT_SOURCE_DIR}/.git' rev-parse --short HEAD
+        OUTPUT_VARIABLE GIT_COMMIT_F
+        ERROR_QUIET
+    )
+    if("${GIT_COMMIT_F}" STREQUAL "")
+        set(IN_GIT_REPO TRUE)
+    else()
+        set(IN_GIT_REPO FALSE)
+    endif()
+else()
+    set(IN_GIT_REPO TRUE)
+endif()
 
 # Don't care about this stuff
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_SCL_SECURE_NO_WARNINGS")
