@@ -1,8 +1,3 @@
-# Copyright (c) 2018 Kavawuvi
-#
-# This code is licensed under the GNU GPL v3.0 or any later version
-# See LICENSE for more information.
-
 # Define the source files
 add_library(monolith MODULE
     src/monolith/monolith.c

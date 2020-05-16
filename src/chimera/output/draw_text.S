@@ -1,8 +1,3 @@
-;# Copyright (c) 2018 Kavawuvi
-;#
-;# This code is licensed under the GNU LGPL v3.0 or any later version
-;# See LICENSE for more information.
-
 .intel_syntax noprefix
 
 .text

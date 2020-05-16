@@ -1,9 +1,5 @@
-// Copyright (c) 2018 Kavawuvi
-//
-// This code is licensed under the GNU LGPL v3.0 or any later version
-// See LICENSE for more information.
-
-#pragma once
+#ifndef CHIMERA_HALO_DATA_PARTICLE_HPP
+#define CHIMERA_HALO_DATA_PARTICLE_HPP
 
 #include <cstdint>
 
@@ -58,3 +54,4 @@ namespace Chimera {
     };
     static_assert(sizeof(Particle) == 0x70);
 }
+#endif
