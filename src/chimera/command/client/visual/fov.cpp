@@ -9,20 +9,58 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstring>
+#include <optional>
 
 #define DEG_TO_RAD(deg) (deg * static_cast<float>(M_PI) / 180.0f)
 #define RAD_TO_DEG(rad) (rad / static_cast<float>(M_PI) * 180.0f)
 
 namespace Chimera {
     static float previous_value;
-    static float setting;
-    static bool vertical;
+
+    static std::optional<float> setting_first_person;
+    static std::optional<float> setting_vehicle;
+    static std::optional<float> setting_cinematic;
+
+    static bool vertical_first_person;
+    static bool vertical_vehicle;
+    static bool vertical_cinematic;
 
     static void change_camera() noexcept {
         constexpr static float BASE_FOV = DEG_TO_RAD(70.0f);
         auto &camera = camera_data();
         float fov_multiplier = camera.fov / BASE_FOV;
         previous_value = camera.fov;
+
+        // Get the FoV to use
+        auto fov_to_use = setting_first_person;
+        bool vertical = vertical_first_person;
+        switch(camera_type()) {
+            case CameraType::CAMERA_FIRST_PERSON:
+                fov_to_use = setting_first_person;
+                vertical = vertical_first_person;
+                break;
+            case CameraType::CAMERA_VEHICLE:
+                fov_to_use = setting_vehicle;
+                vertical = vertical_vehicle;
+                break;
+            default:
+                fov_to_use = setting_cinematic;
+                vertical = vertical_cinematic;
+                break;
+        }
+
+        // If it's not set, default to first person
+        if(!fov_to_use.has_value()) {
+            fov_to_use = setting_first_person;
+            vertical = vertical_first_person;
+        }
+
+        // And if that doesn't work, give up
+        if(!fov_to_use.has_value()) {
+            return;
+        }
+
+        float setting = fov_to_use.value();
 
         if(vertical) {
             // Convert to a vertical FOV based on the resolution of the game.
@@ -39,41 +77,58 @@ namespace Chimera {
         camera_data().fov = previous_value;
     }
 
-    bool fov_command(int argc, const char **args) noexcept {
-        static bool enabled = false;
-
+    static bool fov_command_action(int argc, const char **args, std::optional<float> &setting, bool &vertical) {
         if(argc) {
             char *end = nullptr;
 
+            // Automatic FoV
             if(std::strcmp(args[0], "auto") == 0) {
                 setting = 2.0f * static_cast<float>(std::atan(static_cast<float>(std::tan(DEG_TO_RAD(70.0f) / 2.0f)) * 3.0f / 4.0f));
                 vertical = true;
             }
+
+            // We know what we want
             else {
                 setting = DEG_TO_RAD(static_cast<float>(strtof(args[0], &end)));
                 vertical = (end && *end == 'v');
             }
 
-            // Remove all changes if disabling
-            if(enabled && setting == 0) {
-                remove_precamera_event(change_camera);
-                remove_precamera_event(unchange_camera);
+            // Disable if someone put 0 there
+            if(setting == 0.0F) {
+                setting = std::nullopt;
             }
-            else if(!enabled && setting != 0) {
+
+            // Unregister everything
+            remove_precamera_event(change_camera);
+            remove_camera_event(unchange_camera);
+
+            // Re-register everything
+            if(setting_first_person.has_value() || setting_vehicle.has_value() || setting_cinematic.has_value()) {
                 add_precamera_event(change_camera);
                 add_camera_event(unchange_camera);
             }
-            enabled = (setting != 0);
         }
 
         // Display the current setting.
-        if(enabled) {
-            console_output("%.02f\xB0 %s", RAD_TO_DEG(setting), vertical ? "(vertical)" : "(horizontal)");
+        if(setting.has_value()) {
+            console_output("%.02f\xB0 %s", RAD_TO_DEG(*setting), vertical ? "(vertical)" : "(horizontal)");
         }
         else {
             console_output("off");
         }
 
         return true;
+    }
+
+    bool fov_command(int argc, const char **args) noexcept {
+        return fov_command_action(argc, args, setting_first_person, vertical_first_person);
+    }
+
+    bool fov_vehicle_command(int argc, const char **args) noexcept {
+        return fov_command_action(argc, args, setting_vehicle, vertical_vehicle);
+    }
+
+    bool fov_cinematic_command(int argc, const char **args) noexcept {
+        return fov_command_action(argc, args, setting_cinematic, vertical_cinematic);
     }
 }
