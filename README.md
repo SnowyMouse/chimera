@@ -64,6 +64,7 @@ These are features that are always on.
 - [Auto center fix](#auto-center-fix)
 - [Fog fix](#fog-fix)
 - [Model detail fix](#model-detail-fix)
+- [HUD numbers fix](#hud-numbers-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -161,6 +162,9 @@ Fog in maps such as Assault on the Control Room's sky fog now works as intended.
 
 #### Model detail fix
 The "detail after reflection" flag in model shaders now works as intended.
+
+#### HUD numbers fix
+HUD numbers are no longer drawn oversized if modified to be a higher resolution.
 
 #### Auto center fix
 Chimera fixes a bug where the game does auto look centering based on frame rate.
@@ -269,7 +273,7 @@ the chimera folder created by Chimera.
 - [Deadzones](#deadzones)
 - [Devmode](#devmode)
 - [Diagonals](#diagonals)
-- [FOV](#fov)
+- [FoV](#fov)
 - [HUD kill feed](#hud-kill-feed)
 - [Language](#language)
 - [Model detail](#model-detail)
@@ -478,12 +482,18 @@ value is 0.75.
 
 **Usage:** `chimera_diagonals [0-1]`
 
-#### FOV
-Set FOV. End with "v" to lock to a vertical FOV, or use "auto" to set to an
-automatic FOV. Using a vertical FOV over a horizontal one helps prevent the
+#### FoV
+Set FoV. End with "v" to lock to a vertical FoV, or use "auto" to set to an
+automatic FoV. Using a vertical FoV over a horizontal one helps prevent the
 game from distorting your field of view when switching aspect ratios.
 
+Setting `chimera_fov_cinematic` and `chimera_fov_vehicle` will apply their FoV
+when those apply, falling back to `chimera_fov` if they aren't set or not doing
+anything at all if `chimera_fov` is not set.
+
 **Usage:** `chimera_fov [degrees]`
+**Usage:** `chimera_fov_cinematic [degrees]`
+**Usage:** `chimera_fov_vehicle [degrees]`
 
 #### HUD kill feed
 Put the kill feed in the HUD. Halo puts it in the chat, normally.
@@ -537,6 +547,12 @@ List player indices.
 Set your in-game name.
 
 **Usage:** `chimera_set_name [name]`
+
+#### Send chat message
+Send a chat message. Channel 0 is "all", channel 1 is "team", and channel 2 is
+"vehicle". Other channels may be used by mods.
+
+**Usage:** `chimera_set_name <channel> <message>`
 
 #### Show coordinates
 Show your in-game coordinates.
