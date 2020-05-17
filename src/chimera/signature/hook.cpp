@@ -33,6 +33,7 @@ namespace Chimera {
                 // jmp <relative offset> or movsx
                 case 0x0F: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    auto op2 = *reinterpret_cast<const std::uint8_t *>(at + 2);
                     if(op1 == 0x84) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
@@ -40,9 +41,16 @@ namespace Chimera {
                         break;
                     }
                     else if(op1 == 0xBF) {
-                        offsets.push_back(at - at_start);
-                        bytes.insert(bytes.end(), at, at + 3);
-                        at += 3;
+                        if(op2 == 0x6E || op2 == 0x4E) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 4);
+                            at += 4;
+                        }
+                        else {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 3);
+                            at += 3;
+                        }
                         break;
                     }
                     else {
@@ -56,6 +64,18 @@ namespace Chimera {
                     bytes.insert(bytes.end(), at, at + 5);
                     at += 5;
                     break;
+                }
+
+                // oxr <value>
+                case 0x33: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(op1 == 0xDB) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 2);
+                        at += 2;
+                        break;
+                    }
+                    std::terminate();
                 }
 
                 // cmp ecx, something
@@ -201,6 +221,13 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
+                        break;
+                    }
+
+                    if(a == 0x6C || a == 0x4C) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 4);
+                        at += 4;
                         break;
                     }
 
@@ -452,7 +479,7 @@ namespace Chimera {
                 op = reinterpret_cast<std::uintptr_t>(actual_address) - reinterpret_cast<std::uintptr_t>(hook_data + offset + 5);
             }
 
-            if(*reinterpret_cast<std::uint8_t *>(hook_data + offset) == 0x0F) {
+            if(*reinterpret_cast<std::uint8_t *>(hook_data + offset) == 0x0F && *reinterpret_cast<std::uint8_t *>(hook_data + offset + 1) != 0xBF) {
                 auto &op = *reinterpret_cast<std::uintptr_t *>(hook_data + offset + 2);
                 const auto *actual_address = (jmp_at_byte + offset + 6) + op;
                 op = reinterpret_cast<std::uintptr_t>(actual_address) - reinterpret_cast<std::uintptr_t>(hook_data + offset + 6);
