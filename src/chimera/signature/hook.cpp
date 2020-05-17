@@ -40,7 +40,7 @@ namespace Chimera {
                         at += 6;
                         break;
                     }
-                    else if(op1 == 0xBF) {
+                    else if(op1 == 0xBF || op1 == 0xB6) {
                         if(op2 == 0x6E || op2 == 0x4E) {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 4);
@@ -475,7 +475,7 @@ namespace Chimera {
         // Copy the original instructions
         std::copy(bytes.data(), bytes.data() + bytes.size(), hook_data);
 
-        // Look for any call/jmp instructions to modify before proceeding
+        // Look for any call instructions to modify before proceeding
         for(const std::uintptr_t &offset : offsets) {
             if(*reinterpret_cast<std::uint8_t *>(hook_data + offset) == 0xE8) {
                 // Find where this call instruction is calling.
@@ -484,12 +484,6 @@ namespace Chimera {
 
                 // Update the instruction
                 op = reinterpret_cast<std::uintptr_t>(actual_address) - reinterpret_cast<std::uintptr_t>(hook_data + offset + 5);
-            }
-
-            if(*reinterpret_cast<std::uint8_t *>(hook_data + offset) == 0x0F && *reinterpret_cast<std::uint8_t *>(hook_data + offset + 1) != 0xBF) {
-                auto &op = *reinterpret_cast<std::uintptr_t *>(hook_data + offset + 2);
-                const auto *actual_address = (jmp_at_byte + offset + 6) + op;
-                op = reinterpret_cast<std::uintptr_t>(actual_address) - reinterpret_cast<std::uintptr_t>(hook_data + offset + 6);
             }
         }
         hook_data += bytes.size();

@@ -6,7 +6,8 @@
 extern "C" {
     std::uint32_t weapon_swap_tick_counter = 0;
     std::uint32_t can_increment_weapon_swap_tick_counter = false;
-    void weapon_swap_ticks_fix_asm();
+    void weapon_swap_ticks_fix_asm_eax();
+    void weapon_swap_ticks_fix_asm_ecx();
 }
 
 namespace Chimera {
@@ -15,9 +16,18 @@ namespace Chimera {
     }
 
     void set_up_weapon_swap_ticks_fix() noexcept {
-        auto *data = get_chimera().get_signature("weapon_swap_ticks_sig").data();
         static Hook hook;
-        write_jmp_call(data, hook, reinterpret_cast<const void *>(weapon_swap_ticks_fix_asm), nullptr, false);
+
+        if(get_chimera().feature_present("client_swap_non_custom")) {
+            write_jmp_call(get_chimera().get_signature("weapon_swap_ticks_sig").data(), hook, reinterpret_cast<const void *>(weapon_swap_ticks_fix_asm_eax), nullptr, false);
+        }
+        else if(get_chimera().feature_present("client_swap_custom")) {
+            write_jmp_call(get_chimera().get_signature("weapon_swap_ticks_custom_sig").data(), hook, reinterpret_cast<const void *>(weapon_swap_ticks_fix_asm_ecx), nullptr, false);
+        }
+        else {
+            return;
+        }
+
         add_pretick_event(update_tick_count);
     }
 }

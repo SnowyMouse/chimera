@@ -4,10 +4,9 @@
 
 .text
 
-.globl _weapon_swap_ticks_fix_asm
-_weapon_swap_ticks_fix_asm:
-    pushfd
-    pushad
+;# Calculate and move the tick counter to eax
+weapon_swap_ticks_fix_asm:
+    push ebx
 
     ;# Check if a tick has passed
     mov ebx, dword ptr [_can_increment_weapon_swap_tick_counter]
@@ -36,9 +35,20 @@ _weapon_swap_ticks_fix_asm:
     load_weapon_slot_tick_counter:
     mov eax, dword ptr [_weapon_swap_tick_counter]
 
-    ;# Overwrite eax with our new eax value
-    mov [esp+0x1C], eax
+    pop ebx
+    ret
 
-    popad
-    popfd
+;# The counter is in eax (retail and trial)
+.globl _weapon_swap_ticks_fix_asm_eax
+_weapon_swap_ticks_fix_asm_eax:
+    jmp weapon_swap_ticks_fix_asm
+
+;# The counter is in ecx (custom edition) - requires moving the return value to ecx
+.globl _weapon_swap_ticks_fix_asm_ecx
+_weapon_swap_ticks_fix_asm_ecx:
+    push eax
+    mov eax, ecx
+    call weapon_swap_ticks_fix_asm
+    mov ecx, eax
+    pop eax
     ret
