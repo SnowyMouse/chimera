@@ -74,6 +74,8 @@ add_library(chimera STATIC
     src/chimera/fix/uncompressed_sound_fix.cpp
     src/chimera/fix/video_mode.cpp
     src/chimera/fix/video_mode.S
+    src/chimera/fix/weapon_swap_ticks.cpp
+    src/chimera/fix/weapon_swap_ticks.S
     src/chimera/fix/widescreen_element_reposition_hud.S
     src/chimera/fix/widescreen_element_reposition_letterbox.S
     src/chimera/fix/widescreen_element_reposition_menu.S

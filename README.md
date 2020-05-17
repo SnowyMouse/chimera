@@ -65,6 +65,7 @@ These are features that are always on.
 - [Fog fix](#fog-fix)
 - [Model detail fix](#model-detail-fix)
 - [HUD numbers fix](#hud-numbers-fix)
+- [Weapon swap ticks fix](#weapon-swap-ticks-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -165,6 +166,9 @@ The "detail after reflection" flag in model shaders now works as intended.
 
 #### HUD numbers fix
 HUD numbers are no longer drawn oversized if modified to be a higher resolution.
+
+#### Weapon swap ticks fix
+Weapons are now picked up with the correct timing when holding the action key.
 
 #### Auto center fix
 Chimera fixes a bug where the game does auto look centering based on frame rate.

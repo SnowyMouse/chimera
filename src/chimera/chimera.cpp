@@ -42,6 +42,7 @@
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
 #include "fix/custom_map_lobby_fix.hpp"
+#include "fix/weapon_swap_ticks.hpp"
 #include "halo_data/game_engine.hpp"
 #include "halo_data/main_menu_music.hpp"
 #include "halo_data/port.hpp"
@@ -144,6 +145,9 @@ namespace Chimera {
 
                 // More broken stuff. More broken fixes.
                 set_up_inverted_flag_fix();
+
+                // Fix this massive gameplay issue
+                set_up_weapon_swap_ticks_fix();
 
                 // Why is this broken?
                 if(chimera->feature_present("client_widescreen_custom_edition")) {
