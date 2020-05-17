@@ -13,7 +13,7 @@ namespace Chimera {
 
     static std::uint16_t *dimensions = nullptr;
     static std::uint16_t old_dimensions[2];
-    static std::uint8_t *spacing, old_spacing;
+    static std::uint8_t *spacing, old_spacing, new_spacing;
 
     static void on_map_load() {
         dimensions = nullptr;
@@ -56,6 +56,7 @@ namespace Chimera {
         std::copy(dimensions, dimensions + 2, old_dimensions);
 
         div = dimensions[0] / 128;
+        new_spacing = *spacing / div;
     }
 
     static void set_can_jason_jones() noexcept {
@@ -64,7 +65,7 @@ namespace Chimera {
         }
 
         can_jason_jones = true;
-        *spacing /= div;
+        *spacing = new_spacing;
     }
 
     static void unset_can_jason_jones() noexcept {
@@ -81,6 +82,11 @@ namespace Chimera {
         write_jmp_call(get_chimera().get_signature("fix_counters_h_sig").data(), hook_h, reinterpret_cast<const void *>(jason_jones_the_numbers), reinterpret_cast<const void *>(unjason_jones_the_numbers));
         write_jmp_call(get_chimera().get_signature("fix_counters_w_sig").data(), hook_w, reinterpret_cast<const void *>(jason_jones_the_numbers), reinterpret_cast<const void *>(unjason_jones_the_numbers));
         write_jmp_call(get_chimera().get_signature("fix_counters_sig").data(), hook_f, reinterpret_cast<const void *>(set_can_jason_jones), reinterpret_cast<const void *>(unset_can_jason_jones));
+
+        static Hook timer_before, timer_after;
+        write_jmp_call(get_chimera().get_signature("fix_counters_timer_begin_sig").data(), timer_before, reinterpret_cast<const void *>(set_can_jason_jones));
+        write_jmp_call(get_chimera().get_signature("fix_counters_timer_end_sig").data() + 4, timer_after, reinterpret_cast<const void *>(unset_can_jason_jones));
+
         add_map_load_event(on_map_load);
     }
     void undo_nav_numbers_fix() noexcept {
