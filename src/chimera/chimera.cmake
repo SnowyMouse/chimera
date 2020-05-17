@@ -35,6 +35,7 @@ add_library(chimera STATIC
     src/chimera/event/connect.cpp
     src/chimera/event/connect.S
     src/chimera/event/frame.cpp
+    src/chimera/event/map_load.cpp
     src/chimera/event/tick.cpp
     src/chimera/fast_load/crc32.c
     src/chimera/fast_load/fast_load.cpp

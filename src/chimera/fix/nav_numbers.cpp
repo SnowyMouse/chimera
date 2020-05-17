@@ -3,7 +3,7 @@
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../halo_data/tag.hpp"
-#include "../event/tick.hpp"
+#include "../event/map_load.hpp"
 #include "../event/frame.hpp"
 
 namespace Chimera {
@@ -15,11 +15,7 @@ namespace Chimera {
     static std::uint16_t old_dimensions[2];
     static std::uint8_t *spacing, old_spacing;
 
-    static void on_tick() {
-        if(get_tick_count() != 0) {
-            return;
-        }
-
+    static void on_map_load() {
         dimensions = nullptr;
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
@@ -63,7 +59,7 @@ namespace Chimera {
     }
 
     static void set_can_jason_jones() noexcept {
-        if(get_tick_count() == 0 || !spacing) {
+        if(!spacing) {
             return;
         }
 
@@ -85,18 +81,14 @@ namespace Chimera {
         write_jmp_call(get_chimera().get_signature("fix_counters_h_sig").data(), hook_h, reinterpret_cast<const void *>(jason_jones_the_numbers), reinterpret_cast<const void *>(unjason_jones_the_numbers));
         write_jmp_call(get_chimera().get_signature("fix_counters_w_sig").data(), hook_w, reinterpret_cast<const void *>(jason_jones_the_numbers), reinterpret_cast<const void *>(unjason_jones_the_numbers));
         write_jmp_call(get_chimera().get_signature("fix_counters_sig").data(), hook_f, reinterpret_cast<const void *>(set_can_jason_jones), reinterpret_cast<const void *>(unset_can_jason_jones));
-        add_pretick_event(on_tick);
+        add_map_load_event(on_map_load);
     }
     void undo_nav_numbers_fix() noexcept {
         get_chimera().get_signature("fix_counters_sig").rollback();
-        remove_pretick_event(on_tick);
+        remove_map_load_event(on_map_load);
     }
 
     static void jason_jones_the_numbers() noexcept {
-        if(get_tick_count() == 0) {
-            return;
-        }
-
         // If we can jason jones it, do so
         if(dimensions && can_jason_jones) {
             dimensions[0] /= div;
