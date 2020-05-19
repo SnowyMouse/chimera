@@ -38,6 +38,7 @@
 #include "fix/nav_numbers.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/contrail_fix.hpp"
+#include "fix/vehicle_team_desync.hpp"
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
@@ -112,6 +113,9 @@ namespace Chimera {
 
                 // Disable this crashy piece of shit that some asshole at Microsoft thought was a good idea to put in a game
                 remove_keystone();
+
+                // Fix vehicle desyncing with mtv
+                set_up_vehicle_team_desync_fix();
 
                 // Do this!
                 if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {

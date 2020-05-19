@@ -72,6 +72,7 @@ add_library(chimera STATIC
     src/chimera/fix/nav_numbers.cpp
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp
+    src/chimera/fix/vehicle_team_desync.cpp
     src/chimera/fix/video_mode.cpp
     src/chimera/fix/video_mode.S
     src/chimera/fix/weapon_swap_ticks.cpp
