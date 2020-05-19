@@ -74,7 +74,7 @@ chimera_throttle_fps_help                                                       
 chimera_about_command_credits_header                                            Créditos
 chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
 chimera_about_command_license_header                                            Licencia
-chimera_about_command_license                                                   Copyright (C) 2020 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión.\nVisita https://www.gnu.org/licenses/ para mayor información.
+chimera_about_command_license                                                   Copyright (C) 2020 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
 chimera_block_all_bullshit_help                                                 Deshabilita varias cosas que la mayoría de la gente puede encontrar molestas.
