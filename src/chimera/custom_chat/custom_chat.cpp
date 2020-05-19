@@ -924,6 +924,15 @@ namespace Chimera {
         else if(name_matches(L"Vaporeon")) {
             return L"^5Vaporeon^;";
         }
+        else if(name_matches(L"Raichu")) {
+            return L"^ZRaichu^;";
+        }
+        else if(name_matches(L"Pichu")) {
+            return L"^3Pichu^;";
+        }
+        else if(name_matches(L"Pikachu")) {
+            return L"^xPikachu^;";
+        }
         else if(name_matches(L"ST34MF0X")) {
             return L"^qST34M^8F0X^;";
         }
