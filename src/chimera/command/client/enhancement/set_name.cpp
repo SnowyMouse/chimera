@@ -3,9 +3,18 @@
 #include "../../../signature/signature.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
+#include "../../../event/map_load.hpp"
 
 namespace Chimera {
-    static wchar_t name[13] = {};
+    #define MAX_NAME_LEN 11
+
+    static std::int16_t name[256] = {};
+    static std::int16_t *old_name = nullptr;
+
+    static void fix_color() {
+        name[0] = old_name[0];
+        std::copy(old_name + MAX_NAME_LEN + 1, old_name + sizeof(name) / sizeof(*name), name + MAX_NAME_LEN + 1);
+    }
 
     bool set_name_command(int argc, const char **argv) {
         auto &player_name_sig = get_chimera().get_signature("player_name_sig");
@@ -13,15 +22,22 @@ namespace Chimera {
         if(argc) {
             std::size_t name_length = std::strlen(*argv);
 
+            if(!old_name) {
+                old_name = *reinterpret_cast<std::int16_t **>(player_name_sig.data() + 1);
+            }
+
             if(name_length == 0) {
                 player_name_sig.rollback(); // roll it back
+                remove_map_load_event(fix_color);
             }
-            else if(name_length > 11) {
+            else if(name_length > MAX_NAME_LEN) {
                 console_error("Invalid name %s. Name exceeds the maximum name size of 11 characters.", *argv);
                 return false;
             }
             else {
-                overwrite(player_name_sig.data() + 1, static_cast<wchar_t *>(name));
+                overwrite(player_name_sig.data() + 1, static_cast<std::int16_t *>(name));
+                add_map_load_event(fix_color);
+                fix_color();
             }
 
             // Copy the name (with null terminator)
