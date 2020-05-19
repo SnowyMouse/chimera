@@ -31,7 +31,7 @@ namespace Chimera {
                 remove_map_load_event(fix_color);
             }
             else if(name_length > MAX_NAME_LEN) {
-                console_error("Invalid name %s. Name exceeds the maximum name size of 11 characters.", *argv);
+                console_error("Invalid name %s. Name exceeds the maximum name size of %i characters.", *argv, MAX_NAME_LEN);
                 return false;
             }
             else {
