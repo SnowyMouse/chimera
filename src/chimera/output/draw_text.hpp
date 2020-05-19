@@ -53,7 +53,7 @@ namespace Chimera {
      * @param  font the type of generic font
      * @return      the tag's tag ID
      */
-    TagID get_generic_font(GenericFont font) noexcept;
+    TagID &get_generic_font(GenericFont font) noexcept;
 
     /**
      * Set up the text hook for showing text.

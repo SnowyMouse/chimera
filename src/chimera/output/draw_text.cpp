@@ -9,7 +9,7 @@
 namespace Chimera {
     #include "color_codes.hpp"
 
-    TagID get_generic_font(GenericFont font) noexcept {
+    TagID &get_generic_font(GenericFont font) noexcept {
         // Get the globals tag
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x144);
@@ -99,6 +99,9 @@ namespace Chimera {
 
     extern "C" void display_text(const void *data, std::uint32_t xy, std::uint32_t wh, const void *function_to_use);
 
+    static void *draw_text_8_bit = nullptr;
+    static void *draw_text_16_bit = nullptr;
+
     // This is called every frame, giving us a chance to add text
     static void on_text() {
         if(text_list.size() == 0) {
@@ -118,17 +121,9 @@ namespace Chimera {
             auto *u16 = std::get_if<std::wstring>(&text.text);
 
             if(u8) {
-                static const void *draw_text_8_bit = nullptr;
-                if(!draw_text_8_bit) {
-                    draw_text_8_bit = get_chimera().get_signature("draw_8_bit_text_sig").data();
-                }
                 display_text(u8->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_8_bit);
             }
             else {
-                static const void *draw_text_16_bit = nullptr;
-                if(!draw_text_16_bit) {
-                    draw_text_16_bit = get_chimera().get_signature("draw_16_bit_text_sig").data();
-                }
                 display_text(u16->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_16_bit);
             }
         }
@@ -333,11 +328,30 @@ namespace Chimera {
         apply_text_quake_colors_t(text, x, y, width, height, color, font, anchor);
     }
 
+    extern "C" {
+        const void *draw_text_8_bit_original;
+        const void *draw_text_16_bit_original;
+        extern "C" void display_text_8_scaled() noexcept;
+        extern "C" void display_text_16_scaled() noexcept;
+    }
+
     void setup_text_hook() noexcept {
         static Hook hook;
         auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
         write_jmp_call(reinterpret_cast<void *>(text_hook_addr), hook, reinterpret_cast<const void *>(on_text));
-
+        draw_text_8_bit = get_chimera().get_signature("draw_8_bit_text_sig").data();
+        draw_text_16_bit = get_chimera().get_signature("draw_16_bit_text_sig").data();
         font_data = *reinterpret_cast<FontData **>(get_chimera().get_signature("text_font_data_sig").data() + 13);
+
+        static Hook draw_scale_8, draw_scale_16;
+        // void write_function_override(void *jmp_at, Hook &hook, const void *new_function, const void **original_function);
+        write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
+        write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
+    }
+
+    extern "C" void scale_halo_drawn_text(std::uint8_t *) noexcept {
+    }
+
+    extern "C" void unscale_halo_drawn_text() noexcept {
     }
 }

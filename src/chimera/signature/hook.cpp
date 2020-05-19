@@ -279,7 +279,7 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
-                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2) {
+                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2 || a == 0xEC) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
