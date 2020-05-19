@@ -931,7 +931,7 @@ namespace Chimera {
             return L"^3Pichu^;";
         }
         else if(name_matches(L"Pikachu")) {
-            return L"^xPikachu^;";
+            return L"^XPikachu^;";
         }
         else if(name_matches(L"ST34MF0X")) {
             return L"^qST34M^8F0X^;";
