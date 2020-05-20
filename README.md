@@ -174,6 +174,9 @@ Weapons are now picked up with the correct timing when holding the action key.
 Chimera fixes a bug where the game does auto look centering based on frame rate.
 This would result in vehicles being difficult to handle at high frame rates.
 
+#### Name fade fix
+Names now fade in/out correctly at high frame rates when staring at a player.
+
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
 [HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that

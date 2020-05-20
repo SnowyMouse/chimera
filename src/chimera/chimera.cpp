@@ -30,6 +30,7 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
+#include "fix/name_fade.hpp"
 #include "fix/inverted_flag.hpp"
 #include "fix/fov_fix.hpp"
 #include "fix/force_crash.hpp"
@@ -185,6 +186,7 @@ namespace Chimera {
                 set_up_nav_numbers_fix();
                 set_up_contrail_fix();
                 set_up_motion_sensor_fix();
+                set_up_name_fade_fix();
 
                 // More lol
                 set_up_blue_32bit_color_fix();

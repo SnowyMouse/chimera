@@ -69,6 +69,8 @@ add_library(chimera STATIC
     src/chimera/fix/model_detail.S
     src/chimera/fix/motion_sensor_fix.cpp
     src/chimera/fix/motion_sensor_fix.S
+    src/chimera/fix/name_fade.cpp
+    src/chimera/fix/name_fade.S
     src/chimera/fix/nav_numbers.cpp
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp

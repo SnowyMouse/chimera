@@ -291,7 +291,7 @@ namespace Chimera {
                         at += 3;
                         break;
                     }
-                    else if(a == 0x93 || a == 0x0D) {
+                    else if(a == 0x93 || a == 0x0D || a == 0x2D || a == 0x1D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
