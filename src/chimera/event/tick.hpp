@@ -50,6 +50,12 @@ namespace Chimera {
      * @return tick count
      */
     std::int32_t get_tick_count() noexcept;
+
+    /**
+     * Get the current tick progress
+     * @return tick progress
+     */
+    float get_tick_progress() noexcept;
 }
 
 #endif

@@ -66,6 +66,8 @@ These are features that are always on.
 - [Model detail fix](#model-detail-fix)
 - [HUD numbers fix](#hud-numbers-fix)
 - [Weapon swap ticks fix](#weapon-swap-ticks-fix)
+- [Name fade fix](#name-fade-fix)
+- [Scoreboard fade fix](#scoreboard-fade-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -176,6 +178,9 @@ This would result in vehicles being difficult to handle at high frame rates.
 
 #### Name fade fix
 Names now fade in/out correctly at high frame rates when staring at a player.
+
+#### Scoreboard fade fix
+Scoreboard now fades in/out correctly at high frame rates.
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the

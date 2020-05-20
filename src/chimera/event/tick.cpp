@@ -1,6 +1,7 @@
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+#include <optional>
 
 #include "tick.hpp"
 
@@ -97,5 +98,20 @@ namespace Chimera {
             tick_count = reinterpret_cast<std::int32_t *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_counter_sig").data() + 1) + 0xC);
         }
         return *tick_count;
+    }
+
+    float get_tick_progress() noexcept {
+        static std::optional<float *> tick_progress;
+        if(!tick_progress.has_value()) {
+            tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 304);
+        }
+
+        float v = effective_tick_rate() * **tick_progress;
+
+        if(v > 1) {
+            v = 1;
+        }
+
+        return v;
     }
 }

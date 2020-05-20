@@ -30,11 +30,6 @@ namespace Chimera {
     // This is the assumed tick rate of the first person camera.
     static float *first_person_camera_tick_rate = nullptr;
 
-    // This is the current effective tick rate.
-    static float interpolation_current_tick_rate = 30.0;
-
-    static float *tick_progress = nullptr;
-
     static void on_tick() noexcept {
         interpolate_antenna_on_tick();
         interpolate_flag_on_tick();
@@ -44,18 +39,14 @@ namespace Chimera {
         interpolate_camera_on_tick();
         interpolate_particle_on_tick();
         interpolation_tick_progress = 0;
-        interpolation_current_tick_rate = effective_tick_rate();
-        if(*first_person_camera_tick_rate != interpolation_current_tick_rate) {
-            overwrite(first_person_camera_tick_rate, interpolation_current_tick_rate);
+        float current_tick_rate = effective_tick_rate();
+        if(*first_person_camera_tick_rate != current_tick_rate) {
+            overwrite(first_person_camera_tick_rate, current_tick_rate);
         }
     }
 
     static void on_preframe() noexcept {
-        interpolation_tick_progress = interpolation_current_tick_rate * *tick_progress;
-
-        if(interpolation_tick_progress > 1) {
-            interpolation_tick_progress = 1;
-        }
+        interpolation_tick_progress = get_tick_progress();
 
         interpolate_antenna_before();
         interpolate_flag_before();
@@ -78,8 +69,6 @@ namespace Chimera {
         static Hook fp_interp_hook;
         first_person_camera_tick_rate = *reinterpret_cast<float **>(get_chimera().get_signature("fp_cam_tick_rate_sig").data() + 2);
         //nav_point = reinterpret_cast<void(*)()>(get_chimera().get_signature("nav_point_sig").data());
-
-        tick_progress = reinterpret_cast<float *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_progress_sig").data() + 1) + 304);
 
         add_tick_event(on_tick);
         add_preframe_event(on_preframe);
