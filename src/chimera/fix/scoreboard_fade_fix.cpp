@@ -1,5 +1,6 @@
 #include "nav_numbers.hpp"
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../halo_data/tag.hpp"
@@ -12,12 +13,14 @@ namespace Chimera {
 
     static float *current_value;
     static float value_current_tick = 0.0F;
-    static float fade_amount_per_tick = 2.0F / 30.0F;
+    static float fade_time = 0.5F;
 
     extern "C" void interpolate_scoreboard_fade(float *new_value) {
-        float value_diff = fade_amount_per_tick * (*new_value > value_current_tick ? 1.0F : -1.0F);
+        float fade_amount_per_tick = 1.0F / (fade_time * effective_tick_rate());
+        float value_diff = fade_amount_per_tick * (*new_value >= *current_value ? 1.0F : -1.0F);
         float value_next_tick = value_current_tick + value_diff;
         float v = value_current_tick + (value_next_tick - value_current_tick) * get_tick_progress();
+
         if(v > 1.0F) {
             v = 1.0F;
         }
@@ -43,6 +46,18 @@ namespace Chimera {
         }
         else {
             return;
+        }
+
+        // Get fade time
+        auto *fade_time_ini = chimera.get_ini()->get_value("scoreboard.fade_time");
+        if(fade_time_ini) {
+            try {
+                float new_fade_time = std::strtof(fade_time_ini, nullptr);
+                fade_time = std::max(0.001F, new_fade_time);
+            }
+            catch(std::exception &) {
+                // it's invalid; do nothing
+            }
         }
 
         static Hook hook;
