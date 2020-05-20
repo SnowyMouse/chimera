@@ -17,16 +17,39 @@ namespace Chimera {
 
     extern "C" void interpolate_scoreboard_fade(float *new_value) {
         float fade_amount_per_tick = 1.0F / (fade_time * effective_tick_rate());
-        float value_diff = fade_amount_per_tick * (*new_value >= *current_value ? 1.0F : -1.0F);
+
+        float sign;
+
+        // If it's the same, do nothing
+        float nv = *new_value;
+        float cv = *current_value;
+        if(nv == cv) {
+            return;
+        }
+
+        // We're going up!
+        else if(nv > cv) {
+            sign = 1.0F;
+        }
+
+        // We're going down
+        else {
+            sign = -1.0F;
+        }
+
+        // Now let's see how far we take it
+        float value_diff = fade_amount_per_tick * sign;
         float value_next_tick = value_current_tick + value_diff;
         float v = value_current_tick + (value_next_tick - value_current_tick) * get_tick_progress();
 
+        // Okay!
         if(v > 1.0F) {
             v = 1.0F;
         }
         else if(v < 0.0F) {
             v = 0.0F;
         }
+
         *new_value = v;
     }
 
