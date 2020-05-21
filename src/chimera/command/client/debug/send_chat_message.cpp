@@ -17,6 +17,7 @@ namespace Chimera {
         }
         catch(std::exception &) {
             console_error(localize("send_chat_message_invalid_channel"), argv[0]);
+            return false;
         }
 
         // Send it!
