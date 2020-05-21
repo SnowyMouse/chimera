@@ -33,7 +33,7 @@ namespace Chimera {
         // Keep the player from muting themselves by mistake
         if(server_type() == ServerType::SERVER_DEDICATED) {
             auto tick_rate = effective_tick_rate();
-            if(throttle_time > tick_rate * 3.0F) {
+            if(throttle_time > tick_rate * 3.0F * 2) {
                 console_error(localize("chimera_send_chat_message_throttled"));
                 return false;
             }
