@@ -147,7 +147,7 @@ namespace Chimera {
         }
     }
 
-    void (*function_to_use)() = nullptr;
+    static void (*function_to_use)() = nullptr;
 
     static void on_get_crc32_first_tick() {
         if(get_tick_count() == 0) {
