@@ -1,10 +1,20 @@
 #include "../../../localization/localization.hpp"
 #include "../../../output/output.hpp"
 #include "../../../halo_data/chat.hpp"
+#include "../../../event/tick.hpp"
 #include "../../../halo_data/multiplayer.hpp"
 
 namespace Chimera {
-    bool send_chat_message_command(int argc, const char **argv) noexcept {
+    static int throttle_time = 0;
+
+    static void reduce_throttle() {
+        if(--throttle_time < 0) {
+            throttle_time = 0;
+            remove_tick_event(reduce_throttle);
+        }
+    }
+
+    bool send_chat_message_command(int, const char **argv) noexcept {
         if(server_type() == ServerType::SERVER_NONE) {
             console_error(localize("chimera_error_must_be_in_a_server"));
             return false;
@@ -16,8 +26,20 @@ namespace Chimera {
             channel = std::stoi(argv[0]);
         }
         catch(std::exception &) {
-            console_error(localize("send_chat_message_invalid_channel"), argv[0]);
+            console_error(localize("chimera_send_chat_message_invalid_channel"), argv[0]);
             return false;
+        }
+
+        // Keep the player from muting themselves by mistake
+        if(server_type() == ServerType::SERVER_DEDICATED) {
+            auto tick_rate = effective_tick_rate();
+            if(throttle_time > tick_rate * 2.0F) {
+                console_error(localize("chimera_send_chat_message_throttled"));
+                return false;
+            }
+
+            throttle_time += tick_rate * 1.5F;
+            add_tick_event(reduce_throttle);
         }
 
         // Send it!

@@ -114,6 +114,7 @@ chimera_player_list_command_help                                                
 chimera_player_list_command_none_found                                          There are no players in the server.
 chimera_send_chat_message_help                                                  Send a chat message on the given channel.
 chimera_send_chat_message_invalid_channel                                       Invalid channel number %i
+chimera_send_chat_message_throttled                                             You are sending messages too quickly!
 chimera_set_name_help                                                           Set your name.
 chimera_show_coordinates_help                                                   Display your coordinates.
 chimera_show_fps_help                                                           Display your frame rate.
