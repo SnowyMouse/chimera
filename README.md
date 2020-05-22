@@ -68,6 +68,7 @@ These are features that are always on.
 - [Weapon swap ticks fix](#weapon-swap-ticks-fix)
 - [Name fade fix](#name-fade-fix)
 - [Scoreboard fade fix](#scoreboard-fade-fix)
+- [Timer offset fix](#timer-offset-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -181,6 +182,10 @@ Names now fade in/out correctly at high frame rates when staring at a player.
 
 #### Scoreboard fade fix
 Scoreboard now fades in/out correctly at high frame rates.
+
+#### Timer offset fix
+Halo PC has a bug where equipment spawns `floor(8.1n)` ticks (where n = the
+netgame equipment index). This bug is fixed.
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the

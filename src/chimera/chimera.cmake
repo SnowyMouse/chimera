@@ -75,6 +75,7 @@ add_library(chimera STATIC
     src/chimera/fix/scoreboard_fade_fix.cpp
     src/chimera/fix/scoreboard_fade_fix.S
     src/chimera/fix/sun_fix.cpp
+    src/chimera/fix/timer_offset.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp
     src/chimera/fix/vehicle_team_desync.cpp
     src/chimera/fix/video_mode.cpp

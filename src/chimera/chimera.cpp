@@ -41,6 +41,7 @@
 #include "fix/leak_descriptors.hpp"
 #include "fix/motion_sensor_fix.hpp"
 #include "fix/nav_numbers.hpp"
+#include "fix/timer_offset.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/contrail_fix.hpp"
 #include "fix/vehicle_team_desync.hpp"
@@ -100,6 +101,9 @@ namespace Chimera {
 
             // Set up map loading
             set_up_map_loading();
+
+            // ...why Gearbox?
+            set_up_timer_offset_fix();
 
             // Fix this
             set_up_fix_leaking_descriptors();
