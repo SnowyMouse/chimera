@@ -15,7 +15,7 @@ The official repository is hosted at https://github.com/Kavawuvi/chimera
 ## Installation
 Here is the installation procedure for installing Chimera:
 
-1. Update your installation of Halo to version 1.10.
+1. Update Halo to version 1.10 (unless you're playing the trial).
 2. Back up your game's Strings.dll. Renaming it to `strings-old.dll` works.
 3. Copy strings.dll and chimera.ini into your game folder.
 
