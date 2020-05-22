@@ -64,6 +64,14 @@ namespace Chimera {
         CommandResult execute_command(const char *command, const Command **found_command = nullptr, bool saves = false);
 
         /**
+         * Get the config
+         * @return config
+         */
+        Config &get_config() noexcept {
+            return *this->p_config;
+        }
+
+        /**
          * Get the path to the Chimera profile folder
          * @return path to the Chimera profile folder
          */

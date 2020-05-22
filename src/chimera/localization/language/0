@@ -11,6 +11,7 @@ chimera_error_must_be_in_a_server                                               
 chimera_error_must_be_host                                                      You have to be the host to do that.
 chimera_error_player_not_found                                                  Player %s was not found.
 chimera_error_takes_player_number                                               This command takes a player number from chimera_players.
+chimera_error_failed_to_open_init                                               Failed to open init file %s
 
 chimera_warning_command_will_take_effect_on_next_load                           This command will take effect on next load.
 

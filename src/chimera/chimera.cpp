@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <cmath>
 #include "annoyance/novideo.hpp"
@@ -8,6 +9,8 @@
 #include "custom_chat/custom_chat.hpp"
 #include "config/config.hpp"
 #include "console/console.hpp"
+#include "localization/localization.hpp"
+#include "halo_data/script.hpp"
 #include "event/frame.hpp"
 #include "halo_data/path.hpp"
 #include "halo_data/hud_fonts.hpp"
@@ -55,6 +58,7 @@
 namespace Chimera {
     static Chimera *chimera;
     static void initial_tick();
+    static void set_up_delayed_init();
 
     Chimera::Chimera() : p_signatures(find_all_signatures()) {
         chimera = this;
@@ -219,6 +223,9 @@ namespace Chimera {
             else {
                 enable_output(true);
             }
+
+            // Make it so number one
+            set_up_delayed_init();
         }
     }
 
@@ -517,5 +524,88 @@ namespace Chimera {
 
     const std::vector<Command> &Chimera::get_commands() const noexcept {
         return this->p_commands;
+    }
+
+    static void execute_init() {
+        // Don't re-execute this
+        remove_frame_event(execute_init);
+
+        // First see if we set anything here
+        const char *init = get_chimera().get_ini()->get_value("halo.exec");
+        if(!init) {
+            init = "init.txt";
+        }
+
+        // Next, check the command-line args
+        auto *cmd_line = GetCommandLineA();
+        char *first_letter = cmd_line;
+        std::string last_param;
+        std::optional<std::string> init_maybe;
+        bool letter_digested = false;
+        for(char *c = cmd_line; cmd_line == c || c[-1]; c++) {
+            if((*c == 0 || *c == ' ') && letter_digested) {
+                std::string this_param = std::string(first_letter, c - first_letter);
+                if(last_param == "-exec") {
+                    init_maybe = this_param;
+                    break;
+                }
+                first_letter = c + 1;
+                last_param = this_param;
+                letter_digested = false;
+            }
+            else if(*c != ' ' && !letter_digested) {
+                letter_digested = true;
+            }
+            else if(*c == ' ' && !letter_digested) {
+                first_letter = c + 1;
+            }
+        }
+
+        // If we did set something, do this
+        if(init_maybe.has_value()) {
+            init = init_maybe->c_str();
+        }
+
+        // Do it!
+        get_chimera().get_config().set_saving(false);
+        std::fstream file_to_open(init, std::ios_base::in);
+        if(file_to_open.is_open()) {
+            std::string line;
+            while(std::getline(file_to_open, line)) {
+                if(std::strncmp(line.c_str(), "chimera", strlen("chimera")) == 0) {
+                    const Command *found_command;
+                    switch(get_chimera().execute_command(line.c_str(), &found_command)) {
+                        case COMMAND_RESULT_SUCCESS:
+                        case COMMAND_RESULT_FAILED_ERROR:
+                            break;
+                        case COMMAND_RESULT_FAILED_FEATURE_NOT_AVAILABLE:
+                            console_error(localize("chimera_error_command_unavailable"), found_command->name(), found_command->feature());
+                            break;
+                        case COMMAND_RESULT_FAILED_ERROR_NOT_FOUND:
+                            console_error(localize("chimera_error_command_not_found"));
+                            break;
+                        case COMMAND_RESULT_FAILED_NOT_ENOUGH_ARGUMENTS:
+                            console_error(localize("chimera_error_not_enough_arguments"), found_command->name(), found_command->min_args());
+                            break;
+                        case COMMAND_RESULT_FAILED_TOO_MANY_ARGUMENTS:
+                            console_error(localize("chimera_error_too_many_arguments"), found_command->name(), found_command->max_args());
+                            break;
+                    }
+                }
+                else {
+                    execute_script(line.c_str());
+                }
+            }
+        }
+        else {
+            console_error(localize("chimera_error_failed_to_open_init"), init);
+        }
+        get_chimera().get_config().set_saving(true);
+    }
+
+    static void set_up_delayed_init() {
+        auto &chimera = get_chimera();
+        overwrite(chimera.get_signature("exec_init_sig").data(), static_cast<std::uint8_t>(0xC3));
+        add_frame_event(execute_init);
     }
 }
