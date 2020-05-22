@@ -529,10 +529,14 @@ namespace Chimera {
     static void execute_init() {
         // Don't re-execute this
         remove_frame_event(execute_init);
+        bool should_error_if_not_found = false;
 
         // First see if we set anything here
         const char *init = get_chimera().get_ini()->get_value("halo.exec");
-        if(!init) {
+        if(init) {
+            should_error_if_not_found = true;
+        }
+        else {
             init = "init.txt";
         }
 
@@ -564,6 +568,7 @@ namespace Chimera {
         // If we did set something, do this
         if(init_maybe.has_value()) {
             init = init_maybe->c_str();
+            should_error_if_not_found = true;
         }
 
         // Do it!
@@ -597,7 +602,7 @@ namespace Chimera {
                 }
             }
         }
-        else {
+        else if(should_error_if_not_found) {
             console_error(localize("chimera_error_failed_to_open_init"), init);
         }
         get_chimera().get_config().set_saving(true);
