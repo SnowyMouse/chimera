@@ -365,6 +365,12 @@ namespace Chimera {
                         at += 3;
                         break;
                     }
+                    else if(op1 == 0xC0) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 2);
+                        at += 2;
+                        break;
+                    }
                     else if(op1 == 0x1C) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 7);

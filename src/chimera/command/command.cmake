@@ -12,6 +12,8 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/debug/player_info.cpp
     ${COMMAND_DIR}/core/debug/teleport.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
+    ${COMMAND_DIR}/core/server/block_equipment_rotation.cpp
+    ${COMMAND_DIR}/core/server/block_equipment_rotation.S
     ${COMMAND_DIR}/core/server/player_list.cpp
     ${COMMAND_DIR}/client/controller/aim_assist.cpp
     ${COMMAND_DIR}/client/controller/auto_uncrouch.cpp

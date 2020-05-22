@@ -202,6 +202,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_spectate_previous", "chimera_category_server", "client_spectate", spectate_previous_command, false, 0, 0);
         ADD_COMMAND("chimera_spectate_team_only", "chimera_category_server", "client_spectate", spectate_team_only_command, true, 0, 1);
         ADD_COMMAND("chimera_player_list", "chimera_category_server", "core", player_list_command, false, 0, 0);
+        ADD_COMMAND("chimera_block_equipment_rotation", "chimera_category_server", "core_null_rotation", block_equipment_rotation_command, true, 0, 1);
 
         // Visuals
         ADD_COMMAND("chimera_af", "chimera_category_visual", "client_af", af_command, true, 0, 1);

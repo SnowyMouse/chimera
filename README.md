@@ -264,6 +264,7 @@ the chimera folder created by Chimera.
 - [Block auto center](#block-auto-center)
 - [Block buffering](#block-buffering)
 - [Block camera shaking](#block-camera-shaking)
+- [Block equipment rotation](#block-equipment-rotation)
 - [Block extra weapon](#block-extra-weapon)
 - [Block gametype indicator](#block-gametype-indicator)
 - [Block gametype rules](#block-gametype-rules)
@@ -359,6 +360,13 @@ Camera shaking from taking damage or firing weapons is broken in Halo PC. You
 can disable it if you want.
 
 **Usage:** `chimera_block_camera_shake [true/false]`
+
+#### Block equipment rotation
+Netgame equipment rotation was added in Halo PC. You can disable it if you want
+spawns to look more like their Xbox counterparts, though most maps will probably
+look worse.
+
+**Usage:** `chimera_block_equipment_rotation [true/false]`
 
 #### Block extra weapon
 Block your currently held weapon if you have more than two weapons. Unblock
