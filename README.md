@@ -208,6 +208,7 @@ Below are the features you can take advantage of.
 #### Halo settings
 These features exist to modify how Halo is initialized.
 - `path` (changes the profile path location)
+- `exec` (changes the init text file loaded)
 - `server_port` (set the default server port)
 - `client_port` (set the default client port)
 - `console` (enable console)
@@ -219,6 +220,7 @@ These features exist to modify how Halo is initialized.
 #### Scoreboard settings
 This exists to manipulate the scoreboard
 - `font` (change the font)
+- `fade_time` (change the fade in and fade out time)
 
 #### Name settings
 This exists to manipulate the names shown when looking at players.
@@ -292,6 +294,7 @@ the chimera folder created by Chimera.
 - [Mouse sensitivity](#mouse-sensitivity)
 - [Player info](#player-info)
 - [Player list](#player-list)
+- [Send chat message](#send-chat-message)
 - [Set name](#set-name)
 - [Show coordinates](#show-coordinates)
 - [Show FPS](#show-fps)
@@ -555,16 +558,16 @@ List player indices.
 
 **Usage:** `chimera_player_list`
 
-#### Set name
-Set your in-game name.
-
-**Usage:** `chimera_set_name [name]`
-
 #### Send chat message
 Send a chat message. Channel 0 is "all", channel 1 is "team", and channel 2 is
 "vehicle". Other channels may be used by mods.
 
 **Usage:** `chimera_set_name <channel> <message>`
+
+#### Set name
+Set your in-game name.
+
+**Usage:** `chimera_set_name [name]`
 
 #### Show coordinates
 Show your in-game coordinates.
