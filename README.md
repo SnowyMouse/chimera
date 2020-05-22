@@ -684,6 +684,3 @@ on [Invader](https://github.com/Kavawuvi/invader) for map compression, and this
 is licensed under the GPL as well. So, you'd have to either remove the Invader
 dependency (thus no map compression - required for map downloading!) or ask
 *all* of the developers of upstream Invader for permission, too.
-
-### What is the password to the archive?
-Read PASSWORD.txt.
