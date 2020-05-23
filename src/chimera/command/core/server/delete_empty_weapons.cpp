@@ -28,6 +28,11 @@ namespace Chimera {
                     continue;
                 }
 
+                // Is the object disabled?
+                if(object->no_collision) {
+                    continue;
+                }
+
                 // Is the object in motion
                 if(distance_squared(object->velocity, Point3D {}) > 0.00001F) {
                     continue;
