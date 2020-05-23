@@ -56,6 +56,7 @@ chimera_block_extra_weapon_help                                                 
 chimera_unblock_all_extra_weapons_fail                                          No weapons were blocked.
 chimera_unblock_all_extra_weapons_help                                          Unblock all extra weapons.
 chimera_unblock_all_extra_weapons_success                                       All weapons were unblocked.
+chimera_block_equipment_rotation_command_help                                   Disable rotation from equipment spawns when hosting (emulates Xbox behavior).
 chimera_block_gametype_indicator_command_help                                   Hide the gametype indicator.
 chimera_block_gametype_rules_command_help                                       Disable gametype rules at the start of a game.
 chimera_block_hold_f1_command_help                                              Disable the Hold \"F1\" for score prompt.
