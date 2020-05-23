@@ -95,6 +95,7 @@ chimera_command_version                                                         
 chimera_config_note                                                             #         NOTE: This file is autosaved and may be overwritten on load.         #
 chimera_console_prompt_color_command_help                                       Change the console prompt color.
 chimera_console_prompt_color_command_output                                     %.02f red, %.02f green, %.02f blue
+chimera_delete_empty_weapons_help                                               Delete empty weapons when hosting (emulates Xbox behavior).
 chimera_devmode_command_help                                                    Enable devmode. This will enable Halo's developer and cheat commands.
 chimera_deadzones_command_help                                                  Set the value for all deadzones.
 chimera_diagonals_command_help                                                  Set diagonals for controller movement in multiplayer.

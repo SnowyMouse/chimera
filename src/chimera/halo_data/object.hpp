@@ -18,6 +18,12 @@ namespace Chimera {
     struct BaseDynamicObject;
 
     /**
+     * Erase an object
+     * @param object_id object to delete
+     */
+    void delete_object(ObjectID object_id) noexcept;
+
+    /**
      * This represents and points to an object in loopobjects.
      */
     struct ObjectTableIndexHeader {

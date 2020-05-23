@@ -497,6 +497,11 @@ Set deadzones for analog input.
 
 **Usage:** `chimera_deadzones [0-1]`
 
+#### Delete empty weapons
+Automatically delete empty weapons when hosting, similar to Xbox behavior.
+
+**Usage:** `chimera_delete_empty_weapons [true/false]`
+
 #### Devmode
 Enable devmode commands without blocking you from multiplayer or requiring any
 command line arguments.
