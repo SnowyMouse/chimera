@@ -118,8 +118,8 @@ namespace Chimera {
                         at += 7;
                         break;
                     }
-                    // cmp reg, [reg+op3]
-                    else if(op1 == 0x3B) {
+                    // cmp reg, [reg+op3] or mov reg, [reg+op3]
+                    else if(op1 == 0x3B || op1 == 0x3D || op1 == 0x8B) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;

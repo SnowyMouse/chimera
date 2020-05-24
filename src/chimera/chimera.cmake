@@ -54,6 +54,7 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.S
     src/chimera/fix/force_crash.cpp
     src/chimera/fix/fp_reverb.cpp
+    src/chimera/fix/fp_reverb.S
     src/chimera/fix/fov_fix.cpp
     src/chimera/fix/inverted_flag.cpp
     src/chimera/fix/inverted_flag.S

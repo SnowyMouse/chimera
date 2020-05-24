@@ -5,6 +5,8 @@
 #include "../output/output.hpp"
 
 namespace Chimera {
+    extern "C" void override_non_firing_fp_reverb_asm() noexcept;
+
     void set_up_fp_reverb_fix(int fix) noexcept {
         auto &chimera = get_chimera();
         if(!chimera.feature_present("client_fp_reverb")) {
@@ -13,10 +15,12 @@ namespace Chimera {
 
         bool override_sound_class = fix == 1 || fix == 2;
         bool meme_up_positioning = fix == 2;
+        bool ignore_firing = fix == 3;
 
         auto *first_person_reverb_1 = chimera.get_signature("first_person_reverb_1_sig").data();
         auto *first_person_reverb_2 = chimera.get_signature("first_person_reverb_2_sig").data();
         auto *first_person_reverb_3 = chimera.get_signature("first_person_reverb_3_sig").data();
+        auto *first_person_reverb_4 = chimera.get_signature("first_person_reverb_4_sig").data();
 
         if(meme_up_positioning) {
             static constexpr const SigByte nop_add[] = { 0x90, 0x90, 0x90 };
@@ -27,8 +31,12 @@ namespace Chimera {
 
         if(override_sound_class) {
             static constexpr const SigByte tell_lies_on_the_internet[] = { 0x66, 0xB8, 0x0D, 0x00 };
-            auto *first_person_reverb_4 = chimera.get_signature("first_person_reverb_4_sig").data();
             write_code_s(first_person_reverb_4, tell_lies_on_the_internet);
+        }
+
+        if(ignore_firing) {
+            static Hook hook;
+            write_jmp_call(first_person_reverb_4, hook, nullptr, reinterpret_cast<const void *>(override_non_firing_fp_reverb_asm), false);
         }
     }
 
@@ -45,7 +53,7 @@ namespace Chimera {
         if(argc) {
             disable_fp_reverb_fix();
             int new_setting = std::strtol(argv[0], nullptr, 10);
-            if(new_setting < 0 || new_setting > 2) {
+            if(new_setting < 0 || new_setting > 3) {
                 new_setting = 0;
             }
             set_up_fp_reverb_fix(new_setting);
@@ -60,6 +68,9 @@ namespace Chimera {
                 break;
             case 2:
                 console_output("2 - on (global - disable node offset)");
+                break;
+            case 3:
+                console_output("3 - on (global - exclude firing sounds)");
                 break;
         }
         return true;
