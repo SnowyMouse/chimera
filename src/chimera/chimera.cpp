@@ -37,6 +37,7 @@
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/inverted_flag.hpp"
 #include "fix/fov_fix.hpp"
+#include "fix/fp_reverb.hpp"
 #include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
 #include "fix/motion_sensor_fix.hpp"

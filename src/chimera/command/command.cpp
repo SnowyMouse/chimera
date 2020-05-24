@@ -171,6 +171,7 @@ namespace Chimera {
 
         // Debug
         ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
+        ADD_COMMAND("chimera_test_fp_reverb_fix", "chimera_category_core", "client_fp_reverb", test_fp_reverb_fix_command, true, 0, 1);
 
         if(this->feature_present("core_devmode_retail")) {
             ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode_retail", devmode_retail_command, true, 0, 1);
