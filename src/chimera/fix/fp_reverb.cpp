@@ -60,6 +60,7 @@ namespace Chimera {
         chimera.get_signature("first_person_reverb_2_sig").rollback();
         chimera.get_signature("first_person_reverb_3_sig").rollback();
         chimera.get_signature("first_person_reverb_4_sig").rollback();
+        chimera.get_signature("first_person_reverb_5_sig").rollback();
     }
 
     bool test_fp_reverb_fix_command(int argc, const char **argv) {
