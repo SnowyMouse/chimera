@@ -33,7 +33,7 @@ namespace Chimera {
             return;
         }
 
-        // Also, if this object is NOT our us, check if it's our weapon
+        // Also, if this object is NOT our body, check if it's our weapon
         if(oid_whole_id != player->object_id.whole_id) {
             bool is_us = false;
             for(auto &w : player_object->weapons) {
