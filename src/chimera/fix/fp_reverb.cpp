@@ -17,6 +17,11 @@ namespace Chimera {
             return;
         }
 
+        // If it's not a thing, go away
+        if(oid_whole_id == 0xFFFFFFFF) {
+            return;
+        }
+
         // Also, are we alive? If so, get our object.
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(!player) {
@@ -28,9 +33,18 @@ namespace Chimera {
             return;
         }
 
-        // Also, if this object is NOT our weapon or us, don't do anything
-        if((oid_whole_id != player->object_id.whole_id && oid_whole_id != player_object->weapon.whole_id) || oid_whole_id == 0xFFFFFFFF) {
-            return;
+        // Also, if this object is NOT our us, check if it's our weapon
+        if(oid_whole_id != player->object_id.whole_id) {
+            bool is_us = false;
+            for(auto &w : player_object->weapons) {
+                if(w.whole_id == oid_whole_id) {
+                    is_us = true;
+                    break;
+                }
+            }
+            if(!is_us) {
+                return;
+            }
         }
 
         auto &d = camera_data();
