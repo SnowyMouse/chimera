@@ -18,8 +18,9 @@ _meme_up_reverb_position_asm:
     pushfd
     pushad
     push eax
+    push ebx
     call _have_fun_with_positioning
-    add esp, 4
+    add esp, 8
     popad
     popfd
     pop eax

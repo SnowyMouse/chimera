@@ -4,18 +4,39 @@
 #include "../chimera.hpp"
 #include "../output/output.hpp"
 #include "../halo_data/camera.hpp"
+#include "../halo_data/player.hpp"
+#include "../halo_data/object.hpp"
 
 namespace Chimera {
     extern "C" void override_non_firing_fp_reverb_asm() noexcept;
     extern "C" void meme_up_reverb_position_asm() noexcept;
 
-    extern "C" void have_fun_with_positioning(float *v) noexcept {
-        if(camera_type() == CameraType::CAMERA_FIRST_PERSON) {
-            auto &d = camera_data();
-            v[0] = d.position.x;
-            v[1] = d.position.y;
-            v[2] = d.position.z;
+    extern "C" void have_fun_with_positioning(std::uint32_t oid_whole_id, float *v) noexcept {
+        // If we're not in first person, don't do anything
+        if(camera_type() != CameraType::CAMERA_FIRST_PERSON) {
+            return;
         }
+
+        // Also, are we alive? If so, get our object.
+        auto *player = PlayerTable::get_player_table().get_client_player();
+        if(!player) {
+            return;
+        }
+        auto &ot = ObjectTable::get_object_table();
+        auto *player_object = reinterpret_cast<UnitDynamicObject *>(ot.get_dynamic_object(player->object_id));
+        if(!player_object) {
+            return;
+        }
+
+        // Also, if this object is NOT our weapon or us, don't do anything
+        if((oid_whole_id != player->object_id.whole_id && oid_whole_id != player_object->weapon.whole_id) || oid_whole_id == 0xFFFFFFFF) {
+            return;
+        }
+
+        auto &d = camera_data();
+        v[0] = d.position.x;
+        v[1] = d.position.y;
+        v[2] = d.position.z;
     }
 
     void set_up_fp_reverb_fix(int fix) noexcept {
