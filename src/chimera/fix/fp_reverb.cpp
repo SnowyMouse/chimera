@@ -82,7 +82,7 @@ namespace Chimera {
                 console_output("1 - on (global)");
                 break;
             case 2:
-                console_output("2 - on (global - null offset)");
+                console_output("2 - on (global - set offset to FP camera)");
                 break;
             case 3:
                 console_output("3 - on (global - exclude firing sounds)");
