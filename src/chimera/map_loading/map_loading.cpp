@@ -719,6 +719,8 @@ namespace Chimera {
         execute_script(connect_command);
     }
 
+    static GenericFont font_to_use = GenericFont::FONT_SMALL;
+
     static void download_frame() {
         char output[128] = {};
 
@@ -726,7 +728,7 @@ namespace Chimera {
         std::int16_t width = ((640 / 2) - (640 / 2 + x)) * 2;
         std::int16_t y = 210;
         std::int16_t height = 240 - y;
-        auto font = get_generic_font(GenericFont::FONT_CONSOLE);
+        auto font = get_generic_font(font_to_use);
 
         ColorARGB color { 1.0F, 1.0F, 1.0F, 1.0F };
 
@@ -936,6 +938,11 @@ namespace Chimera {
             auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
             static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
             write_code_s(preload_map_sig, mov_eax_1);
+        }
+
+        auto *font_fam = get_chimera().get_ini()->get_value("chimera.download_font");
+        if(font_fam) {
+            font_to_use = generic_font_from_string(font_fam);
         }
     }
 }
