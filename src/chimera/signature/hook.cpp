@@ -371,7 +371,7 @@ namespace Chimera {
                         at += 2;
                         break;
                     }
-                    else if(op1 == 0x1C) {
+                    else if(op1 == 0x1C || op1 == 0x9C) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 7);
                         at += 7;

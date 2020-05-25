@@ -11,3 +11,16 @@ _override_non_firing_fp_reverb_asm:
     mov ax, 7 ;# if not, then tell lies on the internet
     ignore_fp_firing_reverb:
     ret
+
+.globl _meme_up_reverb_position_asm
+_meme_up_reverb_position_asm:
+    push eax
+    pushfd
+    pushad
+    push eax
+    call _have_fun_with_positioning
+    add esp, 4
+    popad
+    popfd
+    pop eax
+    ret
