@@ -153,6 +153,8 @@ add_custom_command(
 
 target_include_directories(chimera
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/include"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include"
 )
 
 # Set the name
