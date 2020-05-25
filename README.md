@@ -294,6 +294,7 @@ the chimera folder created by Chimera.
 - [Devmode](#devmode)
 - [Diagonals](#diagonals)
 - [FoV](#fov)
+- [FP reverb](#fp-reverb)
 - [HUD kill feed](#hud-kill-feed)
 - [Language](#language)
 - [Model detail](#model-detail)
@@ -527,6 +528,12 @@ anything at all if `chimera_fov` is not set.
 **Usage:** `chimera_fov [degrees]`
 **Usage:** `chimera_fov_cinematic [degrees]`
 **Usage:** `chimera_fov_vehicle [degrees]`
+
+#### FP reverb
+Set whether or not first person sounds should have reverberations when EAX is
+enabled.
+
+**Usage:** `chimera_fp_reverb [true/false]`
 
 #### HUD kill feed
 Put the kill feed in the HUD. Halo puts it in the chat, normally.

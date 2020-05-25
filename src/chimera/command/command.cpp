@@ -171,7 +171,6 @@ namespace Chimera {
 
         // Debug
         ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
-        ADD_COMMAND("chimera_test_fp_reverb_fix", "chimera_category_core", "client_fp_reverb", test_fp_reverb_fix_command, true, 0, 1);
 
         if(this->feature_present("core_devmode_retail")) {
             ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode_retail", devmode_retail_command, true, 0, 1);
@@ -196,6 +195,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_hud_kill_feed", "chimera_category_enhancement", "client_hud_kill_feed", hud_kill_feed_command, true, 0, 1);
         ADD_COMMAND("chimera_set_name", "chimera_category_enhancement", "client", set_name_command, true, 0, 1);
         ADD_COMMAND("chimera_throttle_fps", "chimera_category_enhancement", "client", throttle_fps_command, true, 0, 1);
+        ADD_COMMAND("chimera_fp_reverb", "chimera_category_enhancement", "client_fp_reverb", fp_reverb_command, true, 0, 1);
 
         // Server
         ADD_COMMAND("chimera_spectate", "chimera_category_server", "client_spectate", spectate_command, false, 1, 1);

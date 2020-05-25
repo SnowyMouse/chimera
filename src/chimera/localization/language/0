@@ -104,6 +104,7 @@ chimera_enable_console_command_warning                                          
 chimera_fov_command_help                                                        Set field of view. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
 chimera_fov_vehicle_command_help                                                Set field of view for vehicles. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
 chimera_fov_cinematic_command_help                                              Set field of view for cinematics. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
+chimera_fp_reverb_command_help                                                  Set whether or not first person sounds should have reverb when EAX is enabled.
 chimera_hud_kill_feed_command_help                                              Show the kill feed in the HUD.
 chimera_interpolate_help                                                        Improve the appearance of object movement and animation. (CPU intensive!)
 chimera_language_command_available_languages                                    Available languages:
