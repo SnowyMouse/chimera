@@ -23,6 +23,7 @@
 #include "annoyance/keystone.hpp"
 #include "annoyance/multi_instance.hpp"
 #include "annoyance/registry.hpp"
+#include "annoyance/update.hpp"
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
 #include "fast_load/fast_load.hpp"
@@ -120,6 +121,9 @@ namespace Chimera {
 
                 // Set up this hook
                 set_up_rcon_message_hook();
+
+                // No more updates
+                enable_block_update_check();
 
                 // Make the game use max settings as default because it's not 2003 anymore
                 set_up_sane_defaults();

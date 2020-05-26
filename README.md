@@ -70,6 +70,7 @@ These are features that are always on.
 - [Scoreboard fade fix](#scoreboard-fade-fix)
 - [Timer offset fix](#timer-offset-fix)
 - [Sane default Halo settings](#sane-default-halo-settings)
+- [Removed update check](#removed-update-check)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -206,6 +207,10 @@ ENVIRONMENTAL AUDIO   | EAX         | Requires [dsoal]
 SOUND VARIETY         | HIGH        |
 
 [dsoal]: https://github.com/kcat/dsoal
+
+#### Removed update check
+The check for updates that occurs when clicking on "INTERNET" in joining or
+creating games is disabled.
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
