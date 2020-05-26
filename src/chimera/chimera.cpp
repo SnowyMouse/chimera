@@ -30,6 +30,7 @@
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
+#include "fix/bullshit_server_data.hpp"
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
@@ -131,6 +132,9 @@ namespace Chimera {
 
                 // Fix vehicle desyncing with mtv
                 set_up_vehicle_team_desync_fix();
+
+                // Fix clans putting invisible bullshit in their server names to put them at the top of the list
+                set_up_bullshit_server_data_fix();
 
                 // Do this!
                 if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {
