@@ -69,6 +69,7 @@ These are features that are always on.
 - [Name fade fix](#name-fade-fix)
 - [Scoreboard fade fix](#scoreboard-fade-fix)
 - [Timer offset fix](#timer-offset-fix)
+- [Sane default Halo settings](#sane-default-halo-settings)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
@@ -186,6 +187,21 @@ Scoreboard now fades in/out correctly at high frame rates.
 #### Timer offset fix
 Halo PC has a bug where equipment spawns `floor(8.1n)` ticks (where n = the
 netgame equipment index). This bug is fixed.
+
+#### Sane default Halo settings
+Halo's default video (not including resolution) and audio settings are set to
+more appropriate settings for modern PCs:
+- FRAMERATE: NO VSYNC
+- SPECULAR: YES
+- SHADOWS: YES
+- DECALS: YES
+- PARTICLES: HIGH
+- TEXTURE QUALITY: HIGH
+- HARDWARE ACCELERATION: YES *
+- SOUND QUALITY: HIGH
+- ENVIRONMENTAL AUDIO: EAX *
+- SOUND VARIETY: HIGH
+(* requires [dsoal](https://github.com/kcat/dsoal))
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the

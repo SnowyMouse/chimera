@@ -43,6 +43,7 @@
 #include "fix/motion_sensor_fix.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/timer_offset.hpp"
+#include "fix/sane_defaults.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/contrail_fix.hpp"
 #include "fix/vehicle_team_desync.hpp"
@@ -118,6 +119,11 @@ namespace Chimera {
 
                 // Set up this hook
                 set_up_rcon_message_hook();
+
+                // Make the game use max settings as default because it's not 2003 anymore
+                set_up_sane_defaults();
+
+                MessageBox(0, "chu", "chu", 0);
 
                 // Prevent some annoying registry checks that just make the game slower
                 remove_registry_checks();
