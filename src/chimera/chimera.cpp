@@ -123,8 +123,6 @@ namespace Chimera {
                 // Make the game use max settings as default because it's not 2003 anymore
                 set_up_sane_defaults();
 
-                MessageBox(0, "chu", "chu", 0);
-
                 // Prevent some annoying registry checks that just make the game slower
                 remove_registry_checks();
 
