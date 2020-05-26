@@ -191,17 +191,21 @@ netgame equipment index). This bug is fixed.
 #### Sane default Halo settings
 Halo's default video (not including resolution) and audio settings are set to
 more appropriate settings for modern PCs:
-- FRAMERATE: NO VSYNC
-- SPECULAR: YES
-- SHADOWS: YES
-- DECALS: YES
-- PARTICLES: HIGH
-- TEXTURE QUALITY: HIGH
-- HARDWARE ACCELERATION: YES *
-- SOUND QUALITY: HIGH
-- ENVIRONMENTAL AUDIO: EAX *
-- SOUND VARIETY: HIGH
-(* requires [dsoal](https://github.com/kcat/dsoal))
+
+Setting               | New default | Note
+----------------------|-------------|-------------------------------------------
+FRAMERATE             | NO VSYNC    |
+SPECULAR              | YES         |
+SHADOWS               | YES         |
+DECALS                | YES         |
+PARTICLES             | HIGH        |
+TEXTURE QUALITY       | HIGH        |
+HARDWARE ACCELERATION | YES         | Requires [dsoal]
+SOUND QUALITY         | HIGH        |
+ENVIRONMENTAL AUDIO   | EAX         | Requires [dsoal]
+SOUND VARIETY         | HIGH        |
+
+[dsoal]: https://github.com/kcat/dsoal
 
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
