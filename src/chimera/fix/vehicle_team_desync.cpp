@@ -2,28 +2,12 @@
 #include "../chimera.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../signature/hook.hpp"
-#include "../event/map_load.hpp"
 #include "../signature/signature.hpp"
 
 namespace Chimera {
-    static void on_map_load() noexcept {
-        add_map_load_event(on_map_load);
-
-        auto &s1 = get_chimera().get_signature("vehicle_team_desync_1_sig");
-        auto &s2 = get_chimera().get_signature("vehicle_team_desync_2_sig");
-
-        if(server_type() != ServerType::SERVER_DEDICATED) {
-            s1.rollback();
-            s2.rollback();
-        }
-        else {
-            auto *a = s1.data() + 7;
-            auto *b = s2.data() + 5;
-
-            static constexpr SigByte fix[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
-            write_code_s(a, fix);
-            write_code_s(b, fix);
-        }
+    extern "C" void on_check_for_desynced_vehicle_entry_asm();
+    extern "C" bool on_check_for_desynced_vehicle_entry() {
+        return ServerType() == SERVER_DEDICATED;
     }
 
     void set_up_vehicle_team_desync_fix() noexcept {
@@ -31,6 +15,14 @@ namespace Chimera {
             return;
         }
 
-        add_map_load_event(on_map_load);
+        auto &s1 = get_chimera().get_signature("vehicle_team_desync_1_sig");
+        auto &s2 = get_chimera().get_signature("vehicle_team_desync_2_sig");
+
+        auto *a = s1.data() + 7;
+        auto *b = s2.data() + 5;
+
+        static Hook h1, h2;
+        write_jmp_call(a, h1, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), nullptr, false);
+        write_jmp_call(b, h2, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), nullptr, false);
     }
 }
