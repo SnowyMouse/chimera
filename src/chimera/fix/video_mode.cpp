@@ -30,18 +30,30 @@ namespace Chimera {
             return;
         }
 
-        #define SET_VALUE(key, value) { \
+        int metric = 0;
+        auto auto_or_i = [&metric](const char *w) {
+            if(std::strcmp(w,"auto") == 0) {
+                return GetSystemMetrics(metric);
+            }
+            else {
+                return std::stoi(w);
+            }
+        };
+
+        #define SET_VALUE(key, value, fn) { \
             auto *v = ini->get_value("video_mode." key); \
             if(v) { \
-                value = std::stoi(v); \
+                value = fn(v); \
             } \
         }
 
         // Load and set values
-        SET_VALUE("width", default_width)
-        SET_VALUE("height", default_height)
-        SET_VALUE("refresh_rate", default_refresh_rate)
-        SET_VALUE("vsync", vsync)
+        metric = SM_CXSCREEN;
+        SET_VALUE("width", default_width, auto_or_i)
+        metric = SM_CYSCREEN;
+        SET_VALUE("height", default_height, auto_or_i)
+        SET_VALUE("refresh_rate", default_refresh_rate, std::stoi)
+        SET_VALUE("vsync", vsync, std::stoi)
 
         if(pc) {
             auto *default_res = chimera.get_signature("default_resolution_pc_sig").data();
