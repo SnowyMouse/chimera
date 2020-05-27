@@ -28,7 +28,7 @@ namespace Chimera {
             return std::nullopt;
         }
         try {
-            return std::stod(key);
+            return std::stod(v);
         }
         catch(std::exception &) {
             char error[512];
@@ -44,7 +44,7 @@ namespace Chimera {
             return std::nullopt;
         }
         try {
-            return std::stol(key);
+            return std::stol(v);
         }
         catch(std::exception &) {
             char error[512];
@@ -60,7 +60,7 @@ namespace Chimera {
             return std::nullopt;
         }
         try {
-            return std::stoull(key);
+            return std::stoull(v);
         }
         catch(std::exception &) {
             char error[512];
