@@ -190,6 +190,9 @@ namespace Chimera {
             bool compressed;
             bool valid = header_is_valid_for_this_game(new_path, &compressed, map_name);
             if(!valid) {
+                char error_message[1024];
+                std::snprintf(error_message, sizeof(error_message), "%s.map is not a valid cache file for this version of the game\n\nMap path: %s", map_name, new_path);
+                MessageBox(nullptr, error_message, "Invalid map", 0);
                 std::exit(1);
             }
 
