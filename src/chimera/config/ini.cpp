@@ -48,13 +48,13 @@ namespace Chimera {
         }
         catch(std::exception &) {
             char error[512];
-            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%l - %l)", key, v, LONG_MIN, LONG_MAX);
+            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%li - %li)", key, v, LONG_MIN, LONG_MAX);
             MessageBox(nullptr, error, "Can't read INI value", 0);
             std::terminate();
         }
     }
 
-    std::optional<std::size_t> Ini::get_value_size(const char *key) const noexcept {
+    std::optional<unsigned long long> Ini::get_value_size(const char *key) const noexcept {
         auto *v = this->get_value(key);
         if(!v) {
             return std::nullopt;
@@ -64,7 +64,7 @@ namespace Chimera {
         }
         catch(std::exception &) {
             char error[512];
-            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%l - %l)", key, v, 0, SIZE_MAX);
+            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (0 - %llu)", key, v, ULONG_LONG_MAX);
             MessageBox(nullptr, error, "Can't read INI value", 0);
             std::terminate();
         }
