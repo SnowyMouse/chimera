@@ -16,9 +16,9 @@ namespace Chimera {
         if(!message) {
             return;
         }
+
         wchar_t message_to_send[256] = {};
-        std::fill(message_to_send, message_to_send + sizeof(message_to_send) / sizeof(*message_to_send), 0);
-        MultiByteToWideChar(CP_UTF8, 0, message, std::strlen(message), message_to_send, sizeof(message_to_send) / sizeof(*message_to_send) - 1);
+        MultiByteToWideChar(CP_UTF8, 0, message, -1, message_to_send, sizeof(message_to_send) / sizeof(*message_to_send));
         chat_out_asm(channel, message_to_send);
     }
 }

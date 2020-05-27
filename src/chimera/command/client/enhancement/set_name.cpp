@@ -3,6 +3,7 @@
 #include "../../../signature/signature.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
+#include "../../../localization/localization.hpp"
 #include "../../../event/map_load.hpp"
 
 namespace Chimera {
@@ -30,19 +31,21 @@ namespace Chimera {
                 player_name_sig.rollback(); // roll it back
                 remove_map_load_event(fix_color);
             }
-            else if(name_length > MAX_NAME_LEN) {
-                console_error("Invalid name %s. Name exceeds the maximum name size of %i characters.", *argv, MAX_NAME_LEN);
-                return false;
-            }
             else {
                 overwrite(player_name_sig.data() + 1, static_cast<std::int16_t *>(name));
                 add_map_load_event(fix_color);
                 fix_color();
             }
 
-            // Zero out the name and then copy the new name over
-            std::fill(name + 1, name + 1 + MAX_NAME_LEN, 0);
-            MultiByteToWideChar(CP_UTF8, 0, *argv, static_cast<int>(name_length), reinterpret_cast<LPWSTR>(name + 1), MAX_NAME_LEN - 1);
+            // See if we can get a name
+            wchar_t new_name[MAX_NAME_LEN + 1] = {};
+            if(MultiByteToWideChar(CP_UTF8, 0, *argv, -1, new_name, sizeof(new_name) / sizeof(*new_name)) == 0) {
+                console_error(localize("chimera_set_name_invalid_name_error"), *argv);
+                return false;
+            }
+            else {
+                std::copy(new_name, new_name + sizeof(new_name) / sizeof(*new_name), name + 1);
+            }
         }
 
         console_output("%S", name + 1);

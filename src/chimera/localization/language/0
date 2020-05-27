@@ -120,6 +120,7 @@ chimera_send_chat_message_help                                                  
 chimera_send_chat_message_invalid_channel                                       Invalid channel number %i
 chimera_send_chat_message_throttled                                             You are sending messages too quickly!
 chimera_set_name_help                                                           Set your name.
+chimera_set_name_invalid_name_error                                             Invalid name \"%s\". Argument must be between 0 and 11 characters.
 chimera_show_coordinates_help                                                   Display your coordinates.
 chimera_show_fps_help                                                           Display your frame rate.
 chimera_shrink_empty_weapons_help                                               Shrink all empty weapons on the ground.
