@@ -25,6 +25,27 @@ namespace Chimera {
         std::optional<bool> get_value_bool(const char *key) const noexcept;
 
         /**
+         * Get the value by name
+         * @param  key name of the value
+         * @return     boolean value of the key or nullopt if not set
+         */
+        std::optional<double> get_value_float(const char *key) const noexcept;
+
+        /**
+         * Get the value by name
+         * @param  key name of the value
+         * @return     boolean value of the key or nullopt if not set
+         */
+        std::optional<long> get_value_long(const char *key) const noexcept;
+
+        /**
+         * Get the value by name
+         * @param  key name of the value
+         * @return     boolean value of the key or nullopt if not set
+         */
+        std::optional<std::size_t> get_value_size(const char *key) const noexcept;
+
+        /**
          * Set the value
          * @param key        name of the value
          * @param new_value  new value to set to

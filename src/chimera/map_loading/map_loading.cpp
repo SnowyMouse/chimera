@@ -35,9 +35,9 @@ namespace Chimera {
     std::byte *maps_in_ram_region = nullptr;
     static std::byte *ui_region = nullptr;
 
-    static constexpr std::size_t UI_OFFSET = 1024 * 1024 * 1024;
-    static constexpr std::size_t UI_SIZE = 256 * 1024 * 1024;
-    static constexpr std::size_t CHIMERA_MEMORY_ALLOCATION_SIZE = (UI_OFFSET + UI_SIZE);
+    static std::size_t UI_OFFSET = 768 * 1024 * 1024;
+    static std::size_t UI_SIZE = 256 * 1024 * 1024;
+    #define CHIMERA_MEMORY_ALLOCATION_SIZE (UI_OFFSET + UI_SIZE)
 
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
@@ -900,6 +900,13 @@ namespace Chimera {
 
         do_benchmark = is_enabled("memory.benchmark");
         do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+
+        // Read MiB
+        auto read_mib = [](const char *what, std::size_t default_value) -> std::size_t {
+            return get_chimera().get_ini()->get_value_size(what).value_or(default_value) * 1024 * 1024;
+        };
+        UI_OFFSET = read_mib("memory.map_size", 768);
+        UI_SIZE = read_mib("memory.ui_size", 256);
 
         if(do_maps_in_ram) {
             if(!current_exe_is_laa_patched()) {

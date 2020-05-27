@@ -1,4 +1,5 @@
 #include <fstream>
+#include <windows.h>
 #include "ini.hpp"
 #include "../command/command.hpp"
 #include <cstring>
@@ -19,6 +20,54 @@ namespace Chimera {
             return std::nullopt;
         }
         return STR_TO_BOOL(v);
+    }
+
+    std::optional<double> Ini::get_value_float(const char *key) const noexcept {
+        auto *v = this->get_value(key);
+        if(!v) {
+            return std::nullopt;
+        }
+        try {
+            return std::stod(key);
+        }
+        catch(std::exception &) {
+            char error[512];
+            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid real number", key, v);
+            MessageBox(nullptr, error, "Can't read INI value", 0);
+            std::terminate();
+        }
+    }
+
+    std::optional<long> Ini::get_value_long(const char *key) const noexcept {
+        auto *v = this->get_value(key);
+        if(!v) {
+            return std::nullopt;
+        }
+        try {
+            return std::stol(key);
+        }
+        catch(std::exception &) {
+            char error[512];
+            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%l - %l)", key, v, LONG_MIN, LONG_MAX);
+            MessageBox(nullptr, error, "Can't read INI value", 0);
+            std::terminate();
+        }
+    }
+
+    std::optional<std::size_t> Ini::get_value_size(const char *key) const noexcept {
+        auto *v = this->get_value(key);
+        if(!v) {
+            return std::nullopt;
+        }
+        try {
+            return std::stoull(key);
+        }
+        catch(std::exception &) {
+            char error[512];
+            std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%l - %l)", key, v, 0, SIZE_MAX);
+            MessageBox(nullptr, error, "Can't read INI value", 0);
+            std::terminate();
+        }
     }
 
     void Ini::set_value(const char *key, const char *value) noexcept {
