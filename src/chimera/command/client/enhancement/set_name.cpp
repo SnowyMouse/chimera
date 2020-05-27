@@ -40,8 +40,9 @@ namespace Chimera {
                 fix_color();
             }
 
-            // Copy the name (with null terminator)
-            std::copy(*argv, *argv + name_length + 1, name + 1);
+            // Zero out the name and then copy the new name over
+            std::fill(name + 1, name + 1 + MAX_NAME_LEN, 0);
+            MultiByteToWideChar(CP_UTF8, 0, *argv, static_cast<int>(name_length), reinterpret_cast<LPWSTR>(name + 1), MAX_NAME_LEN - 1);
         }
 
         console_output("%S", name + 1);
