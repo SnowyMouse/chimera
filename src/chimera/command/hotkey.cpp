@@ -31,6 +31,7 @@ namespace Chimera {
         else SET_KEY_IF_HELD(f4)
         else SET_KEY_IF_HELD(f5)
         else SET_KEY_IF_HELD(f5)
+        else SET_KEY_IF_HELD(f6)
         else SET_KEY_IF_HELD(f7)
         else SET_KEY_IF_HELD(f8)
         else SET_KEY_IF_HELD(f9)
