@@ -10,6 +10,7 @@
 #include "../../../halo_data/controls.hpp"
 #include "../../../event/frame.hpp"
 #include "../../../event/tick.hpp"
+#include "../../../event/map_load.hpp"
 #include "../../../halo_data/game_engine.hpp"
 #include "../../../localization/localization.hpp"
 #include <optional>
@@ -49,32 +50,26 @@ namespace Chimera {
         return rv;
     }
 
-    static void on_pretick() {
-        if(get_tick_count() == 0 || get_tick_count() == 1) {
-            remove_pretick_event(on_pretick);
-            blocked_ids.clear();
-            return;
-        }
-
+    extern "C" std::uint32_t get_next_actual_unblocked_weapon(std::uint32_t current_slot = 0xFFFFFFFF) noexcept {
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(!player) {
-            return;
+            return 0xFFFFFFFF;
         }
         auto *unit = reinterpret_cast<UnitDynamicObject *>(ObjectTable::get_object_table().get_dynamic_object(player->object_id));
         if(!unit) {
-            return;
+            return 0xFFFFFFFF;
         }
 
         // Cycle through until we have a weapon we didn't block (or we cycled twice)
         bool looped_once = false;
         bool blocked_once = false;
-        std::uint8_t slot = unit->weapon_slot;
+        std::uint8_t slot = current_slot == 0xFFFFFFFF ? unit->weapon_slot : static_cast<std::uint8_t>(current_slot);
 
         while(true) {
             // If we're >= 4, stop if we didn't check a weapon previously, or loop over if we did (and stop if we already looped over)
             if(slot >= 4) {
                 if(!blocked_once || looped_once) {
-                    return;
+                    return 0xFFFFFFFF;
                 }
                 looped_once = true;
                 slot = 0;
@@ -83,14 +78,14 @@ namespace Chimera {
             // If the weapon is invalid and we haven't yet checked a weapon, stop
             if(unit->weapons[slot].is_null()) {
                 if(!blocked_once) {
-                    return;
+                    return 0xFFFFFFFF;
                 }
             }
             else {
                 auto *weapon = ObjectTable::get_object_table().get_dynamic_object(unit->weapons[slot]);
                 if(!weapon) {
                     if(!blocked_once) {
-                        return;
+                        return 0xFFFFFFFF;
                     }
                 }
                 else {
@@ -98,17 +93,42 @@ namespace Chimera {
                         blocked_once = true;
                     }
                     else if(!blocked_once) {
-                        return;
+                        return 0xFFFFFFFF;
                     }
                     else {
-                        *reinterpret_cast<std::uint8_t *>(get_player_data() + 0x30) = slot; // set to new slot
-                        return;
+                        return slot;
                     }
                 }
             }
 
             slot++;
         }
+
+        return 0xFFFFFFFF;
+    }
+
+    static void on_pretick() {
+        auto next_weapon = get_next_actual_unblocked_weapon();
+        if(next_weapon != 0xFFFFFFFF) {
+            *reinterpret_cast<std::uint8_t *>(get_player_data() + 0x30) = next_weapon;
+        }
+    }
+
+    static void delete_hook() noexcept {
+        auto &slient_switch_weapon_sig = get_chimera().get_signature("client_switch_weapon_sig");
+        slient_switch_weapon_sig.rollback();
+        blocked_ids.clear();
+        remove_pretick_event(on_pretick);
+    }
+
+    extern "C" void block_extra_weapon_asm() noexcept;
+
+    static void set_up_hook() noexcept {
+        static Hook hook;
+        auto *client_switch_weapon = get_chimera().get_signature("client_switch_weapon_sig").data();
+        write_jmp_call(client_switch_weapon + 3, hook, reinterpret_cast<const void *>(block_extra_weapon_asm), nullptr, false);
+        add_map_load_event(delete_hook);
+        add_pretick_event(on_pretick);
     }
 
     bool block_extra_weapon_command(int, const char **) {
@@ -147,7 +167,7 @@ namespace Chimera {
 
         blocked_ids.emplace_back(weapon->tag_id.index.index);
         console_output("Blocked %s", get_tag(weapon->tag_id)->path);
-        add_pretick_event(on_pretick);
+        set_up_hook();
 
         return true;
     }
@@ -155,8 +175,7 @@ namespace Chimera {
     bool unblock_all_extra_weapons_command(int, const char **) {
         if(blocked_ids.size()) {
             console_output(localize("chimera_unblock_all_extra_weapons_success"));
-            blocked_ids.clear();
-            remove_pretick_event(on_pretick);
+            delete_hook();
             return true;
         }
         else {

@@ -106,16 +106,30 @@ namespace Chimera {
                     auto op2 = *reinterpret_cast<const std::uint8_t *>(at + 2);
                     // mov [reg]
                     if(op1 == 0x89) {
-                        offsets.push_back(at - at_start);
-                        bytes.insert(bytes.end(), at, at + 3);
-                        at += 3;
+                        if(op2 == 0x45) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 4);
+                            at += 4;
+                        }
+                        else {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 3);
+                            at += 3;
+                        }
                         break;
                     }
                     // mov word ptr [reg+op4]
-                    else if(op1 == 0xC7 && op2 == 0x44) {
-                        offsets.push_back(at - at_start);
-                        bytes.insert(bytes.end(), at, at + 7);
-                        at += 7;
+                    else if(op1 == 0xC7) {
+                        if(op2 == 0x45) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 6);
+                            at += 6;
+                        }
+                        else if(op2 == 0x44) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 7);
+                            at += 7;
+                        }
                         break;
                     }
                     // cmp reg, [reg+op3] or mov reg, [reg+op3]
