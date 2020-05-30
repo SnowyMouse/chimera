@@ -25,7 +25,7 @@ namespace Chimera {
         std::uint32_t default_refresh_rate = 60;
 
         auto *ini = chimera.get_ini();
-        if(ini->get_value_bool("video_mode.enabled").value_or(false)) {
+        if(!ini->get_value_bool("video_mode.enabled").value_or(false)) {
             return;
         }
 
