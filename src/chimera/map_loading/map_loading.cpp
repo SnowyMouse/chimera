@@ -883,8 +883,7 @@ namespace Chimera {
     void set_up_map_loading() {
         // Get settings
         auto is_enabled = [](const char *what) -> bool {
-            const char *value = get_chimera().get_ini()->get_value(what);
-            return !(!value || std::strcmp(value, "1") != 0);
+            return get_chimera().get_ini()->get_value_bool(what).value_or(false);
         };
 
         static Hook hook;

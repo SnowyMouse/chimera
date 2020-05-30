@@ -72,16 +72,7 @@ namespace Chimera {
         }
 
         // Get fade time
-        auto *fade_time_ini = chimera.get_ini()->get_value("scoreboard.fade_time");
-        if(fade_time_ini) {
-            try {
-                float new_fade_time = std::strtof(fade_time_ini, nullptr);
-                fade_time = std::max(0.001F, new_fade_time);
-            }
-            catch(std::exception &) {
-                // it's invalid; do nothing
-            }
-        }
+        fade_time = static_cast<float>(std::max(0.001, chimera.get_ini()->get_value_float("scoreboard.fade_time").value_or(0.5)));
 
         static Hook hook;
         current_value = *reinterpret_cast<float **>(code_to_use + 3);
