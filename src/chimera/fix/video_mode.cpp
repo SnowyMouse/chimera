@@ -79,8 +79,7 @@ namespace Chimera {
         write_jmp_call(chimera.get_signature("default_resolution_set_sig").data(), set_hook, reinterpret_cast<const void *>(on_set_video_mode_initially));
 
         // Also, windowed mode
-        auto *windowed_mode = ini->get_value("video_mode.windowed");
-        if(windowed_mode && *windowed_mode == '1') {
+        if(ini->get_value_bool("video_mode.windowed").value_or(false)) {
             static Hook hook;
             auto *windowed_sig = chimera.get_signature("windowed_sig").data();
             write_jmp_call(windowed_sig, hook, reinterpret_cast<const void *>(on_windowed_check_force_windowed), nullptr, false);
