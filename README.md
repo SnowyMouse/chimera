@@ -1,7 +1,9 @@
 # Chimera
-Chimera is a mod for Halo: Combat Evolved for the PC. It is licensed under
-version 3.0 of the GNU General Public License. See LICENSE for more
-information.
+Chimera is the update to Halo: Combat Evolved for the PC that we should have had
+but never got.
+
+It is licensed under version 3.0 of the GNU General Public License. See LICENSE
+for more information.
 
 The official repository is hosted at https://github.com/Kavawuvi/chimera
 
@@ -28,12 +30,13 @@ Uninstalling Chimera is simple:
 2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
 
 ## Mod support
-Chimera does not support any binary mods like HAC2 or Open Sauce. The reason
-for this is because they modify the game in similar ways, resulting in them
-conflicting with one another. Supporting just one of these mods would mean
-extra development time that I don't have. Sorry.
+You can install binary mods (i.e. dlls) by creating a folder called "mods" and
+copying the dlls into the directory.
 
-That said, you can create a mods folder and drop in binary mods in there.
+NOTE: Chimera does *not* support dll mods including HAC2 or Open Sauce. This is
+because they modify the game in similar ways, resulting in them conflicting with
+one another. Supporting just one of these mods would mean extra development time
+that I don't have. Sorry.
 
 ## Features
 Chimera provides a number of features and enhancements to the base Halo game.
