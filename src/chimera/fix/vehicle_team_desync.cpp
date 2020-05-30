@@ -2,12 +2,13 @@
 #include "../chimera.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../signature/hook.hpp"
+#include "../output/output.hpp"
 #include "../signature/signature.hpp"
 
 namespace Chimera {
     extern "C" void on_check_for_desynced_vehicle_entry_asm();
     extern "C" bool on_check_for_desynced_vehicle_entry() {
-        return ServerType() == SERVER_DEDICATED;
+        return server_type() == ServerType::SERVER_DEDICATED;
     }
 
     void set_up_vehicle_team_desync_fix() noexcept {
@@ -22,7 +23,7 @@ namespace Chimera {
         auto *b = s2.data() + 5;
 
         static Hook h1, h2;
-        write_jmp_call(a, h1, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), nullptr, false);
-        write_jmp_call(b, h2, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), nullptr, false);
+        write_jmp_call(a, h1, nullptr, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), false);
+        write_jmp_call(b, h2, nullptr, reinterpret_cast<void *>(on_check_for_desynced_vehicle_entry_asm), false);
     }
 }

@@ -14,14 +14,9 @@ _on_check_for_desynced_vehicle_entry_asm:
     test eax, eax
     jz check_desync_let_halo_do_its_thing
 
-    ;# If we are, do immoral things to the stack because Microsoft won't release the game's source code or make a good Halo port
-    popad
-    popfd
-    mov eax, 1
-    sub esp, 4
-    ret
+    ;# If we are, do immoral things to eax because Microsoft won't release the game's source code or make a good Halo port
+    mov dword ptr [esp+0x1C], 1
 
-    ;# If we aren't well ok then
     check_desync_let_halo_do_its_thing:
     popad
     popfd
