@@ -790,7 +790,9 @@ For example, SAPP, a popular server mod, has auto updating. However, some
 versions would crash Halo with an exception error when run on Wine. Note that
 the reason for the crash is *not* a fault of the mod developer but a fault of
 Wine. However, that doesn't change the fact that leaving auto updating turned on
-(which is default) results in the server crashing if you are on Wine.
+(which is default) can result in the server crashing if you are on Wine, thus
+requiring you to install a version that does work and negating any sort of
+convenience auto updating had.
 
 As another example, HAC2, a popular client mod, also has auto updating.
 Periodically, the HAC2 domain would go down, resulting in auto updating failing.
