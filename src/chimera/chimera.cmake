@@ -175,3 +175,8 @@ set_source_files_properties(src/chimera/localization/localization.cpp PROPERTIES
 
 # Ignore this warning
 set_source_files_properties(src/chimera/custom_chat/custom_chat.cpp PROPERTIES COMPILE_FLAGS "-Wno-format")
+
+option(CHIMERA_CUSTOM_EDITION_USE_RETAIL_FIXES "Use retail-specific fixes for Custom Edition" OFF)
+if(${CHIMERA_CUSTOM_EDITION_USE_RETAIL_FIXES})
+    add_definitions(-DCUSTOM_EDITION_USE_RETAIL_FIXES)
+endif()

@@ -189,9 +189,13 @@ namespace Chimera {
                 }
 
                 // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since Custom Edition really isn't worth fixing.
+                #ifndef CUSTOM_EDITION_USE_RETAIL_FIXES
                 if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+                #endif
                     set_up_inverted_flag_fix();
+                #ifndef CUSTOM_EDITION_USE_RETAIL_FIXES
                 }
+                #endif
 
                 // Last I checked, not even MCC has this fixed lol.
                 set_up_sun_fix();
