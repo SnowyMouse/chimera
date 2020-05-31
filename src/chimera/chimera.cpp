@@ -170,9 +170,6 @@ namespace Chimera {
                 // And this should get fixed, too. Holy shit.
                 set_up_descope_fix();
 
-                // More broken stuff. More broken fixes.
-                set_up_inverted_flag_fix();
-
                 // Fix this massive gameplay issue
                 set_up_weapon_swap_ticks_fix();
 
@@ -189,6 +186,11 @@ namespace Chimera {
                 // Fix some demo stuff
                 if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
                     set_up_demo_master_server();
+                }
+
+                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since Custom Edition really isn't worth fixing.
+                if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+                    set_up_inverted_flag_fix();
                 }
 
                 // Last I checked, not even MCC has this fixed lol.
