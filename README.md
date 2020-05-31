@@ -36,7 +36,7 @@ copying the dlls into the directory.
 NOTE: Chimera does *not* support dll mods including HAC2 or Open Sauce. This is
 because they modify the game in similar ways, resulting in them conflicting with
 one another. Supporting just one of these mods would mean extra development time
-that I don't have. Sorry.
+that we don't have. Sorry.
 
 ## Features
 Chimera provides a number of features and enhancements to the base Halo game.
@@ -699,10 +699,11 @@ another thing due to the nature of these fixes.
 ## FAQ
 
 ### Will Chimera run on my system?
-Chimera isn't too taxing, especially on modern systems, but it can make Halo
-harder to run if you're on very ancient hardware.
+Short answer: If your PC is semi-recent and uses Windows 7 or newer, it'll work.
+Note that Chimera isn't too taxing, especially on modern systems, but it can
+make Halo harder to run if you're on very ancient hardware.
 
-There are the hard requirements:
+Long answer: There are the hard requirements:
 
 - OS (if on Windows): Windows 7 or newer
 - Wine (if on Linux): Wine 4.0 or newer\*
@@ -724,7 +725,7 @@ There are the recommendations for running Chimera optimally:
 \* Halo, even with Chimera, is 32-bit, so it won't technically use more than
 4 GiB, but 8 GiB is recommended so Chimera has enough RAM.
 
-The newest of the above requirements is the AMD CPU (FX 6100) which was
+The newest of the above recommendations is the AMD CPU (FX 6100) which was
 released in the year 2011 - over seven years ago at the time of writing this
 sentence.
 
@@ -758,3 +759,54 @@ to the registry, it potentially ends up actually screwing up your operating
 system's video settings, and there is quite simply a better way to do it,
 anyway. We are *not* going to provide an option to re-enable it, nor are we
 going to provide any option to do so. Use dgVoodoo2, instead.
+
+### Why is there no auto updater?
+Short answer: Auto updating is *not* actually a feature you want. For the best
+experience, the responsibility for keeping Chimera up-to-date falls upon you,
+the user.
+
+Long answer: The gains of adding an auto updater are vastly outweighed by the
+cons of having one.
+
+The only reason to add an auto updater is for convenience. Chimera is very easy
+to install and update. So, it is not necessary to add one even for novice users.
+Updates are generally announced on both the Discord server as well as on Open
+Carnage at https://opencarnage.net/index.php?/topic/6916-chimera-10-beta/.
+
+Actually, there are many reasons *against* having an auto updater.
+
+For a start, adding an auto updater presents a security risk. You're assuming
+that the server used to host the update is never going to be hijacked. Signing
+the update *can* be used to mitigate this, preventing unauthorized builds from
+being installed due to validation failing on the client side, but that's only
+effective if the signing mechanism is not compromised. Also, there's the chance
+that a developer could decide to go rogue and deliberately push a bad update out
+of spite. We would never do that, but should you still take the chance?
+
+Also, existing auto updater implementations in Halo mods have all proven to
+cause issues.
+
+For example, SAPP, a popular server mod, has auto updating. However, some
+versions would crash Halo with an exception error when run on Wine. Note that
+the reason for the crash is *not* a fault of the mod developer but a fault of
+Wine. However, that doesn't change the fact that leaving auto updating turned on
+(which is default) results in the server crashing if you are on Wine.
+
+As another example, HAC2, a popular client mod, also has auto updating.
+Periodically, the HAC2 domain would go down, resulting in auto updating failing.
+However, HAC2 would actually block the user from playing the game with the
+current version with the mod. This decimated the player base multiple times, as
+most players depended on HAC2. However, it's even more insidious than this: HAC2
+used to be open source. At some point, the project changed hands, and updates
+became closed source (the [HAC2 repository](https://github.com/Chaosvex/HAC2)
+is no longer maintained). This means that you can potentially update from an
+free and open source build to a nonfree and closed source build.
+
+No mod developer should have that kind of power. No mod should suddenly update
+automatically to a build that no longer works when it was working before. And
+most importantly, **no mod should change the terms of your agreement to use said
+software without your consent**. Also, no user should have the option to consent
+to any of that, because absolutely nothing good comes from having it enabled.
+
+So, it was decided against implementing auto updating functionality in Chimera.
+Keep your stuff up-to-date.
