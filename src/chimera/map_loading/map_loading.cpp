@@ -32,6 +32,7 @@ namespace Chimera {
     static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
     static bool custom_maps_on_retail = false;
     static const char *bitmaps_custom_map = "bitmaps_custom", *sounds_custom_map = "sounds_custom", *loc_custom_map = "loc_custom";
+    static std::FILE *bitmaps_custom_rsc = nullptr, *sounds_custom_rsc = nullptr, *loc_custom_rsc = nullptr;
 
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
@@ -377,8 +378,8 @@ namespace Chimera {
 
         // Open bitmaps.map and sounds.map
         std::size_t old_used = buffer_used;
-        std::FILE *bitmaps_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? bitmaps_custom_map : "bitmaps"), "rb");
-        std::FILE *sounds_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? sounds_custom_map : "sounds"), "rb");
+        std::FILE *bitmaps_file = std::fopen(path_for_map((can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? bitmaps_custom_map : "bitmaps"), "rb");
+        std::FILE *sounds_file = std::fopen(path_for_map((can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? sounds_custom_map : "sounds"), "rb");
         if(!bitmaps_file || !sounds_file) {
             return;
         }
@@ -705,19 +706,42 @@ namespace Chimera {
         const char *map_name = last_backslash + 1;
 
         if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0) {
+            // If we're on retail and we are loading from a custom edition map's resource map, handle that
+            if(get_map_header().engine_type == CACHE_FILE_CUSTOM_EDITION && custom_maps_on_retail) {
+                std::FILE *f;
+
+                if(std::strcmp(map_name, "bitmaps") == 0) {
+                    f = bitmaps_custom_rsc;
+                }
+                else if(std::strcmp(map_name, "sounds") == 0) {
+                    f = sounds_custom_rsc;
+                }
+                else {
+                    f = loc_custom_rsc;
+                }
+
+                // Do it!
+                std::fseek(f, static_cast<long>(file_offset), SEEK_SET);
+                std::fread(output, size, 1, f);
+
+                return 1;
+            }
             return 0;
         }
-        if(std::strcmp(map_name, "ui") == 0) {
-            std::copy(ui_region + file_offset, ui_region + file_offset + size, output);
-            return 1;
-        }
-        else {
-            if(std::strcmp(map_name, currently_loaded_map) != 0) {
-                static char fuck_you[8192] = {};
-                do_map_loading_handling(fuck_you, map_name);
+
+        else if(do_maps_in_ram) {
+            if(std::strcmp(map_name, "ui") == 0) {
+                std::copy(ui_region + file_offset, ui_region + file_offset + size, output);
+                return 1;
             }
-            std::copy(maps_in_ram_region + file_offset, maps_in_ram_region + file_offset + size, output);
-            return 1;
+            else {
+                if(std::strcmp(map_name, currently_loaded_map) != 0) {
+                    static char fuck_you[8192] = {};
+                    do_map_loading_handling(fuck_you, map_name);
+                }
+                std::copy(maps_in_ram_region + file_offset, maps_in_ram_region + file_offset + size, output);
+                return 1;
+            }
         }
 
         return 0;
@@ -772,8 +796,6 @@ namespace Chimera {
 
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "%0.02f %%", 100.0F * dlnow / dltotal);
                 apply_text(std::string(progress_buffer), x + 350, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
-
-
 
                 char download_speed_buffer[64];
                 auto download_speed = map_downloader->get_download_speed();
@@ -940,11 +962,12 @@ namespace Chimera {
             }
 
             ui_region = maps_in_ram_region + UI_OFFSET;
-
-            static Hook read_cache_file_data_hook;
-            auto &read_map_file_data_sig = get_chimera().get_signature("read_map_file_data_sig");
-            write_jmp_call(read_map_file_data_sig.data(), read_cache_file_data_hook, reinterpret_cast<const void *>(on_read_map_file_data_asm), nullptr);
         }
+
+        // Handle this
+        static Hook read_cache_file_data_hook;
+        auto &read_map_file_data_sig = get_chimera().get_signature("read_map_file_data_sig");
+        write_jmp_call(read_map_file_data_sig.data(), read_cache_file_data_hook, reinterpret_cast<const void *>(on_read_map_file_data_asm), nullptr);
 
         // Now do map downloading
         static Hook map_load_multiplayer_hook;
@@ -962,7 +985,10 @@ namespace Chimera {
 
         // Support Cutdown Edition maps
         if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
-            if((custom_maps_on_retail = path_for_map(bitmaps_custom_map) && path_for_map(sounds_custom_map) && path_for_map(loc_custom_map))) {
+            bitmaps_custom_rsc = std::fopen(path_for_map(bitmaps_custom_map), "rb");
+            sounds_custom_rsc = std::fopen(path_for_map(sounds_custom_map), "rb");
+            loc_custom_rsc = std::fopen(path_for_map(loc_custom_map), "rb");
+            if((custom_maps_on_retail = bitmaps_custom_rsc && sounds_custom_rsc && loc_custom_rsc)) {
                 overwrite(get_chimera().get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
                 overwrite(get_chimera().get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
             }
