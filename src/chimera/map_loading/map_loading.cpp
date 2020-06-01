@@ -30,6 +30,7 @@ namespace Invader::Compression {
 
 namespace Chimera {
     static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
+    static std::vector<std::string> sounds_custom_index;
     static bool custom_maps_on_retail = false;
     static const char *bitmaps_custom_map = "bitmaps_custom", *sounds_custom_map = "sounds_custom", *loc_custom_map = "loc_custom";
     static std::FILE *bitmaps_custom_rsc = nullptr, *sounds_custom_rsc = nullptr, *loc_custom_rsc = nullptr;
@@ -991,6 +992,15 @@ namespace Chimera {
             if((custom_maps_on_retail = bitmaps_custom_rsc && sounds_custom_rsc && loc_custom_rsc)) {
                 overwrite(get_chimera().get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
                 overwrite(get_chimera().get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
+            }
+            else {
+                if(bitmaps_custom_rsc) std::fclose(bitmaps_custom_rsc);
+                if(sounds_custom_rsc) std::fclose(sounds_custom_rsc);
+                if(loc_custom_rsc) std::fclose(loc_custom_rsc);
+
+                bitmaps_custom_rsc = nullptr;
+                sounds_custom_rsc = nullptr;
+                loc_custom_rsc = nullptr;
             }
         }
 
