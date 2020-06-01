@@ -29,6 +29,10 @@ namespace Invader::Compression {
 #define BYTES_TO_MiB(bytes) (bytes / 1024.0F / 1024.0F)
 
 namespace Chimera {
+    static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
+    static bool custom_maps_on_retail = false;
+    static const char *bitmaps_custom_map = "bitmaps_custom", *sounds_custom_map = "sounds_custom", *loc_custom_map = "loc_custom";
+
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
 
@@ -134,8 +138,11 @@ namespace Chimera {
                     }
                     return header_full_version_valid;
                 }
-                else {
+                else if(custom_maps_on_retail) {
                     goto ALSO_CHECK_IF_CUSTOM_EDITION;
+                }
+                else {
+                    return false;
                 }
         }
         return false;
@@ -370,8 +377,8 @@ namespace Chimera {
 
         // Open bitmaps.map and sounds.map
         std::size_t old_used = buffer_used;
-        std::FILE *bitmaps_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? "bitmaps_609" : "bitmaps"), "rb");
-        std::FILE *sounds_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? "sounds_609" : "sounds"), "rb");
+        std::FILE *bitmaps_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? bitmaps_custom_map : "bitmaps"), "rb");
+        std::FILE *sounds_file = std::fopen(path_for_map((engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? sounds_custom_map : "sounds"), "rb");
         if(!bitmaps_file || !sounds_file) {
             return;
         }
@@ -951,6 +958,14 @@ namespace Chimera {
             auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
             static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
             write_code_s(preload_map_sig, mov_eax_1);
+        }
+
+        // Support Cutdown Edition maps
+        if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
+            if((custom_maps_on_retail = path_for_map(bitmaps_custom_map) && path_for_map(sounds_custom_map) && path_for_map(loc_custom_map))) {
+                overwrite(get_chimera().get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
+                overwrite(get_chimera().get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
+            }
         }
 
         auto *font_fam = get_chimera().get_ini()->get_value("chimera.download_font");
