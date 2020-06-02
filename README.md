@@ -795,14 +795,13 @@ requiring you to install a version that does work and negating any sort of
 convenience auto updating had.
 
 As another example, HAC2, a popular client mod, also has auto updating.
-Periodically, the HAC2 domain would go down, resulting in auto updating failing.
-However, HAC2 would actually block the user from playing the game with the
-current version with the mod. This decimated the player base multiple times, as
-most players depended on HAC2. However, it's even more insidious than this: HAC2
-used to be open source. At some point, the project changed hands, and updates
-became closed source (the [HAC2 repository](https://github.com/Chaosvex/HAC2)
-is no longer maintained). This means that you can potentially update from an
-free and open source build to a nonfree and closed source build.
+Periodically, the HAC2 domain would go down, and for whatever reason, HAC2 was
+written to not allow the user to start the game with HAC2 if auto updating
+failed, resulting in the player base being decimated.  Also, at some point, the
+HAC2 project changed developers, and later updates became closed source (the
+[public HAC2 repository](https://github.com/Chaosvex/HAC2) is not maintained and
+is years out of date). This meant that people updated from an free and open
+source build to a nonfree and closed source build.
 
 No mod developer should have that kind of power. No mod should suddenly update
 automatically to a build that no longer works when it was working before. And
