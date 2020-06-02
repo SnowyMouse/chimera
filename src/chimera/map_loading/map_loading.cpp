@@ -32,12 +32,12 @@ namespace Invader::Compression {
 namespace Chimera {
     static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
     static std::vector<std::string> sounds_custom_index;
-    static bool custom_maps_on_retail = false;
     static const char *bitmaps_custom_map = "custom_bitmaps", *sounds_custom_map = "custom_sounds", *loc_custom_map = "custom_loc";
     static std::FILE *bitmaps_custom_rsc = nullptr, *sounds_custom_rsc = nullptr, *loc_custom_rsc = nullptr;
 
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
+    static bool custom_maps_on_retail = false;
 
     std::byte *maps_in_ram_region = nullptr;
     static std::byte *ui_region = nullptr;
@@ -45,6 +45,15 @@ namespace Chimera {
     static std::size_t UI_OFFSET = 768 * 1024 * 1024;
     static std::size_t UI_SIZE = 256 * 1024 * 1024;
     #define CHIMERA_MEMORY_ALLOCATION_SIZE (UI_OFFSET + UI_SIZE)
+
+    extern "C" {
+        std::byte *on_map_load_multiplayer_fail;
+        char16_t download_text_string[64] = {};
+        void override_ting_volume_set_asm() noexcept;
+        void override_ting_volume_write_asm() noexcept;
+        void on_map_load_multiplayer_asm() noexcept;
+        void on_server_join_text_asm() noexcept;
+    }
 
     enum CacheFileEngine : std::uint32_t {
         CACHE_FILE_XBOX = 0x5,
@@ -57,6 +66,10 @@ namespace Chimera {
         CACHE_FILE_RETAIL_COMPRESSED = 0x861A0007,
         CACHE_FILE_CUSTOM_EDITION_COMPRESSED = 0x861A0261
     };
+
+    extern "C" bool using_custom_map_on_retail() noexcept {
+        return custom_maps_on_retail && get_map_header().engine_type == CACHE_FILE_CUSTOM_EDITION;
+    }
 
     struct CompressedMapIndex {
         char map_name[32];
@@ -710,7 +723,7 @@ namespace Chimera {
 
         if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0) {
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
-            if(get_map_header().engine_type == CACHE_FILE_CUSTOM_EDITION && custom_maps_on_retail) {
+            if(using_custom_map_on_retail()) {
                 std::FILE *f;
 
                 if(std::strcmp(map_name, "bitmaps") == 0) {
@@ -858,14 +871,6 @@ namespace Chimera {
             get_chimera().get_signature("esrb_text_sig").rollback();
         }
     }
-
-    extern "C" void on_map_load_multiplayer_asm() noexcept;
-    extern "C" {
-        std::byte *on_map_load_multiplayer_fail;
-        char16_t download_text_string[64] = {};
-    }
-
-    extern "C" void on_server_join_text_asm() noexcept;
 
     extern "C" int on_map_load_multiplayer(char *map) noexcept {
         for(char *c = map; *c; c++) {
@@ -1031,11 +1036,6 @@ namespace Chimera {
                 #undef INCREMENT_IF_NECESSARY
             }
         }
-    }
-
-    extern "C" {
-        void override_ting_volume_set_asm() noexcept;
-        void override_ting_volume_write_asm() noexcept;
     }
 
     void set_up_map_loading() {
