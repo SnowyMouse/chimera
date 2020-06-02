@@ -204,6 +204,11 @@ namespace Chimera {
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
         static bool ui_was_loaded = false;
 
+        // Halo PC might do this here. Just ignore it if it does
+        if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0 || std::strcmp(map_name, SOUNDS_CUSTOM_MAP) == 0 || std::strcmp(map_name, BITMAPS_CUSTOM_MAP) == 0 || std::strcmp(map_name, LOC_CUSTOM_MAP) == 0) {
+            return;
+        }
+
         // If the map is already loaded, go away
         bool do_not_reload = (do_maps_in_ram && ((std::strcmp(map_name, "ui") == 0 && ui_was_loaded) || (std::strcmp(map_name, currently_loaded_map) == 0)));
 
