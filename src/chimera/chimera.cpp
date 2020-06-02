@@ -32,6 +32,7 @@
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
 #include "fix/bullshit_server_data.hpp"
+#include "fix/invalid_command_crash.hpp"
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
@@ -111,6 +112,9 @@ namespace Chimera {
 
             // Fix this
             set_up_fix_leaking_descriptors();
+
+            // Lol
+            set_up_invalid_command_crash_fix();
 
             if(this->feature_present("client")) {
                 // Fix the camo by default
