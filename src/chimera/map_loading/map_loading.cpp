@@ -921,11 +921,12 @@ namespace Chimera {
             Tag *tag = get_tag(i);
 
             if(tag->indexed) {
-                std::byte *base = nullptr;
+                std::byte *base = nullptr, *sound_header = nullptr;
                 if(tag->primary_class == TagClassInt::TAG_CLASS_SOUND) {
                     for(std::size_t i = 0; i < sounds_custom_index.size(); i++) {
                         if(sounds_custom_index[i] == tag->path) {
-                            base = sounds_custom[i].get() + 0xA4;
+                            sound_header = sounds_custom[i].get();
+                            base = sound_header + 0xA4;
                             *reinterpret_cast<std::byte **>(tag->data + 0x98 + 0x4) = base;
                             break;
                         }
@@ -969,8 +970,31 @@ namespace Chimera {
                     }
                     case TagClassInt::TAG_CLASS_SOUND: {
                         auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag->data + 0x98);
+
+                        *reinterpret_cast<std::uint32_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint32_t *>(sound_header + 0x6C);
+                        *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6);
+
                         for(std::uint32_t p = 0; p < pitch_range_count; p++) {
-                            INCREMENT_IF_NECESSARY(base + p * 72 + 0x3C + 0x4);
+                            auto *pitch_range = base + p * 72;
+                            INCREMENT_IF_NECESSARY(pitch_range + 0x3C + 0x4);
+                            auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                            auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+
+                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
+                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
+
+                            for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
+                                auto *permutation = permutations + pe * 124;
+
+                                *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                                *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
+
+                                INCREMENT_IF_NECESSARY(permutation + 0x54 + 0xC);
+                                INCREMENT_IF_NECESSARY(permutation + 0x68 + 0xC);
+                                *reinterpret_cast<TagID *>(permutation + 0x34) = tag->id;
+                                *reinterpret_cast<TagID *>(permutation + 0x3C) = tag->id;
+                                *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                            }
                         }
                         break;
                     }
