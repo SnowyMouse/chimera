@@ -33,7 +33,7 @@ namespace Chimera {
     static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
     static std::vector<std::string> sounds_custom_index;
     static bool custom_maps_on_retail = false;
-    static const char *bitmaps_custom_map = "bitmaps_custom", *sounds_custom_map = "sounds_custom", *loc_custom_map = "loc_custom";
+    static const char *bitmaps_custom_map = "custom_bitmaps", *sounds_custom_map = "custom_sounds", *loc_custom_map = "custom_loc";
     static std::FILE *bitmaps_custom_rsc = nullptr, *sounds_custom_rsc = nullptr, *loc_custom_rsc = nullptr;
 
     static bool do_maps_in_ram = false;
@@ -352,20 +352,20 @@ namespace Chimera {
         // Get tag data info
         std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         std::byte *tag_data;
-        std::uint32_t tag_data_size;
+        //std::uint32_t tag_data_size;
         auto engine = game_engine();
         int map_engine;
 
         if(engine == GameEngine::GAME_ENGINE_DEMO) {
             auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
             tag_data = buffer + header.tag_data_offset;
-            tag_data_size = header.tag_data_size;
+            //tag_data_size = header.tag_data_size;
             map_engine = header.engine_type;
         }
         else {
             auto &header = *reinterpret_cast<MapHeader *>(buffer);
             tag_data = buffer + header.tag_data_offset;
-            tag_data_size = header.tag_data_size;
+            //tag_data_size = header.tag_data_size;
             map_engine = header.engine_type;
 
             // Calculate the CRC32 if we aren't a UI file
