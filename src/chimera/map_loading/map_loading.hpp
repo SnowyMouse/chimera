@@ -4,6 +4,10 @@
 #define CHIMERA_MAP_LOADING_HPP
 
 namespace Chimera {
+    #define BITMAPS_CUSTOM_MAP "custom_bitmaps"
+    #define SOUNDS_CUSTOM_MAP "custom_sounds"
+    #define LOC_CUSTOM_MAP "custom_loc"
+
     /**
      * Set up loading maps outside of the maps directory
      */

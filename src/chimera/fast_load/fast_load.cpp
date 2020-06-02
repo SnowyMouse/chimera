@@ -232,7 +232,10 @@ namespace Chimera {
             "bitmaps",
             "sounds",
             "loc",
-            "ui"
+            "ui",
+            BITMAPS_CUSTOM_MAP,
+            SOUNDS_CUSTOM_MAP,
+            LOC_CUSTOM_MAP
         };
 
         // If we've been here before, clear things. Otherwise, get addresses

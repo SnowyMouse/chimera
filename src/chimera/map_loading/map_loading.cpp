@@ -32,7 +32,6 @@ namespace Invader::Compression {
 namespace Chimera {
     static std::vector<std::unique_ptr<std::byte []>> bitmaps_custom, sounds_custom, loc_custom;
     static std::vector<std::string> sounds_custom_index;
-    static const char *bitmaps_custom_map = "custom_bitmaps", *sounds_custom_map = "custom_sounds", *loc_custom_map = "custom_loc";
     static std::FILE *bitmaps_custom_rsc = nullptr, *sounds_custom_rsc = nullptr, *loc_custom_rsc = nullptr;
 
     static bool do_maps_in_ram = false;
@@ -394,8 +393,8 @@ namespace Chimera {
         // Open bitmaps.map and sounds.map
         std::size_t old_used = buffer_used;
         bool using_custom_rsc = (can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION);
-        std::FILE *bitmaps_file = std::fopen(path_for_map(using_custom_rsc ? bitmaps_custom_map : "bitmaps"), "rb");
-        std::FILE *sounds_file = std::fopen(path_for_map(using_custom_rsc ? sounds_custom_map : "sounds"), "rb");
+        std::FILE *bitmaps_file = std::fopen(path_for_map(using_custom_rsc ? BITMAPS_CUSTOM_MAP : "bitmaps"), "rb");
+        std::FILE *sounds_file = std::fopen(path_for_map(using_custom_rsc ? SOUNDS_CUSTOM_MAP : "sounds"), "rb");
         if(!bitmaps_file || !sounds_file) {
             return;
         }
@@ -1110,9 +1109,9 @@ namespace Chimera {
 
         // Support Cutdown Edition maps
         if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
-            bitmaps_custom_rsc = std::fopen(path_for_map(bitmaps_custom_map), "rb");
-            sounds_custom_rsc = std::fopen(path_for_map(sounds_custom_map), "rb");
-            loc_custom_rsc = std::fopen(path_for_map(loc_custom_map), "rb");
+            bitmaps_custom_rsc = std::fopen(path_for_map(BITMAPS_CUSTOM_MAP), "rb");
+            sounds_custom_rsc = std::fopen(path_for_map(SOUNDS_CUSTOM_MAP), "rb");
+            loc_custom_rsc = std::fopen(path_for_map(LOC_CUSTOM_MAP), "rb");
             if((custom_maps_on_retail = bitmaps_custom_rsc && sounds_custom_rsc && loc_custom_rsc)) {
                 auto load_external_resources = [](std::FILE *file, std::vector<std::unique_ptr<std::byte []>> &into, std::vector<std::string> *index = nullptr) {
                     if(!custom_maps_on_retail) {
