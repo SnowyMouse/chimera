@@ -1033,6 +1033,11 @@ namespace Chimera {
         }
     }
 
+    extern "C" {
+        void override_ting_volume_set_asm() noexcept;
+        void override_ting_volume_write_asm() noexcept;
+    }
+
     void set_up_map_loading() {
         // Get settings
         auto is_enabled = [](const char *what) -> bool {
@@ -1167,6 +1172,11 @@ namespace Chimera {
                 if(custom_maps_on_retail) {
                     overwrite(get_chimera().get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
                     overwrite(get_chimera().get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
+
+                    static Hook set_flag, set_float;
+                    write_jmp_call(get_chimera().get_signature("ting_sound_call_sig").data(), set_flag, nullptr, reinterpret_cast<const void *>(override_ting_volume_set_asm), false);
+                    write_jmp_call(get_chimera().get_signature("game_event_volume_sig").data(), set_float, nullptr, reinterpret_cast<const void *>(override_ting_volume_write_asm), false);
+
                     add_map_load_event(load_custom_edition_tags_into_retail_finally);
                 }
             }

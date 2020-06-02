@@ -2,6 +2,9 @@
 
 .intel_syntax noprefix
 
+.data
+should_overwrite_volume_this_time: .long 0
+
 .text
 
 .globl _free_map_handle_bugfix_asm
@@ -67,4 +70,22 @@ _on_server_join_text_asm:
 _on_check_if_map_is_bullshit_asm:
     mov eax, 1
     mov ecx, 1
+    ret
+
+.globl _override_ting_volume_set_asm
+_override_ting_volume_set_asm:
+    mov dword ptr [should_overwrite_volume_this_time], 1
+    ret
+
+.globl _override_ting_volume_write_asm
+_override_ting_volume_write_asm:
+    ;# Did we set the should_overwrite_volume_this_time flag earlier? If not, return.
+    cmp dword ptr [should_overwrite_volume_this_time], 1
+    jne finish_override_ting_volume_write_asm
+
+    ;# If so, set the new ting and clear the flag
+    mov dword ptr [esp+0x28], 0x3E4CCCCD ;# 0.2
+    mov dword ptr [should_overwrite_volume_this_time], 0
+
+    finish_override_ting_volume_write_asm:
     ret

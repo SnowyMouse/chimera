@@ -351,7 +351,8 @@ namespace Chimera {
                 }
 
                 // mov something
-                case 0xBA: {
+                case 0xBA:
+                case 0xBE: {
                     offsets.push_back(at - at_start);
                     bytes.insert(bytes.end(), at, at + 5);
                     at += 5;
@@ -365,6 +366,12 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
+                        break;
+                    }
+                    else if(a == 0x44) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 8);
+                        at += 8;
                         break;
                     }
                     std::terminate();
