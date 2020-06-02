@@ -8,6 +8,16 @@ players_command_text: .string "players"
 .text
 .globl _handle_invalid_command_crash_asm
 _handle_invalid_command_crash_asm:
-    add esp, 4
+    ;# Did we get 0xFFFF?
+    cmp ax, 0xFFFF
+
+    ;# If not, keep going
+    jne done_handle_invalid_command_crash_asm
+
+    ;# Otherwise, try again, but this time put "players" into edx as this effectively does nothing
     lea edx, [players_command_text]
-    jmp dword ptr [_halo_precompile_script_fn]
+    call dword ptr [_halo_get_function_index_fn]
+
+    ;# Done!
+    done_handle_invalid_command_crash_asm:
+    ret
