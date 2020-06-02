@@ -354,34 +354,35 @@ namespace Chimera {
         std::byte *tag_data;
         std::uint32_t tag_data_size;
         auto engine = game_engine();
-        GameEngine map_engine;
+        int map_engine;
 
         if(engine == GameEngine::GAME_ENGINE_DEMO) {
             auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
             tag_data = buffer + header.tag_data_offset;
             tag_data_size = header.tag_data_size;
-            map_engine = static_cast<GameEngine>(header.engine_type);
+            map_engine = header.engine_type;
         }
         else {
             auto &header = *reinterpret_cast<MapHeader *>(buffer);
             tag_data = buffer + header.tag_data_offset;
             tag_data_size = header.tag_data_size;
-            map_engine = static_cast<GameEngine>(header.engine_type);
+            map_engine = header.engine_type;
 
             // Calculate the CRC32 if we aren't a UI file
-            if(map_engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION && buffer == maps_in_ram_region) {
+            if(map_engine == CACHE_FILE_CUSTOM_EDITION && buffer == maps_in_ram_region) {
                 maps_in_ram_crc32 = ~calculate_crc32_of_map_file(nullptr, header);
             }
         }
-        bool can_load_indexed_tags = (buffer + buffer_used) == (tag_data + tag_data_size) && map_engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
+        bool can_load_indexed_tags = map_engine == CACHE_FILE_CUSTOM_EDITION;
 
         // Get the header
         #define TRANSLATE_POINTER(pointer, to_type) reinterpret_cast<to_type>(tag_data + reinterpret_cast<std::uintptr_t>(pointer) - tag_data_address)
 
         // Open bitmaps.map and sounds.map
         std::size_t old_used = buffer_used;
-        std::FILE *bitmaps_file = std::fopen(path_for_map((can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? bitmaps_custom_map : "bitmaps"), "rb");
-        std::FILE *sounds_file = std::fopen(path_for_map((can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) ? sounds_custom_map : "sounds"), "rb");
+        bool using_custom_rsc = (can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION);
+        std::FILE *bitmaps_file = std::fopen(path_for_map(using_custom_rsc ? bitmaps_custom_map : "bitmaps"), "rb");
+        std::FILE *sounds_file = std::fopen(path_for_map(using_custom_rsc ? sounds_custom_map : "sounds"), "rb");
         if(!bitmaps_file || !sounds_file) {
             return;
         }
