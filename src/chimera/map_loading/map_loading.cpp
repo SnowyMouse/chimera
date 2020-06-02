@@ -237,7 +237,7 @@ namespace Chimera {
                         for(auto &map : compressed_maps) {
                             if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
                                 get_tmp_path(map, tmp_path);
-                                //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
+                                console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
                                 last_loaded_map = &map - compressed_maps;
                                 std::strncpy(map_path, tmp_path, MAX_PATH);
                                 return;
@@ -250,7 +250,7 @@ namespace Chimera {
                     auto &compressed_map_to_use = compressed_maps[new_index];
                     try {
                         get_tmp_path(compressed_maps[new_index], tmp_path);
-                        //console_output("Trying to compress %s @ %s -> %s...", map_name, new_path, tmp_path);
+                        //std::printf("Trying to decompress %s @ %s -> %s...\n", map_name, new_path, tmp_path);
                         auto start = std::chrono::steady_clock::now();
 
                         // If we're doing maps in RAM, output directly to the region allowed
@@ -282,7 +282,7 @@ namespace Chimera {
 
                         // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
                         if(!do_maps_in_ram) {
-                            std::strcpy(map_path, tmp_path);
+                            new_path = tmp_path;
                             last_loaded_map++;
                             if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
                                 last_loaded_map = 0;
@@ -293,7 +293,7 @@ namespace Chimera {
                     }
                     catch (std::exception &e) {
                         compressed_map_to_use = {};
-                        //console_output("Failed to decompress %s @ %s: %s", map_name, new_path, e.what());
+                        //std::printf("Failed to decompress %s @ %s: %s\n", map_name, new_path, e.what());
                         return;
                     }
                 }
