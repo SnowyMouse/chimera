@@ -54,6 +54,26 @@ namespace Chimera {
                             if(std::strncmp(name, "sv_", 3) == 0 || std::strcmp(name, "connect") == 0 || std::strcmp(name, "disconnect") == 0 || std::strcmp(name, "crash") == 0) {
                                 blocked = true;
                             }
+
+                            // Are we setting stuff we shouldn't be setting?
+                            else if(std::strcmp(name, "set") == 0) {
+                                auto variable_id = reinterpret_cast<HaloID *>(&call.next_node);
+                                if(!variable_id->is_null() && variable_id->index.index < node_table->current_size) {
+                                    auto &variable_node = syntax_data[variable_id->index.index];
+                                    auto *variable = string_data + variable_node.string_offset;
+
+                                    if(
+                                        std::strcmp(variable, "sv_tk_ban") == 0 ||
+                                        std::strcmp(variable, "multiplayer_draw_teammates_names") == 0 ||
+                                        std::strcmp(variable, "sv_client_action_queue_limit") == 0 ||
+                                        std::strcmp(variable, "sv_client_action_queue_tick_limit") == 0 ||
+                                        std::strcmp(variable, "cl_remote_player_action_queue_limit") == 0 ||
+                                        std::strcmp(variable, "cl_remote_player_action_queue_tick_limit") == 0
+                                    ) {
+                                        blocked = true;
+                                    }
+                                }
+                            }
                         }
                     }
 
