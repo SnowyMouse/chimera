@@ -2,12 +2,17 @@
 #include "../hac_map_downloader.hpp"
 
 int main(int argc, const char **argv) {
-    if(argc != 4) {
-        std::printf("Usage: %s <map name> <tmp file> <engine>\n", argv[0]);
+    if(argc != 4 && argc != 5) {
+        std::printf("Usage: %s <map name> <tmp file> <engine> [first-server]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     HACMapDownloader downloader(argv[1], argv[2], argv[3]);
+
+    // Set a preferred server
+    if(argc > 4) {
+        downloader.set_preferred_server_node(std::stoi(argv[4]));
+    }
     downloader.dispatch();
 
     for(;;) {

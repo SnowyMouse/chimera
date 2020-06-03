@@ -11,7 +11,14 @@
 void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     // Set the URL
     CURLcode result;
-    unsigned int repo = 1;
+
+    // Determine the first repo to use
+    downloader->mutex.lock();
+    auto preferred_server_hold = downloader->preferred_server_node;
+    downloader->mutex.unlock();
+    bool preferred_failed = !preferred_server_hold.has_value();
+    unsigned int repo = preferred_server_hold.value_or(1);
+
     std::string map_formatted;
     for(char &c : downloader->map) {
         if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
@@ -28,8 +35,27 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
         std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, map_formatted.data(), downloader->game_engine.data());
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
         downloader->download_started = Clock::now();
-        result = curl_easy_perform(downloader->curl);
-        repo++;
+
+        // Did we fail?
+        if((result = curl_easy_perform(downloader->curl)) != CURLE_OK) {
+            // Did our preferred one fail? If so, give up
+            if(preferred_failed && result != CURLcode::CURLE_COULDNT_RESOLVE_HOST) {
+                break;
+            }
+
+            if(preferred_server_hold.has_value()) {
+                if(preferred_failed) {
+                    repo++;
+                }
+                else {
+                    repo = 1;
+                    preferred_failed = true;
+                }
+            }
+            else {
+                repo++;
+            }
+        }
 
         // Cancel?
         downloader->mutex.lock();
@@ -41,7 +67,7 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
         }
         downloader->mutex.unlock();
     }
-    while(result != CURLcode::CURLE_COULDNT_RESOLVE_HOST && result != CURLcode::CURLE_OK);
+    while(result != CURLcode::CURLE_OK);
 
     // Note that we're extracting; clean up CURL
     downloader->mutex.lock();
@@ -66,6 +92,12 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     }
 
     downloader->mutex.unlock();
+}
+
+void HACMapDownloader::set_preferred_server_node(const std::optional<unsigned int> &server) noexcept {
+    this->mutex.lock();
+    this->preferred_server_node = server;
+    this->mutex.unlock();
 }
 
 std::size_t HACMapDownloader::get_download_speed() noexcept {

@@ -767,8 +767,8 @@ namespace Chimera {
         return 0;
     }
 
-    std::unique_ptr<HACMapDownloader> map_downloader;
-    char download_temp_file[MAX_PATH];
+    static std::unique_ptr<HACMapDownloader> map_downloader;
+    static char download_temp_file[MAX_PATH];
 
     static char connect_command[256];
 
@@ -919,6 +919,7 @@ namespace Chimera {
         }
 
         map_downloader = std::make_unique<HACMapDownloader>(map, path, game_engine_str);
+        map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
         map_downloader->dispatch();
         std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);

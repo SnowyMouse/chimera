@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+#include <optional>
 
 /**
  * Map downloading class
@@ -70,6 +71,12 @@ public:
      */
     const std::string &get_map() const noexcept;
 
+    /**
+     * Set the preferred server to use
+     * @param server server to use
+     */
+    void set_preferred_server_node(const std::optional<unsigned int> &server) noexcept;
+
     HACMapDownloader(const char *map, const char *output_file, const char *game_engine);
     ~HACMapDownloader();
 
@@ -82,6 +89,9 @@ private:
 
     /** Temp file to save to */
     std::string output_file;
+
+    /** Preferred server to use */
+    std::optional<unsigned int> preferred_server_node;
 
     /** Post! */
     std::string post_fields;
