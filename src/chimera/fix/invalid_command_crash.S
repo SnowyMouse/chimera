@@ -3,7 +3,7 @@
 .intel_syntax noprefix
 
 .data
-players_command_text: .string "players"
+players_command_text: .string "begin"
 meme_global_text: .string "rasterizer_soft_filter"
 ignore_broken_globals: .long 0
 
