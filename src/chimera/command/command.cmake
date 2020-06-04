@@ -12,6 +12,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/debug/player_info.cpp
     ${COMMAND_DIR}/core/debug/teleport.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
+    ${COMMAND_DIR}/core/server/allow_all_passengers.cpp
     ${COMMAND_DIR}/core/server/block_equipment_rotation.cpp
     ${COMMAND_DIR}/core/server/block_equipment_rotation.S
     ${COMMAND_DIR}/core/server/delete_empty_weapons.cpp
