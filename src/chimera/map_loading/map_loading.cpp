@@ -949,119 +949,179 @@ namespace Chimera {
         return 1;
     }
 
-    static void load_custom_edition_tags_into_retail_finally() {
-        for(std::size_t i = 0; i < get_tag_data_header().tag_count; i++) {
-            Tag *tag = get_tag(i);
+    static void jason_jones_the_map() noexcept {
+        auto &header = get_map_header();
+        if(
+            std::strcmp("beavercreek",header.name) == 0 ||
+            std::strcmp("bloodgulch",header.name) == 0 ||
+            std::strcmp("boardingaction",header.name) == 0 ||
+            std::strcmp("carousel",header.name) == 0 ||
+            std::strcmp("chillout",header.name) == 0 ||
+            std::strcmp("damnation",header.name) == 0 ||
+            std::strcmp("dangercanyon",header.name) == 0 ||
+            std::strcmp("deathisland",header.name) == 0 ||
+            std::strcmp("gephyrophobia",header.name) == 0 ||
+            std::strcmp("hangemhigh",header.name) == 0 ||
+            std::strcmp("icefields",header.name) == 0 ||
+            std::strcmp("infinity",header.name) == 0 ||
+            std::strcmp("longest",header.name) == 0 ||
+            std::strcmp("prisoner",header.name) == 0 ||
+            std::strcmp("putput",header.name) == 0 ||
+            std::strcmp("ratrace",header.name) == 0 ||
+            std::strcmp("sidewinder",header.name) == 0 ||
+            std::strcmp("timberland",header.name) == 0 ||
+            std::strcmp("wizard",header.name) == 0
+        ) {
+            bool in_custom_edition_server = false;
 
-            if(tag->indexed) {
-                std::byte *base = nullptr, *sound_header = nullptr;
-                if(tag->primary_class == TagClassInt::TAG_CLASS_SOUND) {
-                    for(std::size_t i = 0; i < sounds_custom_index.size(); i++) {
-                        if(sounds_custom_index[i] == tag->path) {
-                            sound_header = sounds_custom[i].get();
-                            base = sound_header + 0xA4;
-                            *reinterpret_cast<std::byte **>(tag->data + 0x98 + 0x4) = base;
-                            break;
-                        }
-                    }
+            // Fix the stun values
+            auto jj_stun = [&in_custom_edition_server](const char *path) {
+                auto *tag = get_tag(path, TagClassInt::TAG_CLASS_DAMAGE_EFFECT);
+                if(tag) {
+                    float new_damage_stun = in_custom_edition_server ? 0.0F : 1.0F;
+                    float damage_maximum_stun = in_custom_edition_server ? 0.0F : 1.0F;
+                    float damage_stun_time = in_custom_edition_server ? 0.0F : 0.15F;
+                    *reinterpret_cast<float *>(tag->data + 0x1E4) = new_damage_stun;
+                    *reinterpret_cast<float *>(tag->data + 0x1E8) = damage_maximum_stun;
+                    *reinterpret_cast<float *>(tag->data + 0x1EC) = damage_stun_time;
                 }
-                else {
-                    std::uint32_t index = reinterpret_cast<std::uint32_t>(tag->data);
-                    auto &thing_to_use = tag->primary_class == TagClassInt::TAG_CLASS_BITMAP ? bitmaps_custom : loc_custom;
-                    if(thing_to_use.size() > index) {
-                        base = thing_to_use[index].get();
-                        tag->data = base;
-                    }
+            };
+            jj_stun("vehicles\\banshee\\banshee bolt");
+            jj_stun("vehicles\\ghost\\ghost bolt");
+
+            // Fix the rwarthog's angles
+            auto jj_rwarthog = [&in_custom_edition_server](const char *path) {
+                auto *tag = get_tag(path, TagClassInt::TAG_CLASS_WEAPON);
+                if(tag) {
+                    float new_autoaim_angle = in_custom_edition_server ? DEGREES_TO_RADIANS(6.0F) : DEGREES_TO_RADIANS(1.0F);
+                    float new_deviation_angle = in_custom_edition_server ? DEGREES_TO_RADIANS(12.0F) : DEGREES_TO_RADIANS(1.0F);
+                    *reinterpret_cast<float *>(tag->data + 0x3E4) = new_autoaim_angle;
+                    *reinterpret_cast<float *>(tag->data + 0x3F4) = new_deviation_angle;
                 }
+            };
+            jj_rwarthog("vehicles\\rwarthog\\rwarthog_gun");
+        }
+    }
 
-                // If none was found, give up
-                if(!base) {
-                    continue;
-                }
+    static void load_custom_edition_tags_into_retail_finally() noexcept {
+        auto &header = get_map_header();
+        auto engine_type = header.engine_type;
+        jason_jones_the_map(); // make sure the map is compatible with the current netcode
 
-                // Offset to work with
-                auto base_offset = reinterpret_cast<std::uintptr_t>(base);
+        if(engine_type == CACHE_FILE_CUSTOM_EDITION) {
+            for(std::size_t i = 0; i < get_tag_data_header().tag_count; i++) {
+                Tag *tag = get_tag(i);
 
-                #define INCREMENT_IF_NECESSARY(what) { \
-                    auto &ptr = *reinterpret_cast<std::byte **>(what); \
-                    if(ptr < base && ptr != 0) { \
-                        ptr += base_offset; \
-                    } \
-                }
-
-                // Now fix the pointers
-                switch(tag->primary_class) {
-                    case TagClassInt::TAG_CLASS_BITMAP: {
-                        INCREMENT_IF_NECESSARY(base + 0x54 + 0x4);
-                        INCREMENT_IF_NECESSARY(base + 0x60 + 0x4);
-                        auto sequence_count = *reinterpret_cast<std::uint32_t *>(base + 0x54);
-                        auto *sequences = *reinterpret_cast<std::byte **>(base + 0x54 + 0x4);
-                        for(std::uint32_t s = 0; s < sequence_count; s++) {
-                            INCREMENT_IF_NECESSARY(sequences + s * 64 + 0x34 + 0x4);
-                        }
-                        break;
-                    }
-                    case TagClassInt::TAG_CLASS_SOUND: {
-                        auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag->data + 0x98);
-
-                        *reinterpret_cast<std::uint32_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint32_t *>(sound_header + 0x6C);
-                        *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6);
-
-                        for(std::uint32_t p = 0; p < pitch_range_count; p++) {
-                            auto *pitch_range = base + p * 72;
-                            INCREMENT_IF_NECESSARY(pitch_range + 0x3C + 0x4);
-                            auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
-                            auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
-
-                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
-                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
-
-                            for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
-                                auto *permutation = permutations + pe * 124;
-
-                                *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
-                                *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
-
-                                INCREMENT_IF_NECESSARY(permutation + 0x54 + 0xC);
-                                INCREMENT_IF_NECESSARY(permutation + 0x68 + 0xC);
-                                *reinterpret_cast<TagID *>(permutation + 0x34) = tag->id;
-                                *reinterpret_cast<TagID *>(permutation + 0x3C) = tag->id;
-                                *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                if(tag->indexed) {
+                    std::byte *base = nullptr, *sound_header = nullptr;
+                    if(tag->primary_class == TagClassInt::TAG_CLASS_SOUND) {
+                        for(std::size_t i = 0; i < sounds_custom_index.size(); i++) {
+                            if(sounds_custom_index[i] == tag->path) {
+                                sound_header = sounds_custom[i].get();
+                                base = sound_header + 0xA4;
+                                *reinterpret_cast<std::byte **>(tag->data + 0x98 + 0x4) = base;
+                                break;
                             }
                         }
-                        break;
                     }
-                    case TagClassInt::TAG_CLASS_FONT: {
-                        INCREMENT_IF_NECESSARY(base + 0x7C + 0x4);
-                        INCREMENT_IF_NECESSARY(base + 0x30 + 0x4);
-                        INCREMENT_IF_NECESSARY(base + 0x88 + 0xC);
-                        std::uint32_t table_count = *reinterpret_cast<std::uint32_t *>(base + 0x30);
-                        auto *tables = *reinterpret_cast<std::byte **>(base + 0x30 + 0x4);
-                        for(std::uint32_t t = 0; t < table_count; t++) {
-                            INCREMENT_IF_NECESSARY(tables + t * 12 + 0x0 + 0x4);
+                    else {
+                        std::uint32_t index = reinterpret_cast<std::uint32_t>(tag->data);
+                        auto &thing_to_use = tag->primary_class == TagClassInt::TAG_CLASS_BITMAP ? bitmaps_custom : loc_custom;
+                        if(thing_to_use.size() > index) {
+                            base = thing_to_use[index].get();
+                            tag->data = base;
                         }
-                        break;
                     }
-                    case TagClassInt::TAG_CLASS_UNICODE_STRING_LIST: {
-                        INCREMENT_IF_NECESSARY(base + 0x0 + 0x4);
-                        std::uint32_t string_count = *reinterpret_cast<std::uint32_t *>(base + 0x0);
-                        std::byte *strings = *reinterpret_cast<std::byte **>(base + 0x0 + 0x4);
-                        for(std::uint32_t s = 0; s < string_count; s++) {
-                            INCREMENT_IF_NECESSARY(strings + s * 20 + 0x0 + 0xC);
-                        }
-                        break;
-                    }
-                    case TagClassInt::TAG_CLASS_HUD_MESSAGE_TEXT: {
-                        INCREMENT_IF_NECESSARY(base + 0x0 + 0xC);
-                        INCREMENT_IF_NECESSARY(base + 0x14 + 0x4);
-                        INCREMENT_IF_NECESSARY(base + 0x20 + 0x4);
-                        break;
-                    }
-                    default:
-                        break;
-                }
 
-                #undef INCREMENT_IF_NECESSARY
+                    // If none was found, give up
+                    if(!base) {
+                        continue;
+                    }
+
+                    // Offset to work with
+                    auto base_offset = reinterpret_cast<std::uintptr_t>(base);
+
+                    #define INCREMENT_IF_NECESSARY(what) { \
+                        auto &ptr = *reinterpret_cast<std::byte **>(what); \
+                        if(ptr < base && ptr != 0) { \
+                            ptr += base_offset; \
+                        } \
+                    }
+
+                    // Now fix the pointers
+                    switch(tag->primary_class) {
+                        case TagClassInt::TAG_CLASS_BITMAP: {
+                            INCREMENT_IF_NECESSARY(base + 0x54 + 0x4);
+                            INCREMENT_IF_NECESSARY(base + 0x60 + 0x4);
+                            auto sequence_count = *reinterpret_cast<std::uint32_t *>(base + 0x54);
+                            auto *sequences = *reinterpret_cast<std::byte **>(base + 0x54 + 0x4);
+                            for(std::uint32_t s = 0; s < sequence_count; s++) {
+                                INCREMENT_IF_NECESSARY(sequences + s * 64 + 0x34 + 0x4);
+                            }
+                            break;
+                        }
+                        case TagClassInt::TAG_CLASS_SOUND: {
+                            auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag->data + 0x98);
+
+                            *reinterpret_cast<std::uint32_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint32_t *>(sound_header + 0x6C);
+                            *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6);
+
+                            for(std::uint32_t p = 0; p < pitch_range_count; p++) {
+                                auto *pitch_range = base + p * 72;
+                                INCREMENT_IF_NECESSARY(pitch_range + 0x3C + 0x4);
+                                auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                                auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+
+                                *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
+                                *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
+
+                                for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
+                                    auto *permutation = permutations + pe * 124;
+
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
+
+                                    INCREMENT_IF_NECESSARY(permutation + 0x54 + 0xC);
+                                    INCREMENT_IF_NECESSARY(permutation + 0x68 + 0xC);
+                                    *reinterpret_cast<TagID *>(permutation + 0x34) = tag->id;
+                                    *reinterpret_cast<TagID *>(permutation + 0x3C) = tag->id;
+                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                                }
+                            }
+                            break;
+                        }
+                        case TagClassInt::TAG_CLASS_FONT: {
+                            INCREMENT_IF_NECESSARY(base + 0x7C + 0x4);
+                            INCREMENT_IF_NECESSARY(base + 0x30 + 0x4);
+                            INCREMENT_IF_NECESSARY(base + 0x88 + 0xC);
+                            std::uint32_t table_count = *reinterpret_cast<std::uint32_t *>(base + 0x30);
+                            auto *tables = *reinterpret_cast<std::byte **>(base + 0x30 + 0x4);
+                            for(std::uint32_t t = 0; t < table_count; t++) {
+                                INCREMENT_IF_NECESSARY(tables + t * 12 + 0x0 + 0x4);
+                            }
+                            break;
+                        }
+                        case TagClassInt::TAG_CLASS_UNICODE_STRING_LIST: {
+                            INCREMENT_IF_NECESSARY(base + 0x0 + 0x4);
+                            std::uint32_t string_count = *reinterpret_cast<std::uint32_t *>(base + 0x0);
+                            std::byte *strings = *reinterpret_cast<std::byte **>(base + 0x0 + 0x4);
+                            for(std::uint32_t s = 0; s < string_count; s++) {
+                                INCREMENT_IF_NECESSARY(strings + s * 20 + 0x0 + 0xC);
+                            }
+                            break;
+                        }
+                        case TagClassInt::TAG_CLASS_HUD_MESSAGE_TEXT: {
+                            INCREMENT_IF_NECESSARY(base + 0x0 + 0xC);
+                            INCREMENT_IF_NECESSARY(base + 0x14 + 0x4);
+                            INCREMENT_IF_NECESSARY(base + 0x20 + 0x4);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
+                    #undef INCREMENT_IF_NECESSARY
+                }
             }
         }
     }

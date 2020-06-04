@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <optional>
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "../../command.hpp"
@@ -210,7 +209,7 @@ namespace Chimera {
         float *xyz = reinterpret_cast<float *>(get_player_data() + 0x1C);
         float pitch = std::asin(object->aim.z);
         float cos_pitch = std::cos(pitch);
-        float yaw = M_PI / 2 - std::asin(object->aim.x / cos_pitch);
+        auto yaw = static_cast<float>(HALO_PI / 2.0 - std::asin(object->aim.x / cos_pitch));
         if(object->aim.y < 0.0F) {
             yaw *= -1.0F;
         }

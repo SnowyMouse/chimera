@@ -6,6 +6,10 @@
 #include <windows.h>
 #include "../version.hpp"
 
+#define HALO_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+#define DEGREES_TO_RADIANS(deg) (deg / 180.0 * HALO_PI)
+#define RADIANS_TO_DEGREES(rad) (rad / HALO_PI * 180.0)
+
 namespace Chimera {
     struct ColorARGB;
     struct ColorByte;
