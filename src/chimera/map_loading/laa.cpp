@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "laa.hpp"
 #include <stdio.h>
 #include <string.h>

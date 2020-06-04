@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "chat.hpp"
 #include <algorithm>
 #include <windows.h>

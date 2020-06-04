@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <variant>
 #include "../halo_data/tag.hpp"
 #include "../chimera.hpp"

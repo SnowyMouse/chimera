@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../../localization/localization.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/multiplayer.hpp"

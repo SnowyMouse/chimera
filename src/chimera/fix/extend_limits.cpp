@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "extend_limits.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"

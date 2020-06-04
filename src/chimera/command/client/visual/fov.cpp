@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../../event/camera.hpp"
 #include "../../../halo_data/camera.hpp"
 #include "../../../halo_data/resolution.hpp"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../command.hpp"
 #include "../../../fix/model_detail.hpp"
 #include "../../../output/output.hpp"

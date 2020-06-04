@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "force_crash.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"

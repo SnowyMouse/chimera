@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../../output/output.hpp"
 #include "../../../localization/localization.hpp"
 #include "../../../version.hpp"

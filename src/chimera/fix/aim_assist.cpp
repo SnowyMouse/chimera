@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "aim_assist.hpp"
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"

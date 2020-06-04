@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "sun_fix.hpp"
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"

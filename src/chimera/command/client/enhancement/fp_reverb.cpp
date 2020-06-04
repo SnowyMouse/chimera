@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../command.hpp"
 #include "../../../fix/fp_reverb.hpp"
 #include "../../../output/output.hpp"

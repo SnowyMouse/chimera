@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "server.hpp"
 #include "multiplayer.hpp"
 #include "../signature/signature.hpp"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "nav_numbers.hpp"
 #include "../chimera.hpp"
 #include "../config/ini.hpp"

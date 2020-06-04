@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "custom_map_lobby_fix.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"

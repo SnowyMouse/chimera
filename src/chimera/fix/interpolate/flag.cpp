@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../halo_data/object.hpp"
 #include "../../halo_data/flag.hpp"
 

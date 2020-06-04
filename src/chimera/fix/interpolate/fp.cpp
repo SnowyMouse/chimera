@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../math_trig/math_trig.hpp"
 
 #include <optional>

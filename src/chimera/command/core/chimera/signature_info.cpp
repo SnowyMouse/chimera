@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <fstream>
 
 #include "../../../localization/localization.hpp"

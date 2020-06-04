@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "abolish_safe_mode.hpp"
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"

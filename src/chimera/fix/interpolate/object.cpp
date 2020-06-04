@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../signature/signature.hpp"
 #include "../../halo_data/object.hpp"
 #include "../../math_trig/math_trig.hpp"

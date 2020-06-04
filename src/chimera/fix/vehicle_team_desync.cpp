@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "vehicle_team_desync.hpp"
 #include "../chimera.hpp"
 #include "../halo_data/multiplayer.hpp"

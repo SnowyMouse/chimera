@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "bookmark.hpp"

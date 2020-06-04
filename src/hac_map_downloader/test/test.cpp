@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <cstdio>
 #include "../hac_map_downloader.hpp"
 

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../../custom_chat/custom_chat.hpp"
 #include "../../../command/command.hpp"
 #include "../../../output/output.hpp"

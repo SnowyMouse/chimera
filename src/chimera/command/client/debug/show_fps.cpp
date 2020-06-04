@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "../../../event/frame.hpp"
 #include "../../../output/draw_text.hpp"
 #include "../../../output/output.hpp"

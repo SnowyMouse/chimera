@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <optional>
 #define _USE_MATH_DEFINES
 #include <cmath>
