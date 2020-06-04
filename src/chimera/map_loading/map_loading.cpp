@@ -242,7 +242,7 @@ namespace Chimera {
                         for(auto &map : compressed_maps) {
                             if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
                                 get_tmp_path(map, tmp_path);
-                                console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
+                                //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
                                 last_loaded_map = &map - compressed_maps;
                                 std::strncpy(map_path, tmp_path, MAX_PATH);
                                 return;
