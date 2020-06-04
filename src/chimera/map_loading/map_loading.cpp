@@ -396,7 +396,6 @@ namespace Chimera {
         #define TRANSLATE_POINTER(pointer, to_type) reinterpret_cast<to_type>(tag_data + reinterpret_cast<std::uintptr_t>(pointer) - tag_data_address)
 
         // Open bitmaps.map and sounds.map
-        std::size_t old_used = buffer_used;
         bool using_custom_rsc = (can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION);
         std::FILE *bitmaps_file = std::fopen(path_for_map(using_custom_rsc ? BITMAPS_CUSTOM_MAP : "bitmaps"), "rb");
         std::FILE *sounds_file = std::fopen(path_for_map(using_custom_rsc ? SOUNDS_CUSTOM_MAP : "sounds"), "rb");
@@ -452,158 +451,180 @@ namespace Chimera {
         };
 
         // Preload any indexed tags, if possible
+        std::size_t old_used = buffer_used;
         if(can_load_indexed_tags) {
-            std::vector<Resource> bitmaps;
-            std::vector<Resource> sounds;
+            auto *cache_file_header = reinterpret_cast<MapHeader *>(buffer);
+            // If the tag data is NOT last, we need to make a copy
+            std::size_t used_before_preloaded_tag_data = old_used;
 
-            load_resource_map(bitmaps, bitmaps_file);
-            load_resource_map(sounds, sounds_file);
-
-            for(std::size_t t = 0; t < header.tag_count; t++) {
-                auto &tag = tag_array[t];
-                if(!tag.indexed) {
-                    continue;
+            if(cache_file_header->tag_data_offset + cache_file_header->tag_data_size != old_used) {
+                auto bytes_to_append = cache_file_header->tag_data_size;
+                used_before_preloaded_tag_data = old_used + bytes_to_append;
+                if(bytes_to_append > buffer_size || used_before_preloaded_tag_data > buffer_size) {
+                    missed_data += bytes_to_append;
+                    can_load_indexed_tags = false;
                 }
-                if(tag.primary_class == TagClassInt::TAG_CLASS_BITMAP) {
-                    std::size_t resource_tag_index = reinterpret_cast<std::uint32_t>(tag.data);
+                else {
+                    std::memcpy(buffer + old_used, buffer + cache_file_header->tag_data_offset, bytes_to_append);
+                    cache_file_header->tag_data_offset = old_used;
+                    buffer_used = used_before_preloaded_tag_data;
+                }
+            }
 
-                    // If this is screwed up, exit!
-                    if(resource_tag_index > bitmaps.size()) {
-                        std::exit(1);
-                    }
+            if(can_load_indexed_tags) {
+                std::vector<Resource> bitmaps;
+                std::vector<Resource> sounds;
 
-                    auto &resource = bitmaps[resource_tag_index];
+                load_resource_map(bitmaps, bitmaps_file);
+                load_resource_map(sounds, sounds_file);
 
-                    // All right!
-                    std::size_t new_used = buffer_used + resource.data_size;
-                    if(resource.data_size > buffer_size || new_used > buffer_size) {
-                        missed_data += resource.data_size;
+                for(std::size_t t = 0; t < header.tag_count; t++) {
+                    auto &tag = tag_array[t];
+                    if(!tag.indexed) {
                         continue;
                     }
+                    if(tag.primary_class == TagClassInt::TAG_CLASS_BITMAP) {
+                        std::size_t resource_tag_index = reinterpret_cast<std::uint32_t>(tag.data);
 
-                    auto *baseline = buffer + buffer_used;
-                    std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
-                    tag.data = reinterpret_cast<std::byte *>(baseline_address);
-                    std::fseek(bitmaps_file, resource.data_offset, SEEK_SET);
-                    std::fread(baseline, resource.data_size, 1, bitmaps_file);
+                        // If this is screwed up, exit!
+                        if(resource_tag_index >= bitmaps.size()) {
+                            std::exit(1);
+                        }
 
-                    // Now fix the pointers for sequence data
-                    auto &sequences_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x54);
-                    if(sequences_count) {
-                        auto &sequences_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x58);
-                        sequences_ptr += baseline_address;
-                        auto *sequences = TRANSLATE_POINTER(sequences_ptr, std::byte *);
-                        for(std::uint32_t s = 0; s < sequences_count; s++) {
-                            auto *sequence = sequences + s * 0x40;
-                            auto &sprites_count = *reinterpret_cast<std::uint32_t *>(sequence + 0x34);
-                            if(sprites_count) {
-                                auto &sprites = *reinterpret_cast<std::uint32_t *>(sequence + 0x38);
-                                sprites += baseline_address;
+                        auto &resource = bitmaps[resource_tag_index];
+
+                        // All right!
+                        std::size_t bytes_to_read = resource.data_size;
+                        std::size_t new_used = buffer_used + bytes_to_read;
+                        if(bytes_to_read > buffer_size || new_used > buffer_size) {
+                            missed_data += bytes_to_read;
+                            continue;
+                        }
+
+                        auto *baseline = buffer + buffer_used;
+                        std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
+                        tag.data = reinterpret_cast<std::byte *>(baseline_address);
+                        std::fseek(bitmaps_file, resource.data_offset, SEEK_SET);
+                        std::fread(baseline, bytes_to_read, 1, bitmaps_file);
+
+                        // Now fix the pointers for sequence data
+                        auto &sequences_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x54);
+                        if(sequences_count) {
+                            auto &sequences_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x58);
+                            sequences_ptr += baseline_address;
+                            auto *sequences = TRANSLATE_POINTER(sequences_ptr, std::byte *);
+                            for(std::uint32_t s = 0; s < sequences_count; s++) {
+                                auto *sequence = sequences + s * 0x40;
+                                auto &sprites_count = *reinterpret_cast<std::uint32_t *>(sequence + 0x34);
+                                if(sprites_count) {
+                                    auto &sprites = *reinterpret_cast<std::uint32_t *>(sequence + 0x38);
+                                    sprites += baseline_address;
+                                }
                             }
                         }
-                    }
 
-                    // Fix bitmap data
-                    auto &bitmap_data_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x60);
-                    if(bitmap_data_count) {
-                        auto &bitmap_data_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x64);
-                        bitmap_data_ptr += baseline_address;
-                        auto *bitmap_data = TRANSLATE_POINTER(bitmap_data_ptr, std::byte *);
-                        for(std::size_t d = 0; d < bitmap_data_count; d++) {
-                            auto *bitmap = bitmap_data + d * 0x30;
-                            *reinterpret_cast<TagID *>(bitmap + 0x20) = tag.id;
+                        // Fix bitmap data
+                        auto &bitmap_data_count = *reinterpret_cast<std::uint32_t *>(baseline + 0x60);
+                        if(bitmap_data_count) {
+                            auto &bitmap_data_ptr = *reinterpret_cast<std::uint32_t *>(baseline + 0x64);
+                            bitmap_data_ptr += baseline_address;
+                            auto *bitmap_data = TRANSLATE_POINTER(bitmap_data_ptr, std::byte *);
+                            for(std::size_t d = 0; d < bitmap_data_count; d++) {
+                                auto *bitmap = bitmap_data + d * 0x30;
+                                *reinterpret_cast<TagID *>(bitmap + 0x20) = tag.id;
+                            }
                         }
+
+                        buffer_used = new_used;
+                        tag.indexed = 0;
                     }
+                    else if(tag.primary_class == TagClassInt::TAG_CLASS_SOUND) {
+                        std::optional<std::size_t> resource_tag_index;
+                        const char *path = TRANSLATE_POINTER(tag.path, const char *);
 
-                    buffer_used = new_used;
-                    tag.indexed = 0;
-                }
-                else if(tag.primary_class == TagClassInt::TAG_CLASS_SOUND) {
-                    std::optional<std::size_t> resource_tag_index;
-                    const char *path = TRANSLATE_POINTER(tag.path, const char *);
-
-                    for(auto &s : sounds) {
-                        if(std::strcmp(path, s.path) == 0) {
-                            resource_tag_index = &s - sounds.data();
-                            break;
+                        for(auto &s : sounds) {
+                            if(std::strcmp(path, s.path) == 0) {
+                                resource_tag_index = &s - sounds.data();
+                                break;
+                            }
                         }
-                    }
 
-                    // If this is screwed up, exit!
-                    if(!resource_tag_index.has_value()) {
-                        std::exit(1);
-                    }
+                        // If this is screwed up, exit!
+                        if(!resource_tag_index.has_value()) {
+                            std::exit(1);
+                        }
 
-                    // Load sounds
-                    auto &resource = sounds[*resource_tag_index];
-                    static constexpr std::size_t SOUND_HEADER_SIZE = 0xA4;
-                    std::size_t bytes_to_read = resource.data_size - SOUND_HEADER_SIZE;
-                    std::size_t new_used = buffer_used + bytes_to_read;
-                    if(bytes_to_read > buffer_size || new_used > buffer_size) {
-                        missed_data += bytes_to_read;
-                        continue;
-                    }
+                        // Load sounds
+                        auto &resource = sounds[*resource_tag_index];
+                        static constexpr std::size_t SOUND_HEADER_SIZE = 0xA4;
+                        std::size_t bytes_to_read = resource.data_size - SOUND_HEADER_SIZE;
+                        std::size_t new_used = buffer_used + bytes_to_read;
+                        if(bytes_to_read > buffer_size || new_used > buffer_size) {
+                            missed_data += bytes_to_read;
+                            continue;
+                        }
 
-                    auto *baseline = buffer + buffer_used;
-                    std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
-                    std::fseek(sounds_file, resource.data_offset, SEEK_SET);
-                    std::byte base_sound_data[SOUND_HEADER_SIZE];
-                    std::fread(base_sound_data, sizeof(base_sound_data), 1, sounds_file);
-                    std::fread(baseline, bytes_to_read, 1, sounds_file);
+                        auto *baseline = buffer + buffer_used;
+                        std::uint32_t baseline_address = baseline - tag_data + tag_data_address;
+                        std::fseek(sounds_file, resource.data_offset, SEEK_SET);
+                        std::byte base_sound_data[SOUND_HEADER_SIZE];
+                        std::fread(base_sound_data, sizeof(base_sound_data), 1, sounds_file);
+                        std::fread(baseline, bytes_to_read, 1, sounds_file);
 
-                    auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
-                    auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
+                        auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
+                        auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
 
-                    // Set encoding stuff
-                    *reinterpret_cast<std::uint32_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x6C);
+                        // Set encoding stuff
+                        *reinterpret_cast<std::uint32_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x6C);
 
-                    // Set sample rate
-                    *reinterpret_cast<std::uint16_t *>(sound_data + 0x6) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6);
+                        // Set sample rate
+                        *reinterpret_cast<std::uint16_t *>(sound_data + 0x6) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6);
 
-                    if(pitch_range_count) {
-                        *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
+                        if(pitch_range_count) {
+                            *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;
 
-                        // Fix the pointers
-                        for(std::size_t p = 0; p < pitch_range_count; p++) {
-                            auto *pitch_range = baseline + p * 0x48;
-                            auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
-                            auto &permutation_ptr = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40);
-                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
-                            *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
+                            // Fix the pointers
+                            for(std::size_t p = 0; p < pitch_range_count; p++) {
+                                auto *pitch_range = baseline + p * 0x48;
+                                auto &permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                                auto &permutation_ptr = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x40);
+                                *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
+                                *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
 
-                            if(permutation_count) {
-                                permutation_ptr += baseline_address;
-                                auto *permutations = TRANSLATE_POINTER(permutation_ptr, std::byte *);
-                                for(std::size_t r = 0; r < permutation_count; r++) {
-                                    auto *permutation = permutations + r * 0x7C;
-                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
-                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
-                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x34) = *reinterpret_cast<std::uint32_t *>(&tag.id);
-                                    *reinterpret_cast<std::uint32_t *>(permutation + 0x3C) = *reinterpret_cast<std::uint32_t *>(&tag.id);
+                                if(permutation_count) {
+                                    permutation_ptr += baseline_address;
+                                    auto *permutations = TRANSLATE_POINTER(permutation_ptr, std::byte *);
+                                    for(std::size_t r = 0; r < permutation_count; r++) {
+                                        auto *permutation = permutations + r * 0x7C;
+                                        *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                                        *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
+                                        *reinterpret_cast<std::uint32_t *>(permutation + 0x34) = *reinterpret_cast<std::uint32_t *>(&tag.id);
+                                        *reinterpret_cast<std::uint32_t *>(permutation + 0x3C) = *reinterpret_cast<std::uint32_t *>(&tag.id);
 
-                                    auto &mouth_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x54 + 0xC);
-                                    auto &subtitle_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x68 + 0xC);
+                                        auto &mouth_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x54 + 0xC);
+                                        auto &subtitle_data = *reinterpret_cast<std::uint32_t *>(permutation + 0x68 + 0xC);
 
-                                    if(mouth_data) {
-                                        mouth_data += baseline_address;
-                                    }
+                                        if(mouth_data) {
+                                            mouth_data += baseline_address;
+                                        }
 
-                                    if(subtitle_data) {
-                                        subtitle_data += baseline_address;
+                                        if(subtitle_data) {
+                                            subtitle_data += baseline_address;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        buffer_used = new_used;
+                        tag.indexed = 0;
                     }
-
-                    buffer_used = new_used;
-                    tag.indexed = 0;
                 }
-            }
 
-            // Add up the difference
-            std::size_t bytes_added = (buffer_used - old_used);
-            reinterpret_cast<MapHeader *>(buffer)->tag_data_size += bytes_added;
+                // Add up the difference
+                std::size_t bytes_added = (buffer_used - used_before_preloaded_tag_data);
+                cache_file_header->tag_data_size += bytes_added;
+            }
         }
 
         // Preload all of the assets
