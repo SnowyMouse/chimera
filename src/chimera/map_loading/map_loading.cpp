@@ -23,6 +23,7 @@
 #include "../bookmark/bookmark.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../fix/custom_edition_bridge/map_support.hpp"
+#include "../fix/custom_edition_bridge/master_server.hpp"
 #include <chrono>
 
 namespace Invader::Compression {
@@ -989,7 +990,9 @@ namespace Chimera {
 
         // Support Cutdown Edition maps
         if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
-            custom_maps_on_retail = set_up_custom_edition_map_support();
+            if((custom_maps_on_retail = set_up_custom_edition_map_support())) {
+                set_up_custom_edition_master_server_support();
+            }
         }
 
         auto *font_fam = get_chimera().get_ini()->get_value("chimera.download_font");
