@@ -105,6 +105,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/camera.cpp
     src/chimera/halo_data/chat.cpp
     src/chimera/halo_data/chat.S
+    src/chimera/halo_data/controls.cpp
     src/chimera/halo_data/decal.cpp
     src/chimera/halo_data/effect.cpp
     src/chimera/halo_data/flag.cpp

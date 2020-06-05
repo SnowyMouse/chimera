@@ -7,7 +7,6 @@
 #include "pad.hpp"
 
 namespace Chimera {
-
     struct Controls {
         std::uint8_t jump;
         std::uint8_t switch_grenade;
@@ -52,6 +51,8 @@ namespace Chimera {
         std::uint8_t controller_aim;
         PAD(0x3);
     };
+
+    Controls &get_controls() noexcept;
 }
 
 #endif
