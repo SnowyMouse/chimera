@@ -51,6 +51,8 @@ add_library(chimera STATIC
     src/chimera/fix/bullshit_server_data.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
+    src/chimera/fix/custom_edition_bridge/map_support.cpp
+    src/chimera/fix/custom_edition_bridge/map_support.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp

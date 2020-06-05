@@ -16,6 +16,18 @@ namespace Chimera {
         MAP_USER_INTERFACE
     };
 
+    enum CacheFileEngine : std::uint32_t {
+        CACHE_FILE_XBOX = 0x5,
+        CACHE_FILE_DEMO = 0x6,
+        CACHE_FILE_RETAIL = 0x7,
+        CACHE_FILE_CUSTOM_EDITION = 0x261,
+        CACHE_FILE_DARK_CIRCLET = 0x1A86,
+
+        CACHE_FILE_DEMO_COMPRESSED = 0x861A0006,
+        CACHE_FILE_RETAIL_COMPRESSED = 0x861A0007,
+        CACHE_FILE_CUSTOM_EDITION_COMPRESSED = 0x861A0261
+    };
+
     /**
      * This is the header located at the first 2048 bytes of each map file
      */
@@ -27,7 +39,7 @@ namespace Chimera {
         std::uint32_t head = 0x68656164;
 
         /** 7 if retail; 0x261 if Custom Edition; 5 if Xbox */
-        std::uint32_t engine_type;
+        CacheFileEngine engine_type;
 
         /** File size in bytes; Halo ignores map files that are >384 MiB */
         std::uint32_t file_size;
@@ -85,8 +97,8 @@ namespace Chimera {
 
         PAD(0x2A0);
 
-        /** 7 if retail; 0x261 if Custom Edition; 5 if Xbox */
-        std::uint32_t engine_type;
+        /** 6 */
+        CacheFileEngine engine_type;
 
         /** File name of map excluding extension; typically matches scenario tag name, but not required */
         char name[32];
