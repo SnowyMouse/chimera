@@ -44,11 +44,12 @@ To ensure the base game is preserved as much as possible, most features are not
 turned on by default, and the ones that are only exist to enhance or fix the
 game.
 - [Passive features](#passive-features)
+- [Custom Edition map support on retail](#custom-edition-map-support-on-retail)
 - [Ini features](#ini-features)
 - [Commands](#commands)
 
 ### Passive features
-These are features that are always on.
+These are features that are always (or are on).
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)
@@ -74,12 +75,14 @@ These are features that are always on.
 - [Timer offset fix](#timer-offset-fix)
 - [Sane default Halo settings](#sane-default-halo-settings)
 - [Removed update check](#removed-update-check)
+- [Multi-team vehicle fix](#multi-team-vehicle-fix)
 - [Map downloading](#map-downloading)
 
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
 will never move faster than 30 frames per second. Chimera adds interpolation to
-the game for objects. Unlike MCC, it also adds it for particles, too.
+the game for objects. Unlike MCC, it also adds it for cutscenes and plasma
+projectiles, too.
 
 #### Limit increase
 Chimera increases some of the limits of the game. Note that, unless you play a
@@ -97,7 +100,8 @@ maps. This allows you to take advantage of the blazingly fast zstd compression
 algorithm, drastically cutting down map size.
 
 If [maps in RAM](#memory-settings) is enabled, compressed maps will be
-decompressed directly into RAM. Otherwise, temp files will be used.
+decompressed directly into RAM. Otherwise, temp files will be used (placed in
+Chimera's folder).
 
 #### Reduced DRM
 Normally, Halo does not allow you to join servers with someone that has the
@@ -215,6 +219,11 @@ SOUND VARIETY         | HIGH        |
 The check for updates that occurs when clicking on "INTERNET" in joining or
 creating games is disabled.
 
+#### Multi-team vehicles fix
+Servers with Chimera's [chimera_allow_all_passengers](#allow-all-passengers),
+multi-team vehicles, or some equivalent feature enabled will not desync a client
+with this fix.
+
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
 [HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that
@@ -286,11 +295,33 @@ This allows you to execute Chimera commands, Halo commands, or Halo scripts
 when the key combination is invoked. See the included chimera.ini file for more
 information on these settings.
 
+### Custom Edition map support on retail
+Chimera can enable Halo Custom Edition map support when playing the base Halo PC
+game.
+
+To enable this, put the following files to your maps folder:
+- `custom_bitmaps.map` (Halo Custom Edition bitmaps.map file)
+- `custom_loc.map`     (Halo Custom Edition loc.map file)
+- `custom_sounds.map`  (Halo Custom Edition sounds.map file)
+
+You can obtain these files from the Halo Custom Edition installer. Then, simply
+rename them to have the `custom_` prefixes and copy them into your maps folder.
+
+> **NOTE:** If you do not wish to install Halo Custom Edition, you can extract
+> these resource map files from the installer using archiver programs such as
+> [7-Zip](https://www.7-zip.org/download.html) (Windows) or
+> [p7zip](https://wiki.archlinux.org/index.php/P7zip) (POSIX).
+
+> **CAUTION:** Do NOT overwrite your original bitmaps.map or sounds.map files.
+> You need these to load Halo PC maps. Also, Chimera will *not* enable Custom
+> Edition support if *any* of the above files are missing.
+
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
 these features are off by default. Commands are stored in preferences.txt in
 the chimera folder created by Chimera.
 - [Aim assist](#aim-assist)
+- [Allow all passengers](#allow-all-passengers)
 - [Anisotropic filtering](#anisotropic-filtering)
 - [Auto uncrouching](#auto-uncrouching)
 - [Block all bullshit](#block-all-bullshit)
@@ -351,6 +382,14 @@ Halo's aim assist was broken in the PC release. Chimera fixes it. It only works
 for analog sticks, though.
 
 **Usage:** `chimera_aim_assist [true/false]`
+
+#### Allow all passengers
+Disable teammate restrictions for vehicles, allowing anyone to enter anyone's
+vehicle. This will only apply if you're hosting a game, and clients will need to
+have a version of Chimera that fixes desyncing with multi-team vehicles (or an
+equivalent mod), or else desyncing will occur.
+
+**Usage:** `chimera_allow_all_passengers [true/false]`
 
 #### Anisotropic filtering
 This enables the same thing that is done in config.txt but without having to
