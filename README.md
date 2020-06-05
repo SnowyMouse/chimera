@@ -7,12 +7,20 @@ for more information.
 
 The official repository is hosted at https://github.com/Kavawuvi/chimera
 
+
+
+
+
 ## Table of contents
 - [Installation](#installation)
 - [System requirements](#system-requirements)
 - [Mod support](#mod-support)
 - [Features](#features)
 - [FAQ](#faq)
+
+
+
+
 
 ## Installation
 Here is the installation procedure for installing Chimera:
@@ -29,6 +37,10 @@ Uninstalling Chimera is simple:
 1. Delete Chimera's strings.dll and (optionally) chimera.ini.
 2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
 
+
+
+
+
 ## Mod support
 You can install binary mods (i.e. dlls) by creating a folder called "mods" and
 copying the dlls into the directory.
@@ -37,6 +49,10 @@ NOTE: Chimera does *not* support dll mods including HAC2 or Open Sauce. This is
 because they modify the game in similar ways, resulting in them conflicting with
 one another. Supporting just one of these mods would mean extra development time
 that we don't have. Sorry.
+
+
+
+
 
 ## Features
 Chimera provides a number of features and enhancements to the base Halo game.
@@ -47,6 +63,7 @@ game.
 - [Custom Edition map support on retail](#custom-edition-map-support-on-retail)
 - [Ini features](#ini-features)
 - [Commands](#commands)
+
 
 ### Passive features
 These are features that are always (or are on).
@@ -295,6 +312,7 @@ This allows you to execute Chimera commands, Halo commands, or Halo scripts
 when the key combination is invoked. See the included chimera.ini file for more
 information on these settings.
 
+
 ### Custom Edition map support on retail
 Chimera can enable Halo Custom Edition map support when playing the base Halo PC
 game.
@@ -313,8 +331,9 @@ rename them to have the `custom_` prefixes and copy them into your maps folder.
 > [p7zip](https://wiki.archlinux.org/index.php/P7zip) (POSIX).
 
 > **CAUTION:** Do NOT overwrite your original bitmaps.map or sounds.map files.
-> You need these to load Halo PC maps. Also, Chimera will *not* enable Custom
-> Edition support if *any* of the above files are missing.
+> You need these to load Halo PC maps. Also, Chimera will *not* enable this
+> feature if *any* of the above files are missing.
+
 
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
@@ -735,7 +754,16 @@ another thing due to the nature of these fixes.
 
 **Usage:** `chimera_widescreen_fix [true/false]`
 
+
+
+
+
 ## FAQ
+Below is a list of frequently asked questions. These questions are either based
+on questions I have received or questions I *might* receive that I feel are
+worth answering in a readme.
+
+
 
 ### Will Chimera run on my system?
 Short answer: If your PC is semi-recent and uses Windows 7 or newer, it'll work.
