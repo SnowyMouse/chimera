@@ -164,6 +164,14 @@ const std::string &HACMapDownloader::get_map() const noexcept {
 
 void HACMapDownloader::cancel() noexcept {
     this->mutex.lock();
+    if(this->status == DOWNLOAD_STAGE_CANCELED || this->status == DOWNLOAD_STAGE_FAILED) {
+        if(std::filesystem::exists(this->output_file)) {
+            if(this->output_file_handle) {
+                std::fclose(this->output_file_handle);
+            }
+            std::filesystem::remove(this->output_file);
+        }
+    }
     if(this->status == DOWNLOAD_STAGE_CANCELED) {
         this->mutex.unlock();
         return;
@@ -184,7 +192,6 @@ void HACMapDownloader::cancel() noexcept {
             std::fclose(this->output_file_handle);
             this->output_file_handle = nullptr;
         }
-        std::filesystem::remove(this->output_file);
         this->mutex.unlock();
     }
 }

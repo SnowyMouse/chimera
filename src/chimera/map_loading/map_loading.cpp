@@ -36,7 +36,6 @@ namespace Invader::Compression {
 namespace Chimera {
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
-    static bool custom_maps_on_retail = false;
 
     std::byte *maps_in_ram_region = nullptr;
     static std::byte *ui_region = nullptr;
@@ -53,7 +52,7 @@ namespace Chimera {
     }
 
     extern "C" bool using_custom_map_on_retail() noexcept {
-        return custom_maps_on_retail && get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
+        return custom_edition_maps_supported_on_retail() && get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
     }
 
     struct CompressedMapIndex {
@@ -139,7 +138,7 @@ namespace Chimera {
                     }
                     return header_full_version_valid;
                 }
-                else if(custom_maps_on_retail) {
+                else if(custom_edition_maps_supported_on_retail()) {
                     goto ALSO_CHECK_IF_CUSTOM_EDITION;
                 }
                 else {
@@ -770,6 +769,8 @@ namespace Chimera {
     }
 
     static GenericFont font_to_use = GenericFont::FONT_SMALL;
+    static bool retail_fallback = false;
+    extern "C" int on_map_load_multiplayer(const char *map) noexcept;
 
     static void download_frame() {
         char output[128] = {};
@@ -788,8 +789,6 @@ namespace Chimera {
 
         switch(map_downloader->get_status()) {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
-                std::snprintf(output, sizeof(output), "Wait a minute...");
-                break;
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
                 std::snprintf(output, sizeof(output), "Connecting to repo...");
                 break;
@@ -826,7 +825,7 @@ namespace Chimera {
                 console_output("Download complete. Reconnecting...");
 
                 char to_path[MAX_PATH];
-                std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().data());
+                std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().c_str());
 
                 std::filesystem::rename(download_temp_file, to_path);
 
@@ -846,10 +845,20 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Download canceled!");
                 break;
             default: {
-                std::snprintf(output, sizeof(output), "Download failed!");
-                console_output("Download failed!");
-                std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
-                add_preframe_event(initiate_connection);
+                if(retail_fallback || !custom_edition_maps_supported_on_retail()) {
+                    std::snprintf(output, sizeof(output), "Download failed!");
+                    console_output("Download failed!");
+                    retail_fallback = false;
+                    std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
+                    add_preframe_event(initiate_connection);
+                }
+                else {
+                    std::snprintf(output, sizeof(output), "Retrying on retail Halo PC repo...");
+                    std::string map_name_temp = map_downloader->get_map().c_str();
+                    delete map_downloader.release();
+                    retail_fallback = true;
+                    on_map_load_multiplayer(map_name_temp.c_str());
+                }
                 break;
             }
         }
@@ -865,12 +874,14 @@ namespace Chimera {
             get_chimera().get_signature("server_join_progress_text_sig").rollback();
             get_chimera().get_signature("server_join_established_text_sig").rollback();
             get_chimera().get_signature("esrb_text_sig").rollback();
+            retail_fallback = false;
         }
     }
 
-    extern "C" int on_map_load_multiplayer(char *map) noexcept {
-        for(char *c = map; *c; c++) {
-            *c = std::tolower(*c);
+    extern "C" int on_map_load_multiplayer(const char *map) noexcept {
+        std::string name_lowercase_copy = map;
+        for(char &c : name_lowercase_copy) {
+            c = std::tolower(c);
         }
 
         if(path_for_map(map)) {
@@ -901,7 +912,7 @@ namespace Chimera {
                 game_engine_str = "halom";
                 break;
             case GameEngine::GAME_ENGINE_RETAIL:
-                game_engine_str = "halor";
+                game_engine_str = (custom_edition_maps_supported_on_retail() && !retail_fallback) ? "halom" : "halor";
                 break;
             case GameEngine::GAME_ENGINE_DEMO:
                 game_engine_str = "halod";
@@ -910,7 +921,7 @@ namespace Chimera {
                 game_engine_str = nullptr;
         }
 
-        map_downloader = std::make_unique<HACMapDownloader>(map, path, game_engine_str);
+        map_downloader = std::make_unique<HACMapDownloader>(name_lowercase_copy.c_str(), path, game_engine_str);
         map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
         map_downloader->dispatch();
         std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
@@ -990,7 +1001,7 @@ namespace Chimera {
 
         // Support Cutdown Edition maps
         if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
-            if((custom_maps_on_retail = set_up_custom_edition_map_support())) {
+            if(set_up_custom_edition_map_support()) {
                 set_up_custom_edition_master_server_support();
             }
         }

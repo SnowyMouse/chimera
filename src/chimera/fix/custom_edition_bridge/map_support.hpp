@@ -20,6 +20,12 @@ namespace Chimera {
      * @param map_name    map name
      */
     void load_custom_edition_resource_data_in_retail(std::byte *output, std::size_t file_offset, std::size_t file_size, const char *map_name);
+
+    /**
+     * Return true if custom edition maps are supported on retail
+     * @return true custom edition maps are supported on retail
+     */
+    bool custom_edition_maps_supported_on_retail() noexcept;
 }
 
 #endif

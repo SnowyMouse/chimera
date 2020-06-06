@@ -200,14 +200,15 @@ namespace Chimera {
         }
     }
 
+    static bool custom_maps_on_retail = false;
     bool set_up_custom_edition_map_support() noexcept {
-        bool custom_maps_on_retail = true;
+        custom_maps_on_retail = true;
 
         bitmaps_custom_rsc = std::fopen(path_for_map(BITMAPS_CUSTOM_MAP), "rb");
         sounds_custom_rsc = std::fopen(path_for_map(SOUNDS_CUSTOM_MAP), "rb");
         loc_custom_rsc = std::fopen(path_for_map(LOC_CUSTOM_MAP), "rb");
         if((custom_maps_on_retail = bitmaps_custom_rsc && sounds_custom_rsc && loc_custom_rsc)) {
-            auto load_external_resources = [&custom_maps_on_retail](std::FILE *file, std::vector<std::unique_ptr<std::byte []>> &into, std::vector<std::string> *index = nullptr) {
+            auto load_external_resources = [](std::FILE *file, std::vector<std::unique_ptr<std::byte []>> &into, std::vector<std::string> *index = nullptr) {
                 if(!custom_maps_on_retail) {
                     return;
                 }
@@ -303,5 +304,9 @@ namespace Chimera {
         // Do it!
         std::fseek(f, static_cast<long>(file_offset), SEEK_SET);
         std::fread(output, file_size, 1, f);
+    }
+
+    bool custom_edition_maps_supported_on_retail() noexcept {
+        return custom_maps_on_retail;
     }
 }
