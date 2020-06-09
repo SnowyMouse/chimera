@@ -125,7 +125,10 @@ Normally, Halo does not allow you to join servers with someone that has the
 same CD key. This was done to prevent people from sharing CD keys. However,
 this protection has shown to not work and, as a result, is purely an hindrance
 to people who have legitimate copies of the game, such as modders. By disabling
-the CD key check, you can locally host a game that lets you join yourself.
+the CD key check, you can locally host a game that lets you join yourself. Also,
+because a large number of players do not own legitimate copies of the game,
+having the CD key check in place will likely prevent you from getting any
+players in the first place.
 
 Note that this feature does not "crack" the game. You still need a valid Halo
 installation in order to run the installer for the game as well as update the
