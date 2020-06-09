@@ -56,6 +56,11 @@ namespace Chimera {
         SET_VALUE("refresh_rate", default_refresh_rate, std::stoi)
         SET_VALUE("vsync", vsync, std::stoi)
 
+        // Don't fallback the resolution to 800x600
+        auto fallback_resolution_sig = chimera.get_signature("fallback_resolution_sig").data();
+        static const constexpr SigByte remove_fallback_resolution[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        write_code_s(fallback_resolution_sig, remove_fallback_resolution);
+
         if(pc) {
             auto *default_res = chimera.get_signature("default_resolution_pc_sig").data();
             overwrite(default_res + 4, default_width);
