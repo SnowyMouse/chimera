@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 
@@ -12,6 +13,10 @@ namespace Chimera {
 
     void set_up_auto_get_list() noexcept {
         auto &chimera = get_chimera();
+
+        if(!chimera.get_ini()->get_value_bool("server_list.auto_query").value_or(false)) {
+            return;
+        }
 
         static Hook hook_get, hook_add;
         auto *auto_query_master_list_sig = chimera.get_signature("auto_query_master_list_sig").data();
