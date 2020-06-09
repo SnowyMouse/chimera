@@ -11,20 +11,19 @@ namespace Chimera {
     void reduce_drm() noexcept {
         auto &chimera = get_chimera();
 
-        if(!chimera.feature_present("core_drm")) {
-            return;
-        }
-
+        // Remove the registry check. Speeds up Halo loading and improves Wine compatibility.
         if(chimera.feature_present("client_drm")) {
             auto &client_drm_sig = chimera.get_signature("client_drm_sig");
             SigByte client_drm_mod[] = {0xEB, 0x13};
             write_code_s(client_drm_sig.data(), client_drm_mod);
         }
 
+        // Allow invalid keys to join. If we don't, almost nobody can join anyway, so we might as well remove that restriction.
         auto &server_drm_1_sig = chimera.get_signature("server_drm_1_sig");
         SigByte server_drm_mod[] = {0x90, 0x90, 0x90, 0x90, 0x90};
         write_code_s(server_drm_1_sig.data() + 10, server_drm_mod);
 
+        // Allow duplicate keys to join. This is useful for testing mods and scripts.
         auto &server_drm_2_sig = chimera.get_signature("server_drm_2_sig");
         overwrite(server_drm_2_sig.data() + 5, static_cast<std::uint8_t>(0xEB));
     }
@@ -32,6 +31,7 @@ namespace Chimera {
     extern "C" void fun_cd_key_hash_function_asm() noexcept;
 
     void set_cd_hash() noexcept {
+        // If we have a hash, set up the custom hash thing. This is to prevent servers from tracking you (and maybe leave a funny message in their logs).
         auto *hash = get_chimera().get_ini()->get_value("halo.hash");
         if(hash && std::strlen(hash) > 0) {
             static Hook hook;
@@ -44,6 +44,7 @@ namespace Chimera {
         if(hash) {
             #define HASH_LENGTH 32
 
+            // Randomize the hash
             if(std::strcmp(hash, "%") == 0) {
                 srand(time(nullptr));
                 char characters[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -51,6 +52,8 @@ namespace Chimera {
                     key[i] = characters[rand() % sizeof(characters)];
                 }
             }
+
+            // Use a custom hash and pad out the rest of the hash with '0's.
             else {
                 std::memset(key, '0', HASH_LENGTH);
                 auto len = std::strlen(hash);
