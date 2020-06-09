@@ -11,8 +11,13 @@ namespace Chimera {
     void reduce_drm() noexcept {
         auto &chimera = get_chimera();
 
+        // Disregard the trial
+        if(!chimera.feature_present("core_full")) {
+            return;
+        }
+
         // Remove the registry check. Speeds up Halo loading and improves Wine compatibility.
-        if(chimera.feature_present("client_drm")) {
+        if(chimera.feature_present("client_full")) {
             auto &client_drm_sig = chimera.get_signature("client_drm_sig");
             SigByte client_drm_mod[] = {0xEB, 0x13};
             write_code_s(client_drm_sig.data(), client_drm_mod);
