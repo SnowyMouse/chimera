@@ -21,6 +21,7 @@
 #include "signature/hook.hpp"
 #include "signature/signature.hpp"
 #include "chimera.hpp"
+#include "annoyance/auto_get_list.hpp"
 #include "annoyance/drm.hpp"
 #include "annoyance/keystone.hpp"
 #include "annoyance/multi_instance.hpp"
@@ -145,6 +146,9 @@ namespace Chimera {
 
                 // Fix clans putting invisible bullshit in their server names to put them at the top of the list
                 set_up_bullshit_server_data_fix();
+
+                // Well, why not?
+                set_up_auto_get_list();
 
                 // Do this!
                 if(chimera->get_ini()->get_value_bool("halo.background_playback").value_or(false)) {

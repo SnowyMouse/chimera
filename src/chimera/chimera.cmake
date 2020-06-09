@@ -13,6 +13,8 @@ add_custom_command(
 # Define the source files
 add_library(chimera STATIC
     src/chimera/map_loading/laa.cpp
+    src/chimera/annoyance/auto_get_list.cpp
+    src/chimera/annoyance/auto_get_list.S
     src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/drm.S
     src/chimera/annoyance/keystone.cpp
