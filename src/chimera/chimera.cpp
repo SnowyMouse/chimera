@@ -56,6 +56,9 @@
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
+#include "halo_data/object.hpp"
+#include "event/tick.hpp"
+#include "event/map_load.hpp"
 #include "fix/custom_map_lobby_fix.hpp"
 #include "fix/weapon_swap_ticks.hpp"
 #include "halo_data/game_engine.hpp"
@@ -68,6 +71,7 @@ namespace Chimera {
     static Chimera *chimera;
     static void initial_tick();
     static void set_up_delayed_init();
+    static void april_fools() noexcept;
 
     Chimera::Chimera() : p_signatures(find_all_signatures()) {
         chimera = this;
@@ -125,6 +129,8 @@ namespace Chimera {
                 const char *value_true = "true";
                 camo_fix_command(1, &value_true);
                 add_preframe_event(initial_tick);
+
+                add_map_load_event(april_fools);
 
                 // Set up this hook
                 set_up_rcon_message_hook();
@@ -646,5 +652,69 @@ namespace Chimera {
         auto &chimera = get_chimera();
         overwrite(chimera.get_signature("exec_init_sig").data(), static_cast<std::uint8_t>(0xC3));
         add_frame_event(execute_init);
+    }
+
+    // Have fun
+    static void cartridge_tilt() noexcept {
+        auto &table = ObjectTable::get_object_table();
+
+        static std::size_t offset = 0;
+        #define RND (((((offset++) ^ 0x123456) * 7891) % 256) / 256.0 - 0.5 * 2.0)
+
+        for(std::size_t i = 0; i < table.current_size; i++) {
+            auto *object = table.get_dynamic_object(i);
+            if(object) {
+                auto *nodes = object->nodes();
+
+                std::size_t node_count;
+
+                if(object->type != ObjectType::OBJECT_TYPE_PROJECTILE) {
+                    auto *tag_data = get_tag(object->tag_id)->data;
+                    auto *model_tag = get_tag(*reinterpret_cast<TagID *>(tag_data + 0x28 + 0xC));
+                    if(!model_tag) {
+                        continue;
+                    }
+                    node_count = *reinterpret_cast<std::uint32_t *>(model_tag->data + 0xB8);
+                }
+                else {
+                    node_count = 1;
+                }
+
+                if(nodes) {
+                    for(std::size_t n = 0; n < node_count; n++) {
+                        auto *node = nodes + n;
+                        node->position.x += RND;
+                        node->position.y += RND;
+                        node->position.z += RND;
+                        node->scale += RND;
+                        node->rotation.v[0].x += RND;
+                        node->rotation.v[0].y -= RND;
+                        node->rotation.v[0].z += RND;
+                        node->rotation.v[1].x -= RND;
+                        node->rotation.v[1].y += RND;
+                        node->rotation.v[1].z -= RND;
+                        node->rotation.v[2].x -= RND;
+                        node->rotation.v[2].y += RND;
+                        node->rotation.v[2].z -= RND;
+                    }
+                }
+            }
+        }
+    }
+
+    // Every 1st of April, the Master Chief gets down
+    static void april_fools() noexcept {
+        static int count = 0;
+        if(++count == 1) {
+            SYSTEMTIME time = {};
+            GetSystemTime(&time);
+            if(time.wMonth == 4 && time.wDay == 1) {
+                add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
+            }
+        }
+        else {
+            remove_preframe_event(cartridge_tilt);
+            remove_map_load_event(april_fools);
+        }
     }
 }
