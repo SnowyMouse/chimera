@@ -235,9 +235,9 @@ namespace Chimera {
             "sounds",
             "loc",
             "ui",
-            BITMAPS_CUSTOM_MAP,
-            SOUNDS_CUSTOM_MAP,
-            LOC_CUSTOM_MAP
+            BITMAPS_CUSTOM_MAP_NAME,
+            SOUNDS_CUSTOM_MAP_NAME,
+            LOC_CUSTOM_MAP_NAME
         };
 
         // If we've been here before, clear things. Otherwise, get addresses
