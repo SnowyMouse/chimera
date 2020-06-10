@@ -204,9 +204,9 @@ namespace Chimera {
     bool set_up_custom_edition_map_support() noexcept {
         custom_maps_on_retail = true;
 
-        bitmaps_custom_rsc = std::fopen(path_for_map(BITMAPS_CUSTOM_MAP), "rb");
-        sounds_custom_rsc = std::fopen(path_for_map(SOUNDS_CUSTOM_MAP), "rb");
-        loc_custom_rsc = std::fopen(path_for_map(LOC_CUSTOM_MAP), "rb");
+        bitmaps_custom_rsc = std::fopen(BITMAPS_CUSTOM_MAP, "rb");
+        sounds_custom_rsc = std::fopen(SOUNDS_CUSTOM_MAP, "rb");
+        loc_custom_rsc = std::fopen(LOC_CUSTOM_MAP, "rb");
         if((custom_maps_on_retail = bitmaps_custom_rsc && sounds_custom_rsc && loc_custom_rsc)) {
             auto load_external_resources = [](std::FILE *file, std::vector<std::unique_ptr<std::byte []>> &into, std::vector<std::string> *index = nullptr) {
                 if(!custom_maps_on_retail) {

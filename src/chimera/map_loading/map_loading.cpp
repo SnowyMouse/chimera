@@ -382,8 +382,8 @@ namespace Chimera {
 
         // Open bitmaps.map and sounds.map
         bool using_custom_rsc = (can_load_indexed_tags && engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION);
-        std::FILE *bitmaps_file = std::fopen(path_for_map(using_custom_rsc ? BITMAPS_CUSTOM_MAP : "bitmaps"), "rb");
-        std::FILE *sounds_file = std::fopen(path_for_map(using_custom_rsc ? SOUNDS_CUSTOM_MAP : "sounds"), "rb");
+        std::FILE *bitmaps_file = std::fopen(using_custom_rsc ? BITMAPS_CUSTOM_MAP : path_for_map("bitmaps"), "rb");
+        std::FILE *sounds_file = std::fopen(using_custom_rsc ? SOUNDS_CUSTOM_MAP : path_for_map("sounds"), "rb");
         if(!bitmaps_file || !sounds_file) {
             return;
         }
