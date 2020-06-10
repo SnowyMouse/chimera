@@ -190,7 +190,7 @@ namespace Chimera {
         static bool ui_was_loaded = false;
 
         // Halo PC might do this here. Just ignore it if it does
-        if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0 || std::strcmp(map_name, SOUNDS_CUSTOM_MAP) == 0 || std::strcmp(map_name, BITMAPS_CUSTOM_MAP) == 0 || std::strcmp(map_name, LOC_CUSTOM_MAP) == 0) {
+        if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0 || std::strcmp(map_name, SOUNDS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map_name, BITMAPS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map_name, LOC_CUSTOM_MAP_NAME) == 0) {
             return;
         }
 
@@ -884,7 +884,7 @@ namespace Chimera {
             c = std::tolower(c);
         }
 
-        if(path_for_map(map)) {
+        if(path_for_map(map) || std::strcmp(map, SOUNDS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, BITMAPS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, LOC_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, "sounds") == 0 || std::strcmp(map, "bitmaps") == 0 || std::strcmp(map, "loc") == 0) {
             return 0;
         }
 
