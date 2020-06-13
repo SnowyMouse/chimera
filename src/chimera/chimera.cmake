@@ -57,6 +57,8 @@ add_library(chimera STATIC
     src/chimera/fix/custom_edition_bridge/map_support.S
     src/chimera/fix/custom_edition_bridge/master_server.cpp
     src/chimera/fix/custom_edition_bridge/master_server.S
+    src/chimera/fix/custom_edition_bridge/netcode.cpp
+    src/chimera/fix/custom_edition_bridge/netcode.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp

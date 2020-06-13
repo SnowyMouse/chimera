@@ -41,6 +41,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp
     ${COMMAND_DIR}/client/mouse/mouse_sensitivity.cpp
+    ${COMMAND_DIR}/client/server/custom_edition_netcode.cpp
     ${COMMAND_DIR}/client/server/spectate.cpp
     ${COMMAND_DIR}/client/server/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp

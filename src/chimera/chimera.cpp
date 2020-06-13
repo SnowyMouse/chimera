@@ -658,6 +658,10 @@ namespace Chimera {
     static void cartridge_tilt() noexcept {
         auto &table = ObjectTable::get_object_table();
 
+        if((get_tick_count() / 16) % 15) {
+            return;
+        }
+
         static std::size_t offset = 0;
         #define RND (((((offset++) ^ 0x123456) * 7891) % 256) / 256.0 - 0.5 * 2.0)
 
@@ -705,10 +709,10 @@ namespace Chimera {
     // Every 1st of April, the Master Chief gets down
     static void april_fools() noexcept {
         static int count = 0;
-        if(++count == 1) {
+        if(++count <= 4) {
             SYSTEMTIME time = {};
             GetSystemTime(&time);
-            if(time.wMonth == 4 && time.wDay == 1) {
+            if(time.wMonth == 6 && time.wDay == 10) {
                 add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
             }
         }

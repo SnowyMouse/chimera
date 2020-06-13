@@ -3,8 +3,6 @@
 #ifndef CHIMERA_CE_MASTER_SERVER_HPP
 #define CHIMERA_CE_MASTER_SERVER_HPP
 
-#include <cstddef>
-
 namespace Chimera {
     /**
      * Set up using the Custom Edition master server
