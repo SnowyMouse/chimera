@@ -230,7 +230,9 @@ namespace Chimera {
                                 get_tmp_path(map, tmp_path);
                                 //console_output("Didn't need to decompress %s -> %s", new_path, tmp_path);
                                 last_loaded_map = &map - compressed_maps;
-                                std::strncpy(map_path, tmp_path, MAX_PATH);
+                                if(map_path) {
+                                    std::strncpy(map_path, tmp_path, MAX_PATH);
+                                }
                                 return;
                             }
                         }
@@ -325,7 +327,9 @@ namespace Chimera {
                 }
             }
 
-            std::strcpy(map_path, new_path);
+            if(map_path) {
+                std::strcpy(map_path, new_path);
+            }
         }
     }
 
@@ -352,6 +356,7 @@ namespace Chimera {
     std::uint32_t calculate_crc32_of_current_map_file() noexcept {
         // If we're doing maps in RAM, this was already calculated
         if(do_maps_in_ram) {
+            do_map_loading_handling(nullptr, latest_map_loaded_multiplayer);
             return maps_in_ram_crc32;
         }
         // Otherwise do this
@@ -390,8 +395,13 @@ namespace Chimera {
             map_engine = header.engine_type;
 
             // Calculate the CRC32 if we aren't a UI file
-            if(map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && buffer == maps_in_ram_region) {
-                maps_in_ram_crc32 = ~calculate_crc32_of_map_file(nullptr, header);
+            if(buffer == maps_in_ram_region) {
+                if(map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION) {
+                    maps_in_ram_crc32 = ~calculate_crc32_of_map_file(nullptr, header);
+                }
+                else {
+                    maps_in_ram_crc32 = crc32_for_stock_map(header.name).value_or(0xFFFFFFFF);
+                }
             }
         }
         bool can_load_indexed_tags = map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;

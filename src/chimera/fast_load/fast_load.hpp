@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <cstdint>
+#include <optional>
 
 namespace Chimera {
     /**
@@ -16,6 +17,12 @@ namespace Chimera {
      * Reload the map list
      */
     void reload_map_list() noexcept;
+
+    /**
+     * Get the stock map CRC32
+     * @param stock_map stock map CRC32 if present
+     */
+    std::optional<std::uint32_t> crc32_for_stock_map(const char *stock_map) noexcept;
 }
 
 #endif
