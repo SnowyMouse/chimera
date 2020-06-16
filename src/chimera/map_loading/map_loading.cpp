@@ -43,6 +43,8 @@ namespace Chimera {
     static std::size_t UI_SIZE = 256 * 1024 * 1024;
     #define CHIMERA_MEMORY_ALLOCATION_SIZE (UI_OFFSET + UI_SIZE)
 
+    const char *latest_map_loaded_multiplayer = nullptr;
+
     extern "C" {
         std::byte *on_map_load_multiplayer_fail;
         char16_t download_text_string[64] = {};
@@ -346,6 +348,24 @@ namespace Chimera {
 
     extern std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept;
     std::uint32_t maps_in_ram_crc32;
+
+    std::uint32_t calculate_crc32_of_current_map_file() noexcept {
+        // If we're doing maps in RAM, this was already calculated
+        if(do_maps_in_ram) {
+            return maps_in_ram_crc32;
+        }
+        // Otherwise do this
+        else {
+            // Read this
+            std::FILE *f = std::fopen(path_for_map(latest_map_loaded_multiplayer, true), "rb");
+            MapHeader header = {};
+            std::fread(&header, sizeof(header), 1, f);
+            std::fseek(f, 0, SEEK_SET);
+            auto crc = calculate_crc32_of_map_file(f, header);
+            std::fclose(f);
+            return crc;
+        }
+    }
 
     static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
         auto start = std::chrono::steady_clock::now();
@@ -879,6 +899,7 @@ namespace Chimera {
 
     extern "C" int on_map_load_multiplayer(const char *map) noexcept {
         std::string name_lowercase_copy = map;
+        latest_map_loaded_multiplayer = map;
         for(char &c : name_lowercase_copy) {
             c = std::tolower(c);
         }

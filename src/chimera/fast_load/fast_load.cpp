@@ -43,6 +43,67 @@ namespace Chimera {
         std::uint32_t crc = 0;
         std::uint32_t current_offset = 0;
 
+        // Use a built-in CRC32 if possible (CRC32s from Invader)
+        if(header.engine_type == CACHE_FILE_RETAIL || header.engine_type == CACHE_FILE_RETAIL_COMPRESSED) {
+            if(std::strcmp(header.name, "beavercreek") == 0) {
+                return 0x07B3876A;
+            }
+            else if(std::strcmp(header.name, "bloodgulch") == 0) {
+                return 0x7B309554;
+            }
+            else if(std::strcmp(header.name, "boardingaction") == 0) {
+                return 0xF4DEEF94;
+            }
+            else if(std::strcmp(header.name, "carousel") == 0) {
+                return 0x9C301A08;
+            }
+            else if(std::strcmp(header.name, "chillout") == 0) {
+                return 0x93C53C27;
+            }
+            else if(std::strcmp(header.name, "damnation") == 0) {
+                return 0x0FBA059D;
+            }
+            else if(std::strcmp(header.name, "dangercanyon") == 0) {
+                return 0xC410CD74;
+            }
+            else if(std::strcmp(header.name, "deathisland") == 0) {
+                return 0x1DF8C97F;
+            }
+            else if(std::strcmp(header.name, "gephyrophobia") == 0) {
+                return 0xD2872165;
+            }
+            else if(std::strcmp(header.name, "hangemhigh") == 0) {
+                return 0xA7C8B9C6;
+            }
+            else if(std::strcmp(header.name, "icefields") == 0) {
+                return 0x5EC1DEB7;
+            }
+            else if(std::strcmp(header.name, "infinity") == 0) {
+                return 0x0E7F7FE7;
+            }
+            else if(std::strcmp(header.name, "longest") == 0) {
+                return 0xC8F48FF6;
+            }
+            else if(std::strcmp(header.name, "prisoner") == 0) {
+                return 0x43B81A8B;
+            }
+            else if(std::strcmp(header.name, "putput") == 0) {
+                return 0xAF2F0B84;
+            }
+            else if(std::strcmp(header.name, "ratrace") == 0) {
+                return 0xF7F8E14C;
+            }
+            else if(std::strcmp(header.name, "sidewinder") == 0) {
+                return 0xBD95CF55;
+            }
+            else if(std::strcmp(header.name, "timberland") == 0) {
+                return 0x54446470;
+            }
+            else if(std::strcmp(header.name, "wizard") == 0) {
+                return 0xCF3359B1;
+            }
+        }
+
         auto seek = [&f, &current_offset](std::size_t offset) {
             if(f) {
                 std::fseek(f, offset, SEEK_SET);

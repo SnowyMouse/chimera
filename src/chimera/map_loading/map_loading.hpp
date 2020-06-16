@@ -3,6 +3,8 @@
 #ifndef CHIMERA_MAP_LOADING_HPP
 #define CHIMERA_MAP_LOADING_HPP
 
+#include <cstdint>
+
 namespace Chimera {
     #define BITMAPS_CUSTOM_MAP_NAME "custom_bitmaps"
     #define SOUNDS_CUSTOM_MAP_NAME "custom_sounds"
@@ -24,5 +26,11 @@ namespace Chimera {
      * @return     path to the map if found
      */
     const char *path_for_map(const char *map, bool tmp = false) noexcept;
+
+    /**
+     * Calculate the crc32 of the currently loaded map
+     * @return crc32
+     */
+    std::uint32_t calculate_crc32_of_current_map_file() noexcept;
 }
 #endif

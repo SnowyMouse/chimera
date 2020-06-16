@@ -42,7 +42,7 @@ namespace Chimera {
                         at += 6;
                         break;
                     }
-                    else if(op1 == 0xBF || op1 == 0xB6) {
+                    else if(op1 == 0xBF || op1 == 0xB6 || op1 == 0xB7) {
                         if(op2 == 0x6E || op2 == 0x4E) {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 4);
@@ -307,7 +307,7 @@ namespace Chimera {
                         at += 3;
                         break;
                     }
-                    else if(a == 0x93 || a == 0x0D || a == 0x2D || a == 0x1D) {
+                    else if(a == 0x93 || a == 0x0D || a == 0x2D || a == 0x1D || a == 0x83) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
