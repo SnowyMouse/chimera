@@ -39,6 +39,11 @@ namespace Chimera {
         // If we have a hash, set up the custom hash thing. This is to prevent servers from tracking you (and maybe leave a funny message in their logs).
         auto *hash = get_chimera().get_ini()->get_value("halo.hash");
         if(hash && std::strlen(hash) > 0) {
+            if(!get_chimera().feature_present("client_edit_cd_hash")) {
+                MessageBox(nullptr, "Using custom CD hashes is not supported on this client. (client is probably modified)", "Error", MB_ICONERROR | MB_OK);
+                std::exit(1);
+            }
+
             static Hook hook;
             write_jmp_call(get_chimera().get_signature("cd_key_hash_sig").data() + 12, hook, nullptr, reinterpret_cast<const void *>(fun_cd_key_hash_function_asm));
         }
