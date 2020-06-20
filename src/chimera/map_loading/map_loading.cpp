@@ -10,6 +10,7 @@
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../output/output.hpp"
+#include "../localization/localization.hpp"
 #include "../output/draw_text.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/script.hpp"
@@ -33,6 +34,7 @@ namespace Invader::Compression {
 #define BYTES_TO_MiB(bytes) (bytes / 1024.0F / 1024.0F)
 
 namespace Chimera {
+    static bool allow_retail_maps = false;
     static bool do_maps_in_ram = false;
     static bool do_benchmark = false;
 
@@ -897,7 +899,7 @@ namespace Chimera {
             apply_text(output, x, y, width, height, color, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         }
 
-        if(map_downloader->is_finished()) {
+        if(!map_downloader || map_downloader->is_finished()) {
             delete map_downloader.release();
             remove_preframe_event(download_frame);
             get_chimera().get_signature("server_join_progress_text_sig").rollback();
@@ -918,6 +920,32 @@ namespace Chimera {
             return 0;
         }
 
+        // Determine what we're downloading from
+        const char *game_engine_str;
+        switch(game_engine()) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                game_engine_str = "halom";
+                break;
+            case GameEngine::GAME_ENGINE_RETAIL:
+                game_engine_str = (custom_edition_maps_supported_on_retail() && !retail_fallback) ? "halom" : "halor";
+                break;
+            case GameEngine::GAME_ENGINE_DEMO:
+                game_engine_str = "halod";
+                break;
+            default:
+                game_engine_str = nullptr;
+                return 1;
+        }
+
+        // Can we even do this?
+        if(game_engine_str && std::strcmp(game_engine_str, "halor") == 0 && !allow_retail_maps) {
+            console_error(localize("chimera_error_cannot_download_retail_maps_1"));
+            console_error(localize("chimera_error_cannot_download_retail_maps_2"));
+            std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
+            add_preframe_event(initiate_connection);
+            return 1;
+        }
+
         // Change the server status text
         static Hook hook1, hook2;
         char text_string8[sizeof(download_text_string) / sizeof(*download_text_string)] = {};
@@ -934,26 +962,14 @@ namespace Chimera {
         overwrite(esrb_text_sig.data() + 5, static_cast<std::int16_t>(0x7FFF));
         overwrite(esrb_text_sig.data() + 5 + 7, static_cast<std::int16_t>(0x7FFF));
 
+        // Start downloading (determine where to download to and start!)
         char path[MAX_PATH];
         std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
-        const char *game_engine_str;
-        switch(game_engine()) {
-            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
-                game_engine_str = "halom";
-                break;
-            case GameEngine::GAME_ENGINE_RETAIL:
-                game_engine_str = (custom_edition_maps_supported_on_retail() && !retail_fallback) ? "halom" : "halor";
-                break;
-            case GameEngine::GAME_ENGINE_DEMO:
-                game_engine_str = "halod";
-                break;
-            default:
-                game_engine_str = nullptr;
-        }
-
         map_downloader = std::make_unique<HACMapDownloader>(name_lowercase_copy.c_str(), path, game_engine_str);
         map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
         map_downloader->dispatch();
+
+        // Add callbacks so we can check every frame the status
         std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);
         return 1;
@@ -1034,6 +1050,10 @@ namespace Chimera {
             set_up_custom_edition_map_support();
         }
 
+        // Should we allow retail maps?
+        allow_retail_maps = get_chimera().get_ini()->get_value_bool("memory.download_retail_maps").value_or(false);
+
+        // What font should we use?
         auto *font_fam = get_chimera().get_ini()->get_value("chimera.download_font");
         if(font_fam) {
             font_to_use = generic_font_from_string(font_fam);

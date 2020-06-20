@@ -293,7 +293,12 @@ This feature exists to allow you to take advantage larger amounts of RAM,
 reducing hiccups and stutters, especially on slower storage. However, you will
 need an LAA-patched executable to use this feature.
 - `enable_map_memory_buffer` (enables loading maps directly into RAM)
+- `map_size` (size of buffer in MiB for loading non-UI maps)
+- `ui_size` (size of buffer in MiB for loading UI maps)
 - `benchmark` (shows a benchmark whenever a map is loaded)
+- `download_font` (change the font used for downloading)
+- `download_preferred_node` (change the initial server node tested)
+- `download_retail_maps` (allow downloading of retail Halo PC maps - UNSAFE)
 
 #### Video mode settings
 These settings allow you to change Halo's video settings without requiring
