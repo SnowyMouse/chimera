@@ -61,7 +61,7 @@ static BOOL load_dlls() {
     extern int halo_type();
     instantiate_chimera();
     if(find_signatures() == 0) {
-        MessageBox(NULL, signature_errors(), "Error", MB_OK);
+        MessageBox(NULL, signature_errors(), "Error", MB_ICONERROR | MB_OK);
         destroy_chimera();
         return FALSE;
     }

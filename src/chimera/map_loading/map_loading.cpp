@@ -206,7 +206,7 @@ namespace Chimera {
             if(!valid) {
                 char error_message[1024];
                 std::snprintf(error_message, sizeof(error_message), "%s.map is not a valid cache file for this version of the game\n\nMap path: %s", map_name, new_path);
-                MessageBox(nullptr, error_message, "Invalid map", 0);
+                MessageBox(nullptr, error_message, "Invalid map", MB_ICONERROR | MB_OK);
                 std::exit(1);
             }
 
@@ -991,7 +991,7 @@ namespace Chimera {
 
         if(do_maps_in_ram) {
             if(!current_exe_is_laa_patched()) {
-                MessageBox(0, "Map memory buffers requires an large address aware-patched executable.", "Error", 0);
+                MessageBox(nullptr, "Map memory buffers requires an large address aware-patched executable.", "Error", MB_ICONERROR | MB_OK);
                 std::exit(1);
             }
 
@@ -1003,7 +1003,7 @@ namespace Chimera {
             if(!maps_in_ram_region) {
                 char error_text[256] = {};
                 std::snprintf(error_text, sizeof(error_text), "Failed to allocate %.02f GiB for map memory buffers.", BYTES_TO_MiB(CHIMERA_MEMORY_ALLOCATION_SIZE) / 1024.0F);
-                MessageBox(0, error_text, "Error", 0);
+                MessageBox(nullptr, error_text, "Error", MB_ICONERROR | MB_OK);
                 std::exit(1);
             }
 

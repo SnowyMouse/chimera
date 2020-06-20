@@ -82,8 +82,8 @@ namespace Chimera {
             static const char *expected_version = "01.00.10.0621";
             if(game_engine() != GAME_ENGINE_DEMO && std::strcmp(build_string, expected_version) != 0) {
                 char error[256] = {};
-                std::snprintf(error, sizeof(error), "Chimera does not support %s. Please update your game to %s.", build_string, expected_version);
-                MessageBox(0, error, "Error", 0);
+                std::snprintf(error, sizeof(error), "Chimera does not support %s. Please use %s.", build_string, expected_version);
+                MessageBox(nullptr, error, "Error", MB_ICONERROR | MB_OK);
                 this->p_signatures.clear();
                 return;
             }
@@ -102,7 +102,7 @@ namespace Chimera {
             if(path) {
                 static std::string new_path = path;
                 if(new_path.size() >= MAX_PATH) {
-                    MessageBox(nullptr, "Path is too long", "Error", 0);
+                    MessageBox(nullptr, "Path is too long", "Error", MB_ICONERROR | MB_OK);
                     std::exit(1);
                 }
                 overwrite(chimera->get_signature("write_path_sig").data() + 2, new_path.data());

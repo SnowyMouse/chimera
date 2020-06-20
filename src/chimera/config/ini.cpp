@@ -35,7 +35,7 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid real number", key, v);
-            MessageBox(nullptr, error, "Can't read INI value", 0);
+            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
             std::terminate();
         }
     }
@@ -51,7 +51,7 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%li - %li)", key, v, LONG_MIN, LONG_MAX);
-            MessageBox(nullptr, error, "Can't read INI value", 0);
+            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
             std::terminate();
         }
     }
@@ -67,7 +67,7 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (0 - %llu)", key, v, ULONG_LONG_MAX);
-            MessageBox(nullptr, error, "Can't read INI value", 0);
+            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
             std::terminate();
         }
     }
