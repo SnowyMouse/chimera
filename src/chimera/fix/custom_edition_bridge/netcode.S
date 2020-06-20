@@ -31,7 +31,7 @@ _override_join_name_packet_asm:
     mov dword ptr [eax + 0x93], 0x0220980E
     mov word ptr [eax], 0x94C
 
-    ;# Override this meme stuff
+    ;# Write CRC32, passing the address to the CRC32 and keys
     push ebx
     lea ebx, [eax + 0x8F]
     mov [esp], ebx
