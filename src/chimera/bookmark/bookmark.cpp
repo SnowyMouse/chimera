@@ -190,7 +190,7 @@ namespace Chimera {
             // Lookup it
             char port[6] = {};
             std::snprintf(port, sizeof(port), "%u", b.port);
-            int q = getaddrinfo(b.address, "2302", nullptr, &address);
+            int q = getaddrinfo(b.address, port, nullptr, &address);
             if(q != 0) {
                 finished_packet.error = QueryPacketDone::Error::FAILED_TO_RESOLVE;
                 continue;
