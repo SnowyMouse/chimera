@@ -13,7 +13,6 @@ The official repository is hosted at https://github.com/Kavawuvi/chimera
 
 ## Table of contents
 - [Installation](#installation)
-- [System requirements](#system-requirements)
 - [Mod support](#mod-support)
 - [Features](#features)
 - [FAQ](#faq)
@@ -771,6 +770,12 @@ Below is a list of frequently asked questions. These questions are either based
 on questions I have received or questions I *might* receive that I feel are
 worth answering in a readme.
 
+- [Will Chimera run on my system?]
+- [Can I use Chimera under a license besides GNU GPL version 3?]
+- [Why does Halo's gamma setting not work when Chimera is installed?]
+- [Why is there no auto updater?]
+- [Why do I get an error when joining Custom Edition servers with modded maps?]
+
 
 
 ### Will Chimera run on my system?
@@ -884,5 +889,36 @@ most importantly, **no mod should change the terms of your agreement to use said
 software without your consent**. Also, no user should have the option to consent
 to any of that, because absolutely nothing good comes from having it enabled.
 
-So, it was decided against implementing auto updating functionality in Chimera.
-Keep your stuff up-to-date.
+Since it's easy to keep your version of Chimera up-to-date, anyway, it was
+decided against implementing auto updating functionality in Chimera.
+
+### Why do I get an error when joining Custom Edition servers with modded maps?
+Short answer: This is probably due to a CRC32 mismatch. Basically, this is to
+prevent Halo from crashing due to using a map that differs from what is hosted
+on the server. This is done for your protection, and we recommend either forging
+the CRC32 or getting the original map.
+
+Long answer: Halo Custom Edition (and Chimera if joining Custom Edition servers)
+calculates a checksum (a number) from your map based on the contents of the map
+file. It then sends this number to the server upon joining, and the server
+compares it against the map it has. If the checksum isn't forged, then it can
+confirm, with ~99.999999976% certainty (or a 1 in 4,294,967,296 chance for a
+collision), that the map is identical.
+
+The reason it does all of this is due to the fact that using a modified map or
+a different map entirely can result in a game crash for the client. Obviously,
+there are some modifications that can be done to a map that will not result in a
+crash, but there is no way to discern such a chance using a checksum, alone.
+This is done for your protection, and it is not recommended to attempt to bypass
+this check.
+
+If you *want* to join a server using a modified Halo Custom Edition map on a
+Halo Custom Edition server, then you should forge the CRC32.
+
+
+
+[Will Chimera run on my system?]: #will-chimera-run-on-my-system
+[Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
+[Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
+[Why is there no auto updater?]: #why-is-there-no-auto-updater
+[Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
