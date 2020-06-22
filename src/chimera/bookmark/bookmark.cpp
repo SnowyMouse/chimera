@@ -212,7 +212,7 @@ namespace Chimera {
 
             // Do socket things
             SOCKET s = socket(family, SOCK_DGRAM, IPPROTO_UDP);
-            DWORD opt = 1000;
+            DWORD opt = 700;
             setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&opt), sizeof(opt));
             static constexpr char PACKET_QUERY[] = "\\query";
             q = sendto(s, PACKET_QUERY, sizeof(PACKET_QUERY) - 1, 0, reinterpret_cast<sockaddr *>(&saddr), saddr_size);
