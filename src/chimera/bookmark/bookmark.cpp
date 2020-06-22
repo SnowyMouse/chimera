@@ -301,15 +301,31 @@ namespace Chimera {
                     float red = 0.0F;
                     float green = 0.0F;
 
-                    if(p.ping < 20) {
+                    // <15 ms = green
+                    if(p.ping < 15) {
                         green = 1.0F;
                     }
-                    else if(p.ping < 170) {
-                        green = 1.0F - (p.ping - 20) / 150.0F;
-                        red = 0.2F + (p.ping - 20) / 150.0F * 0.8F;
+
+                    // 30 - 80 ms = green to yellow
+                    else if(p.ping < 80) {
+                        green = 1.0F;
+                        red = (p.ping - 15) / static_cast<float>(80 - 15);
                     }
-                    else {
+
+                    // 100 - 200 ms = yellow to red
+                    else if(p.ping < 200) {
+                        green = 1.0F - (p.ping - 80) / static_cast<float>(200 - 80);
                         red = 1.0F;
+                    }
+
+                    // 200 ms - 300 ms = darker red
+                    else if(p.ping < 300) {
+                        red = 1.0F - (p.ping - 200) / static_cast<float>(300 - 200) * 0.7F;
+                    }
+
+                    // 300+ ping = dark red
+                    else {
+                        red = 0.7F;
                     }
 
                     success++;
