@@ -34,7 +34,7 @@ namespace Chimera {
         std::size_t i;
         std::string address;
         std::size_t address_length = 0;
-        for(i = 0; i < sizeof(b.address) - 1 && i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ':'; i++, address_length++);
+        for(i = 0; i < sizeof(b.address) - 1 && i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ':' && line[i] != ' '; i++, address_length++);
         if(address_length < 2) {
             return std::nullopt;
         }
@@ -50,7 +50,7 @@ namespace Chimera {
         // Now the port
         if(line[i++] == ':') {
             std::size_t port_length = 0;
-            for(i = 0; i < line_length && line[i] != '\r' && line[i] != '\n'; i++, port_length++);
+            for(i = 0; i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ' '; i++, port_length++);
             try {
                 b.port = static_cast<std::uint16_t>(std::stoi(std::string(line + address_length + 1, port_length)));
             }
