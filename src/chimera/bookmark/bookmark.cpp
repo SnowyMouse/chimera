@@ -58,8 +58,11 @@ namespace Chimera {
                 return std::nullopt;
             }
         }
+
+        // Default to 2302 otherwise
         else {
-            return std::nullopt;
+            b.port = 2302;
+            i--;
         }
 
         // Lastly, the password (if present)
