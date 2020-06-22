@@ -49,8 +49,11 @@ namespace Chimera {
 
         // Now the port
         if(line[i++] == ':') {
-            std::size_t port_length = 0;
-            for(i = 0; i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ' '; i++, port_length++);
+            // Increment port_length until we get to the end
+            std::size_t port_length;
+            for(port_length = 0; i < line_length && line[i] != '\r' && line[i] != '\n' && line[i] != ' '; i++, port_length++);
+
+            // Attempt to convert to port
             try {
                 b.port = static_cast<std::uint16_t>(std::stoi(std::string(line + address_length + 1, port_length)));
             }
