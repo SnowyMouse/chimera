@@ -134,9 +134,12 @@ namespace Chimera {
 
         for(auto &b : bookmarks) {
             char line[256];
+
+            // If we have a password, also include that.
             if(b.password[0]) {
                 std::snprintf(line, sizeof(line), "%s%s%s:%u %s", b.brackets ? "[" : "", b.address, b.brackets ? "]" : "", b.port, b.password);
             }
+            // Otherwise it's not really required to have a password
             else {
                 std::snprintf(line, sizeof(line), "%s%s%s:%u", b.brackets ? "[" : "", b.address, b.brackets ? "]" : "", b.port);
             }
@@ -240,8 +243,8 @@ namespace Chimera {
                             kv.first = std::string(str_start, c - str_start);
                         }
                         else {
-                            // Strip invalid characters from the start. If the string is all invalid, don't strip the last character.
-                            for(char *k = str_start; k + 1 < c && *k < 0x20; k++, str_start++);
+                            // Strip invalid/whitespace characters from the start. If the string is all invalid, don't strip the last character.
+                            for(char *k = str_start; k + 1 < c && *k <= 0x20; k++, str_start++);
 
                             // And here we go!
                             kv.second = std::string(str_start, c - str_start);
@@ -311,8 +314,14 @@ namespace Chimera {
 
                     success++;
 
+                    // Sometimes the game variant isn't set to anything (default gametype I think?). In this case, use the gametype.
+                    const char *gametype = p.get_data_for_key("gamevariant");
+                    if(!gametype[0]) {
+                        gametype = p.get_data_for_key("gametype");
+                    }
+
                     if(can_use_tabs) {
-                        console_output(ConsoleColor { 1.0F, red, green, 0.25F }, "%zu. %s|t%s|t%s|t%s / %s|r%zu ms", q, p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), p.get_data_for_key("gamevariant"), p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
+                        console_output(ConsoleColor { 1.0F, red, green, 0.25F }, "%zu. %s|t%s|t%s|t%s / %s|r%zu ms", q, p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), gametype, p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
                     }
                     else {
                         console_output(ConsoleColor { 1.0F, red, green, 0.25F }, "%zu. %s (%s; %s / %s) - %zu ms", q, p.get_data_for_key("hostname"), p.get_data_for_key("mapname"), p.get_data_for_key("numplayers"), p.get_data_for_key("maxplayers"), p.ping);
