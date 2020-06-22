@@ -240,12 +240,19 @@ namespace Chimera {
                             kv.first = std::string(str_start, c - str_start);
                         }
                         else {
+                            // Strip invalid characters from the start. If the string is all invalid, don't strip the last character.
+                            for(char *k = str_start; k + 1 < c && *k < 0x20; k++, str_start++);
+
+                            // And here we go!
                             kv.second = std::string(str_start, c - str_start);
+
+                            // Next, replace any unknown characters with '?'
                             for(char &c : kv.second) {
                                 if(c < 0x20) {
                                     c = '?';
                                 }
                             }
+
                             finished_packet.query_data.push_back(std::move(kv));
                             kv = {};
                         }
