@@ -294,9 +294,9 @@ namespace Chimera {
                     if(p.ping < 20) {
                         green = 1.0F;
                     }
-                    else if(p.ping < 120) {
-                        green = 1.0F - (p.ping - 20) / 100.0F;
-                        red = 0.2F + (p.ping - 20) / 100.0F * 0.8F;
+                    else if(p.ping < 170) {
+                        green = 1.0F - (p.ping - 20) / 150.0F;
+                        red = 0.2F + (p.ping - 20) / 150.0F * 0.8F;
                     }
                     else {
                         red = 1.0F;
