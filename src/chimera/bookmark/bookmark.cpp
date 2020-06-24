@@ -318,7 +318,7 @@ namespace Chimera {
                         red = (p.ping - 15) / static_cast<float>(80 - 15);
                     }
 
-                    // 100 - 200 ms = yellow to red
+                    // 80 - 200 ms = yellow to red
                     else if(p.ping < 200) {
                         green = 1.0F - (p.ping - 80) / static_cast<float>(200 - 80);
                         red = 1.0F;

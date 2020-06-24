@@ -27,6 +27,7 @@
 #include "annoyance/multi_instance.hpp"
 #include "annoyance/registry.hpp"
 #include "annoyance/update.hpp"
+#include "annoyance/watson.hpp"
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
 #include "fast_load/fast_load.hpp"
@@ -93,6 +94,9 @@ namespace Chimera {
 
             // Make this thing less annoying
             reduce_drm();
+
+            // Goodbye, Watson
+            remove_watson();
 
             // Load the ini
             chimera->reload_ini();

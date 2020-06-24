@@ -91,6 +91,7 @@ These are features that are always (or are on).
 - [Timer offset fix](#timer-offset-fix)
 - [Sane default Halo settings](#sane-default-halo-settings)
 - [Removed update check](#removed-update-check)
+- [Removed Watson](#removed-watson)
 - [Multi-team vehicle fix](#multi-team-vehicle-fix)
 - [Map downloading](#map-downloading)
 
@@ -237,6 +238,13 @@ SOUND VARIETY         | HIGH        |
 #### Removed update check
 The check for updates that occurs when clicking on "INTERNET" in joining or
 creating games is disabled.
+
+#### Removed Watson
+When Halo PC crashes, it launches a program called "Watson" to attempt to report
+errors to a server that has not been online in years. This is a waste of time,
+and it presents a minor annoyance for people who are unaware that you can simply
+remove the Watson folder. Therefore, Chimera removes the functionality
+altogether.
 
 #### Multi-team vehicles fix
 Servers with Chimera's [chimera_allow_all_passengers](#allow-all-passengers),
