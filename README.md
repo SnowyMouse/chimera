@@ -271,6 +271,7 @@ Below are the features you can take advantage of.
 - [Name settings](#name-settings)
 - [Memory settings](#memory-settings)
 - [Video mode settings](#video-mode-settings)
+- [Controller settings](#controller-settings)
 - [Custom chat settings](#custom-chat-settings)
 - [Hotkeys](#hotkeys)
 
@@ -316,6 +317,13 @@ vidmode. You can even use refresh rates in excess of 120 Hz.
 - `refresh_rate` (refresh rate in Hertz)
 - `vsync` (enable double buffer vSync to reduce tearing)
 - `windowed` (display Halo in a window)
+
+#### Controller settings
+These settings allow you to configure gamepads. See the included chimera.ini
+file for more information on these settings. You can also get [premade configs]
+in the Chimera repository if you want to use a premade configuration file.
+
+[example configs]: https://github.com/Kavawuvi/chimera/tree/master/controller_config
 
 #### Custom chat settings
 This allows you to customize the different colors, positioning, and timings of

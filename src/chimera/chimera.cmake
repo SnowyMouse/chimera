@@ -144,6 +144,8 @@ add_library(chimera STATIC
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
     src/chimera/math_trig/math_trig.cpp
+    src/chimera/miscellaneous/controller.cpp
+    src/chimera/miscellaneous/controller.S
     src/chimera/output/draw_text.cpp
     src/chimera/output/draw_text.S
     src/chimera/output/output.cpp

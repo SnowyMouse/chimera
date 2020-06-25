@@ -64,6 +64,7 @@
 #include "fix/weapon_swap_ticks.hpp"
 #include "halo_data/game_engine.hpp"
 #include "halo_data/main_menu_music.hpp"
+#include "miscellaneous/controller.hpp"
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
 #include "config/ini.hpp"
@@ -262,6 +263,9 @@ namespace Chimera {
 
                 // Memes
                 set_up_uncompressed_sound_fix();
+
+                // RAICHU
+                set_up_controller();
             }
             else {
                 enable_output(true);
