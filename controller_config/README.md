@@ -1,6 +1,6 @@
 To use a controller config, paste the contents of the entire text file to the
-`[controller]` section in chimera.ini. Set `enabled=1` or uncomment enabled=1 if
-using the included chimera.ini. For example:
+`[controller]` section in chimera.ini. Set `enabled=1` or uncomment `enabled=1`
+if using the included chimera.ini. For example:
 
 ```ini
 [controller]
