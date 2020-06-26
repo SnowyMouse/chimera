@@ -369,6 +369,7 @@ the chimera folder created by Chimera.
 - [Block all bullshit](#block-all-bullshit)
 - [Block auto center](#block-auto-center)
 - [Block buffering](#block-buffering)
+- [Block button quotes](#block-button-quotes)
 - [Block camera shaking](#block-camera-shaking)
 - [Block equipment rotation](#block-equipment-rotation)
 - [Block extra weapon](#block-extra-weapon)
@@ -469,6 +470,11 @@ This feature is known to reduce input lag, and it works like the feature in
 config.txt. You can enable this behavior if you want.
 
 **Usage:** `chimera_block_buffering [true/false]`
+
+#### Block button quotes
+Remove the quotation marks in button prompts (e.g. Hold "E")
+
+**Usage:** `chimera_block_button_quotes [true/false]`
 
 #### Block camera shaking
 Camera shaking from taking damage or firing weapons is broken in Halo PC. You

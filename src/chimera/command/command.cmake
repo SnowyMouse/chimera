@@ -20,6 +20,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/controller/aim_assist.cpp
     ${COMMAND_DIR}/client/controller/auto_uncrouch.cpp
     ${COMMAND_DIR}/client/controller/auto_uncrouch.S
+    ${COMMAND_DIR}/client/controller/block_button_quotes.cpp
     ${COMMAND_DIR}/client/controller/deadzones.cpp
     ${COMMAND_DIR}/client/controller/deadzones.S
     ${COMMAND_DIR}/client/controller/diagonals.cpp

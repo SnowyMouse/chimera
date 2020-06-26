@@ -243,6 +243,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_auto_uncrouch", "chimera_category_controller", "client_auto_uncrouch", auto_uncrouch_command, true, 0, 1);
         ADD_COMMAND("chimera_diagonals", "chimera_category_controller", "client_diagonals", diagonals_command, true, 0, 1);
         ADD_COMMAND("chimera_deadzones", "chimera_category_controller", "client_deadzones", deadzones_command, true, 0, 1);
+        ADD_COMMAND("chimera_block_button_quotes", "chimera_category_controller", "client_quote_prompt", block_button_quotes_command, true, 0, 1);
 
         // Bookmark
         ADD_COMMAND("chimera_bookmark_list", "chimera_category_bookmark", "client", bookmark_list_command, false, 0, 0);
