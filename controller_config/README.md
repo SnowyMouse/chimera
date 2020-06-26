@@ -4,6 +4,7 @@ using the included chimera.ini. For example:
 
 ```ini
 [controller]
+
 ;===============================================================================
 ; Controller settings
 ;
