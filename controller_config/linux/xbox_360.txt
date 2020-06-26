@@ -1,4 +1,4 @@
-; Applies to: Xbox One, Xbox One S, and Xbox 360 controllers on Linux
+; Applies to: Xbox 360 controllers on Linux
 
 axis_2_n=Left Stick Up
 axis_2_p=Left Stick Down
@@ -21,7 +21,7 @@ button_5=Left Bumper
 button_6=Right Bumper
 button_7=Back
 button_8=Start
-button_9=Home
+button_9=Guide
 button_10=Left Stick
 button_11=Right Stick
 

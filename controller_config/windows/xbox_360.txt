@@ -1,4 +1,4 @@
-; Applies to: Xbox One and Xbox One S controllers on Windows
+; Applies to: Xbox 360 controllers on Windows
 
 axis_1_n=Left Stick Up
 axis_1_p=Left Stick Down
@@ -19,8 +19,8 @@ button_3=X
 button_4=Y
 button_5=Left Bumper
 button_6=Right Bumper
-button_7=Menu
-button_8=View
+button_7=Back
+button_8=Start
 button_9=Left Stick
 button_10=Right Stick
 
