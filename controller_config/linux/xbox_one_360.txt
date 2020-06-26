@@ -1,7 +1,4 @@
-; Applies to: Xbox (original) controllers
-;
-; To use this, paste the contents of this text file under [controller] in your
-; chimera.ini file and uncomment/set enabled=1
+; Applies to: Xbox One, Xbox One S, and Xbox 360 controllers on Linux
 
 axis_2_n=Left Stick Up
 axis_2_p=Left Stick Down
@@ -18,14 +15,15 @@ axis_3_p=Left Trigger
 
 button_1=A
 button_2=B
-button_3=Black
-button_4=X
-button_5=Y
-button_6=White
+button_3=X
+button_4=Y
+button_5=Left Bumper
+button_6=Right Bumper
 button_7=Back
 button_8=Start
-button_9=Left Stick
-button_10=Right Stick
+button_9=Home
+button_10=Left Stick
+button_11=Right Stick
 
 pov_1_w=D-Pad Left
 pov_1_e=D-Pad Right

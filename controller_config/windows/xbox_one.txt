@@ -1,7 +1,4 @@
 ; Applies to: Xbox One and Xbox One S controllers on Windows
-;
-; To use this, paste the contents of this text file under [controller] in your
-; chimera.ini file and uncomment/set enabled=1
 
 axis_1_n=Left Stick Up
 axis_1_p=Left Stick Down
