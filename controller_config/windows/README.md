@@ -9,6 +9,7 @@ of them and what controllers they apply to.
 - Microsoft Xbox 360
 - Razer Serval (via [Razer Synapse 2.0](https://www2.razer.com/au-en/synapse-2))
 - Sony DualShock 4 (via [DS4Windows](http://ds4windows.com/))
+- Steam Controller (via [Steam](https://store.steampowered.com/))
 
 ## xbox_one.txt
 - Microsoft Xbox One
