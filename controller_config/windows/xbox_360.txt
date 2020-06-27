@@ -3,7 +3,7 @@
 ; This also applies to a number of other controller configs, since emulating
 ; Xbox 360 controllers seems to be pretty common.
 ;
-; See https://github.com/Kavawuvi/chimera/tree/master/controller_config/windows/README.md
+; See https://github.com/Kavawuvi/chimera/blob/master/controller_config/windows/README.md
 ; for a list.
 
 axis_1_n=Left Stick Up
