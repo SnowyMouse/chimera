@@ -4,6 +4,9 @@ add_library(hac_map_downloader STATIC
     src/hac_map_downloader/hac_map_downloader.cpp
 )
 
+# Target this
+target_include_directories(hac_map_downloader PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/include)
+
 add_executable(hac_map_downloader_test
     src/hac_map_downloader/test/test.cpp
 )
