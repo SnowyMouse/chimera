@@ -21,7 +21,5 @@ namespace Chimera {
         auto *ptr_2 = get_chimera().get_signature("floor_decal_meme_2_sig").data() + 7;
         static Hook hook_2;
         write_jmp_call(ptr_2, hook_2, nullptr, reinterpret_cast<const void *>(fix_decal_memery_asm), false);
-
-        add_tick_event(do_fun);
     }
 }
