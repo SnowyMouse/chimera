@@ -590,11 +590,15 @@ namespace Chimera {
                         auto *sound_data = TRANSLATE_POINTER(tag.data, std::byte *);
                         auto &pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
 
-                        // Set encoding stuff
-                        *reinterpret_cast<std::uint32_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x6C);
+                        // Copy over channel count and format
+                        *reinterpret_cast<std::uint16_t *>(sound_data + 0x6C) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6C);
+                        *reinterpret_cast<std::uint16_t *>(sound_data + 0x6E) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6E);
 
-                        // Set sample rate
+                        // Copy over sample rate
                         *reinterpret_cast<std::uint16_t *>(sound_data + 0x6) = *reinterpret_cast<std::uint16_t *>(base_sound_data + 0x6);
+
+                        // Copy over longest permutation length
+                        *reinterpret_cast<std::uint32_t *>(sound_data + 0x84) = *reinterpret_cast<std::uint32_t *>(base_sound_data + 0x84);
 
                         if(pitch_range_count) {
                             *reinterpret_cast<std::uint32_t *>(sound_data + 0x9C) = baseline_address;

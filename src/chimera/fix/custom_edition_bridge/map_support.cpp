@@ -137,8 +137,15 @@ namespace Chimera {
                         case TagClassInt::TAG_CLASS_SOUND: {
                             auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag->data + 0x98);
 
-                            *reinterpret_cast<std::uint32_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint32_t *>(sound_header + 0x6C);
+                            // Copy over channel count and format
+                            *reinterpret_cast<std::uint16_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6C);
+                            *reinterpret_cast<std::uint16_t *>(tag->data + 0x6E) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6E);
+
+                            // Copy over sample rate
                             *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(sound_header + 0x6);
+
+                            // Copy over longest permutation length
+                            *reinterpret_cast<std::uint32_t *>(tag->data + 0x84) = *reinterpret_cast<std::uint32_t *>(sound_header + 0x84);
 
                             for(std::uint32_t p = 0; p < pitch_range_count; p++) {
                                 auto *pitch_range = base + p * 72;
