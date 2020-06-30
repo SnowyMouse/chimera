@@ -42,6 +42,7 @@
 #include "fix/extend_limits.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
+#include "fix/floor_decal_memery.hpp"
 #include "fix/inverted_flag.hpp"
 #include "fix/fov_fix.hpp"
 #include "fix/fp_reverb.hpp"
@@ -124,6 +125,9 @@ namespace Chimera {
 
             // Fix this
             set_up_fix_leaking_descriptors();
+
+            // Fix some more bullshit
+            set_up_floor_decals_fix();
 
             // Lol
             set_up_invalid_command_crash_fix();

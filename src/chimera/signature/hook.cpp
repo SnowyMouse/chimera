@@ -134,6 +134,13 @@ namespace Chimera {
                         }
                         break;
                     }
+                    // mov [addr], ax
+                    else if(op1 == 0xA3) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 6);
+                        at += 6;
+                        break;
+                    }
                     // cmp reg, [reg+op3] or mov reg, [reg+op3]
                     else if(op1 == 0x3B || op1 == 0x3D || op1 == 0x8B) {
                         offsets.push_back(at - at_start);
@@ -324,6 +331,19 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
+                        break;
+                    }
+
+                    std::terminate();
+                }
+
+                // shl
+                case 0xD3: {
+                    auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(a == 0xE3) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 2);
+                        at += 2;
                         break;
                     }
 
