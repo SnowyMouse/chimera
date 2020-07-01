@@ -57,11 +57,11 @@ static BOOL load_dlls() {
     extern void instantiate_chimera();
     extern void destroy_chimera();
     extern int find_signatures();
-    extern const char *signature_errors();
+    extern void print_signature_errors();
     extern int halo_type();
     instantiate_chimera();
     if(find_signatures() == 0) {
-        MessageBox(NULL, signature_errors(), "Error", MB_ICONERROR | MB_OK);
+        print_signature_errors();
         destroy_chimera();
         return FALSE;
     }

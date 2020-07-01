@@ -436,17 +436,24 @@ namespace Chimera {
         return chimera->feature_present("client") || chimera->feature_present("server");
     }
 
-    extern "C" const char *signature_errors() {
+    extern "C" void print_signature_errors() {
+        // Hold errors
         static char error_buffer[65536];
-
         std::size_t error_buffer_offset = 0;
         #define APPEND_SPRINTF(...) error_buffer_offset += std::snprintf(error_buffer + error_buffer_offset, sizeof(error_buffer) - error_buffer_offset, __VA_ARGS__)
 
         APPEND_SPRINTF("Could not load Chimera.\n\n");
-
         bool engine_type_missing = false;
+        bool is_server = chimera->get_signature("map_server_path_1_sig").data() != nullptr;
 
-        auto list_missing_sigs_for_feature = [&error_buffer_offset, &engine_type_missing](const char *feature) {
+        auto list_missing_sigs_for_feature = [&error_buffer_offset, &engine_type_missing, &is_server](const char *feature) {
+            // If we're the server, don't show non-server signatures and vice versa
+            bool client_signature = std::strncmp(feature, "client", 6) == 0;
+            bool server_signature = std::strncmp(feature, "server", 6) == 0;
+            if((client_signature && is_server) || (server_signature && !is_server)) {
+                return;
+            }
+
             auto missing_sigs = chimera->missing_signatures_for_feature(feature);
             if(missing_sigs.size() != 0) {
                 APPEND_SPRINTF("Missing signatures from %s:\n", feature);
@@ -489,7 +496,14 @@ namespace Chimera {
             }
         }
 
-        return error_buffer;
+        // If we're on the server, print to standard error
+        if(is_server) {
+            std::fputs(error_buffer, stderr);
+        }
+        // Otherwise, show an error message for the user
+        else {
+            MessageBox(nullptr, error_buffer, "Error", MB_ICONERROR | MB_OK);
+        }
     }
 
     int halo_type() {
