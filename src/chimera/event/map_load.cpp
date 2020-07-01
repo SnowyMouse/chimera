@@ -3,6 +3,7 @@
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+#include "../halo_data/game_engine.hpp"
 
 #include "map_load.hpp"
 
@@ -48,6 +49,12 @@ namespace Chimera {
 
         // Add the hook
         static Hook hook;
-        write_jmp_call(get_chimera().get_signature("on_map_load_sig").data(), hook, reinterpret_cast<const void *>(on_map_load));
+        auto &chimera = get_chimera();
+        if(chimera.feature_present("server")) {
+            write_jmp_call(chimera.get_signature(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION ? "on_map_load_server_custom_sig" : "on_map_load_server_retail_sig").data(), hook, nullptr, reinterpret_cast<const void *>(on_map_load));
+        }
+        else {
+            write_jmp_call(chimera.get_signature("on_map_load_client_sig").data(), hook, reinterpret_cast<const void *>(on_map_load));
+        }
     }
 }

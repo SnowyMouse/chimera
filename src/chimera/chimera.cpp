@@ -126,9 +126,6 @@ namespace Chimera {
             // Fix this
             set_up_fix_leaking_descriptors();
 
-            // Fix some more bullshit
-            set_up_floor_decals_fix();
-
             // Lol
             set_up_invalid_command_crash_fix();
 
@@ -138,6 +135,9 @@ namespace Chimera {
                 const char *value_true = "true";
                 camo_fix_command(1, &value_true);
                 add_preframe_event(initial_tick);
+
+                // Fix some more bullshit
+                set_up_floor_decals_fix();
 
                 add_map_load_event(april_fools);
 
@@ -596,6 +596,7 @@ namespace Chimera {
         // Don't re-execute this
         remove_frame_event(execute_init);
         bool should_error_if_not_found = false;
+        bool is_server = get_chimera().feature_present("server");
 
         // First see if we set anything here
         const char *init = get_chimera().get_ini()->get_value("halo.exec");
@@ -638,7 +639,9 @@ namespace Chimera {
         }
 
         // Do it!
-        get_chimera().get_config().set_saving(false);
+        if(!is_server) {
+            get_chimera().get_config().set_saving(false);
+        }
         std::fstream file_to_open(init, std::ios_base::in);
         if(file_to_open.is_open()) {
             std::string line;
@@ -671,7 +674,9 @@ namespace Chimera {
         else if(should_error_if_not_found) {
             console_error(localize("chimera_error_failed_to_open_init"), init);
         }
-        get_chimera().get_config().set_saving(true);
+        if(!is_server) {
+            get_chimera().get_config().set_saving(true);
+        }
     }
 
     static void set_up_delayed_init() {
