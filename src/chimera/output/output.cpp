@@ -16,6 +16,11 @@ namespace Chimera {
         output_enabled = enabled;
     }
 
+    extern "C" void send_rcon_message_asm(std::uint32_t player, const char *message) noexcept;
+    void send_rcon_message(int player, const char *message) {
+        send_rcon_message_asm(static_cast<std::uint32_t>(player), message);
+    }
+
     extern "C" void console_output_asm(const ConsoleColor &color, const char *message);
     void console_output_raw(const ConsoleColor &color, const char *message) noexcept {
         if(!output_enabled) {

@@ -3,17 +3,50 @@
 .intel_syntax noprefix
 
 .data
+rcon_out_addr: .long 0
 console_output_addr: .long 0
 hud_output_addr: .long 0
 rcon_message_addr: .long 0
 
 .text
+rcon_out_sig: .string "rcon_out_sig"
 console_output_sig: .string "console_out_sig"
 hud_output_sig: .string "hud_message_sig"
 rcon_message_sig: .string "rcon_message_sig"
 
 ;# Make sure anything with a % sign doesn't get wrecked
 console_output_format: .string "%s"
+
+.globl _send_rcon_message_asm
+_send_rcon_message_asm:
+    pushfd
+    pushad
+
+    ;# Check if we know the address
+    cmp dword ptr rcon_out_addr, 0
+    jnz do_rcon_output
+
+    ;# Get the address if not set
+    lea eax, byte ptr rcon_out_sig
+    push eax
+    call _address_for_signature
+    mov rcon_out_addr, eax
+    pop eax
+
+    do_rcon_output:
+    ;# Set the variables
+    ;# eax = pointer to message
+    ;# ebp = player index (also pushed!)
+    mov eax, [esp+0x2C] ;# message
+    mov ebp, [esp+0x28] ;# player
+    push ebp
+    call dword ptr rcon_out_addr
+    add esp, 4
+
+    ;# Clean up
+    popad
+    popfd
+    ret
 
 .globl _console_output_asm
 _console_output_asm:

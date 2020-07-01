@@ -25,6 +25,13 @@ namespace Chimera {
     };
 
     /**
+     * Send an rcon message to someone
+     * @param player  player to send to
+     * @param message message to send
+     */
+    void send_rcon_message(int player, const char *message);
+
+    /**
      * Set whether or not to enable output
      * @param enabled set to true if output should be enabled
      */
