@@ -553,7 +553,6 @@ namespace Chimera {
             // Set default settings
             if(chimera->get_ini()->get_value_bool("halo.optimal_defaults").value_or(false)) {
                 chimera->execute_command("chimera_block_mouse_acceleration true");
-                chimera->execute_command("chimera_hud_kill_feed true");
                 chimera->execute_command("chimera_aim_assist true");
                 chimera->execute_command("chimera_interpolate true");
                 chimera->execute_command("chimera_diagonals 0.75");

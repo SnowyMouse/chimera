@@ -397,7 +397,6 @@ the chimera folder created by Chimera.
 - [Diagonals](#diagonals)
 - [FoV](#fov)
 - [FP reverb](#fp-reverb)
-- [HUD kill feed](#hud-kill-feed)
 - [Language](#language)
 - [Model detail](#model-detail)
 - [Mouse sensitivity](#mouse-sensitivity)
@@ -649,11 +648,6 @@ Set whether or not first person sounds should have reverberations when EAX is
 enabled.
 
 **Usage:** `chimera_fp_reverb [true/false]`
-
-#### HUD kill feed
-Put the kill feed in the HUD. Halo puts it in the chat, normally.
-
-**Usage:** `chimera_hud_kill_feed [true/false]`
 
 #### Language
 Chimera is localized for both English and, thanks to help from the community,

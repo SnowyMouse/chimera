@@ -58,7 +58,6 @@ chimera_command_info_for_command                                                
 chimera_command_version                                                         Chimera versión %s por Kavawuvi ^v^
 chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
 chimera_devmode_command_help                                                    Habilita el devmode. Esto habilitará los comandos de cheats y de desarrollador.
-chimera_hud_kill_feed_command_help                                              Muestra los anuncios de muertes en el HUD.
 chimera_language_command_available_languages                                    Lenguajes disponibles:
 chimera_language_command_error_invalid_language                                 Lenguaje inválido %s.
 chimera_language_command_help                                                   Establece el idioma de Chimera.

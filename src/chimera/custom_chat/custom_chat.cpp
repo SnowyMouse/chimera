@@ -80,6 +80,14 @@ namespace Chimera {
         static Hook kill_feed_hook;
         write_function_override(get_chimera().get_signature("kill_feed_sig").data(), kill_feed_hook, reinterpret_cast<const void *>(on_kill_feed), &kill_feed_message);
 
+        // Set up the kill feed stuff
+        auto &hud_kill_feed_sig = get_chimera().get_signature("hud_kill_feed_sig");
+        auto &hud_kill_feed_host_kill_sig = get_chimera().get_signature("hud_kill_feed_host_kill_sig");
+        auto &hud_kill_feed_host_betray_sig = get_chimera().get_signature("hud_kill_feed_host_betray_sig");
+        overwrite(hud_kill_feed_sig.data() + 1, reinterpret_cast<int>(static_cast<void (*)(const wchar_t *)>(hud_output_raw)) - reinterpret_cast<int>(hud_kill_feed_sig.data() + 5));
+        overwrite(hud_kill_feed_host_kill_sig.data() + 1, reinterpret_cast<int>(static_cast<void (*)(const wchar_t *)>(hud_output_raw)) - reinterpret_cast<int>(hud_kill_feed_host_kill_sig.data() + 5));
+        overwrite(hud_kill_feed_host_betray_sig.data() + 1, reinterpret_cast<int>(static_cast<void (*)(const wchar_t *)>(hud_output_raw)) - reinterpret_cast<int>(hud_kill_feed_host_betray_sig.data() + 5));
+
         load_chat_settings();
 
         custom_chat_initialized = true;
