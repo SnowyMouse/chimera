@@ -2,8 +2,11 @@
 
 #include <fstream>
 #include <windows.h>
+#include <iostream>
+#include <istream>
 #include "ini.hpp"
 #include "../command/command.hpp"
+#include "../chimera.hpp"
 #include <cstring>
 
 namespace Chimera {
@@ -102,7 +105,7 @@ namespace Chimera {
     }
 
     // Returns false on error, a key/value pair, or true to do nothing
-    static std::variant<std::pair<std::string, std::string>, bool> digest_line(const char *data, const char **new_offset, std::string &current_group) {
+    static std::variant<std::pair<std::string, std::string>, bool> digest_line(const char *data, const char **new_offset, std::string &current_group, std::size_t line_number) {
         // Determine how big the line is
         std::size_t line_length = 0;
         bool non_whitespace = false;
@@ -139,9 +142,23 @@ namespace Chimera {
             return true;
         }
 
+        auto show_error = [&line_number, &data]() {
+            // We can't feasibly continue from this without causing undefined behavior. Abort the process after showing an error message.
+            char error[1024];
+            std::snprintf(error, sizeof(error), "chimera.ini error (line #%zu):\n\n%s\n\nThis line could not be parsed. The game must close now.\n", line_number, data);
+            if(get_chimera().feature_present("server")) {
+                std::cerr << error;
+            }
+            else {
+                MessageBox(NULL, error, "Chimera configuration error", MB_ICONERROR | MB_OK);
+            }
+            ExitProcess(136);
+        };
+
         // Check if we're in a group
         if(*data == '[') {
             if(right_square_bracket_offset == 0) {
+                show_error();
                 return false;
             }
             else {
@@ -162,6 +179,7 @@ namespace Chimera {
             return std::pair(key, std::string(data + equals_offset + 1, line_length - equals_offset - 1));
         }
 
+        show_error();
         return false;
     }
 
@@ -177,13 +195,27 @@ namespace Chimera {
     void Ini::load_from_stream(std::istream &stream) {
         std::string group;
         std::string line;
+        std::size_t no = 0;
+
+        if(!stream.good()) {
+            static const char *failed_to_open_error = "chimera.ini could not be opened.\n\nMake sure it exists and you have permission to it.\n\nThe game must close now.\n";
+            if(get_chimera().feature_present("server")) {
+                std::cerr << failed_to_open_error;
+            }
+            else {
+                MessageBox(NULL, failed_to_open_error, "Chimera configuration error", MB_ICONERROR | MB_OK);
+            }
+            ExitProcess(136);
+        }
+
         while(std::getline(stream, line)) {
-            auto result = digest_line(line.data(), nullptr, group);
+            auto result = digest_line(line.data(), nullptr, group, ++no);
             if(result.index() == 0) {
                 this->set_value(std::move(std::get<0>(result)));
             }
             else if(std::get<1>(result) == false) {
                 this->p_values.clear();
+                ExitProcess(136);
                 return;
             }
         }
