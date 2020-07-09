@@ -836,25 +836,28 @@ dependency (thus no map compression - required for map downloading!) or ask
 *all* of the developers of upstream Invader for permission, too.
 
 ### Why does Halo's gamma setting not work when Chimera is installed?
-Halo's gamma setting was disabled as it does a lot more harm than good. This may
-seem like an inconvenience, but you really do not want to use this. We recommend
-using [dgVoodoo2](http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2.html) for this,
-instead.
+Short answer: Halo's gamma setting was disabled as it does a lot more harm than
+good. Basically, it's screwed up and there's no good way to fix it. This may
+seem like an inconvenience, but you really do *not* want to use this. We
+recommend using [dgVoodoo2] for this, instead.
 
-Basically, how Halo's gamma setting works is, rather than changing Halo's own
+Long answer: How Halo's gamma setting works is, rather than changing Halo's own
 brightness level, it changes your operating system's brightness. It then stores
-the gamma setting by editing the registry. The way this works is completely and
-utterly screwed up, and there's no way to fix it. Halo is also programmed to
-restore the operating system's older gamma setting when it closes. However, this
-can only occur if Halo closes correctly. There is the chance that it won't close
+the gamma setting by editing the registry. Halo is then programmed to restore
+the operating system's older gamma setting when it closes. However, this can
+only occur if Halo closes correctly. There is the chance that it won't close
 properly (exception errors, you closed it improperly, etc.), and if that
 happens, you may end up with Halo's gamma setting lingering.
 
 We decided to disable this setting since it presented unnecessary modifications
 to the registry, it potentially ends up actually screwing up your operating
 system's video settings, and there is quite simply a better way to do it,
-anyway. We are *not* going to provide an option to re-enable it, nor are we
-going to provide any option to do so. Use dgVoodoo2, instead.
+anyway.
+
+We are *not* going to provide an option to re-enable it, nor are we going to
+provide any option to do so. Again, use [dgVoodoo2], instead.
+
+[dgVoodoo2]: http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2.html
 
 ### Why is there no auto updater?
 Short answer: Auto updating is *not* actually a feature you want. For the best
