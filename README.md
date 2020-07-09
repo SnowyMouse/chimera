@@ -854,8 +854,8 @@ to the registry, it potentially ends up actually screwing up your operating
 system's video settings, and there is quite simply a better way to do it,
 anyway.
 
-We are *not* going to provide an option to re-enable it, nor are we going to
-provide any option to do so. Again, use [dgVoodoo2], instead.
+We are *not* going to provide an option to re-enable it. Again, use [dgVoodoo2],
+instead.
 
 [dgVoodoo2]: http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2.html
 
