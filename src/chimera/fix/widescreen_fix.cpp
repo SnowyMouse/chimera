@@ -73,6 +73,10 @@ extern "C" {
     std::int32_t widescreen_mouse_right_bounds = 640;
     std::int32_t *widescreen_mouse_x = nullptr;
     std::int32_t *widescreen_mouse_y = nullptr;
+
+    std::int16_t widescreen_left_offset_add = 0;
+    void widescreen_cutscene_text_before_asm() noexcept;
+    void widescreen_cutscene_text_after_asm() noexcept;
 }
 
 namespace Chimera {
@@ -245,10 +249,8 @@ namespace Chimera {
     static std::uint16_t *tabs_ptr;
 
     extern "C" void reposition_menu_text_element(std::int16_t *element) noexcept {
-        std::int16_t increase = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
-
-        element[1] += increase;
-        element[3] += increase;
+        element[1] += widescreen_left_offset_add;
+        element[3] += widescreen_left_offset_add;
 
         // This is for the score screens which use tabbing.
         std::uint16_t tab_count = static_cast<std::uint16_t>(tabs_ptr[0]);
@@ -260,7 +262,7 @@ namespace Chimera {
         else {
             if(tabs_ptr[1] != last_increase) {
                 for(std::size_t i = 0; i < tab_count; i++) {
-                    tabs_ptr[i + 1] += increase;
+                    tabs_ptr[i + 1] += widescreen_left_offset_add;
                 }
                 last_increase = tabs_ptr[1];
             }
@@ -268,13 +270,13 @@ namespace Chimera {
     }
 
     extern "C" void reposition_menu_text_input() noexcept {
-        std::int16_t increase = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
+        std::int16_t increase = widescreen_left_offset_add;
         widescreen_text_input_element[1] += increase;
         widescreen_text_input_element[3] += increase;
     }
 
     extern "C" void unreposition_menu_text_input() noexcept {
-        std::int16_t increase = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
+        std::int16_t increase = widescreen_left_offset_add;
         widescreen_text_input_element[1] -= increase;
         widescreen_text_input_element[3] -= increase;
     }
@@ -376,6 +378,10 @@ namespace Chimera {
             static Hook nav_marker_sp;
             auto &widescreen_nav_marker_sp_sig = get_chimera().get_signature("widescreen_nav_marker_sp_sig");
             write_jmp_call(widescreen_nav_marker_sp_sig.data(), nav_marker_sp, reinterpret_cast<const void *>(widescreen_set_upscale_flag), reinterpret_cast<const void *>(widescreen_unset_upscale_flag));
+
+            static Hook cutscene_text;
+            auto &widescreen_text_cutscene_sig = get_chimera().get_signature("widescreen_text_cutscene_sig");
+            write_jmp_call(widescreen_text_cutscene_sig.data() + 8, cutscene_text, reinterpret_cast<const void *>(widescreen_cutscene_text_before_asm), reinterpret_cast<const void *>(widescreen_cutscene_text_after_asm), false);
 
             if(ce) {
                 auto &widescreen_text_f2_text_position_motd_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_sig");
@@ -495,6 +501,7 @@ namespace Chimera {
                 widescreen_console_tabs_sig.rollback();
                 widescreen_input_text_sig.rollback();
                 widescreen_mouse_sig.rollback();
+                widescreen_text_cutscene_sig.rollback();
 
                 widescreen_text_x_offset = 0;
 
@@ -524,6 +531,7 @@ namespace Chimera {
 
     static void on_tick() noexcept {
         aspect_ratio = static_cast<float>(get_resolution().width) / static_cast<float>(get_resolution().height);
+        widescreen_left_offset_add = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
 
         // Change instructions if we need them to be changed
         widescreen_width_480p = aspect_ratio * 480.0f;
