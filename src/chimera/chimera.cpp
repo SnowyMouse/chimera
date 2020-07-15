@@ -638,7 +638,7 @@ namespace Chimera {
         }
 
         // Remove quotes from it
-        char final_init_maybe[1024] = {};
+        char final_init_maybe[MAX_PATH] = {};
         if(init_maybe.has_value()) {
             auto init_maybe_len = init_maybe->size();
             auto *init_maybe_cstr = init_maybe->c_str();
