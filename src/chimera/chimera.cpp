@@ -612,8 +612,14 @@ namespace Chimera {
         std::string last_param;
         std::optional<std::string> init_maybe;
         bool letter_digested = false;
+        bool inside_quote = false;
         for(char *c = cmd_line; cmd_line == c || c[-1]; c++) {
-            if((*c == 0 || *c == ' ') && letter_digested) {
+            // Invert if we're inside quotes
+            if(*c == '"') {
+                inside_quote = !inside_quote;
+            }
+
+            if((*c == 0 || (*c == ' ' && !inside_quote)) && letter_digested) {
                 std::string this_param = std::string(first_letter, c - first_letter);
                 if(last_param == "-exec") {
                     init_maybe = this_param;
@@ -631,9 +637,18 @@ namespace Chimera {
             }
         }
 
-        // If we did set something, do this
+        // Remove quotes from it
+        char final_init_maybe[1024] = {};
         if(init_maybe.has_value()) {
-            init = init_maybe->c_str();
+            auto init_maybe_len = init_maybe->size();
+            auto *init_maybe_cstr = init_maybe->c_str();
+            for(std::size_t i = 0, k = 0; i < (sizeof(final_init_maybe) - 1) && k < init_maybe_len; i++, k++) {
+                while(init_maybe_cstr[k] == '"') {
+                    k++;
+                }
+                final_init_maybe[i] = init_maybe_cstr[k];
+            }
+            init = final_init_maybe;
             should_error_if_not_found = true;
         }
 
