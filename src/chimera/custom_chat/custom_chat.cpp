@@ -37,7 +37,6 @@ namespace Chimera {
     static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use);
     static void check_for_quit_players();
     static void load_chat_settings();
-    static const wchar_t *special_name_color(const wchar_t *name);
 
     extern "C" std::uint32_t chat_get_local_rcon_id() noexcept {
         auto *list = ServerInfoPlayerList::get_server_info_player_list();
@@ -532,7 +531,7 @@ namespace Chimera {
 
         // Get player name
         char player_u8[256];
-        u16_to_u8(player_u8, sizeof(player_u8), special_name_color(player_info.name));
+        u16_to_u8(player_u8, sizeof(player_u8), player_info.name);
 
         // Format a message
         char entire_message[MAX_MESSAGE_LENGTH];
@@ -911,43 +910,5 @@ namespace Chimera {
 
         chat_fade_out_time = std::max(0.0F, chat_fade_out_time);
         server_fade_out_time = std::max(0.0F, server_fade_out_time);
-    }
-
-    static const wchar_t *special_name_color(const wchar_t *name) {
-        if(name == nullptr) {
-            return nullptr;
-        }
-        auto name_matches = [&name](const wchar_t *name_to_match) {
-            for(std::size_t i = 0;;i++) {
-                if(name[i] != name_to_match[i]) {
-                    return false;
-                }
-                else if(name[i] == 0) {
-                    return true;
-                }
-            }
-        };
-
-        if(name_matches(L"Kavawuvi")) {
-            return L"^KKavawuvi^;";
-        }
-        else if(name_matches(L"Vaporeon")) {
-            return L"^5Vaporeon^;";
-        }
-        else if(name_matches(L"Raichu")) {
-            return L"^ZRaichu^;";
-        }
-        else if(name_matches(L"Pichu")) {
-            return L"^3Pichu^;";
-        }
-        else if(name_matches(L"Pikachu")) {
-            return L"^XPikachu^;";
-        }
-        else if(name_matches(L"ST34MF0X")) {
-            return L"^qST34M^8F0X^;";
-        }
-        else {
-            return name;
-        }
     }
 }
