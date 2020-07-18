@@ -731,7 +731,7 @@ namespace Chimera {
         auto get_player_name = [&server_info](PlayerID id, ColorARGB *color_to_use) -> std::string {
             char name[256];
             auto *player = server_info->get_player(id);
-            u16_to_u8(name, sizeof(name), special_name_color(player->name));
+            u16_to_u8(name, sizeof(name), player->name);
 
             return std::string("^") + color_id_for_player(player - server_info->players, color_to_use) + name + "^;";
         };
