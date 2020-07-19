@@ -146,7 +146,7 @@ namespace Chimera {
         float center_x = (min_x + max_x) / 2.0f;
         float center_y = (min_y + max_y) / 2.0f;
 
-        bool inner_center = std::fabs(320.0f - center_x) < 210.0 && std::fabs(240.0f - center_y) < 170.0;
+        bool inner_center = std::fabs(320.0f - center_x) < 210.0 && std::fabs(240.0f - center_y) < 120.0;
         bool centered_x = inner_center || std::fabs(320.0f - center_x) < 100.0;
         //bool centered_y = inner_center || std::fabs(240.0f - center_y) < 100.0;
 
@@ -216,7 +216,7 @@ namespace Chimera {
         float min_y = element.corners[CORNER_TOP_LEFT].y;
         float max_y = element.corners[CORNER_BOTTOM_LEFT].y;
 
-        if(min_x <= 1.0f && max_x >= 639.0f && min_y <= 1.0F && max_y >= 479.0f) {
+        if(min_x <= 1.0f && max_x >= 639.0f) {
             element.corners[CORNER_TOP_RIGHT].x += increase;
             element.corners[CORNER_BOTTOM_RIGHT].x += increase;
             return;
@@ -547,10 +547,11 @@ namespace Chimera {
                 std::int16_t &bounds_bottom = *reinterpret_cast<std::int16_t *>(tag->data + 0x28);
                 std::int16_t &bounds_right = *reinterpret_cast<std::int16_t *>(tag->data + 0x2A);
 
-                if(bounds_top == 0 && bounds_bottom == 480 && bounds_left == 0 && bounds_right == 640) {
-                    bounds_bottom = 478;
+                if(bounds_right == 640) {
+                    bounds_right = 638;
                 }
             };
+            jason_jones_tag("ui\\shell\\main_menu\\halo_logo");
             jason_jones_tag("ui\\shell\\main_menu\\multiplayer_type_select\\join_game\\join_game_items_list");
             jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\controls_setup\\controls_options_menu");
             jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\gamepad_setup\\gamepad_setup_options");
