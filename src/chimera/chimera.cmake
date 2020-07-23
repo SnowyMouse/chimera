@@ -134,6 +134,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/object.S
     src/chimera/halo_data/particle.cpp
     src/chimera/halo_data/path.cpp
+    src/chimera/halo_data/pause.cpp
     src/chimera/halo_data/player.cpp
     src/chimera/halo_data/port.cpp
     src/chimera/halo_data/resolution.cpp
