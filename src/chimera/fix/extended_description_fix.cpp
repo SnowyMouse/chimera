@@ -7,9 +7,8 @@
 
 namespace Chimera {
     void set_up_extended_description_fix() noexcept {
-        auto *extended_description_index_sig = get_chimera().get_signature("extended_description_index_sig").data();
+        auto &extended_description_index_sig = get_chimera().get_signature("extended_description_index_sig");
 
-        overwrite(extended_description_index_sig, static_cast<std::uint8_t>(0x09));
-        overwrite(extended_description_index_sig + 0x0C, static_cast<std::uint8_t>(0x09));
+        overwrite(extended_description_index_sig.data(), static_cast<std::uint8_t>(0x09));
     }
 }
