@@ -5,6 +5,7 @@
 
 #include "../../halo_data/object.hpp"
 #include "../../halo_data/camera.hpp"
+#include "../../halo_data/pause.hpp"
 #include "../../halo_data/player.hpp"
 #include "camera.hpp"
 
@@ -35,6 +36,10 @@ namespace Chimera {
     extern bool spectate_enabled;
 
     void interpolate_camera_before() noexcept {
+        if(game_paused()) {
+            return;
+        }
+
         // Check if a tick has passed. If so, copy data to the current interpolation buffer.
         auto type = camera_type();
         if(tick_passed) {
@@ -101,7 +106,7 @@ namespace Chimera {
     }
 
     void interpolate_camera_after() noexcept {
-        if(skip) {
+        if(skip || game_paused()) {
             return;
         }
 
