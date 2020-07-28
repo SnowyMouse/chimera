@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include "fp.hpp"
+#include "../../halo_data/pause.hpp"
 #include "../../chimera.hpp"
 #include "../../signature/signature.hpp"
 
@@ -44,6 +45,10 @@ namespace Chimera {
     static bool tick_passed = false;
 
     void interpolate_fp_before() noexcept {
+        if(game_paused()) {
+            return;
+        }
+
         // This is the progress of the current tick.
         extern float interpolation_tick_progress;
         FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(first_person_nodes() + 0x8C);
@@ -86,7 +91,7 @@ namespace Chimera {
 
     void interpolate_fp_after() noexcept {
         // Revert the interpolation to prevent weird things from happening.
-        if(!skip) {
+        if(!skip && !game_paused()) {
             FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(first_person_nodes() + 0x8C);
             std::copy(current_tick, current_tick + NODES_PER_BUFFER, fpn);
         }

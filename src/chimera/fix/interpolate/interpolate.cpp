@@ -6,6 +6,7 @@
 #include "../../signature/hook.hpp"
 #include "../../signature/signature.hpp"
 #include "../../halo_data/multiplayer.hpp"
+#include "../../halo_data/pause.hpp"
 #include "../../event/camera.hpp"
 #include "../../event/frame.hpp"
 #include "../../event/tick.hpp"
@@ -33,6 +34,11 @@ namespace Chimera {
     static float *first_person_camera_tick_rate = nullptr;
 
     static void on_tick() noexcept {
+        // Prevent interpolation when the game is paused
+        if(game_paused()) {
+            return;
+        }
+
         interpolate_antenna_on_tick();
         interpolate_flag_on_tick();
         interpolate_fp_on_tick();
@@ -48,6 +54,10 @@ namespace Chimera {
     }
 
     static void on_preframe() noexcept {
+        if(game_paused()) {
+            return;
+        }
+
         interpolation_tick_progress = get_tick_progress();
 
         interpolate_antenna_before();
@@ -61,6 +71,10 @@ namespace Chimera {
     }
 
     static void on_frame() noexcept {
+        if(game_paused()) {
+            return;
+        }
+
         interpolate_antenna_after();
         interpolate_object_after();
         interpolate_particle_after();
