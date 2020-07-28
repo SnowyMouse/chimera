@@ -40,6 +40,7 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
+#include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/floor_decal_memery.hpp"
@@ -244,6 +245,7 @@ namespace Chimera {
 
                 // More lol
                 set_up_blue_32bit_color_fix();
+                set_up_extended_description_fix();
 
                 // wtf
                 set_up_force_crash_fix();

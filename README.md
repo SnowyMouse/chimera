@@ -71,6 +71,7 @@ These are features that are always (or are on).
 - [Compressed maps](#compressed-maps)
 - [Reduced DRM](#reduced-drm)
 - [Descope fix](#descope-fix)
+- [Extended description fix](#extended-description-fix)
 - [Fast loading](#fast-loading)
 - [Fast server listing](#fast-server-listing)
 - [128 MiB map leak fix](#128-mib-map-leak-fix)
@@ -140,6 +141,10 @@ This functionality is broken when in a server, as the client only descopes when
 the player takes damage on the client instance rather than if they actually
 took damage on the server. Chimera changes this to making it so if you lose
 health or shield, you are descoped.
+
+#### Extended description fix
+Chimera fixes a bug where the "About" button of the profile settings menu
+doesn't display the correct bitmap in the extended description.
 
 #### Fast loading
 Halo Custom Edition CRC32s every map on startup. On a small maps folder, this
