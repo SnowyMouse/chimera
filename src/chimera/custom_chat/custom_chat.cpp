@@ -6,6 +6,7 @@
 #include <locale>
 #include <codecvt>
 #include <cwchar>
+#include <cctype>
 #include <regex>
 #include "../event/frame.hpp"
 #include "../event/tick.hpp"
@@ -583,57 +584,59 @@ namespace Chimera {
     }
 
     static void on_chat_input() noexcept {
-        static std::uint8_t *modifier = nullptr;
-        static std::uint8_t *character = nullptr;
-        static std::uint8_t *key_code = nullptr;
-        if(!modifier) {
+        struct alignas(std::uint16_t) key_input {
+            std::uint8_t modifier;
+            std::uint8_t character;
+            std::uint8_t key_code;
+        }; static_assert(sizeof(key_input) == sizeof(std::uint32_t)); // 4-byte strides
+        
+        static key_input    *input_buffer = nullptr; // array of size 0x40
+        static std::int16_t *input_count = nullptr;  // population count for input_buffer
+        if(!input_buffer) {
             auto *data = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("on_key_press_sig").data() + 10);
-            modifier = data + 2;
-            character = data + 3;
-            key_code = data + 4;
+            input_buffer = reinterpret_cast<key_input*>(data + 2);
+            input_count = reinterpret_cast<std::int16_t*>(data);
         }
 
         // Handle keyboard input if we have the chat input open
         if(chat_input_open) {
+            const auto& [modifier, character, key_code] = input_buffer[*input_count];
             // Special key pressed
-            if(*character == 0xFF) {
-                if(*key_code == 0) {
+            if(character == 0xFF) {
+                if(key_code == 0) {
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
                     chat_message_scroll = 0;
                     enable_input(true);
                 }
                 // Left arrow
-                else if(*key_code == 0x4F) {
+                else if(key_code == 0x4F) {
                     if(chat_input_cursor > 0) {
                         chat_input_cursor--;
                     }
                 }
                 // Right arrow
-                else if(*key_code == 0x50) {
+                else if(key_code == 0x50) {
                     if(chat_input_buffer[chat_input_cursor] != 0) {
                         chat_input_cursor++;
                     }
                 }
                 // Up arrow
-                else if(*key_code == 0x4D) {
+                else if(key_code == 0x4D) {
                     if(chat_message_scroll + 1 != MESSAGE_BUFFER_SIZE && chat_messages[chat_message_scroll + 1].valid()) {
                         chat_message_scroll++;
                     }
                 }
                 // Page down
-                else if(*key_code == 0x4E) {
+                else if(key_code == 0x4E) {
                     if(chat_message_scroll != 0) {
                         chat_message_scroll--;
                     }
                 }
                 // Backspace/Delete
-                else if(*key_code == 0x1D) {
-                    static bool ignore_next_key = false;
-                    if(ignore_next_key) {
-                        ignore_next_key = false;
-                    }
-                    else if(chat_input_cursor > 0) {
+                else if(key_code == 0x1D) {
+                    // static bool ignore_next_key = false; // no longer necessary since deduplication
+                    if(chat_input_cursor > 0) {
                         std::size_t length = std::strlen(chat_input_buffer);
                         // Move everything after the cursor down a character
                         for(std::size_t i = chat_input_cursor - 1; i < length; i++) {
@@ -641,11 +644,10 @@ namespace Chimera {
                         }
                         chat_input_buffer[length - 1] = 0;
                         chat_input_cursor--;
-                        ignore_next_key = true;
                     }
                 }
                 // Del
-                else if(*key_code == 0x54) {
+                else if(key_code == 0x54) {
                     std::size_t length = std::strlen(chat_input_buffer);
 
                     // Move everything after the cursor down a character
@@ -654,7 +656,7 @@ namespace Chimera {
                     }
                 }
                 // Enter
-                else if(*key_code == 0x38) {
+                else if(key_code == 0x38) {
                     if(std::strlen(chat_input_buffer) && server_type() != ServerType::SERVER_NONE) {
                         wchar_t chat_data[sizeof(chat_input_buffer)];
                         std::copy(chat_input_buffer, chat_input_buffer + sizeof(chat_input_buffer), chat_data);
@@ -667,7 +669,7 @@ namespace Chimera {
                 }
             }
             // Insert a character
-            else {
+            else if (!std::iscntrl(character)) { // prevents keys like backspace from inserting characters into the buffer
                 std::size_t length = std::strlen(chat_input_buffer);
                 if(length + 1 < INPUT_BUFFER_SIZE) {
                     // Null terminate so we don't get blown up
@@ -676,7 +678,7 @@ namespace Chimera {
                     for(std::size_t i = length; i > chat_input_cursor; i--) {
                         chat_input_buffer[i] = chat_input_buffer[i - 1];
                     }
-                    chat_input_buffer[chat_input_cursor++] = *character;
+                    chat_input_buffer[chat_input_cursor++] = character;
                 }
             }
         }
