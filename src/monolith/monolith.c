@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <winbase.h>
 #include <shlwapi.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 typedef struct {
     HMODULE module;
@@ -111,6 +113,47 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
     switch(reason) {
         case DLL_PROCESS_ATTACH:
             {
+                // Check if we're CD'd into the Halo directory
+                static char exe_path[MAX_PATH];
+                memset(exe_path, 0, sizeof(exe_path));
+                GetModuleFileNameA(NULL, exe_path, sizeof(exe_path));
+
+                // Get the current directory
+                static char cd_path[MAX_PATH];
+                memset(cd_path, 0, sizeof(cd_path));
+                DWORD cd_len = GetCurrentDirectory(sizeof(cd_path), cd_path);
+
+                // Make sure we're in the same CD
+                bool in_cd;
+                if(strncmp(cd_path, exe_path, cd_len) == 0) { // does the start match?
+                    in_cd = true;
+
+                    // Next, we need to skip extraneous separators
+                    cd_len++;
+                    while(exe_path[cd_len] == '\\' && exe_path[cd_len] == '/') {
+                        cd_len++;
+                    }
+
+                    // If we have any more path separators before hitting the end, we're not in the same directory
+                    for(const char *i = exe_path + cd_len; *i; i++) {
+                        if(*i == '\\' || *i == '/') {
+                            in_cd = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    in_cd = false;
+                }
+
+                // Make sure it's the same
+                if(!in_cd) {
+                    char error_message[MAX_PATH * 2 + 256];
+                    snprintf(error_message, sizeof(error_message), "Make sure your current directory is the same as the executable's current directory.\n\nEXE: %s\n\nCD: %s", exe_path, cd_path);
+                    MessageBox(NULL, error_message, "Unable to load Chimera", MB_ICONERROR | MB_OK);
+                    ExitProcess(135);
+                }
+
                 // Do this
                 WSAStartup(MAKEWORD(2,2), &fun);
 
