@@ -584,10 +584,11 @@ namespace Chimera {
     }
 
     static void on_chat_input() noexcept {
-        struct alignas(std::uint16_t) key_input {
+        struct key_input {
             std::uint8_t modifier;
             std::uint8_t character;
             std::uint8_t key_code;
+            std::uint8_t unknown; // definitely set to different values but meaning is unclear
         }; static_assert(sizeof(key_input) == sizeof(std::uint32_t)); // 4-byte strides
         
         static key_input    *input_buffer = nullptr; // array of size 0x40
@@ -600,7 +601,7 @@ namespace Chimera {
 
         // Handle keyboard input if we have the chat input open
         if(chat_input_open) {
-            const auto& [modifier, character, key_code] = input_buffer[*input_count];
+            const auto& [modifier, character, key_code, input_unknown] = input_buffer[*input_count];
             // Special key pressed
             if(character == 0xFF) {
                 if(key_code == 0) {
