@@ -167,6 +167,11 @@ namespace Chimera {
     MapList &get_map_list() noexcept;
 
     /**
+     * Get whether the map is protected
+     */
+    bool map_is_protected() noexcept;
+
+    /**
      * Load ui.map
      */
     void load_ui_map() noexcept;
