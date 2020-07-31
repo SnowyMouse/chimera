@@ -219,11 +219,11 @@ namespace Chimera {
                 }
 
                 // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since Custom Edition really isn't worth fixing.
-                #ifndef CUSTOM_EDITION_USE_RETAIL_FIXES
+                #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
                 #endif
                     set_up_inverted_flag_fix();
-                #ifndef CUSTOM_EDITION_USE_RETAIL_FIXES
+                #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 }
                 #endif
 
