@@ -144,6 +144,9 @@ add_library(chimera STATIC
     src/chimera/halo_data/server.cpp
     src/chimera/halo_data/tag.cpp
     src/chimera/localization/localization.cpp
+    src/chimera/lua/instance.cpp
+    src/chimera/lua/io.cpp
+    src/chimera/lua/lua.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
@@ -200,7 +203,7 @@ set_source_files_properties(src/chimera/localization/localization.cpp PROPERTIES
 # Ignore this warning
 set_source_files_properties(src/chimera/custom_chat/custom_chat.cpp PROPERTIES COMPILE_FLAGS "-Wno-format")
 
-option(CHIMERA_CUSTOM_EDITION_USE_RETAIL_FIXES "Use retail-specific fixes for Custom Edition" OFF)
-if(${CHIMERA_CUSTOM_EDITION_USE_RETAIL_FIXES})
-    add_definitions(-DCUSTOM_EDITION_USE_RETAIL_FIXES)
+option(CHIMERA_DISABLE_CUSTOM_EDITION_FIXES "Limit detail over reflection and fog fixes to retail/demo" OFF)
+if(${CHIMERA_DISABLE_CUSTOM_EDITION_FIXES})
+    add_definitions(-DCHIMERA_DISABLE_CUSTOM_EDITION_FIXES)
 endif()
