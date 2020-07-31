@@ -70,6 +70,7 @@
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
 #include "config/ini.hpp"
+#include "lua/lua.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -129,6 +130,9 @@ namespace Chimera {
 
             // Lol
             set_up_invalid_command_crash_fix();
+            
+            // Lua!
+            set_up_lua();
 
             if(this->feature_present("client")) {
                 // Fix the camo by default

@@ -144,6 +144,9 @@ add_library(chimera STATIC
     src/chimera/halo_data/server.cpp
     src/chimera/halo_data/tag.cpp
     src/chimera/localization/localization.cpp
+    src/chimera/lua/instance.cpp
+    src/chimera/lua/io.cpp
+    src/chimera/lua/lua.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
@@ -190,6 +193,7 @@ target_link_libraries(chimera shlwapi hac_map_downloader ${CMAKE_CURRENT_SOURCE_
 
 # Target this
 target_include_directories(chimera PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include)
+target_include_directories(chimera PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/lua/include)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")
