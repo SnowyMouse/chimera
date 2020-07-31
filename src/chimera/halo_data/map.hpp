@@ -128,6 +128,7 @@ namespace Chimera {
      * @return reference to the map header of the currently loaded map
      */
     MapHeader &get_map_header() noexcept;
+    MapHeaderDemo &get_demo_map_header() noexcept;
 
     /** This is an individual map index */
     struct MapIndex {

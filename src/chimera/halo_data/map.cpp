@@ -12,6 +12,12 @@ namespace Chimera {
         return *map_header;
     }
 
+    MapHeaderDemo &get_demo_map_header() noexcept {
+        auto &map_header_sig = get_chimera().get_signature("map_header_sig");
+        static auto *map_header = reinterpret_cast<MapHeaderDemo *>(*reinterpret_cast<std::byte **>(map_header_sig.data() + 2) - 0x2C0);
+        return *map_header;
+    }
+
     MapList &get_map_list() noexcept {
         static std::optional<MapList *> all_map_indices;
         if(!all_map_indices.has_value()) {
