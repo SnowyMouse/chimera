@@ -77,8 +77,8 @@ chimera_about_command_license                                                   
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
 chimera_block_all_bullshit_help                                                 Deshabilita varias cosas que la mayoría de la gente puede encontrar molestas.
-chimera_category_controller                                                     Mando.
-chimera_category_custom_chat                                                    chat_custom.
+chimera_category_controller                                                     mando
+chimera_category_custom_chat                                                    chat_custom
 chimera_chat_block_ips_command_help                                             Oculta las IPs mostradas en los mensajes.
 chimera_chat_block_server_messages_command_help                                 Oculta los mensajes del servidor.
 chimera_chat_color_help_command_help                                            Muestra una lista de los colores del chat al ingresar mensajes en éste.
