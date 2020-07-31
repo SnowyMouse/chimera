@@ -9,6 +9,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/core/chimera/language.cpp
     ${COMMAND_DIR}/core/chimera/signature_info.cpp
     ${COMMAND_DIR}/core/debug/devmode.cpp
+    ${COMMAND_DIR}/core/debug/map_info.cpp
     ${COMMAND_DIR}/core/debug/player_info.cpp
     ${COMMAND_DIR}/core/debug/teleport.cpp
     ${COMMAND_DIR}/core/debug/tps.cpp
