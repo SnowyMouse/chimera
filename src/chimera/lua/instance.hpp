@@ -33,19 +33,27 @@ namespace Chimera {
 
         /**
          * Instantiate a Lua script instance
+         * @param name      name of the script
          * @param lua_data  pointer to the lua script
          * @param lua_size  length of the lua script
          * @param sandboxed disable certain features in the Lua script
          * @throws          LuaScriptInstance if failed
          */
-        LuaScriptInstance(const char *lua_data, std::size_t lua_size, bool sandboxed);
+        LuaScriptInstance(const char *name, const char *lua_data, std::size_t lua_size, bool sandboxed);
         LuaScriptInstance(LuaScriptInstance &&move) noexcept;
+        ~LuaScriptInstance() noexcept;
     private:
         /** Lua state */
         lua_State *state = nullptr;
 
+        /** Are we sandboxed? */
+        bool sandboxed;
+
         /** Script name (no extension) */
         std::string name;
+
+        /** API to use */
+        unsigned int api;
     };
 }
 

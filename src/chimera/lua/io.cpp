@@ -6,6 +6,23 @@
 #include "../signature/hook.hpp"
 
 namespace Chimera {
+    // This is used to block virtualprotect in sandboxed Lua scripts
+    static bool sandbox_enabled = false;
+    template<typename T> void overwrite_sandboxed(T *from, T to, lua_State *state) {
+        if(sandbox_enabled) {
+            luaL_error(state, "cannot use VirtualProtect: script is sandboxed");
+        }
+        else {
+            overwrite(from, to);
+        }
+    }
+
+    bool set_sandbox(bool sandbox) noexcept {
+        auto old_sandbox = sandbox_enabled;
+        sandbox_enabled = sandbox;
+        return old_sandbox;
+    }
+
     template <typename T, typename lua_type, void (*pushval)(lua_State *, lua_type)> static int read_number(lua_State *state) {
         int args = lua_gettop(state);
         if(args == 1) {
@@ -30,7 +47,7 @@ namespace Chimera {
                 from = to;
             }
             else {
-                overwrite(&from, to);
+                overwrite_sandboxed(&from, to, state);
             }
             return 0;
         }
@@ -69,7 +86,7 @@ namespace Chimera {
                 *from = to;
             }
             else {
-                overwrite(from, to);
+                overwrite_sandboxed(from, to, state);
             }
             return 0;
         }
@@ -78,7 +95,7 @@ namespace Chimera {
         }
     }
 
-    template<typename T> static void write_any_string(T *to, const T *from, bool virtual_protect) {
+    template<typename T> static void write_any_string(T *to, const T *from, bool virtual_protect, lua_State *state) {
         if(!virtual_protect) {
             while(*from) {
                 *to = *from;
@@ -88,7 +105,7 @@ namespace Chimera {
         }
         else {
             while(*from) {
-                overwrite(to, *from);
+                overwrite_sandboxed(to, *from, state);
                 to++;
                 from++;
             }
@@ -113,7 +130,7 @@ namespace Chimera {
             if(args == 3) {
                 virtual_protect = lua_toboolean(state, 3);
             }
-            write_any_string(reinterpret_cast<char *>(luaL_checkinteger(state, 1)), luaL_checkstring(state, 2), virtual_protect);
+            write_any_string(reinterpret_cast<char *>(luaL_checkinteger(state, 1)), luaL_checkstring(state, 2), virtual_protect, state);
             return 0;
         }
         else {
@@ -152,7 +169,7 @@ namespace Chimera {
             wchar_t string[512] = {};
             MultiByteToWideChar(CP_UTF8, 0, luaL_checkstring(state, 2), -1, string, sizeof(string) / sizeof(*string));
 
-            write_any_string(string, str_out, virtual_protect);
+            write_any_string(string, str_out, virtual_protect, state);
             return 0;
         }
         else {
@@ -171,7 +188,7 @@ namespace Chimera {
         }
     }
 
-    void set_up_io_functions(lua_State *state, unsigned int api_version) noexcept {
+    void set_up_io_functions(lua_State *state, unsigned int api) noexcept {
         // Define read/write functions
         auto read_i8 = read_number<std::int8_t, lua_Integer, lua_pushinteger>;
         auto read_u8 = read_number<std::uint8_t, lua_Integer, lua_pushinteger>;
@@ -188,7 +205,7 @@ namespace Chimera {
         lua_call write_bit_fn;
 
         // If API version 3 or newer, allow VirtualProtect stuff
-        if(api_version >= 3) {
+        if(api >= 3) {
             write_i8  = write_number<std::int8_t, lua_Integer, luaL_checkinteger, true>;
             write_u8  = write_number<std::uint8_t, lua_Integer, luaL_checkinteger, true>;
             write_i16 = write_number<std::int16_t, lua_Integer, luaL_checkinteger, true>;
