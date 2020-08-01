@@ -76,7 +76,7 @@ namespace Chimera {
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_build"), map_build);
         OUTPUT_WITH_COLOR("CRC32: 0x%.08X", crc32);
 
-        const char* map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
+        const char *map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_compressed"), map_is_compressed);
 
         if(compressed) {
@@ -103,14 +103,14 @@ namespace Chimera {
 
             float buffer_used_percentage = (static_cast<float>(buffer_used) / buffer_size) * 100;
 
-            const char* key_string = localize("chimera_map_info_command_ram_buffer");
+            const char *key_string = localize("chimera_map_info_command_ram_buffer");
             OUTPUT_WITH_COLOR("%s: %.2f MiB / %.2f MiB (%.2f%%)", key_string, SIZE_IN_MIB(buffer_used), SIZE_IN_MIB(buffer_size), buffer_used_percentage);
         }
 
         OUTPUT_WITH_COLOR("%s: %d / %d", localize("chimera_map_info_command_map_tag_count"), tag_count, MAX_TAG_COUNT);
         OUTPUT_WITH_COLOR("%s: %.2f MiB / %.2f MiB", localize("chimera_map_info_command_map_tag_data_size"), SIZE_IN_MIB(tag_data_size), MAX_TAG_DATA_SIZE_MIB);
 
-        const char* map_protected = map_is_protected() ? localize("common_yes") : localize("common_no");
+        const char *map_protected = map_is_protected() ? localize("common_yes") : localize("common_no");
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_protected"), map_protected);
 
         // Restore the output prefix
