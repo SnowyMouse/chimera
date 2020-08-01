@@ -128,6 +128,7 @@ namespace Chimera {
      * @return reference to the map header of the currently loaded map
      */
     MapHeader &get_map_header() noexcept;
+    MapHeaderDemo &get_demo_map_header() noexcept;
 
     /** This is an individual map index */
     struct MapIndex {
@@ -164,6 +165,11 @@ namespace Chimera {
      * @return map list
      */
     MapList &get_map_list() noexcept;
+
+    /**
+     * Get whether the map is protected
+     */
+    bool map_is_protected() noexcept;
 
     /**
      * Load ui.map
