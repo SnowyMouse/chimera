@@ -128,7 +128,10 @@ chimera_spectate_previous_command_help                                          
 chimera_map_info_command_current_map_info                                       Información del mapa actual
 chimera_map_info_command_map_name                                               Nombre
 chimera_map_info_command_map_build                                              Construcción
+chimera_map_info_command_compressed                                             Comprimido
 chimera_map_info_command_map_size                                               Tamaño
+chimera_map_info_command_uncompressed_map_size                                  Tamaño sin comprimir
+chimera_map_info_command_ram_buffer                                             Espacio en RAM
 chimera_map_info_command_map_tag_count                                          Contador de tags
 chimera_map_info_command_map_tag_data_size                                      Tamaño de datos de tags
 chimera_map_info_command_map_protected                                          Protegido

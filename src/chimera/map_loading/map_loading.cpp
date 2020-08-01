@@ -41,9 +41,17 @@ namespace Chimera {
     std::byte *maps_in_ram_region = nullptr;
     static std::byte *ui_region = nullptr;
 
-    static std::size_t UI_OFFSET = 768 * 1024 * 1024;
-    static std::size_t UI_SIZE = 256 * 1024 * 1024;
+    std::size_t ui_map_file_size = 0;
+    std::size_t map_file_size = 0;
+    std::size_t compressed_ui_map_file_size = 0;
+    std::size_t compressed_map_file_size = 0;
+
+    std::size_t UI_OFFSET = 768 * 1024 * 1024;
+    std::size_t UI_SIZE = 256 * 1024 * 1024;
     #define CHIMERA_MEMORY_ALLOCATION_SIZE (UI_OFFSET + UI_SIZE)
+
+    std::size_t ui_buffer_used = 0;
+    std::size_t map_buffer_used = 0;
 
     const char *latest_map_loaded_multiplayer = nullptr;
 
@@ -186,7 +194,9 @@ namespace Chimera {
         std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
     }
 
-    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
+    static std::size_t size_from_file(const char *path) noexcept;
+
+    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t &buffer_used, std::size_t buffer_size, const char *map_name) noexcept;
     static char currently_loaded_map[32] = {};
 
     extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
@@ -197,8 +207,10 @@ namespace Chimera {
             return;
         }
 
+        bool ui_map = std::strcmp(map_name, "ui") == 0;
+
         // If the map is already loaded, go away
-        bool do_not_reload = (do_maps_in_ram && ((std::strcmp(map_name, "ui") == 0 && ui_was_loaded) || (std::strcmp(map_name, currently_loaded_map) == 0)));
+        bool do_not_reload = (do_maps_in_ram && ((ui_map && ui_was_loaded) || (std::strcmp(map_name, currently_loaded_map) == 0)));
 
         const char *new_path = path_for_map(map_name);
         if(new_path) {
@@ -217,6 +229,8 @@ namespace Chimera {
             std::byte *buffer = nullptr;
 
             if(!do_not_reload) {
+                compressed_map_file_size = 0;
+                
                 if(compressed) {
                     // Get filesystem data
                     struct stat64 s;
@@ -224,6 +238,13 @@ namespace Chimera {
                     std::uint64_t mtime = s.st_mtime;
 
                     char tmp_path[MAX_PATH] = {};
+
+                    if(ui_map) {
+                        compressed_ui_map_file_size = size_from_file(new_path);
+                    }
+                    else {
+                        compressed_map_file_size = size_from_file(new_path);
+                    }
 
                     // See if we can find it
                     if(!do_maps_in_ram) {
@@ -251,7 +272,7 @@ namespace Chimera {
                         // If we're doing maps in RAM, output directly to the region allowed
                         if(do_maps_in_ram) {
                             std::size_t offset;
-                            if(std::strcmp(map_name, "ui") == 0) {
+                            if(ui_map) {
                                 buffer_size = UI_SIZE;
                                 offset = UI_OFFSET;
                             }
@@ -262,11 +283,25 @@ namespace Chimera {
 
                             buffer = maps_in_ram_region + offset;
                             buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
+                            
+                            if(ui_map) {
+                                ui_map_file_size = buffer_used;
+                            }
+                            else {
+                                map_file_size = buffer_used;
+                            }
                         }
 
                         // Otherwise do a map file
                         else {
                             Invader::Compression::decompress_map_file(new_path, tmp_path);
+                            
+                            if(ui_map) {
+                                ui_map_file_size = size_from_file(tmp_path);
+                            }
+                            else {
+                                map_file_size = size_from_file(tmp_path);
+                            }
                         }
                         auto end = std::chrono::steady_clock::now();
 
@@ -294,7 +329,7 @@ namespace Chimera {
                 }
                 else if(do_maps_in_ram) {
                     std::size_t offset;
-                    if(std::strcmp(map_name, "ui") == 0) {
+                    if(ui_map) {
                         buffer_size = UI_SIZE;
                         offset = UI_OFFSET;
                     }
@@ -313,18 +348,35 @@ namespace Chimera {
                     std::fseek(f, 0, SEEK_SET);
                     std::fread(buffer, buffer_size, 1, f);
                     std::fclose(f);
+
+                    if(ui_map) {
+                        ui_map_file_size = buffer_used;
+                    }
+                    else {
+                        map_file_size = buffer_used;
+                    }
+                }
+                else {
+                    if(ui_map) {
+                        ui_map_file_size = size_from_file(new_path);
+                    }
+                    else {
+                        map_file_size = size_from_file(new_path);
+                    }
                 }
 
                 // Load everything from bitmaps.map and sounds.map that can fit
                 if(do_maps_in_ram) {
                     preload_assets_into_memory_buffer(buffer, buffer_used, buffer_size, map_name);
 
-                    if(std::strcmp(map_name, "ui") == 0) {
+                    if(ui_map) {
+                        ui_buffer_used = buffer_used;
                         ui_was_loaded = true;
                     }
                     else {
                         std::fill(currently_loaded_map, currently_loaded_map + sizeof(currently_loaded_map), 0);
                         std::strncpy(currently_loaded_map, map_name, sizeof(currently_loaded_map) - 1);
+                        map_buffer_used = buffer_used;
                     }
                 }
             }
@@ -352,6 +404,15 @@ namespace Chimera {
         return nullptr;
     }
 
+    static std::size_t size_from_file(const char *path) noexcept {
+        std::FILE *f = std::fopen(path, "rb");
+        std::fseek(f, 0, SEEK_END);
+        std::size_t file_size = std::ftell(f);
+        std::fclose(f);
+
+        return file_size;
+    }
+
     extern std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept;
     std::uint32_t maps_in_ram_crc32;
 
@@ -374,7 +435,7 @@ namespace Chimera {
         }
     }
 
-    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
+    static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t &buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
         auto start = std::chrono::steady_clock::now();
 
         // Get tag data info

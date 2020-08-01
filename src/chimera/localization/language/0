@@ -156,7 +156,10 @@ chimera_uncap_cinematic_command_help                                            
 chimera_map_info_command_current_map_info                                       Current map info
 chimera_map_info_command_map_name                                               Name
 chimera_map_info_command_map_build                                              Build
+chimera_map_info_command_compressed                                             Compressed
 chimera_map_info_command_map_size                                               Size
+chimera_map_info_command_uncompressed_map_size                                  Uncompressed size
+chimera_map_info_command_ram_buffer                                             RAM buffer
 chimera_map_info_command_map_tag_count                                          Tag count
 chimera_map_info_command_map_tag_data_size                                      Tag data size
 chimera_map_info_command_map_protected                                          Protected
