@@ -48,6 +48,11 @@ namespace Chimera {
                             bytes.insert(bytes.end(), at, at + 4);
                             at += 4;
                         }
+                        else if(op2 == 0x15) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 7);
+                            at += 7;
+                        }
                         else {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 3);
@@ -173,6 +178,14 @@ namespace Chimera {
 
                 // push 0x00-0xFF
                 case 0x6A: {
+                    offsets.push_back(at - at_start);
+                    bytes.insert(bytes.end(), at, at + 2);
+                    at += 2;
+                    break;
+                }
+                
+                // jz short
+                case 0x74: {
                     offsets.push_back(at - at_start);
                     bytes.insert(bytes.end(), at, at + 2);
                     at += 2;
@@ -327,7 +340,7 @@ namespace Chimera {
                 case 0x8D: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     auto b = *reinterpret_cast<const std::uint8_t *>(at + 2);
-                    if(a == 0x44 && b == 0x0C) {
+                    if(a == 0x44 && (b == 0x0C || b == 0x24)) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;

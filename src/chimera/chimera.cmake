@@ -27,6 +27,7 @@ add_library(chimera STATIC
     src/chimera/annoyance/novideo.cpp
     src/chimera/annoyance/registry.cpp
     src/chimera/annoyance/tab_out_video.cpp
+    src/chimera/annoyance/tab_out_video.S
     src/chimera/annoyance/update.cpp
     src/chimera/annoyance/update.S
     src/chimera/annoyance/watson.cpp
