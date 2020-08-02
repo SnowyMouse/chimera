@@ -168,7 +168,7 @@ namespace Chimera {
         }
 
         blocked_ids.emplace_back(weapon->tag_id.index.index);
-        console_output("Blocked %s", get_tag(weapon->tag_id)->path);
+        console_output(localize("chimera_block_extra_weapon_blocked"), map_is_protected() ? localize("chimera_tag_map_is_protected") : get_tag(weapon->tag_id)->path);
         set_up_hook();
 
         return true;

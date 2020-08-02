@@ -4,6 +4,7 @@
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
 #include "../../../halo_data/multiplayer.hpp"
+#include "../../../halo_data/map.hpp"
 #include "../../../output/output.hpp"
 
 namespace Chimera {
@@ -77,7 +78,7 @@ namespace Chimera {
         OUTPUT_WITH_COLOR("    %s Object ID: %08X (Address: 0x%08X)", name, object_id.whole_id, reinterpret_cast<std::uintptr_t>(object));
         auto *tag = get_tag(object->tag_id);
         if(tag) {
-            OUTPUT_WITH_COLOR("    %s Object Tag ID: %08X (Path: %s)", name, object->tag_id, tag->path);
+            OUTPUT_WITH_COLOR("    %s Object Tag ID: %08X (Path: %s)", name, object->tag_id, map_is_protected() ? localize("chimera_tag_map_is_protected") : tag->path);
         }
         if(object->base_shield) {
             OUTPUT_WITH_COLOR("    %s Object Shield: %.02f%% (%.02f / %.02f hitpoints)", name, object->shield * 100.0F, object->base_shield * object->shield, object->base_shield);

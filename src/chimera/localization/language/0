@@ -18,6 +18,8 @@ chimera_error_failed_to_open_init                                               
 chimera_error_cannot_download_retail_maps_1                                     Retail Halo PC and HaloMD maps are unsupported by the map downloader.
 chimera_error_cannot_download_retail_maps_2                                     Modify chimera.ini and set \"download_retail_maps\" under \"memory\" to enable.
 
+chimera_tag_map_is_protected                                                    Map is protected (unknown)
+
 chimera_warning_command_will_take_effect_on_next_load                           This command will take effect on next load.
 
 chimera_custom_chat_to_all                                                      All
@@ -55,6 +57,7 @@ chimera_block_button_quotes_command_help                                        
 chimera_block_buffering_command_help                                            Disable buffering. May improve mouse input.
 chimera_block_buffering_command_warning                                         Disable Buffering is already enabled (likely via config.txt)!
 chimera_block_camera_shake_command_help                                         Disable camera shaking from damage.
+chimera_block_extra_weapon_blocked                                              Blocked %s
 chimera_block_extra_weapon_error_cannot_get_object                              Failed to read your object (you are dead)
 chimera_block_extra_weapon_error_cannot_get_weapon                              Failed to read the weapon
 chimera_block_extra_weapon_error_not_enough_weapons                             You need to be holding at least 3 unblocked weapons.
