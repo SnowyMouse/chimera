@@ -85,10 +85,14 @@ static BOOL load_dlls() {
         }
 
         // Attempt to load it
+        printf("Loading %s...", path);
+        fflush(stdout);
         loaded_dlls[dll_count].module = LoadLibrary(path);
         if(loaded_dlls[dll_count].module == NULL) {
+            printf("failed\n");
             continue;
         }
+        printf("done\n");
 
         // Reallocate if needed
         if(++dll_count == dll_capacity) {
