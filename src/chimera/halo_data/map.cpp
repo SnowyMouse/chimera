@@ -56,13 +56,13 @@ namespace Chimera {
 
             // Bounds check the tag path so we don't blow up
             if(tag_path < base_address || tag_path > base_address_end) {
-                return false;
+                return true;
             }
 
             // Bounds check the end so strcmp doesn't explode
             for(auto *tp = tag_path; *tp; tp++) {
-                if(tp > base_address_end) {
-                    return false;
+                if(tp + 1 >= base_address_end) {
+                    return true;
                 }
             }
 
