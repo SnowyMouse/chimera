@@ -55,7 +55,7 @@ namespace Chimera {
             auto tag_class = tag->primary_class;
 
             // Bounds check the tag path so we don't blow up
-            if(tag_path < base_address || tag_path > base_address_end) {
+            if(tag_path < base_address || tag_path >= base_address_end) {
                 return true;
             }
 
