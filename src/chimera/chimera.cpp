@@ -560,6 +560,7 @@ namespace Chimera {
                 chimera->execute_command("chimera_diagonals 0.75");
                 chimera->execute_command("chimera_block_loading_screen true");
                 chimera->execute_command("chimera_fov auto");
+                chimera->execute_command("chimera_fov_cinematic auto");
                 chimera->execute_command("chimera_fp_reverb true");
                 chimera->execute_command("chimera_widescreen_fix true");
                 chimera->execute_command("chimera_throttle_fps 300");
