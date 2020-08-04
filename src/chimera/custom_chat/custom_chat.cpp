@@ -380,11 +380,11 @@ namespace Chimera {
         std::size_t i;
         for(i = 0; i * sizeof(*u8) < u8_len - sizeof(*u8) && i * sizeof(*u16) < u16_len - sizeof(*u16); i++) {
             u8[i] = static_cast<char>(u16[i]);
-            if(!*u8) {
+            if(!u8[i]) {
                 break;
             }
         }
-        u8[i + 1] = 0;
+        u8[i] = 0;
     }
 
     // Determine what color ID to use for a player
