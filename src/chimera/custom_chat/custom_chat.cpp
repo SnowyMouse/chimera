@@ -378,7 +378,7 @@ namespace Chimera {
 
     static void u16_to_u8(char *u8, std::size_t u8_len, const wchar_t *u16, std::size_t u16_len) {
         std::size_t i;
-        for(i = 0; i * sizeof(*u8) < u8_len - sizeof(*u8) && i * sizeof(*u16) < u16_len - sizeof(*u16); i++) {
+        for(i = 0; i * sizeof(*u8) < u8_len - sizeof(*u8) && i * sizeof(*u16) < u16_len; i++) {
             u8[i] = static_cast<char>(u16[i]);
             if(!u8[i]) {
                 break;
