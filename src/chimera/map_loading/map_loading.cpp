@@ -187,8 +187,8 @@ namespace Chimera {
     }
 
     // Hold my compressed map...
-    static CompressedMapIndex compressed_maps[2] = {};
-    static std::size_t last_loaded_map = 0;
+    static CompressedMapIndex compressed_maps[3] = {};
+    static std::size_t last_loaded_map = ~static_cast<std::size_t>(0);
 
     static void get_tmp_path(const CompressedMapIndex &compressed_map, char *buffer) {
         std::snprintf(buffer, MAX_PATH, "%s\\tmp_%zu.map", get_chimera().get_path(), &compressed_map - compressed_maps);
@@ -230,7 +230,7 @@ namespace Chimera {
 
             if(!do_not_reload) {
                 compressed_map_file_size = 0;
-                
+
                 if(compressed) {
                     // Get filesystem data
                     struct stat64 s;
@@ -247,6 +247,11 @@ namespace Chimera {
                     }
 
                     // See if we can find it
+                    std::size_t new_index = last_loaded_map + 1;
+                    if(new_index >= (sizeof(compressed_maps) / sizeof(*compressed_maps))) {
+                        new_index = 0;
+                    }
+
                     if(!do_maps_in_ram) {
                         for(auto &map : compressed_maps) {
                             if(std::strcmp(map_name, map.map_name) == 0 && map.date_modified == mtime) {
@@ -262,7 +267,6 @@ namespace Chimera {
                     }
 
                     // Attempt to decompress
-                    std::size_t new_index = !last_loaded_map;
                     auto &compressed_map_to_use = compressed_maps[new_index];
                     try {
                         get_tmp_path(compressed_maps[new_index], tmp_path);
@@ -283,7 +287,7 @@ namespace Chimera {
 
                             buffer = maps_in_ram_region + offset;
                             buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
-                            
+
                             if(ui_map) {
                                 ui_map_file_size = buffer_used;
                             }
@@ -295,7 +299,7 @@ namespace Chimera {
                         // Otherwise do a map file
                         else {
                             Invader::Compression::decompress_map_file(new_path, tmp_path);
-                            
+
                             if(ui_map) {
                                 ui_map_file_size = size_from_file(tmp_path);
                             }
@@ -312,8 +316,9 @@ namespace Chimera {
 
                         // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
                         if(!do_maps_in_ram) {
+                            std::printf("Okay then!\n");
                             new_path = tmp_path;
-                            last_loaded_map++;
+                            last_loaded_map = new_index;
                             if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
                                 last_loaded_map = 0;
                             }
