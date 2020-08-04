@@ -376,9 +376,9 @@ namespace Chimera {
 
     static void initialize_chat_message(ChatMessage &message, const char *message_text, const ColorARGB &color);
 
-    static void u16_to_u8(char *u8, std::size_t u8_len, const wchar_t *u16) {
+    static void u16_to_u8(char *u8, std::size_t u8_len, const wchar_t *u16, std::size_t u16_len) {
         std::size_t i;
-        for(i = 0; i < u8_len - 1; i++) {
+        for(i = 0; i < u8_len - 1 && i * 2 < u16_len; i++) {
             u8[i] = static_cast<char>(u16[i]);
             if(!*u8) {
                 break;
@@ -532,7 +532,7 @@ namespace Chimera {
 
         // Get player name
         char player_u8[256];
-        u16_to_u8(player_u8, sizeof(player_u8), player_info.name);
+        u16_to_u8(player_u8, sizeof(player_u8), player_info.name, sizeof(player_info.name));
 
         // Format a message
         char entire_message[MAX_MESSAGE_LENGTH];
@@ -553,7 +553,7 @@ namespace Chimera {
 
     extern "C" void draw_chat_message(const wchar_t *message, std::uint32_t p_int, std::uint32_t c_int) {
         char message_u8[256] = {};
-        u16_to_u8(message_u8, sizeof(message_u8), message);
+        u16_to_u8(message_u8, sizeof(message_u8), message, sizeof(message_u8) * sizeof(wchar_t));
 
         draw_chat_message(message_u8, p_int, c_int);
     }
@@ -590,7 +590,7 @@ namespace Chimera {
             std::uint8_t key_code;
             std::uint8_t unknown; // definitely set to different values but meaning is unclear
         }; static_assert(sizeof(key_input) == sizeof(std::uint32_t)); // 4-byte strides
-        
+
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
         if(!input_buffer) {
@@ -718,11 +718,13 @@ namespace Chimera {
             return std::string();
         }
         auto *strings = *reinterpret_cast<std::byte **>(ustr_tag_data + 0x4);
-        auto *str = *reinterpret_cast<wchar_t **>(strings + 0x14 * index + 0xC);
+        auto *str_ref = strings + 0x14 * index;
+        auto str_len = *reinterpret_cast<std::size_t *>(str_ref + 0x0);
+        auto *str = *reinterpret_cast<wchar_t **>(str_ref + 0xC);
 
         // Convert
         char s[256];
-        u16_to_u8(s, sizeof(s), str);
+        u16_to_u8(s, sizeof(s), str, str_len);
         return std::string(s);
     }
 
@@ -734,7 +736,7 @@ namespace Chimera {
         auto get_player_name = [&server_info](PlayerID id, ColorARGB *color_to_use) -> std::string {
             char name[256];
             auto *player = server_info->get_player(id);
-            u16_to_u8(name, sizeof(name), player->name);
+            u16_to_u8(name, sizeof(name), player->name, sizeof(player->name));
 
             return std::string("^") + color_id_for_player(player - server_info->players, color_to_use) + name + "^;";
         };
