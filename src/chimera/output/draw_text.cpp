@@ -7,6 +7,7 @@
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "draw_text.hpp"
+#include "../event/frame.hpp"
 
 namespace Chimera {
     #include "color_codes.hpp"
@@ -341,6 +342,7 @@ namespace Chimera {
         static Hook hook;
         auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
         write_jmp_call(reinterpret_cast<void *>(text_hook_addr), hook, reinterpret_cast<const void *>(on_text));
+        add_frame_event(+[] { text_list.clear(); }); // unary+ on lamba with no captures decays to a function pointer
         draw_text_8_bit = get_chimera().get_signature("draw_8_bit_text_sig").data();
         draw_text_16_bit = get_chimera().get_signature("draw_16_bit_text_sig").data();
         font_data = *reinterpret_cast<FontData **>(get_chimera().get_signature("text_font_data_sig").data() + 13);
