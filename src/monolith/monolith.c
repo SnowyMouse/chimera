@@ -28,11 +28,14 @@ static int string_copy(char *out, const char *in) {
 }
 
 static inline char to_lowercase(char a) {
-    return a + (a >= 'A' && a <= 'Z') * ('a' - 'A');
+    return (a >= 'A' && a <= 'Z') ? ('a' + a - 'A') : a;
 }
 
 static inline int string_equal(const char *a, const char *b) {
-    while(to_lowercase(*(a++)) == to_lowercase(*(b++)) && *a);
+    while(*a && (to_lowercase(*a) == to_lowercase(*b))) {
+        a++;
+        b++;
+    }
     return *a == *b;
 }
 
