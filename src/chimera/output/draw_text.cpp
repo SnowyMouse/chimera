@@ -179,6 +179,24 @@ namespace Chimera {
         if(override_font) {
             RECT rect;
 
+            // Find spaces on left and right
+            int trailing = 0;
+            for(const T *q = text; *q; q++) {
+                if(*q == ' ') {
+                    trailing++;
+                }
+                else {
+                    trailing = 0;
+                }
+            }
+
+            // Find how long a space is (yes it's this much of a pain; please don't ask)
+            override_font->DrawText(NULL, " .", -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+            int space_dot = rect.right - rect.left;
+            override_font->DrawText(NULL, ".", -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+            int dot = rect.right - rect.left;
+            int trailing_space = (space_dot - dot) * trailing;
+
             if(sizeof(T) == sizeof(char)) {
                 override_font->DrawText(NULL, reinterpret_cast<const char *>(text), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
             }
@@ -187,7 +205,7 @@ namespace Chimera {
             }
 
             auto res = get_resolution();
-            return static_cast<int>((rect.right - rect.left) * 480 + 240) / res.height;
+            return static_cast<int>((rect.right - rect.left + trailing_space) * 480 + 240) / res.height;
         }
 
         struct Character {
@@ -386,7 +404,7 @@ namespace Chimera {
     static void on_add_scene(LPDIRECT3DDEVICE9 device) noexcept {
         if(!font) {
             #ifdef USE_SYSTEM_FONT
-            D3DXCreateFont(device, static_cast<INT>(22 * (get_resolution().height / 480.0)), 0, 0 * 100, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
+            D3DXCreateFont(device, static_cast<INT>(15 * (get_resolution().height / 480.0)), 0, 0 * 100, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
             #endif
         }
         if(!dev) {
