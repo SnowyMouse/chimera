@@ -531,6 +531,7 @@ namespace Chimera {
     }
 
     static void on_reset(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS *) {
+        text_list.clear();
         if(small_font_override) {
             small_font_override->Release();
             small_font_override = nullptr;
