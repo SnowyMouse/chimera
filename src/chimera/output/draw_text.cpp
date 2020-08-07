@@ -15,6 +15,7 @@
 #include "../event/d3d9_end_scene.hpp"
 #include "../event/d3d9_reset.hpp"
 #include "../halo_data/resolution.hpp"
+#include "../fix/widescreen_fix.hpp"
 
 namespace Chimera {
     #include "color_codes.hpp"
@@ -23,6 +24,14 @@ namespace Chimera {
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
+        // Do NOT use these if widescreen fix is disabled unless we're 4:3
+        if(!widescreen_fix_enabled()) {
+            auto resolution = get_resolution();
+            if(resolution.width / 4 * 3 != resolution.height) {
+                return nullptr;
+            }
+        }
+
         switch(font) {
             case GenericFont::FONT_CONSOLE:
                 return console_font_override;

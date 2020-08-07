@@ -298,6 +298,10 @@ namespace Chimera {
 
     static bool f1 = false;
 
+    bool widescreen_fix_enabled() noexcept {
+        return setting;
+    }
+
     void set_widescreen_fix(bool new_setting) noexcept {
         if(new_setting != setting) {
             ce = get_chimera().feature_present("client_widescreen_custom_edition");
