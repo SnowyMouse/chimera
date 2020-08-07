@@ -92,7 +92,6 @@ namespace Chimera {
     };
 
     static std::vector<Text> text_list;
-    static std::vector<std::pair<Text, LPD3DXFONT>> text_list_to_render_on_end_scene;
 
     struct FontData {
         // Font being used
@@ -132,7 +131,61 @@ namespace Chimera {
             auto *override_font = get_override_font(text.font);
 
             if(override_font) {
-                text_list_to_render_on_end_scene.emplace_back(text, override_font);
+                auto res = get_resolution();
+                double scale = res.height / 480.0;
+
+                // Get our rects up
+                RECT rect;
+                rect.left = text.x * scale;
+                rect.right = (text.width) * scale;
+                rect.top = (text.y) * scale;
+                rect.bottom = (text.height) * scale;
+
+                RECT rshadow = rect;
+                rshadow.left += 1;
+                rshadow.right += 1;
+                rshadow.top += 1;
+                rshadow.bottom += 1;
+
+                auto align = DT_LEFT;
+
+                // Colors
+                D3DCOLOR color = D3DCOLOR_ARGB(
+                    static_cast<int>(UINT8_MAX * text.color.alpha),
+                    static_cast<int>(UINT8_MAX * text.color.red),
+                    static_cast<int>(UINT8_MAX * text.color.green),
+                    static_cast<int>(UINT8_MAX * text.color.blue)
+                );
+                D3DCOLOR color_shadow = D3DCOLOR_ARGB(
+                    static_cast<int>(UINT8_MAX * (text.color.alpha * 0.75)),
+                    static_cast<int>(UINT8_MAX * (text.color.red * 0.15)),
+                    static_cast<int>(UINT8_MAX * (text.color.green * 0.15)),
+                    static_cast<int>(UINT8_MAX * (text.color.blue * 0.15))
+                );
+
+                switch(text.alignment) {
+                    case ALIGN_LEFT:
+                        align = DT_LEFT;
+                        break;
+                    case ALIGN_CENTER:
+                        align = DT_CENTER;
+                        break;
+                    case ALIGN_RIGHT:
+                        align = DT_RIGHT;
+                        break;
+                }
+
+                auto *u8 = std::get_if<std::string>(&text.text);
+                auto *u16 = std::get_if<std::wstring>(&text.text);
+
+                if(u8) {
+                    override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                    override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
+                }
+                else {
+                    override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                    override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
+                }
             }
             else {
                 font_data->color = text.color;
@@ -410,69 +463,6 @@ namespace Chimera {
         if(!dev) {
             dev = device;
         }
-
-        auto res = get_resolution();
-        double scale = res.height / 480.0;
-
-        for(auto &text_pair : text_list_to_render_on_end_scene) {
-            auto &text = text_pair.first;
-            auto *override_font = text_pair.second;
-
-            // Get our rects up
-            RECT rect;
-            rect.left = text.x * scale;
-            rect.right = (text.width) * scale;
-            rect.top = (text.y) * scale;
-            rect.bottom = (text.height) * scale;
-
-            RECT rshadow = rect;
-            rshadow.left += 1;
-            rshadow.right += 1;
-            rshadow.top += 1;
-            rshadow.bottom += 1;
-
-            auto align = DT_LEFT;
-
-            // Colors
-            D3DCOLOR color = D3DCOLOR_ARGB(
-                static_cast<int>(UINT8_MAX * text.color.alpha),
-                static_cast<int>(UINT8_MAX * text.color.red),
-                static_cast<int>(UINT8_MAX * text.color.green),
-                static_cast<int>(UINT8_MAX * text.color.blue)
-            );
-            D3DCOLOR color_shadow = D3DCOLOR_ARGB(
-                static_cast<int>(UINT8_MAX * (text.color.alpha * 0.75)),
-                static_cast<int>(UINT8_MAX * (text.color.red * 0.15)),
-                static_cast<int>(UINT8_MAX * (text.color.green * 0.15)),
-                static_cast<int>(UINT8_MAX * (text.color.blue * 0.15))
-            );
-
-            switch(text.alignment) {
-                case ALIGN_LEFT:
-                    align = DT_LEFT;
-                    break;
-                case ALIGN_CENTER:
-                    align = DT_CENTER;
-                    break;
-                case ALIGN_RIGHT:
-                    align = DT_RIGHT;
-                    break;
-            }
-
-            auto *u8 = std::get_if<std::string>(&text.text);
-            auto *u16 = std::get_if<std::wstring>(&text.text);
-
-            if(u8) {
-                override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
-                override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
-            }
-            else {
-                override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
-                override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
-            }
-        }
-
-        text_list_to_render_on_end_scene.clear();
     }
 
     void setup_text_hook() noexcept {
