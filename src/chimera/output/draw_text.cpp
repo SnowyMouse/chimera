@@ -426,10 +426,10 @@ namespace Chimera {
             rect.bottom = (text.height) * scale;
 
             RECT rshadow = rect;
-            rshadow.left += 2;
-            rshadow.right += 2;
-            rshadow.top += 2;
-            rshadow.bottom += 2;
+            rshadow.left += 1;
+            rshadow.right += 1;
+            rshadow.top += 1;
+            rshadow.bottom += 1;
 
             auto align = DT_LEFT;
 
