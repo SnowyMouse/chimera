@@ -421,9 +421,9 @@ namespace Chimera {
             // Get our rects up
             RECT rect;
             rect.left = text.x * scale;
-            rect.right = (text.width + text.x) * scale;
+            rect.right = (text.width) * scale;
             rect.top = (text.y) * scale;
-            rect.bottom = (text.height + text.y) * scale;
+            rect.bottom = (text.height) * scale;
 
             RECT rshadow = rect;
             rshadow.left += 2;
