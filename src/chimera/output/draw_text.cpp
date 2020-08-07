@@ -10,7 +10,8 @@
 #include "../signature/signature.hpp"
 #include "draw_text.hpp"
 #include "../event/frame.hpp"
-#include "../event/end_scene.hpp"
+#include "../event/d3d9_end_scene.hpp"
+#include "../event/d3d9_reset.hpp"
 #include "../halo_data/resolution.hpp"
 
 namespace Chimera {
@@ -232,7 +233,7 @@ namespace Chimera {
         if(override_font) {
             RECT rect;
 
-            // Find spaces on left and right
+            // Find spaces on right
             int trailing = 0;
             for(const T *q = text; *q; q++) {
                 if(*q == ' ') {
@@ -465,6 +466,13 @@ namespace Chimera {
         }
     }
 
+    static void on_reset(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS *) {
+        if(font) {
+            font->Release();
+            font = nullptr;
+        }
+    }
+
     void setup_text_hook() noexcept {
         static Hook hook;
         auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
@@ -479,7 +487,8 @@ namespace Chimera {
         write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
         write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
 
-        add_end_scene_event(on_add_scene);
+        add_d3d9_end_scene_event(on_add_scene);
+        add_d3d9_reset_event(on_reset);
     }
 
     // D3DXCreateFont(pDevice, size, 0, Settings.FontWeight*100, 1, Settings.FontItalic, UNICODE, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Settings.FontName, &Text);

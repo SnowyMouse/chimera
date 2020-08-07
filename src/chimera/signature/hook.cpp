@@ -446,7 +446,7 @@ namespace Chimera {
                 // call dword ptr[x]
                 case 0xFF: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0x51) {
+                    if(op1 == 0x51 || op1 == 0x52) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

@@ -4,8 +4,8 @@
 
 .text
 
-.globl _on_end_scene_asm
-_on_end_scene_asm:
+.globl _on_d3d9_end_scene_asm
+_on_d3d9_end_scene_asm:
     pushfd
     pushad
 

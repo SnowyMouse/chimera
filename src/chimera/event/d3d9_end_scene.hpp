@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#ifndef CHIMERA_END_SCENE_HPP
-#define CHIMERA_END_SCENE_HPP
+#ifndef CHIMERA__EVENT__D3D9_END_SCENE_HPP
+#define CHIMERA__EVENT__D3D9_END_SCENE_HPP
 
 #include <d3d9.h>
 
@@ -19,13 +19,13 @@ namespace Chimera {
      * @param function This is the function to add
      * @param priority This is the priority used to determine call order.
      */
-    void add_end_scene_event(const EndSceneEventFunction function, EventPriority priority = EventPriority::EVENT_PRIORITY_DEFAULT);
+    void add_d3d9_end_scene_event(const EndSceneEventFunction function, EventPriority priority = EventPriority::EVENT_PRIORITY_DEFAULT);
 
     /**
      * Remove an EndScene event if the function is being used as an event.
      * @param function This is the function to remove
      */
-    void remove_end_scene_event(const EndSceneEventFunction function);
+    void remove_d3d9_end_scene_event(const EndSceneEventFunction function);
 }
 
 #endif
