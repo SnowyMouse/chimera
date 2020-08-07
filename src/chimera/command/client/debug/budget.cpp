@@ -54,8 +54,8 @@ namespace Chimera {
 
     static void show_budget() noexcept {
         auto font = GenericFont::FONT_CONSOLE;
-        std::int16_t increment = font_pixel_height(font) - 2;
-        std::int16_t y = 330;
+        std::int16_t increment = font_pixel_height(font);
+        std::int16_t y = 480 - increment * 10;
 
         // Header
         apply_text("Type", x_name, y, x_name_width, 480, blue, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_TOP_RIGHT);
