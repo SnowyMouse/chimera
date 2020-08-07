@@ -146,16 +146,14 @@ namespace Chimera {
 
                 color.alpha = 1.0F - ratio * 0.5F;
 
-                auto large_font = get_generic_font(GenericFont::FONT_LARGE);
-
                 if(!get_console_open()) {
-                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, large_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+                    apply_text(std::string(dead_text), -320, 60, 640, 480, color, GenericFont::FONT_LARGE, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
                 }
             }
 
             color.alpha = 0.8F;
 
-            auto small_font = get_generic_font(GenericFont::FONT_SMALL);
+            auto small_font = GenericFont::FONT_SMALL;
             auto height = font_pixel_height(small_font);
 
             if(!get_console_open()) {
