@@ -5,6 +5,7 @@
 #include <variant>
 #include "../halo_data/tag.hpp"
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "output.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
@@ -17,36 +18,65 @@
 namespace Chimera {
     #include "color_codes.hpp"
 
-    //#define USE_SYSTEM_FONT
-
-    static LPD3DXFONT font = nullptr;
+    static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr;
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
-    static LPD3DXFONT get_override_font(const TagID &what) {
-        return font;
+    static LPD3DXFONT get_override_font(GenericFont font) {
+        switch(font) {
+            case GenericFont::FONT_CONSOLE:
+                return console_font_override;
+            case GenericFont::FONT_SYSTEM:
+                return system_font_override;
+            case GenericFont::FONT_SMALL:
+                return small_font_override;
+            case GenericFont::FONT_LARGE:
+                return large_font_override;
+            default:
+                std::terminate();
+        }
     }
 
-    TagID &get_generic_font(GenericFont font) noexcept {
+    static LPD3DXFONT get_override_font(const std::variant<TagID, GenericFont> &font) {
+        auto *generic = std::get_if<1>(&font);
+        if(generic) {
+            return get_override_font(*generic);
+        }
+        else {
+            return nullptr;
+        }
+    }
+
+    const TagID &get_generic_font(GenericFont font) noexcept {
         // Get the globals tag
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x144);
 
         // Console font is referenced here
         if(font == GenericFont::FONT_CONSOLE) {
-            return *reinterpret_cast<TagID *>(interface_bitmaps + 0x10 + 0xC);
+            return *reinterpret_cast<const TagID *>(interface_bitmaps + 0x10 + 0xC);
         }
         // System font
         else if(font == GenericFont::FONT_SYSTEM) {
-            return *reinterpret_cast<TagID *>(interface_bitmaps + 0x00 + 0xC);
+            return *reinterpret_cast<const TagID *>(interface_bitmaps + 0x00 + 0xC);
         }
 
         // Get HUD globals which has the remaining two fonts.
-        auto *hud_globals = get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0x60 + 0xC));
+        auto *hud_globals = get_tag(*reinterpret_cast<const TagID *>(interface_bitmaps + 0x60 + 0xC));
         if(font == GenericFont::FONT_LARGE) {
-            return *reinterpret_cast<TagID *>(hud_globals->data + 0x48 + 0xC);
+            return *reinterpret_cast<const TagID *>(hud_globals->data + 0x48 + 0xC);
         }
         else {
-            return *reinterpret_cast<TagID *>(hud_globals->data + 0x58 + 0xC);
+            return *reinterpret_cast<const TagID *>(hud_globals->data + 0x58 + 0xC);
+        }
+    }
+
+    static const TagID &get_generic_font_if_generic(const std::variant<TagID, GenericFont> &font) noexcept {
+        auto *generic = std::get_if<1>(&font);
+        if(generic) {
+            return get_generic_font(*generic);
+        }
+        else {
+            return std::get<0>(font);
         }
     }
 
@@ -90,6 +120,9 @@ namespace Chimera {
 
         // Alignment of the font
         FontAlignment alignment;
+
+        // Are we overriding this bad boy?
+        LPD3DXFONT override;
     };
 
     static std::vector<Text> text_list;
@@ -129,9 +162,7 @@ namespace Chimera {
         auto old_font_data = *font_data;
 
         for(auto &text : text_list) {
-            auto *override_font = get_override_font(text.font);
-
-            if(override_font) {
+            if(text.override) {
                 auto res = get_resolution();
                 double scale = res.height / 480.0;
 
@@ -179,6 +210,8 @@ namespace Chimera {
                 auto *u8 = std::get_if<std::string>(&text.text);
                 auto *u16 = std::get_if<std::wstring>(&text.text);
 
+                auto *override_font = text.override;
+
                 if(u8) {
                     override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
                     override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
@@ -210,8 +243,11 @@ namespace Chimera {
         text_list.clear();
     }
 
-    std::int16_t font_pixel_height(const TagID &font) noexcept {
+    std::int16_t font_pixel_height(const std::variant<TagID, GenericFont> &font) noexcept {
+        // Find the font
+        TagID font_tag = get_generic_font_if_generic(font);
         auto *override_font = get_override_font(font);
+
         if(override_font) {
             TEXTMETRIC tm;
             override_font->GetTextMetrics(&tm);
@@ -219,7 +255,7 @@ namespace Chimera {
             return static_cast<int>((tm.tmAscent + tm.tmDescent) * 480 + 240) / res.height;
         }
 
-        auto *tag = get_tag(font);
+        auto *tag = get_tag(font_tag);
         auto *tag_data = tag->data;
         return *reinterpret_cast<std::uint16_t *>(tag_data + 0x4) + *reinterpret_cast<std::uint16_t *>(tag_data + 0x6);
     }
@@ -228,8 +264,11 @@ namespace Chimera {
 
     }
 
-    template<typename T> std::int16_t text_pixel_length_t(const T *text, const TagID &font) {
-        auto *override_font = get_override_font(font);
+    template<typename T> std::int16_t text_pixel_length_t(const T *text, const std::variant<TagID, GenericFont> &font) {
+        // Find the font
+        TagID font_tag = get_generic_font_if_generic(font);
+        LPD3DXFONT override_font = get_override_font(font);
+
         if(override_font) {
             RECT rect;
 
@@ -270,7 +309,7 @@ namespace Chimera {
         static_assert(sizeof(Character) == 0x14);
 
         // Get the tag
-        auto *tag = get_tag(font);
+        auto *tag = get_tag(font_tag);
 
         // If it's not loaded, don't care
         if(tag->indexed && reinterpret_cast<std::uintptr_t>(tag->data) < 65536) {
@@ -314,17 +353,21 @@ namespace Chimera {
         return length;
     }
 
-    std::int16_t text_pixel_length(const char *text, const TagID &font) noexcept {
+    std::int16_t text_pixel_length(const char *text, const std::variant<TagID, GenericFont> &font) noexcept {
         return text_pixel_length_t(text, font);
     }
 
-    std::int16_t text_pixel_length(const wchar_t *text, const TagID &font) noexcept {
+    std::int16_t text_pixel_length(const wchar_t *text, const std::variant<TagID, GenericFont> &font) noexcept {
         return text_pixel_length_t(text, font);
     }
 
     float widescreen_width_480p = 640.0;
 
-    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, TagID font, FontAlignment alignment, TextAnchor anchor) noexcept {
+    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, FontAlignment alignment, TextAnchor anchor) noexcept {
+        // Find the font
+        TagID font_tag = get_generic_font_if_generic(font);
+        LPD3DXFONT override_font = get_override_font(font);
+
         // Adjust the coordinates based on the given anchor
         switch(anchor) {
             case TextAnchor::ANCHOR_TOP_LEFT:
@@ -344,11 +387,15 @@ namespace Chimera {
                 x += static_cast<std::int16_t>(widescreen_width_480p / 2.0f);
                 break;
         }
-        text_list.emplace_back(Text { text, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), color, font, alignment } );
+        text_list.emplace_back(Text { text, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), color, font_tag, alignment, override_font } );
     }
 
-    template<class T> void apply_text_quake_colors_t(T text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, TagID font, TextAnchor anchor) {
+    template<class T> static void apply_text_quake_colors_t(T text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) {
         std::vector<std::tuple<char,T>> segments;
+
+        // Find the font
+        TagID font_tag = get_generic_font_if_generic(font);
+        LPD3DXFONT override = get_override_font(font);
 
         // Adjust the base coordinates based on the given anchor
         switch(anchor) {
@@ -430,7 +477,7 @@ namespace Chimera {
             color_for_code(color_int, chosen_color);
 
             // Add the color to the list
-            text_list.emplace_back(Text { string, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), chosen_color, font, FontAlignment::ALIGN_LEFT });
+            text_list.emplace_back(Text { string, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), chosen_color, font_tag, FontAlignment::ALIGN_LEFT, override });
 
             // Offset, giving up if we're overflowing or exceed y
             x += text_pixel_length(string.data(), font);
@@ -440,11 +487,11 @@ namespace Chimera {
         }
     }
 
-    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, TagID font, TextAnchor anchor) noexcept {
+    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
         apply_text_quake_colors_t(text, x, y, width, height, color, font, anchor);
     }
 
-    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, TagID font, TextAnchor anchor) noexcept {
+    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
         apply_text_quake_colors_t(text, x, y, width, height, color, font, anchor);
     }
 
@@ -456,21 +503,50 @@ namespace Chimera {
     }
 
     static void on_add_scene(LPDIRECT3DDEVICE9 device) noexcept {
-        if(!font) {
-            #ifdef USE_SYSTEM_FONT
-            D3DXCreateFont(device, static_cast<INT>(15 * (get_resolution().height / 480.0)), 0, 0 * 100, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
-            #endif
-        }
         if(!dev) {
             dev = device;
+
+            auto *ini = get_chimera().get_ini();
+            auto scale = get_resolution().height / 480.0;
+
+            #define generate_font(override_var, override_name) \
+                if(ini->get_value_bool("font_override." override_name "_font_override").value_or(false)) { \
+                    auto size = ini->get_value_long("font_override." override_name "_font_size").value_or(12); \
+                    auto weight = ini->get_value_long("font_override." override_name "_font_weight").value_or(400); \
+                    auto *family = ini->get_value("font_override." override_name "_font_family"); \
+                    if(family == nullptr) { \
+                        family = "Arial"; \
+                    } \
+                    D3DXCreateFont(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
+                }
+
+            generate_font(system_font_override, "system");
+            generate_font(console_font_override, "console");
+            generate_font(small_font_override, "small");
+            generate_font(large_font_override, "large");
+
+            #undef generate_font
         }
     }
 
     static void on_reset(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS *) {
-        if(font) {
-            font->Release();
-            font = nullptr;
+        if(small_font_override) {
+            small_font_override->Release();
+            small_font_override = nullptr;
         }
+        if(large_font_override) {
+            large_font_override->Release();
+            large_font_override = nullptr;
+        }
+        if(console_font_override) {
+            console_font_override->Release();
+            console_font_override = nullptr;
+        }
+        if(system_font_override) {
+            system_font_override->Release();
+            system_font_override = nullptr;
+        }
+        dev = nullptr;
     }
 
     void setup_text_hook() noexcept {
@@ -487,8 +563,10 @@ namespace Chimera {
         write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
         write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
 
-        add_d3d9_end_scene_event(on_add_scene);
-        add_d3d9_reset_event(on_reset);
+        if(get_chimera().get_ini()->get_value_bool("font_override.enabled").value_or(false)) {
+            add_d3d9_end_scene_event(on_add_scene);
+            add_d3d9_reset_event(on_reset);
+        }
     }
 
     // D3DXCreateFont(pDevice, size, 0, Settings.FontWeight*100, 1, Settings.FontItalic, UNICODE, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Settings.FontName, &Text);

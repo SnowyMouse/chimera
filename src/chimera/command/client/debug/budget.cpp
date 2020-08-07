@@ -50,10 +50,10 @@ namespace Chimera {
     static ColorARGB yellow = ColorARGB { 0.7, 1.0, 1.0, 0.4 };
     static ColorARGB red = ColorARGB { 0.7, 1.0, 0.4, 0.4 };
 
-    static void output_limit(const char *name, std::uint32_t value, std::uint32_t max, std::int16_t y, TagID font) noexcept;
+    static void output_limit(const char *name, std::uint32_t value, std::uint32_t max, std::int16_t y, GenericFont font) noexcept;
 
     static void show_budget() noexcept {
-        auto font = get_generic_font(GenericFont::FONT_CONSOLE);
+        auto font = GenericFont::FONT_CONSOLE;
         std::int16_t increment = font_pixel_height(font) - 2;
         std::int16_t y = 330;
 
@@ -123,7 +123,7 @@ namespace Chimera {
         }
     }
 
-    static void output_limit(const char *name, std::uint32_t value, std::uint32_t max, std::int16_t y, TagID font) noexcept {
+    static void output_limit(const char *name, std::uint32_t value, std::uint32_t max, std::int16_t y, GenericFont font) noexcept {
         char buffer[64];
         auto color = blue;
         if(value >= max) {

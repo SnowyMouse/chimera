@@ -56,7 +56,7 @@ namespace Chimera {
             }
         }
 
-        auto font = get_generic_font(GenericFont::FONT_CONSOLE);
+        auto font = GenericFont::FONT_CONSOLE;
         int font_size = font_pixel_height(font);
         apply_text(center, -240, 220 - font_size * 2, 480, 200, blue, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         apply_text(relative, -240, 220 - font_size, 480, 200, blue, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);

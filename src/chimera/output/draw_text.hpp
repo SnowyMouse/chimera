@@ -53,7 +53,7 @@ namespace Chimera {
      * @param  font the type of generic font
      * @return      the tag's tag ID
      */
-    TagID &get_generic_font(GenericFont font) noexcept;
+    const TagID &get_generic_font(GenericFont font) noexcept;
 
     /**
      * Set up the text hook for showing text.
@@ -63,24 +63,25 @@ namespace Chimera {
     /**
      * Get the number of pixels a string takes up given a font.
      * @param  text the text to measure
-     * @param  font the type of generic font
+     * @param  font the font
      * @return      the length in pixels
      */
-    std::int16_t text_pixel_length(const char *text, const TagID &font) noexcept;
+    std::int16_t text_pixel_length(const char *text, const std::variant<TagID, GenericFont> &font) noexcept;
 
     /**
      * Get the number of pixels a string takes up given a font.
      * @param  text the text to measure
-     * @param  font the type of generic font
+     * @param  font the font
      * @return      the length in pixels
      */
-    std::int16_t text_pixel_length(const wchar_t *text, const TagID &font) noexcept;
+    std::int16_t text_pixel_length(const wchar_t *text, const std::variant<TagID, GenericFont> &font) noexcept;
 
     /**
      * Get the height of the font
+     * @param  font the font
      * @return      the height in pixels
      */
-    std::int16_t font_pixel_height(const TagID &font) noexcept;
+    std::int16_t font_pixel_height(const std::variant<TagID, GenericFont> &font) noexcept;
 
     /**
      * Display text on the screen for one frame.
@@ -94,7 +95,7 @@ namespace Chimera {
      * @param alignment alignment to use
      * @param anchor    anchor to use
      */
-    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, TagID font, FontAlignment alignment, TextAnchor anchor) noexcept;
+    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, FontAlignment alignment, TextAnchor anchor) noexcept;
 
     /**
      * Display text on the screen using Quake III arena style colors. This is left aligned.
@@ -107,7 +108,7 @@ namespace Chimera {
      * @param font      font to use; can be a generic font type or a specific font tag
      * @param anchor    anchor to use
      */
-    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &default_color, TagID font, TextAnchor anchor) noexcept;
+    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &default_color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept;
 
     /**
      * Display text on the screen using Quake III arena style colors. This is left aligned.
@@ -120,7 +121,7 @@ namespace Chimera {
      * @param font      font to use; can be a generic font type or a specific font tag
      * @param anchor    anchor to use
      */
-    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &default_color, TagID font, TextAnchor anchor) noexcept;
+    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &default_color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept;
 }
 
 #endif

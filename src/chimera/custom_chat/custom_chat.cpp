@@ -208,9 +208,8 @@ namespace Chimera {
     }
 
     static void on_custom_chat_frame() noexcept {
-        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font_type, float slide_time_length, float time_up, float fade_out_time) {
+        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font, float slide_time_length, float time_up, float fade_out_time) {
             // Define the font
-            auto font = get_generic_font(font_type);
             std::uint16_t line_height = font_pixel_height(font);
             if(line_height == 0) {
                 line_height = 1;
@@ -312,8 +311,7 @@ namespace Chimera {
             }
 
             // Define the font for chat input
-            auto font = get_generic_font(chat_input_font);
-            std::uint16_t line_height = font_pixel_height(font);
+            std::uint16_t line_height = font_pixel_height(chat_input_font);
             if(line_height == 0) {
                 line_height = 1;
             }
@@ -321,14 +319,14 @@ namespace Chimera {
             std::size_t adjusted_y = chat_input_y + line_height * 2;
 
             std::snprintf(buffer_to_show, sizeof(buffer_to_show), "%s - %s", localize(channel_name), chat_input_buffer);
-            apply_text_quake_colors(buffer_to_show, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, font, chat_input_anchor);
+            apply_text_quake_colors(buffer_to_show, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
             std::size_t length_of_shown_buffer = std::strlen(buffer_to_show);
             std::size_t length_of_input_buffer = std::strlen(chat_input_buffer);
             std::size_t input_buffer_start = length_of_shown_buffer - length_of_input_buffer;
             std::size_t cursor_location = input_buffer_start + chat_input_cursor;
             buffer_to_show[cursor_location] = 0;
-            std::size_t cursor_x = text_pixel_length(buffer_to_show, font);
+            std::size_t cursor_x = text_pixel_length(buffer_to_show, chat_input_font);
 
             // Subtract color codes
             char cursor_code[4];
@@ -338,21 +336,21 @@ namespace Chimera {
             for(std::size_t i = 0; i < cursor_location; i++) {
                 if(buffer_to_show[i] == '^' && buffer_to_show[i + 1] != 0) {
                     if(buffer_to_show[i + 1] == '^') {
-                        cursor_x -= text_pixel_length("^", font);
+                        cursor_x -= text_pixel_length("^", chat_input_font);
                         i++;
                         continue;
                     }
 
                     cursor_code[0] = buffer_to_show[i];
                     cursor_code[1] = buffer_to_show[i + 1];
-                    cursor_x -= text_pixel_length(cursor_code, font);
+                    cursor_x -= text_pixel_length(cursor_code, chat_input_font);
                     i ++;
                 }
             }
             cursor_code[2] = '_';
             cursor_code[3] = 0;
 
-            apply_text_quake_colors(cursor_code, cursor_x + chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, font, chat_input_anchor);
+            apply_text_quake_colors(cursor_code, cursor_x + chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
             if(show_chat_color_help) {
                 const char *color_codes = "1234567890\nqwertyuiop QWERTYUIOP\nasdfghjkl ASDFGHJKL\nzxcvbnm ZXCVBNM";
@@ -365,10 +363,10 @@ namespace Chimera {
                     }
                     else if(*code != ' ') {
                         char code_text[] = {'^', *code, '^', '^', *code, 0};
-                        apply_text_quake_colors(code_text, help_x, help_y, chat_input_w, line_height, chat_input_color, font, chat_input_anchor);
+                        apply_text_quake_colors(code_text, help_x, help_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
                     }
                     char code_space[] = {'^', *code, 0};
-                    help_x += text_pixel_length(code_space, font);
+                    help_x += text_pixel_length(code_space, chat_input_font);
                 }
             }
         }
@@ -475,7 +473,6 @@ namespace Chimera {
             }
 
             // Next, let's see if we can break it up into lines
-            auto font = get_generic_font(server_message_font);
             std::size_t pos = 0;
             std::size_t s_len = 0;
             std::size_t last_space = 0;
@@ -485,7 +482,7 @@ namespace Chimera {
                 if(s[s_len] == ' ') {
                     last_space = s_len;
                 }
-                if(text_pixel_length(s, font) > server_message_w) {
+                if(text_pixel_length(s, server_message_font) > server_message_w) {
                     if(last_space) {
                         s[last_space] = 0;
                         pos -= (s_len - last_space);

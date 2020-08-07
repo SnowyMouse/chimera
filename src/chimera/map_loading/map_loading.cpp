@@ -880,7 +880,6 @@ namespace Chimera {
         std::int16_t width = ((640 / 2) - (640 / 2 + x)) * 2;
         std::int16_t y = 210;
         std::int16_t height = 240 - y;
-        auto font = get_generic_font(font_to_use);
 
         ColorARGB color { 1.0F, 1.0F, 1.0F, 1.0F };
 
@@ -898,16 +897,16 @@ namespace Chimera {
                 auto dltotal = map_downloader->get_total_size();
 
                 // Draw the progress
-                apply_text("Transferred:", x, y, 100, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                apply_text("Transferred:", x, y, 100, height, color, font_to_use, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
                 char progress_buffer[80];
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f ", dlnow / 1024.0F / 1024.0F);
-                apply_text(std::string(progress_buffer), x + 100, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
+                apply_text(std::string(progress_buffer), x + 100, y, 100, height, color, font_to_use, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "/ %.02f MiB", dltotal / 1024.0F / 1024.0F);
-                apply_text(std::string(progress_buffer), x + 200, y, 150, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                apply_text(std::string(progress_buffer), x + 200, y, 150, height, color, font_to_use, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
 
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "%0.02f %%", 100.0F * dlnow / dltotal);
-                apply_text(std::string(progress_buffer), x + 350, y, 100, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
+                apply_text(std::string(progress_buffer), x + 350, y, 100, height, color, font_to_use, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
                 char download_speed_buffer[64];
                 auto download_speed = map_downloader->get_download_speed();
@@ -917,7 +916,7 @@ namespace Chimera {
                 else {
                     std::snprintf(download_speed_buffer, sizeof(download_speed_buffer), "%zu kB/s", download_speed);
                 }
-                apply_text(download_speed_buffer, x + 450, y, 150, height, color, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
+                apply_text(download_speed_buffer, x + 450, y, 150, height, color, font_to_use, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
 
                 break;
             }
@@ -966,7 +965,7 @@ namespace Chimera {
 
         // Draw the progress text
         if(*output) {
-            apply_text(output, x, y, width, height, color, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
+            apply_text(output, x, y, width, height, color, font_to_use, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         }
 
         if(!map_downloader || map_downloader->is_finished()) {
