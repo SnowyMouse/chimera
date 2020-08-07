@@ -183,7 +183,7 @@ namespace Chimera {
                     at += 2;
                     break;
                 }
-                
+
                 // jz short
                 case 0x74: {
                     offsets.push_back(at - at_start);
@@ -456,7 +456,7 @@ namespace Chimera {
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
                     }
-                    else if(op1 == 0x15) {
+                    else if(op1 == 0x15 || op1 == 0x92) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;

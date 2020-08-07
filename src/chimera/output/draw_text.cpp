@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#include <d3d9.h>
+#include <d3dx9.h>
 #include <variant>
 #include "../halo_data/tag.hpp"
 #include "../chimera.hpp"
@@ -8,9 +10,20 @@
 #include "../signature/signature.hpp"
 #include "draw_text.hpp"
 #include "../event/frame.hpp"
+#include "../event/end_scene.hpp"
+#include "../halo_data/resolution.hpp"
 
 namespace Chimera {
     #include "color_codes.hpp"
+
+    //#define USE_SYSTEM_FONT
+
+    static LPD3DXFONT font = nullptr;
+    static LPDIRECT3DDEVICE9 dev = nullptr;
+
+    static LPD3DXFONT get_override_font(const TagID &what) {
+        return font;
+    }
 
     TagID &get_generic_font(GenericFont font) noexcept {
         // Get the globals tag
@@ -79,6 +92,7 @@ namespace Chimera {
     };
 
     static std::vector<Text> text_list;
+    static std::vector<std::pair<Text, LPD3DXFONT>> text_list_to_render_on_end_scene;
 
     struct FontData {
         // Font being used
@@ -115,26 +129,42 @@ namespace Chimera {
         auto old_font_data = *font_data;
 
         for(auto &text : text_list) {
-            font_data->color = text.color;
-            font_data->alignment = text.alignment;
-            font_data->font = text.font;
+            auto *override_font = get_override_font(text.font);
 
-            // Depending on if we're using 8-bit or 16-bit, draw stuff
-            auto *u8 = std::get_if<std::string>(&text.text);
-            auto *u16 = std::get_if<std::wstring>(&text.text);
-
-            if(u8) {
-                display_text(u8->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_8_bit);
+            if(override_font) {
+                text_list_to_render_on_end_scene.emplace_back(text, override_font);
             }
             else {
-                display_text(u16->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_16_bit);
+                font_data->color = text.color;
+                font_data->alignment = text.alignment;
+                font_data->font = text.font;
+
+                // Depending on if we're using 8-bit or 16-bit, draw stuff
+                auto *u8 = std::get_if<std::string>(&text.text);
+                auto *u16 = std::get_if<std::wstring>(&text.text);
+
+                if(u8) {
+                    display_text(u8->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_8_bit);
+                }
+                else {
+                    display_text(u16->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_16_bit);
+                }
             }
         }
+
         *font_data = old_font_data;
         text_list.clear();
     }
 
     std::int16_t font_pixel_height(const TagID &font) noexcept {
+        auto *override_font = get_override_font(font);
+        if(override_font) {
+            TEXTMETRIC tm;
+            override_font->GetTextMetrics(&tm);
+            auto res = get_resolution();
+            return static_cast<int>((tm.tmAscent + tm.tmDescent) * 480 + 240) / res.height;
+        }
+
         auto *tag = get_tag(font);
         auto *tag_data = tag->data;
         return *reinterpret_cast<std::uint16_t *>(tag_data + 0x4) + *reinterpret_cast<std::uint16_t *>(tag_data + 0x6);
@@ -145,6 +175,21 @@ namespace Chimera {
     }
 
     template<typename T> std::int16_t text_pixel_length_t(const T *text, const TagID &font) {
+        auto *override_font = get_override_font(font);
+        if(override_font) {
+            RECT rect;
+
+            if(sizeof(T) == sizeof(char)) {
+                override_font->DrawText(NULL, reinterpret_cast<const char *>(text), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+            }
+            else {
+                override_font->DrawTextW(NULL, reinterpret_cast<const wchar_t *>(text), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+            }
+
+            auto res = get_resolution();
+            return static_cast<int>((rect.right - rect.left) * 480 + 240) / res.height;
+        }
+
         struct Character {
             std::uint16_t character;
             std::uint16_t character_width;
@@ -338,6 +383,80 @@ namespace Chimera {
         extern "C" void display_text_16_scaled() noexcept;
     }
 
+    static void on_add_scene(LPDIRECT3DDEVICE9 device) noexcept {
+        if(!font) {
+            #ifdef USE_SYSTEM_FONT
+            D3DXCreateFont(device, static_cast<INT>(22 * (get_resolution().height / 480.0)), 0, 0 * 100, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
+            #endif
+        }
+        if(!dev) {
+            dev = device;
+        }
+
+        auto res = get_resolution();
+        double scale = res.height / 480.0;
+
+        for(auto &text_pair : text_list_to_render_on_end_scene) {
+            auto &text = text_pair.first;
+            auto *override_font = text_pair.second;
+
+            // Get our rects up
+            RECT rect;
+            rect.left = text.x * scale;
+            rect.right = (text.width + text.x) * scale;
+            rect.top = (text.y) * scale;
+            rect.bottom = (text.height + text.y) * scale;
+
+            RECT rshadow = rect;
+            rshadow.left += 2;
+            rshadow.right += 2;
+            rshadow.top += 2;
+            rshadow.bottom += 2;
+
+            auto align = DT_LEFT;
+
+            // Colors
+            D3DCOLOR color = D3DCOLOR_ARGB(
+                static_cast<int>(UINT8_MAX * text.color.alpha),
+                static_cast<int>(UINT8_MAX * text.color.red),
+                static_cast<int>(UINT8_MAX * text.color.green),
+                static_cast<int>(UINT8_MAX * text.color.blue)
+            );
+            D3DCOLOR color_shadow = D3DCOLOR_ARGB(
+                static_cast<int>(UINT8_MAX * (text.color.alpha * 0.75)),
+                static_cast<int>(UINT8_MAX * (text.color.red * 0.15)),
+                static_cast<int>(UINT8_MAX * (text.color.green * 0.15)),
+                static_cast<int>(UINT8_MAX * (text.color.blue * 0.15))
+            );
+
+            switch(text.alignment) {
+                case ALIGN_LEFT:
+                    align = DT_LEFT;
+                    break;
+                case ALIGN_CENTER:
+                    align = DT_CENTER;
+                    break;
+                case ALIGN_RIGHT:
+                    align = DT_RIGHT;
+                    break;
+            }
+
+            auto *u8 = std::get_if<std::string>(&text.text);
+            auto *u16 = std::get_if<std::wstring>(&text.text);
+
+            if(u8) {
+                override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
+            }
+            else {
+                override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
+            }
+        }
+
+        text_list_to_render_on_end_scene.clear();
+    }
+
     void setup_text_hook() noexcept {
         static Hook hook;
         auto *text_hook_addr = get_chimera().get_signature("text_hook_sig").data();
@@ -351,7 +470,11 @@ namespace Chimera {
         // void write_function_override(void *jmp_at, Hook &hook, const void *new_function, const void **original_function);
         write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
         write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
+
+        add_end_scene_event(on_add_scene);
     }
+
+    // D3DXCreateFont(pDevice, size, 0, Settings.FontWeight*100, 1, Settings.FontItalic, UNICODE, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Settings.FontName, &Text);
 
     extern "C" void scale_halo_drawn_text(std::uint8_t *) noexcept {
     }
