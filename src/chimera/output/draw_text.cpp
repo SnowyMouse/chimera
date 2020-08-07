@@ -3,6 +3,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <variant>
+#include <filesystem>
 #include "../halo_data/tag.hpp"
 #include "../chimera.hpp"
 #include "../config/ini.hpp"
@@ -563,7 +564,34 @@ namespace Chimera {
         write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
         write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
 
-        if(get_chimera().get_ini()->get_value_bool("font_override.enabled").value_or(false)) {
+        auto *chimera_ini = get_chimera().get_ini();
+        if(chimera_ini->get_value_bool("font_override.enabled").value_or(false)) {
+            auto *fonts_directory = chimera_ini->get_value("font_override.fonts_directory");
+            if(fonts_directory) {
+                std::printf("Fonts directory: %s\n", fonts_directory);
+                auto fonts_dir = std::filesystem::path(fonts_directory);
+                if(std::filesystem::is_directory(fonts_dir)) {
+                    std::printf("Fonts directory: %s is a directory\n", fonts_directory);
+                    try {
+                        for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
+                            std::printf("Loading font %s...", f.path().string().c_str());
+                            std::fflush(stdout);
+                            if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
+                                std::printf("done\n");
+                            }
+                            else {
+                                std::printf("FAILED\n");
+                                char error_message[256 + MAX_PATH];
+                                std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
+                            }
+                        }
+                    }
+                    catch(std::exception &e) {
+                        MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
+                    }
+                }
+            }
+
             add_d3d9_end_scene_event(on_add_scene);
             add_d3d9_reset_event(on_reset);
         }
