@@ -126,6 +126,94 @@ namespace Chimera {
         LPD3DXFONT override;
     };
 
+    template<typename String> struct TextRect {
+        String text;
+        std::int16_t x;
+        std::int16_t y;
+        std::int16_t width;
+        std::int16_t height;
+        FontAlignment align;
+    };
+
+    template<typename String> static std::vector<TextRect<String>> handle_formatting(String text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, FontAlignment align, const std::variant<TagID, GenericFont> &font) {
+        auto size = text.size();
+        std::vector<TextRect<String>> fmt;
+        if(size == 0) {
+            return fmt;
+        }
+
+        std::size_t start = 0;
+        auto font_height = font_pixel_height(font);
+        int tabs = 0;
+        auto original_align = align;
+
+        auto append_thing = [&fmt, &x, &y, &width, &height, &align, &text, &tabs, &start](std::size_t end) {
+            auto substr_size = end - start;
+            if(substr_size == 0) {
+                return;
+            }
+            auto &new_fmt = fmt.emplace_back();
+            new_fmt.x = x + tabs * (0.20 * x);
+            new_fmt.y = y;
+            new_fmt.width = width;
+            new_fmt.height = height;
+            new_fmt.text = text.substr(start, substr_size);
+            new_fmt.align = align;
+        };
+
+        for(std::size_t i = 0; i < size - 1 && height > 0; i++) {
+            bool break_it_up = false;
+
+            // Check if we hit an escape character
+            if(text[i] == '|') {
+                char control_char = text[i+1];
+                switch(control_char) {
+                    case 'n':
+                    case 'r':
+                    case 'l':
+                    case 'c':
+                    case 't':
+                        break_it_up = true;
+                        break;
+                }
+
+                // If we did, break it up
+                if(break_it_up) {
+                    append_thing(i);
+                    switch(control_char) {
+                        case 'n':
+                            tabs = 0;
+                            y += font_height;
+                            height -= font_height;
+                            align = original_align;
+                            break;
+                        case 'r':
+                            tabs = 0;
+                            align = FontAlignment::ALIGN_RIGHT;
+                            break;
+                        case 'l':
+                            tabs = 0;
+                            align = FontAlignment::ALIGN_LEFT;
+                            break;
+                        case 'c':
+                            tabs = 0;
+                            align = FontAlignment::ALIGN_CENTER;
+                            break;
+                        case 't':
+                            tabs++;
+                            align = FontAlignment::ALIGN_LEFT;
+                            break;
+                    }
+                    i += 1;
+                    start = i + 1;
+                }
+            }
+        }
+
+        append_thing(size);
+        return fmt;
+    }
+
     static std::vector<Text> text_list;
 
     struct FontData {
@@ -388,7 +476,25 @@ namespace Chimera {
                 x += static_cast<std::int16_t>(widescreen_width_480p / 2.0f);
                 break;
         }
-        text_list.emplace_back(Text { text, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), color, font_tag, alignment, override_font } );
+
+        auto *u8 = std::get_if<0>(&text);
+        auto *u16 = std::get_if<1>(&text);
+
+        #define handle_formatting_call(what) handle_formatting(*what, x, y, width, height, alignment, font)
+
+        if(u8) {
+            for(auto &i : handle_formatting_call(u8)) {
+                text_list.emplace_back(Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font } );
+            }
+        }
+
+        if(u16) {
+            for(auto &i : handle_formatting_call(u16)) {
+                text_list.emplace_back(Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font } );
+            }
+        }
+
+        #undef handle_formatting_call
     }
 
     template<class T> static void apply_text_quake_colors_t(T text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) {
@@ -489,11 +595,15 @@ namespace Chimera {
     }
 
     void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
-        apply_text_quake_colors_t(text, x, y, width, height, color, font, anchor);
+        for(auto &i : handle_formatting(text, x, y, width, height, FontAlignment::ALIGN_LEFT, font)) {
+            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor);
+        }
     }
 
     void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
-        apply_text_quake_colors_t(text, x, y, width, height, color, font, anchor);
+        for(auto &i : handle_formatting(text, x, y, width, height, FontAlignment::ALIGN_LEFT, font)) {
+            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor);
+        }
     }
 
     extern "C" {
