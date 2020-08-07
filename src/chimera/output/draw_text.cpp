@@ -583,11 +583,14 @@ namespace Chimera {
                                 std::printf("FAILED\n");
                                 char error_message[256 + MAX_PATH];
                                 std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
+                                MessageBox(nullptr, error_message, "Failed to load font", MB_ICONERROR | MB_OK);
+                                std::exit(EXIT_FAILURE);
                             }
                         }
                     }
                     catch(std::exception &e) {
                         MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
+                        std::exit(EXIT_FAILURE);
                     }
                 }
             }
