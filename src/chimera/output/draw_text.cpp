@@ -600,8 +600,6 @@ namespace Chimera {
         }
     }
 
-    // D3DXCreateFont(pDevice, size, 0, Settings.FontWeight*100, 1, Settings.FontItalic, UNICODE, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Settings.FontName, &Text);
-
     extern "C" void scale_halo_drawn_text(std::uint8_t *) noexcept {
     }
 
