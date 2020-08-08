@@ -662,8 +662,8 @@ namespace Chimera {
                     if(family == nullptr) { \
                         family = "Arial"; \
                     } \
-                    shadow.first = ini->get_value_long("font_override." override_name "_shadow_offset_x").value_or(1); \
-                    shadow.second = ini->get_value_long("font_override." override_name "_shadow_offset_y").value_or(1); \
+                    shadow.first = ini->get_value_long("font_override." override_name "_font_shadow_offset_x").value_or(2); \
+                    shadow.second = ini->get_value_long("font_override." override_name "_font_shadow_offset_y").value_or(2); \
                     D3DXCreateFont(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
                 }
 
