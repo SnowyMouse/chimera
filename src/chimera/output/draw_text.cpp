@@ -162,9 +162,10 @@ namespace Chimera {
                 return;
             }
             auto &new_fmt = fmt.emplace_back();
-            new_fmt.x = x + tabs * (0.25 * width);
+            auto tab_width = (0.25 * width);
+            new_fmt.x = x + tabs * tab_width;
             new_fmt.y = y;
-            new_fmt.width = width;
+            new_fmt.width = tabs ? tab_width : width;
             new_fmt.height = height;
             new_fmt.text = text.substr(start, substr_size);
             new_fmt.align = align;
