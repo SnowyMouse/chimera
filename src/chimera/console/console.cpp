@@ -551,7 +551,7 @@ namespace Chimera {
 
         auto *ini = chimera.get_ini();
         max_lines = ini->get_value_size("custom_console.buffer_size").value_or(10000);
-        max_lines_soft = ini->get_value_size("custom_console.buffer_size_soft").value_or(100);
+        max_lines_soft = ini->get_value_size("custom_console.buffer_size_soft").value_or(256);
         use_scrollback = ini->get_value_bool("custom_console.enable_scrollback").value_or(false);
         line_height = ini->get_value_float("custom_console.line_height").value_or(1.1);
         fade_time = ini->get_value_float("custom_console.fade_time").value_or(0.75);
