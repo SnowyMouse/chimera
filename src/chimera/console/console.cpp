@@ -353,14 +353,16 @@ namespace Chimera {
         ColorARGB color;
     };
     static std::deque<Line> custom_lines;
-    static std::size_t max_lines = 100;
+    static std::size_t max_lines;
     static std::size_t position = 0;
+    static bool use_scrollback = false;
 
     extern "C" void override_console_output_eax_asm();
     extern "C" void override_console_output_edi_asm();
 
     static double fade_start;
     static double fade_time;
+    static double total_lifetime;
     #define MICROSECONDS_PER_SEC 1000000
     static double line_height;
     static int x_margin;
@@ -370,6 +372,10 @@ namespace Chimera {
         auto height = font_pixel_height(font);
         auto this_line_height = height * line_height;
         auto open = get_console_open();
+
+        if(!open) {
+            position = 0;
+        }
 
         int margin = x_margin;
         int y = 480 - this_line_height;
@@ -430,9 +436,18 @@ namespace Chimera {
             auto &line = custom_lines[custom_lines.size() - (i + 1)];
             auto color_copy = line.color;
 
-            if(!open) {
-                auto time_since = std::chrono::duration_cast<std::chrono::microseconds>(now - line.created).count();
-                if(time_since > (fade_start + fade_time) * MICROSECONDS_PER_SEC) {
+            // Renew the lifespan of still-alive lines if open
+            auto time_since = std::chrono::duration_cast<std::chrono::microseconds>(now - line.created).count();
+            if(open) {
+                if(time_since < total_lifetime * MICROSECONDS_PER_SEC) {
+                    line.created = now;
+                    time_since = 0;
+                }
+            }
+
+            // If we aren't open or scrollback is disabled, hide lines that aren't alive anymore
+            if(!open || !use_scrollback) {
+                if(time_since > total_lifetime * MICROSECONDS_PER_SEC) {
                     break;
                 }
                 if(time_since > fade_start * MICROSECONDS_PER_SEC) {
@@ -468,11 +483,14 @@ namespace Chimera {
         write_jmp_call(chimera.get_signature("console_cls_sig").data(), cls_hook, reinterpret_cast<const void *>(do_cls));
 
         auto *ini = chimera.get_ini();
-        max_lines = ini->get_value_size("custom_console.scrollback").value_or(100);
+        max_lines = ini->get_value_size("custom_console.buffer_size").value_or(100);
+        use_scrollback = ini->get_value_bool("custom_console.enable_scrollback").value_or(false);
         line_height = ini->get_value_float("custom_console.line_height").value_or(1.1);
         fade_time = ini->get_value_float("custom_console.fade_time").value_or(0.75);
         fade_start = ini->get_value_float("custom_console.fade_start").value_or(4.0);
         x_margin = ini->get_value_long("custom_console.x_margin").value_or(10);
+
+        total_lifetime = fade_time + fade_start;
 
         add_preframe_event(on_console_frame);
     }
