@@ -398,8 +398,9 @@ namespace Chimera {
             color.alpha = 1.0F;
 
             // Show "halo( "
-            auto prefix_x = margin + text_pixel_length("halo( ", font);
-            apply_text("halo( ", margin, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            const char *prompt_pre = "halo( ";
+            auto prefix_x = margin + text_pixel_length(prompt_pre, font);
+            apply_text(prompt_pre, margin, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
 
             // Show the remaining text
             const auto *console_text = get_console_text();
