@@ -16,6 +16,7 @@
 #include "../fix/widescreen_fix.hpp"
 #include "console.hpp"
 #include "../output/draw_text.hpp"
+#include "../halo_data/keyboard.hpp"
 
 #include <fstream>
 #include <deque>
@@ -354,8 +355,10 @@ namespace Chimera {
     };
     static std::deque<Line> custom_lines;
     static std::size_t max_lines;
+    static std::size_t max_lines_soft;
     static std::size_t position = 0;
     static bool use_scrollback = false;
+    static std::size_t more_lines_below = 0;
 
     extern "C" void override_console_output_eax_asm();
     extern "C" void override_console_output_edi_asm();
@@ -371,10 +374,17 @@ namespace Chimera {
         auto font = GenericFont::FONT_CONSOLE;
         auto height = font_pixel_height(font);
         auto this_line_height = height * line_height;
+        if(this_line_height < 1) {
+            this_line_height = 1;
+        }
         auto open = get_console_open();
 
         if(!open) {
             position = 0;
+        }
+
+        if(position < more_lines_below) {
+            more_lines_below = position;
         }
 
         int margin = x_margin;
@@ -382,8 +392,12 @@ namespace Chimera {
         std::size_t i = position;
         auto resolution = get_resolution();
         int width = (widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640) - margin * 2;
-
         auto now = SteadyClock::now();
+
+        // If we're on the bottom, we can clear this
+        if(position == 0) {
+            more_lines_below = 0;
+        }
 
         // Show the text input?
         if(open) {
@@ -403,6 +417,16 @@ namespace Chimera {
             ColorARGB color = *console_color;
             color.alpha = 1.0F;
 
+            // Note that we have things below
+            int right_side = -margin;
+            if(more_lines_below) {
+                char more_lines_below_text[256];
+                std::snprintf(more_lines_below_text, sizeof(more_lines_below_text), "(+%zu line%s)", more_lines_below, more_lines_below == 1 ? "" : "s");
+                int more_lines_below_width = text_pixel_length(more_lines_below_text, font);
+                right_side += more_lines_below_width;
+                apply_text(more_lines_below_text, width - right_side, y, more_lines_below_width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            }
+
             // Show "halo( "
             const char *prompt_pre = "halo( ";
             auto prefix_x = margin + text_pixel_length(prompt_pre, font);
@@ -411,10 +435,10 @@ namespace Chimera {
             // Show the remaining text
             const auto *console_text = get_console_text();
             std::uint8_t cursor = static_cast<std::uint8_t>(console_text[0x106]);
-            apply_text(console_text, prefix_x, y, width - (prefix_x - margin), height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            apply_text(console_text, prefix_x, y, width - (prefix_x + right_side), height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
 
             // Blink a cursor every second?
-            if(std::chrono::duration_cast<std::chrono::milliseconds>(SteadyClock::now().time_since_epoch()).count() / 500 % 2) {
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / 500 % 2) {
                 int cursor_x = 0;
 
                 // Are we at the end? If so, we don't need to make a substring
@@ -430,6 +454,37 @@ namespace Chimera {
         }
 
         y -= this_line_height * 1.2;
+
+        // Is the button held? (prevent scrolling too fast)
+        static bool button_held = false;
+
+        // Are we pressing things?
+        auto &keys = get_keyboard_keys();
+        if(keys.page_up || keys.page_down) {
+            int max_lines_shown = y / this_line_height;
+            int half_page = max_lines_shown / 2;
+
+            if(!button_held) {
+                button_held = true;
+                if(keys.page_up) {
+                    position += half_page;
+                    if(position >= custom_lines.size()) {
+                        position = custom_lines.size() - 1;
+                    }
+                }
+                else {
+                    if(position < static_cast<std::size_t>(half_page)) {
+                        position = 0;
+                    }
+                    else {
+                        position -= half_page;
+                    }
+                }
+            }
+        }
+        else {
+            button_held = false;
+        }
 
         // Show the lines
         while(y > 0 && i < custom_lines.size()) {
@@ -460,6 +515,18 @@ namespace Chimera {
             i++;
             y -= this_line_height;
         }
+
+        // Clean up if not open
+        if(!open && use_scrollback) {
+            while(custom_lines.size() > max_lines_soft) {
+                if(std::chrono::duration_cast<std::chrono::microseconds>(now - custom_lines.front().created).count() > total_lifetime * MICROSECONDS_PER_SEC) {
+                    custom_lines.pop_front();
+                }
+                else {
+                    break;
+                }
+            }
+        }
     }
 
     static void do_cls() noexcept {
@@ -483,7 +550,8 @@ namespace Chimera {
         write_jmp_call(chimera.get_signature("console_cls_sig").data(), cls_hook, reinterpret_cast<const void *>(do_cls));
 
         auto *ini = chimera.get_ini();
-        max_lines = ini->get_value_size("custom_console.buffer_size").value_or(100);
+        max_lines = ini->get_value_size("custom_console.buffer_size").value_or(10000);
+        max_lines_soft = ini->get_value_size("custom_console.buffer_size_soft").value_or(100);
         use_scrollback = ini->get_value_bool("custom_console.enable_scrollback").value_or(false);
         line_height = ini->get_value_float("custom_console.line_height").value_or(1.1);
         fade_time = ini->get_value_float("custom_console.fade_time").value_or(0.75);
@@ -496,11 +564,21 @@ namespace Chimera {
     }
 
     extern "C" void on_console_output(char *text, const ColorARGB &color) {
+        // Erase all new lines until the buffer size is small enough to hold the new line
+        while(custom_lines.size() > max_lines + 1) {
+            custom_lines.pop_front();
+            if(position > 1) {
+                position--;
+            }
+        }
+
         custom_lines.emplace_back(Line { std::string(text), SteadyClock::now(), color });
         text[0] = 0;
 
-        while(custom_lines.size() > max_lines) {
-            custom_lines.pop_front();
+        // Add 1 so we don't lose our position
+        if(position > 0) {
+            position++;
+            more_lines_below ++; // tell the user more lines have been printed
         }
     }
 }
