@@ -579,7 +579,7 @@ namespace Chimera {
             initialize_custom_chat();
 
             // If we're using a custom console, set that up
-            if(chimera->get_ini()->get_value_bool("halo.console").value_or(false)) {
+            if(chimera->get_ini()->get_value_bool("custom_console.enabled").value_or(false)) {
                 setup_custom_console();
             }
             // Otherwise, merely fix console fade

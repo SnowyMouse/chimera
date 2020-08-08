@@ -12,6 +12,7 @@
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../halo_data/multiplayer.hpp"
+#include "../config/ini.hpp"
 #include "../fix/widescreen_fix.hpp"
 #include "console.hpp"
 #include "../output/draw_text.hpp"
@@ -358,12 +359,11 @@ namespace Chimera {
     extern "C" void override_console_output_eax_asm();
     extern "C" void override_console_output_edi_asm();
 
-    // void *jmp_at, Hook &hook, const void *new_function, const void **original_function
-
-    static double fade_start = 3.0;
-    static double fade_time = 0.5;
+    static double fade_start;
+    static double fade_time;
     #define MICROSECONDS_PER_SEC 1000000
-    static double line_height = 1.1;
+    static double line_height;
+    static int x_margin;
 
     static void on_console_frame() {
         auto font = GenericFont::FONT_CONSOLE;
@@ -371,7 +371,7 @@ namespace Chimera {
         auto this_line_height = height * line_height;
         auto open = get_console_open();
 
-        int margin = 10;
+        int margin = x_margin;
         int y = 480 - this_line_height;
         std::size_t i = position;
         auto resolution = get_resolution();
@@ -465,6 +465,13 @@ namespace Chimera {
 
         static Hook cls_hook;
         write_jmp_call(chimera.get_signature("console_cls_sig").data(), cls_hook, reinterpret_cast<const void *>(do_cls));
+
+        auto *ini = chimera.get_ini();
+        max_lines = ini->get_value_size("custom_console.scrollback").value_or(100);
+        line_height = ini->get_value_float("custom_console.line_height").value_or(1.1);
+        fade_time = ini->get_value_float("custom_console.fade_time").value_or(0.75);
+        fade_start = ini->get_value_float("custom_console.fade_start").value_or(4.0);
+        x_margin = ini->get_value_long("custom_console.x_margin").value_or(10);
 
         add_preframe_event(on_console_frame);
     }
