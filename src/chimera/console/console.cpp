@@ -375,7 +375,7 @@ namespace Chimera {
         int y = 480 - this_line_height;
         std::size_t i = position;
         auto resolution = get_resolution();
-        int width = (widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640) - margin;
+        int width = (widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640) - margin * 2;
 
         auto now = SteadyClock::now();
 
@@ -404,7 +404,7 @@ namespace Chimera {
             // Show the remaining text
             const auto *console_text = get_console_text();
             std::uint8_t cursor = static_cast<std::uint8_t>(console_text[0x106]);
-            apply_text(console_text, prefix_x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            apply_text(console_text, prefix_x, y, width - (prefix_x - margin), height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
 
             // Blink a cursor every second?
             if(std::chrono::duration_cast<std::chrono::milliseconds>(SteadyClock::now().time_since_epoch()).count() / 500 % 2) {
