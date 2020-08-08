@@ -21,6 +21,7 @@ namespace Chimera {
     #include "color_codes.hpp"
 
     static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr;
+    static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow;
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
@@ -274,11 +275,28 @@ namespace Chimera {
                 rect.top = (text.y) * scale;
                 rect.bottom = (text.height) * scale;
 
+                // Figure out shadow
+                std::pair<int,int> shadow_offset;
+                if(system_font_override == text.override) {
+                    shadow_offset = system_font_shadow;
+                }
+                else if(small_font_override == text.override) {
+                    shadow_offset = small_font_shadow;
+                }
+                else if(large_font_override == text.override) {
+                    shadow_offset = large_font_shadow;
+                }
+                else if(console_font_override == text.override) {
+                    shadow_offset = console_font_shadow;
+                }
+                bool draw_shadow = shadow_offset.first != 0 || shadow_offset.second != 0;
                 RECT rshadow = rect;
-                rshadow.left += 1;
-                rshadow.right += 1;
-                rshadow.top += 1;
-                rshadow.bottom += 1;
+                if(draw_shadow) {
+                    rshadow.left += shadow_offset.first;
+                    rshadow.right += shadow_offset.first;
+                    rshadow.top += shadow_offset.second;
+                    rshadow.bottom += shadow_offset.second;
+                }
 
                 auto align = DT_LEFT;
 
@@ -314,11 +332,15 @@ namespace Chimera {
                 auto *override_font = text.override;
 
                 if(u8) {
-                    override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                    if(draw_shadow) {
+                        override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                    }
                     override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
                 }
                 else {
-                    override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                    if(draw_shadow) {
+                        override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                    }
                     override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
                 }
             }
@@ -632,7 +654,7 @@ namespace Chimera {
             auto *ini = get_chimera().get_ini();
             auto scale = get_resolution().height / 480.0;
 
-            #define generate_font(override_var, override_name) \
+            #define generate_font(override_var, override_name, shadow) \
                 if(ini->get_value_bool("font_override." override_name "_font_override").value_or(false)) { \
                     auto size = ini->get_value_long("font_override." override_name "_font_size").value_or(12); \
                     auto weight = ini->get_value_long("font_override." override_name "_font_weight").value_or(400); \
@@ -640,13 +662,15 @@ namespace Chimera {
                     if(family == nullptr) { \
                         family = "Arial"; \
                     } \
+                    shadow.first = ini->get_value_long("font_override." override_name "_shadow_offset_x").value_or(1); \
+                    shadow.second = ini->get_value_long("font_override." override_name "_shadow_offset_y").value_or(1); \
                     D3DXCreateFont(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
                 }
 
-            generate_font(system_font_override, "system");
-            generate_font(console_font_override, "console");
-            generate_font(small_font_override, "small");
-            generate_font(large_font_override, "large");
+            generate_font(system_font_override, "system", system_font_shadow);
+            generate_font(console_font_override, "console", console_font_shadow);
+            generate_font(small_font_override, "small", small_font_shadow);
+            generate_font(large_font_override, "large", large_font_shadow);
 
             #undef generate_font
         }
