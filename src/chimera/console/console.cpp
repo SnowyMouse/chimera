@@ -375,7 +375,7 @@ namespace Chimera {
         int y = 480 - this_line_height;
         std::size_t i = position;
         auto resolution = get_resolution();
-        int width = widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640;
+        int width = (widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640) - margin;
 
         auto now = SteadyClock::now();
 
