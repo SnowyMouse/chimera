@@ -346,6 +346,12 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
+                    else if(a == 0x7E) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
 
                     std::terminate();
                 }

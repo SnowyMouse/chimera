@@ -445,7 +445,13 @@ namespace Chimera {
         }
     }
 
+    static void do_cls() noexcept {
+        position = 0;
+        custom_lines.clear();
+    }
+
     void setup_custom_console() noexcept {
+        // Intercept console text printed
         static Hook out_hook;
         const void *original_fn;
         auto &chimera = get_chimera();
@@ -455,6 +461,10 @@ namespace Chimera {
         else {
             write_function_override(chimera.get_signature("console_out_copy_sig").data(), out_hook, reinterpret_cast<const void *>(override_console_output_eax_asm), &original_fn);
         }
+
+        static Hook cls_hook;
+        write_jmp_call(chimera.get_signature("console_cls_sig").data(), cls_hook, reinterpret_cast<const void *>(do_cls));
+
         add_preframe_event(on_console_frame);
     }
 
