@@ -363,15 +363,16 @@ namespace Chimera {
     static double fade_start = 3.0;
     static double fade_time = 0.5;
     #define MICROSECONDS_PER_SEC 1000000
+    static double line_height = 1.1;
 
     static void on_console_frame() {
         auto font = GenericFont::FONT_CONSOLE;
         auto height = font_pixel_height(font);
-        auto line_height = height * 1.1;
+        auto this_line_height = height * line_height;
         auto open = get_console_open();
 
         int margin = 10;
-        int y = 480 - line_height - margin;
+        int y = 480 - this_line_height;
         std::size_t i = position;
         auto resolution = get_resolution();
         int width = widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640;
@@ -417,11 +418,11 @@ namespace Chimera {
                 else {
                     cursor_x = text_pixel_length(std::string(console_text, console_text + cursor).c_str(), font);
                 }
-                apply_text("_", prefix_x + cursor_x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+                apply_text("_", prefix_x + cursor_x, y + height + (line_height - height), width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
             }
         }
 
-        y -= line_height * 1.2;
+        y -= this_line_height * 1.2;
 
         // Show the lines
         while(y > 0 && i < custom_lines.size()) {
@@ -441,7 +442,7 @@ namespace Chimera {
 
             apply_text(line.text, margin, y, width, height, color_copy, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
             i++;
-            y -= line_height;
+            y -= this_line_height;
         }
     }
 
