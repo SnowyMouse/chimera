@@ -27,3 +27,41 @@ _fade_out_console_asm:
     popad
     popfd
     ret
+
+.globl _override_console_output_eax_asm
+_override_console_output_eax_asm:
+    ;# Color
+    push ebx
+    mov ebx, eax
+    add ebx, 0x103
+    push ebx
+
+    ;# String
+    push eax
+
+    call _on_console_output
+
+    ;# Done!
+    add esp, 8
+    xor eax, eax
+    pop ebx
+    ret
+
+.globl _override_console_output_edi_asm
+_override_console_output_edi_asm:
+    ;# Color
+    push ebx
+    mov ebx, edi
+    add ebx, 0x103
+    push ebx
+
+    ;# String
+    push edi
+
+    call _on_console_output
+
+    ;# Done!
+    add esp, 8
+    xor eax, eax
+    pop ebx
+    ret

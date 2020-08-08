@@ -162,7 +162,7 @@ namespace Chimera {
                 return;
             }
             auto &new_fmt = fmt.emplace_back();
-            new_fmt.x = x + tabs * (0.20 * x);
+            new_fmt.x = x + tabs * (0.25 * width);
             new_fmt.y = y;
             new_fmt.width = width;
             new_fmt.height = height;
@@ -209,8 +209,10 @@ namespace Chimera {
                             align = FontAlignment::ALIGN_CENTER;
                             break;
                         case 't':
-                            tabs++;
                             align = FontAlignment::ALIGN_LEFT;
+                            if(tabs < 4) {
+                                tabs++;
+                            }
                             break;
                     }
                     i += 1;

@@ -43,6 +43,11 @@ namespace Chimera {
      * Set up and enable the console fade fix
      */
     void setup_console_fade_fix() noexcept;
+
+    /**
+     * Set up the custom consolizer
+     */
+    void setup_custom_console() noexcept;
 }
 
 #endif

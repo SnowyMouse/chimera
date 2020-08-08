@@ -7,12 +7,18 @@
 #include "../command/command.hpp"
 #include "../event/command.hpp"
 #include "../event/tick.hpp"
+#include "../event/frame.hpp"
 #include "../output/output.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../halo_data/resolution.hpp"
 #include "../halo_data/multiplayer.hpp"
+#include "../fix/widescreen_fix.hpp"
 #include "console.hpp"
+#include "../output/draw_text.hpp"
 
 #include <fstream>
+#include <deque>
+#include <chrono>
 
 namespace Chimera {
     static std::string rcon_password;
@@ -302,6 +308,14 @@ namespace Chimera {
         return *addr;
     }
 
+    static const char *get_console_text() {
+        static const char *addr = nullptr;
+        if(!addr) {
+            addr = *reinterpret_cast<const char **>(get_chimera().get_signature("console_buffer_sig").data() + 2);
+        };
+        return addr;
+    }
+
     static void check_when_console_is_closed() noexcept {
         static std::uint8_t *addr = nullptr;
         if(!addr) {
@@ -328,5 +342,128 @@ namespace Chimera {
     void setup_console_fade_fix() noexcept {
         overwrite(get_chimera().get_signature("console_fade_call_sig").data(), static_cast<std::uint8_t>(0xEB));
         add_pretick_event(fade_out_console);
+    }
+
+    using SteadyClock = std::chrono::steady_clock;
+
+    struct Line {
+        std::string text;
+        SteadyClock::time_point created;
+        ColorARGB color;
+    };
+    static std::deque<Line> custom_lines;
+    static std::size_t max_lines = 100;
+    static std::size_t position = 0;
+
+    extern "C" void override_console_output_eax_asm();
+    extern "C" void override_console_output_edi_asm();
+
+    // void *jmp_at, Hook &hook, const void *new_function, const void **original_function
+
+    static double fade_start = 3.0;
+    static double fade_time = 0.5;
+    #define MICROSECONDS_PER_SEC 1000000
+
+    static void on_console_frame() {
+        auto font = GenericFont::FONT_CONSOLE;
+        auto height = font_pixel_height(font);
+        auto line_height = height * 1.1;
+        auto open = get_console_open();
+
+        int margin = 10;
+        int y = 480 - line_height - margin;
+        std::size_t i = position;
+        auto resolution = get_resolution();
+        int width = widescreen_fix_enabled() ? (static_cast<int>(resolution.width) * 480 + 240) / resolution.height : 640;
+
+        auto now = SteadyClock::now();
+
+        // Show the text input?
+        if(open) {
+            // Get the prompt color
+            static ColorARGB *console_color = nullptr;
+            if(!console_color) {
+                if(get_chimera().feature_present("client_console_prompt_color_demo")) {
+                    console_color = reinterpret_cast<ColorARGB *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("console_prompt_color_demo_sig").data() + 2) - 4);
+                }
+                else {
+                    console_color = *reinterpret_cast<ColorARGB **>(get_chimera().get_signature("console_prompt_color_sig").data() + 1);
+                }
+            }
+            console_color->alpha = 0.0F;
+
+            // Copy the console color
+            ColorARGB color = *console_color;
+            color.alpha = 1.0F;
+
+            // Show "halo( "
+            auto prefix_x = margin + text_pixel_length("halo( ", font);
+            apply_text("halo( ", margin, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+
+            // Show the remaining text
+            const auto *console_text = get_console_text();
+            std::uint8_t cursor = static_cast<std::uint8_t>(console_text[0x106]);
+            apply_text(console_text, prefix_x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+
+            // Blink a cursor every second?
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(SteadyClock::now().time_since_epoch()).count() / 500 % 2) {
+                int cursor_x = 0;
+
+                // Are we at the end? If so, we don't need to make a substring
+                if(console_text[cursor] == 0) {
+                    cursor_x = text_pixel_length(console_text, font);
+                }
+                // Otherwise, a meme we go
+                else {
+                    cursor_x = text_pixel_length(std::string(console_text, console_text + cursor).c_str(), font);
+                }
+                apply_text("_", prefix_x + cursor_x, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            }
+        }
+
+        y -= line_height * 1.2;
+
+        // Show the lines
+        while(y > 0 && i < custom_lines.size()) {
+            auto &line = custom_lines[custom_lines.size() - (i + 1)];
+            auto color_copy = line.color;
+
+            if(!open) {
+                auto time_since = std::chrono::duration_cast<std::chrono::microseconds>(now - line.created).count();
+                if(time_since > (fade_start + fade_time) * MICROSECONDS_PER_SEC) {
+                    break;
+                }
+                if(time_since > fade_start * MICROSECONDS_PER_SEC) {
+                    double scale = 1.0 - (time_since - fade_start * MICROSECONDS_PER_SEC) / (fade_time * MICROSECONDS_PER_SEC);
+                    color_copy.alpha *= scale;
+                }
+            }
+
+            apply_text(line.text, margin, y, width, height, color_copy, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+            i++;
+            y -= line_height;
+        }
+    }
+
+    void setup_custom_console() noexcept {
+        static Hook out_hook;
+        const void *original_fn;
+        auto &chimera = get_chimera();
+        if(chimera.feature_present("client_demo")) {
+            write_function_override(chimera.get_signature("console_out_copy_demo_sig").data(), out_hook, reinterpret_cast<const void *>(override_console_output_edi_asm), &original_fn);
+        }
+        else {
+            write_function_override(chimera.get_signature("console_out_copy_sig").data(), out_hook, reinterpret_cast<const void *>(override_console_output_eax_asm), &original_fn);
+        }
+        add_preframe_event(on_console_frame);
+    }
+
+    extern "C" void on_console_output(char *text, const ColorARGB &color) {
+        custom_lines.emplace_back(Line { std::string(text), SteadyClock::now(), color });
+        text[0] = 0;
+
+        while(custom_lines.size() > max_lines) {
+            custom_lines.pop_front();
+        }
     }
 }
