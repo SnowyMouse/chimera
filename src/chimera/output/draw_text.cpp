@@ -721,6 +721,10 @@ namespace Chimera {
                     std::printf("Fonts directory: %s is a directory\n", fonts_directory);
                     try {
                         for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
+                            if(!f.is_regular_file() || (f.path().extension().string() != ".otf" && f.path().extension().string() != ".ttf" && f.path().extension().string() != ".ttc")) {
+                                continue;
+                            }
+
                             std::printf("Loading font %s...", f.path().string().c_str());
                             std::fflush(stdout);
                             if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
