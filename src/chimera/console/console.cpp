@@ -530,8 +530,18 @@ namespace Chimera {
     }
 
     static void do_cls() noexcept {
-        position = 0;
-        custom_lines.clear();
+        // If we ran cls in the console, actually clear it
+        if(get_console_open()) {
+            position = 0;
+            custom_lines.clear();
+        }
+        // Otherwise, make it look like we cleared it but if we have scrollback, we can see those messages again
+        else {
+            auto invalid_time = SteadyClock::now() - std::chrono::microseconds(static_cast<int>((fade_start + fade_time) * 1000000));
+            for(auto &i : custom_lines) {
+                i.created =invalid_time;
+            }
+        }
     }
 
     void setup_custom_console() noexcept {
