@@ -713,36 +713,31 @@ namespace Chimera {
 
         auto *chimera_ini = get_chimera().get_ini();
         if(chimera_ini->get_value_bool("font_override.enabled").value_or(false)) {
-            auto *fonts_directory = chimera_ini->get_value("font_override.fonts_directory");
-            if(fonts_directory) {
-                std::printf("Fonts directory: %s\n", fonts_directory);
-                auto fonts_dir = std::filesystem::path(fonts_directory);
-                if(std::filesystem::is_directory(fonts_dir)) {
-                    std::printf("Fonts directory: %s is a directory\n", fonts_directory);
-                    try {
-                        for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
-                            if(!f.is_regular_file() || (f.path().extension().string() != ".otf" && f.path().extension().string() != ".ttf" && f.path().extension().string() != ".ttc")) {
-                                continue;
-                            }
+            auto fonts_dir = std::filesystem::path("fonts");
+            if(std::filesystem::is_directory(fonts_dir)) {
+                try {
+                    for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
+                        if(!f.is_regular_file() || (f.path().extension().string() != ".otf" && f.path().extension().string() != ".ttf" && f.path().extension().string() != ".ttc")) {
+                            continue;
+                        }
 
-                            std::printf("Loading font %s...", f.path().string().c_str());
-                            std::fflush(stdout);
-                            if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
-                                std::printf("done\n");
-                            }
-                            else {
-                                std::printf("FAILED\n");
-                                char error_message[256 + MAX_PATH];
-                                std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
-                                MessageBox(nullptr, error_message, "Failed to load font", MB_ICONERROR | MB_OK);
-                                std::exit(EXIT_FAILURE);
-                            }
+                        std::printf("Loading font %s...", f.path().string().c_str());
+                        std::fflush(stdout);
+                        if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
+                            std::printf("done\n");
+                        }
+                        else {
+                            std::printf("FAILED\n");
+                            char error_message[256 + MAX_PATH];
+                            std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
+                            MessageBox(nullptr, error_message, "Failed to load font", MB_ICONERROR | MB_OK);
+                            std::exit(EXIT_FAILURE);
                         }
                     }
-                    catch(std::exception &e) {
-                        MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
-                        std::exit(EXIT_FAILURE);
-                    }
+                }
+                catch(std::exception &e) {
+                    MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
+                    std::exit(EXIT_FAILURE);
                 }
             }
 
