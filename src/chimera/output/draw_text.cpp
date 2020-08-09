@@ -229,25 +229,10 @@ namespace Chimera {
 
     static std::vector<Text> text_list;
 
-    struct FontData {
-        // Font being used
-        TagID font;
-
-        // I don't know
-        std::uint32_t unknown1;
-
-        // I still don't know
-        std::int16_t unknown_ffff;
-
-        // Alignment
-        FontAlignment alignment;
-
-        // Text to use
-        ColorARGB color;
-    };
-    static_assert(sizeof(FontData) == 0x1C);
-
     static FontData *font_data;
+    FontData &get_current_font_data() noexcept {
+        return *font_data;
+    }
 
     extern "C" void display_text(const void *data, std::uint32_t xy, std::uint32_t wh, const void *function_to_use);
 

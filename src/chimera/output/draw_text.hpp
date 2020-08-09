@@ -48,6 +48,30 @@ namespace Chimera {
         ANCHOR_CENTER
     };
 
+    struct FontData {
+        // Font being used
+        TagID font;
+
+        // I don't know
+        std::uint32_t unknown1;
+
+        // I still don't know
+        std::int16_t unknown_ffff;
+
+        // Alignment
+        FontAlignment alignment;
+
+        // Text to use
+        ColorARGB color;
+    };
+    static_assert(sizeof(FontData) == 0x1C);
+
+    /**
+     * Get the font data for the text currently being drawn
+     * @return font data
+     */
+    FontData &get_current_font_data() noexcept;
+
     /**
      * Get the font tag for a specific GenericFont.
      * @param  font the type of generic font

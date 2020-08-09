@@ -21,6 +21,7 @@
 #include "signature/hook.hpp"
 #include "signature/signature.hpp"
 #include "chimera.hpp"
+#include "custom_chat/hud_text.hpp"
 #include "annoyance/auto_get_list.hpp"
 #include "annoyance/drm.hpp"
 #include "annoyance/keystone.hpp"
@@ -272,6 +273,9 @@ namespace Chimera {
 
                 // RAICHU
                 set_up_controller();
+
+                // Hell yes
+                initialize_hud_text();
             }
             else {
                 enable_output(true);
