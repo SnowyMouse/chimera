@@ -426,14 +426,16 @@ namespace Chimera {
                 right_side += more_lines_below_width;
                 apply_text(more_lines_below_text, width - right_side, y, more_lines_below_width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
             }
+            
+            // Get the console text
+            const auto *console_text = get_console_text();
+            const auto *prompt_pre = console_text - 32;
 
-            // Show "halo( "
-            const char *prompt_pre = "halo( ";
+            // Show the prompt prefix, aka "halo( "
             auto prefix_x = margin + text_pixel_length(prompt_pre, font);
             apply_text(prompt_pre, margin, y, width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
 
             // Show the remaining text
-            const auto *console_text = get_console_text();
             std::uint8_t cursor = static_cast<std::uint8_t>(console_text[0x106]);
             apply_text(console_text, prefix_x, y, width - (prefix_x + right_side), height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
 
