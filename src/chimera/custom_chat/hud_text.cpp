@@ -10,6 +10,7 @@
 namespace Chimera {
     extern "C" {
         void on_pickup_hud_text_asm() noexcept;
+        void on_hold_to_pick_up_hud_text_asm() noexcept;
     }
 
     static const std::byte *hud_globals_data() noexcept {
@@ -30,18 +31,39 @@ namespace Chimera {
     }
 
     extern "C" std::uint32_t on_pickup_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {
+        auto &fd = get_current_font_data();
         auto x = xy >> 16;
         auto y = (xy & 0xFFFF);
-        apply_text(std::wstring(string), x, y, 1024, 1024, get_current_font_data().color, GenericFont::FONT_LARGE, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
         return y + hud_line_size();
+    }
+
+    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+        //*xy = 0;
+        auto &fd = get_current_font_data();
+        auto x = (*xy >> 16) - text_pixel_length(string, get_generic_font(GenericFont::FONT_LARGE));
+        auto y = (*xy & 0xFFFF);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+
+        *xy &= 0x0000FFFF;
+        *xy |= (x + (text_pixel_length(string, GenericFont::FONT_LARGE))) << 16;
     }
 
     void initialize_hud_text() noexcept {
         auto &chimera = get_chimera();
-        static Hook picked_up_ammo;
+
         static SigByte nop_fn[5] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
+
+        static Hook picked_up_ammo;
         auto *picked_up_ammo_draw_text_call = chimera.get_signature("picked_up_ammo_draw_text_call_sig").data() + 11;
         write_code_s(picked_up_ammo_draw_text_call, nop_fn);
         write_jmp_call(picked_up_ammo_draw_text_call, picked_up_ammo, reinterpret_cast<const void *>(on_pickup_hud_text_asm), nullptr, false);
+
+        static Hook hold_text;
+        auto *hold_to_pick_up_text_call_sig = chimera.get_signature("hold_to_pick_up_text_call_sig").data() + 14;
+        write_code_s(hold_to_pick_up_text_call_sig, nop_fn);
+        write_jmp_call(hold_to_pick_up_text_call_sig, hold_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_asm), nullptr, false);
+
+
     }
 }
