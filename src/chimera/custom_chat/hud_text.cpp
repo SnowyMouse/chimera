@@ -5,6 +5,7 @@
 #include "../output/draw_text.hpp"
 #include "../halo_data/tag.hpp"
 #include "../output/output.hpp"
+#include "../halo_data/resolution.hpp"
 #include "../chimera.hpp"
 
 namespace Chimera {
@@ -13,6 +14,7 @@ namespace Chimera {
         void on_hold_to_pick_up_hud_text_asm() noexcept;
         void on_weapon_pick_up_hud_text_asm() noexcept;
         void on_hold_to_pick_up_hud_text_button_asm() noexcept;
+        void on_names_above_heads_hud_text_asm() noexcept;
     }
 
     static const std::byte *hud_globals_data() noexcept {
@@ -69,7 +71,30 @@ namespace Chimera {
         *xy |= x << 16;
     }
 
+    extern "C" void on_names_above_heads_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+        auto &fd = get_current_font_data();
+
+        auto res = get_resolution();
+        auto x0 = xy[0] >> 16;
+        auto x1 = xy[1] >> 16;
+        auto avg = (x0 + x1) / 2;
+        float scale = (static_cast<float>(res.width) / static_cast<float>(res.height) * 480) / 640.0;
+        auto x_middle = avg * scale;
+
+        auto y = *xy & 0xFFFF;
+        auto width = text_pixel_length(string, GenericFont::FONT_SMALL);
+        apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, GenericFont::FONT_SMALL, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+    }
+
+    static bool enabled = false;
+
+    bool hud_text_mod_initialized() noexcept {
+        return enabled;
+    }
+
     void initialize_hud_text() noexcept {
+        enabled = true;
+
         auto &chimera = get_chimera();
 
         static SigByte nop_fn[5] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
@@ -93,5 +118,10 @@ namespace Chimera {
         auto *picked_up_a_weapon_text_call_sig = chimera.get_signature("picked_up_a_weapon_text_call_sig").data() + 7;
         write_code_s(picked_up_a_weapon_text_call_sig, nop_fn);
         write_jmp_call(picked_up_a_weapon_text_call_sig, picked_up_weapon, reinterpret_cast<const void *>(on_weapon_pick_up_hud_text_asm), nullptr, false);
+
+        static Hook widescreen_text_f3_name;
+        auto *widescreen_text_f3_name_sig = chimera.get_signature("widescreen_text_f3_name_sig").data();
+        write_code_s(widescreen_text_f3_name_sig, nop_fn);
+        write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
     }
 }

@@ -11,6 +11,12 @@ namespace Chimera {
     void initialize_hud_text() noexcept;
 
     /**
+     * Get whether or not we initialized this stuff
+     * @return true if we did it
+     */
+    bool hud_text_mod_initialized() noexcept;
+
+    /**
      * Get the HUD color
      * @return HUD color
      */

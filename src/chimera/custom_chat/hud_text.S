@@ -58,3 +58,15 @@ _on_weapon_pick_up_hud_text_asm:
     popad
     popfd
     ret
+
+.globl _on_names_above_heads_hud_text_asm
+_on_names_above_heads_hud_text_asm:
+    pushfd
+    pushad
+    push ecx
+    push dword ptr [esp+0x34]
+    call _on_names_above_heads_hud_text
+    add esp, 0x8
+    popad
+    popfd
+    ret

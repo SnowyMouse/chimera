@@ -11,6 +11,7 @@
 #include "../signature/hook.hpp"
 #include "../event/tick.hpp"
 #include "../output/output.hpp"
+#include "../custom_chat/hud_text.hpp"
 
 #include "../halo_data/tag.hpp"
 #include "../halo_data/resolution.hpp"
@@ -370,7 +371,7 @@ namespace Chimera {
             write_function_override(reinterpret_cast<void *>(widescreen_text_stare_name_sig.data()), text_stare_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_stare_name), &widescreen_element_position_text_stare_name_fn);
 
             static Hook text_f3_name;
-            if(ce) {
+            if(ce && !hud_text_mod_initialized()) {
                 auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
                 write_function_override(reinterpret_cast<void *>(widescreen_text_f3_name_sig.data()), text_f3_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_f3_name), &widescreen_element_position_text_f3_name_fn);
             }
@@ -474,7 +475,7 @@ namespace Chimera {
                 widescreen_text_pgcr_sig.rollback();
                 widescreen_element_motion_sensor_scaling_sig.rollback();
                 widescreen_text_stare_name_sig.rollback();
-                if(ce) {
+                if(ce && !hud_text_mod_initialized()) {
                     auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
                     widescreen_text_f3_name_sig.rollback();
                 }
