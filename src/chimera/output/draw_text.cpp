@@ -21,8 +21,8 @@
 namespace Chimera {
     #include "color_codes.hpp"
 
-    static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr, smaller_font_override = nullptr;
-    static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow, smaller_font_shadow;
+    static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr, smaller_font_override = nullptr, ticker_font_override = nullptr;
+    static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow, smaller_font_shadow, ticker_font_shadow;
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
@@ -45,6 +45,8 @@ namespace Chimera {
                 return large_font_override;
             case GenericFont::FONT_SMALLER:
                 return smaller_font_override;
+            case GenericFont::FONT_TICKER:
+                return ticker_font_override;
             default:
                 std::terminate();
         }
@@ -68,6 +70,16 @@ namespace Chimera {
             }
             else {
                 return get_generic_font(GenericFont::FONT_SMALL);
+            }
+        }
+
+        if(font == GenericFont::FONT_TICKER) {
+            auto *tag = get_tag("ui\\ticker", TagClassInt::TAG_CLASS_FONT);
+            if(tag) {
+                return tag->id;
+            }
+            else {
+                return get_generic_font(GenericFont::FONT_CONSOLE);
             }
         }
 
@@ -119,6 +131,9 @@ namespace Chimera {
         }
         else if(std::strcmp(str, "large") == 0) {
             return GenericFont::FONT_LARGE;
+        }
+        else if(std::strcmp(str, "ticker") == 0) {
+            return GenericFont::FONT_TICKER;
         }
         return GenericFont::FONT_CONSOLE;
     }
@@ -673,6 +688,7 @@ namespace Chimera {
             generate_font(small_font_override, "small", small_font_shadow);
             generate_font(large_font_override, "large", large_font_shadow);
             generate_font(smaller_font_override, "smaller", smaller_font_shadow);
+            generate_font(ticker_font_override, "ticker", ticker_font_shadow);
 
             #undef generate_font
         }
@@ -699,6 +715,10 @@ namespace Chimera {
         if(smaller_font_override) {
             smaller_font_override->Release();
             smaller_font_override = nullptr;
+        }
+        if(ticker_font_override) {
+            ticker_font_override->Release();
+            ticker_font_override = nullptr;
         }
         dev = nullptr;
     }

@@ -26,8 +26,11 @@ namespace Chimera {
         /** Fonts used for large text */
         FONT_LARGE,
 
-        /** Fonts used for names above heads or the ticker in the user interface (basically small but smaller) */
-        FONT_SMALLER
+        /** Fonts used for names above heads (basically small but smaller) */
+        FONT_SMALLER,
+
+        /** Fonts used for the ticker in the user interface */
+        FONT_TICKER
     };
 
     /**
