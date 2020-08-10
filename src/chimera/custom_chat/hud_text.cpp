@@ -121,7 +121,7 @@ namespace Chimera {
         write_jmp_call(picked_up_a_weapon_text_call_sig, picked_up_weapon, reinterpret_cast<const void *>(on_weapon_pick_up_hud_text_asm), nullptr, false);
 
         // F3 stuff
-        if(chimera.feature_present("client_custom")) {
+        if(chimera.feature_present("core_custom_edition")) {
             static Hook widescreen_text_f3_name;
             auto *widescreen_text_f3_name_sig = chimera.get_signature("widescreen_text_f3_name_sig").data();
             write_code_s(widescreen_text_f3_name_sig, nop_fn);
