@@ -6,18 +6,14 @@
 
 .globl _on_pickup_hud_text_asm
 _on_pickup_hud_text_asm:
-    push ebx
-    mov ebx, esp
     pushfd
     pushad
-    push dword ptr [esp+0x54]
-    push dword ptr [esp+0x38]
+    push dword ptr [esp+0x50]
+    push dword ptr [esp+0x34]
     call _on_pickup_hud_text
     add esp, 0x8
-    mov dword ptr [ebx], eax
     popad
     popfd
-    pop ebx
     ret
 
 .globl _on_hold_to_pick_up_hud_text_asm
@@ -69,4 +65,12 @@ _on_names_above_heads_hud_text_asm:
     add esp, 0x8
     popad
     popfd
+    ret
+
+zero: .long 0
+
+.globl _hud_text_fmul_with_0_asm
+_hud_text_fmul_with_0_asm:
+    fmul dword ptr [zero]
+    fadd dword ptr [_hud_text_new_line_spacing]
     ret

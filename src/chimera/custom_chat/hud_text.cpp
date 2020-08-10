@@ -6,6 +6,7 @@
 #include "../halo_data/tag.hpp"
 #include "../output/output.hpp"
 #include "../halo_data/resolution.hpp"
+#include "../event/frame.hpp"
 #include "../chimera.hpp"
 
 namespace Chimera {
@@ -15,6 +16,8 @@ namespace Chimera {
         void on_weapon_pick_up_hud_text_asm() noexcept;
         void on_hold_to_pick_up_hud_text_button_asm() noexcept;
         void on_names_above_heads_hud_text_asm() noexcept;
+        void hud_text_fmul_with_0_asm() noexcept;
+        float hud_text_new_line_spacing = 0.0F;
     }
 
     static const std::byte *hud_globals_data() noexcept {
@@ -30,14 +33,17 @@ namespace Chimera {
         return *reinterpret_cast<const float *>(hud_globals_data() + 0x90) * font_pixel_height(GenericFont::FONT_LARGE);
     }
 
-    extern "C" std::uint32_t on_pickup_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {
+    static void on_frame() noexcept {
+        hud_text_new_line_spacing = hud_line_size();
+    }
+
+    extern "C" void on_pickup_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {
         auto &fd = get_current_font_data();
 
         auto x = xy >> 16;
         auto y = (xy & 0xFFFF);
 
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
-        return y + hud_line_size();
     }
 
     extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy, std::uint32_t element) noexcept {
@@ -47,9 +53,9 @@ namespace Chimera {
         auto x = (*xy >> 16) - text_pixel_length(string, large_font_tag_id);
         auto y = (*xy & 0xFFFF);
 
-        // If we're the first element, we should offset the Y coordinate based on the differences of our font vs. the tag font
+        // Offset the y coordinate if this is the first element
         if(element == 0) {
-            y = y - font_pixel_height(large_font_tag_id) + font_pixel_height(GenericFont::FONT_LARGE);
+            y += hud_line_size();
         }
 
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
@@ -61,13 +67,11 @@ namespace Chimera {
     extern "C" void on_weapon_pick_up_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
         auto &fd = get_current_font_data();
 
-        auto large_font_tag_id = get_generic_font(GenericFont::FONT_LARGE);
         auto x = (*xy >> 16);
-        // Again, offset the Y coordinate based on the differences of our font vs. the tag font for consistency
-        auto y = (*xy & 0xFFFF) - font_pixel_height(large_font_tag_id) + font_pixel_height(GenericFont::FONT_LARGE);
+        auto y = (*xy & 0xFFFF);
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
 
-        *xy = static_cast<std::uint16_t>(y);
+        *xy = static_cast<std::uint16_t>(y + hud_line_size());
         *xy |= x << 16;
     }
 
@@ -97,6 +101,8 @@ namespace Chimera {
 
         auto &chimera = get_chimera();
 
+        add_preframe_event(on_frame);
+
         static SigByte nop_fn[5] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
 
         static Hook picked_up_ammo;
@@ -125,5 +131,14 @@ namespace Chimera {
             write_code_s(widescreen_text_f3_name_sig, nop_fn);
             write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
         }
+
+        static Hook line_spacing_1, line_spacing_2;
+        static SigByte nop_flt[6] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        auto *line_spacing_draw_text_1_sig = chimera.get_signature("line_spacing_draw_text_1_sig").data();
+        auto *line_spacing_draw_text_2_sig = chimera.get_signature("line_spacing_draw_text_2_sig").data();
+        write_code_s(line_spacing_draw_text_1_sig, nop_flt);
+        write_code_s(line_spacing_draw_text_2_sig, nop_flt);
+        write_jmp_call(line_spacing_draw_text_1_sig, line_spacing_1, reinterpret_cast<const void *>(hud_text_fmul_with_0_asm), nullptr, false);
+        write_jmp_call(line_spacing_draw_text_2_sig, line_spacing_2, reinterpret_cast<const void *>(hud_text_fmul_with_0_asm), nullptr, false);
     }
 }
