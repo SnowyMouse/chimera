@@ -16,6 +16,7 @@ namespace Chimera {
         void on_weapon_pick_up_hud_text_asm() noexcept;
         void on_names_above_heads_hud_text_asm() noexcept;
         void hud_text_fmul_with_0_asm() noexcept;
+        void on_menu_hud_text_asm() noexcept;
         float hud_text_new_line_spacing = 0.0F;
     }
 
@@ -82,6 +83,38 @@ namespace Chimera {
         apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
     }
 
+    extern "C" void on_menu_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+        auto &fd = get_current_font_data();
+
+        auto res = get_resolution();
+        int add = static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f;
+
+        GenericFont font;
+        if(fd.font == get_generic_font(GenericFont::FONT_LARGE)) {
+            font = GenericFont::FONT_LARGE;
+        }
+        else if(fd.font == get_generic_font(GenericFont::FONT_SMALL)) {
+            font = GenericFont::FONT_SMALL;
+        }
+        else if(fd.font == get_generic_font(GenericFont::FONT_SMALLER)) {
+            font = GenericFont::FONT_SMALLER;
+        }
+        else if(fd.font == get_generic_font(GenericFont::FONT_TICKER)) {
+            font = GenericFont::FONT_TICKER;
+        }
+        else {
+            font = GenericFont::FONT_SMALL;
+        }
+
+        auto x1 = (*xy >> 16) + add;
+        auto y1 = (*xy & 0xFFFF);
+
+        auto x2 = (xy[1] >> 16) + add;
+        auto y2 = (xy[1] & 0xFFFF);
+
+        apply_text(std::wstring(string), x1, y1, x2 - x1, y2 - y1, fd.color, font, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+    }
+
     static bool enabled = false;
 
     bool hud_text_mod_initialized() noexcept {
@@ -134,6 +167,17 @@ namespace Chimera {
         auto *multiplayer_spawn_timer_hold_f1_for_score_text_call_sig = chimera.get_signature("multiplayer_spawn_timer_hold_f1_for_score_text_call_sig").data() + 14;
         write_code_s(multiplayer_spawn_timer_hold_f1_for_score_text_call_sig, nop_fn);
         write_jmp_call(multiplayer_spawn_timer_hold_f1_for_score_text_call_sig, hold_f1, reinterpret_cast<const void *>(on_hud_text_esi_asm), nullptr, false);
+
+        // Menu text
+        static Hook widescreen_menu_text;
+        auto *widescreen_menu_text_sig = chimera.get_signature("widescreen_menu_text_sig").data() + 9;
+        write_code_s(widescreen_menu_text_sig, nop_fn);
+        write_jmp_call(widescreen_menu_text_sig, widescreen_menu_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        static Hook widescreen_menu_2_text;
+        auto *widescreen_menu_text_2_sig = chimera.get_signature("widescreen_menu_text_2_sig").data();
+        write_code_s(widescreen_menu_text_2_sig, nop_fn);
+        write_jmp_call(widescreen_menu_text_2_sig, widescreen_menu_2_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
 
         // Make the line spacing use our font instead of the map's font
         static Hook line_spacing_1, line_spacing_2;
