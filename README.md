@@ -27,13 +27,15 @@ Here is the installation procedure for installing Chimera:
 1. Update Halo to version 1.10 (unless you're playing the trial).
 2. Back up your game's Strings.dll. Renaming it to `strings-old.dll` works.
 3. Copy strings.dll and chimera.ini into your game folder.
+4. Optionally add a fonts folder to load custom fonts.
+5. Optionally add a mods folder to load custom dll mods.
 
 > **NOTE**: Each file goes into the main game folder, NOT controls. If you put
 > the files in controls, it will not work.
 
 Uninstalling Chimera is simple:
 
-1. Delete Chimera's strings.dll and (optionally) chimera.ini.
+1. Delete Chimera's strings.dll and optionally chimera.ini, fonts, and/or mods.
 2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
 
 
@@ -275,6 +277,7 @@ Below are the features you can take advantage of.
 - [Scoreboard settings](#scoreboard-settings)
 - [Name settings](#name-settings)
 - [Memory settings](#memory-settings)
+- [Font override settings](#font-override-settings)
 - [Video mode settings](#video-mode-settings)
 - [Controller settings](#controller-settings)
 - [Custom chat settings](#custom-chat-settings)
@@ -305,13 +308,20 @@ This exists to manipulate the names shown when looking at players.
 This feature exists to allow you to take advantage larger amounts of RAM,
 reducing hiccups and stutters, especially on slower storage. However, you will
 need an LAA-patched executable to use this feature.
-- `enable_map_memory_buffer` (enables loading maps directly into RAM)
+- `enabled` (enables loading maps directly into RAM)
 - `map_size` (size of buffer in MiB for loading non-UI maps)
 - `ui_size` (size of buffer in MiB for loading UI maps)
 - `benchmark` (shows a benchmark whenever a map is loaded)
 - `download_font` (change the font used for downloading)
 - `download_preferred_node` (change the initial server node tested)
 - `download_retail_maps` (allow downloading of retail Halo PC maps - UNSAFE)
+
+#### Font override settings
+This allows you to override fonts Chimera uses with system fonts, allowing you
+to choose the size, family, drop shadow, and weight (boldness) of each font. See
+the included chimera.ini for more information on these. You can also optionally
+add a fonts folder to your game install location to use loose ttf, otf, and ttc
+files.
 
 #### Video mode settings
 These settings allow you to change Halo's video settings without requiring
