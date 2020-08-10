@@ -64,6 +64,9 @@ namespace Chimera {
         write_code_s(hold_to_pick_up_text_call_sig, nop_fn);
         write_jmp_call(hold_to_pick_up_text_call_sig, hold_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_asm), nullptr, false);
 
-
+        static Hook button_text;
+        auto *hold_button_text_call_sig = chimera.get_signature("hold_button_text_call_sig").data() + 11;
+        write_code_s(hold_button_text_call_sig, nop_fn);
+        write_jmp_call(hold_button_text_call_sig, button_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_asm), nullptr, false);
     }
 }

@@ -24,8 +24,7 @@ _on_pickup_hud_text_asm:
 _on_hold_to_pick_up_hud_text_asm:
     pushfd
     pushad
-    lea eax, [esp+0x4C]
-    push eax
+    push esi
     push dword ptr [esp+0x34]
     call _on_hold_hud_text
     add esp, 0x8
