@@ -11,6 +11,8 @@ namespace Chimera {
     extern "C" {
         void on_pickup_hud_text_asm() noexcept;
         void on_hold_to_pick_up_hud_text_asm() noexcept;
+        void on_weapon_pick_up_hud_text_asm() noexcept;
+        void on_hold_to_pick_up_hud_text_button_asm() noexcept;
     }
 
     static const std::byte *hud_globals_data() noexcept {
@@ -22,31 +24,49 @@ namespace Chimera {
         return hud_globals_tag->data;
     }
 
-    //const ColorARGB &get_hud_text_color() noexcept {
-    //    return *reinterpret_cast<const ColorARGB *>(hud_globals_data() + 0x80);
-    //}
-
     static std::uint32_t hud_line_size() noexcept {
         return *reinterpret_cast<const float *>(hud_globals_data() + 0x90) * font_pixel_height(GenericFont::FONT_LARGE);
     }
 
     extern "C" std::uint32_t on_pickup_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {
         auto &fd = get_current_font_data();
+
         auto x = xy >> 16;
         auto y = (xy & 0xFFFF);
+
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
         return y + hud_line_size();
     }
 
-    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
-        //*xy = 0;
+    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy, std::uint32_t element) noexcept {
         auto &fd = get_current_font_data();
-        auto x = (*xy >> 16) - text_pixel_length(string, get_generic_font(GenericFont::FONT_LARGE));
+
+        auto large_font_tag_id = get_generic_font(GenericFont::FONT_LARGE);
+        auto x = (*xy >> 16) - text_pixel_length(string, large_font_tag_id);
         auto y = (*xy & 0xFFFF);
+
+        // If we're the first element, we should offset the Y coordinate based on the differences of our font vs. the tag font
+        if(element == 0) {
+            y = y - font_pixel_height(large_font_tag_id) + font_pixel_height(GenericFont::FONT_LARGE);
+        }
+
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
 
-        *xy &= 0x0000FFFF;
+        *xy = static_cast<std::uint16_t>(y);
         *xy |= (x + (text_pixel_length(string, GenericFont::FONT_LARGE))) << 16;
+    }
+
+    extern "C" void on_weapon_pick_up_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+        auto &fd = get_current_font_data();
+
+        auto large_font_tag_id = get_generic_font(GenericFont::FONT_LARGE);
+        auto x = (*xy >> 16);
+        // Again, offset the Y coordinate based on the differences of our font vs. the tag font for consistency
+        auto y = (*xy & 0xFFFF) - font_pixel_height(large_font_tag_id) + font_pixel_height(GenericFont::FONT_LARGE);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+
+        *xy = static_cast<std::uint16_t>(y);
+        *xy |= x << 16;
     }
 
     void initialize_hud_text() noexcept {
@@ -67,6 +87,11 @@ namespace Chimera {
         static Hook button_text;
         auto *hold_button_text_call_sig = chimera.get_signature("hold_button_text_call_sig").data() + 11;
         write_code_s(hold_button_text_call_sig, nop_fn);
-        write_jmp_call(hold_button_text_call_sig, button_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_asm), nullptr, false);
+        write_jmp_call(hold_button_text_call_sig, button_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_button_asm), nullptr, false);
+
+        static Hook picked_up_weapon;
+        auto *picked_up_a_weapon_text_call_sig = chimera.get_signature("picked_up_a_weapon_text_call_sig").data() + 7;
+        write_code_s(picked_up_a_weapon_text_call_sig, nop_fn);
+        write_jmp_call(picked_up_a_weapon_text_call_sig, picked_up_weapon, reinterpret_cast<const void *>(on_weapon_pick_up_hud_text_asm), nullptr, false);
     }
 }
