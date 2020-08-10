@@ -125,4 +125,5 @@ namespace Chimera {
             write_code_s(widescreen_text_f3_name_sig, nop_fn);
             write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
         }
+    }
 }
