@@ -16,27 +16,14 @@ _on_pickup_hud_text_asm:
     popfd
     ret
 
-.globl _on_hold_to_pick_up_hud_text_asm
-_on_hold_to_pick_up_hud_text_asm:
+.globl _on_hud_text_esi_asm
+_on_hud_text_esi_asm:
     pushfd
     pushad
     push esi
     push dword ptr [esp+0x34]
     call _on_hold_hud_text
     add esp, 0x8
-    popad
-    popfd
-    ret
-
-.globl _on_hold_to_pick_up_hud_text_button_asm
-_on_hold_to_pick_up_hud_text_button_asm:
-    pushfd
-    pushad
-    push 0x12345678
-    push esi
-    push dword ptr [esp+0x38]
-    call _on_hold_hud_text
-    add esp, 0xC
     popad
     popfd
     ret

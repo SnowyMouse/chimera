@@ -12,9 +12,8 @@
 namespace Chimera {
     extern "C" {
         void on_pickup_hud_text_asm() noexcept;
-        void on_hold_to_pick_up_hud_text_asm() noexcept;
+        void on_hud_text_esi_asm() noexcept;
         void on_weapon_pick_up_hud_text_asm() noexcept;
-        void on_hold_to_pick_up_hud_text_button_asm() noexcept;
         void on_names_above_heads_hud_text_asm() noexcept;
         void hud_text_fmul_with_0_asm() noexcept;
         float hud_text_new_line_spacing = 0.0F;
@@ -97,26 +96,31 @@ namespace Chimera {
 
         static SigByte nop_fn[5] = { 0x90, 0x90, 0x90, 0x90, 0x90 };
 
+        // Picked up %i rounds
         static Hook picked_up_ammo;
         auto *picked_up_ammo_draw_text_call = chimera.get_signature("picked_up_ammo_draw_text_call_sig").data() + 11;
         write_code_s(picked_up_ammo_draw_text_call, nop_fn);
         write_jmp_call(picked_up_ammo_draw_text_call, picked_up_ammo, reinterpret_cast<const void *>(on_pickup_hud_text_asm), nullptr, false);
 
+        // "Hold" "to pick up"
         static Hook hold_text;
         auto *hold_to_pick_up_text_call_sig = chimera.get_signature("hold_to_pick_up_text_call_sig").data() + 14;
         write_code_s(hold_to_pick_up_text_call_sig, nop_fn);
-        write_jmp_call(hold_to_pick_up_text_call_sig, hold_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_asm), nullptr, false);
+        write_jmp_call(hold_to_pick_up_text_call_sig, hold_text, reinterpret_cast<const void *>(on_hud_text_esi_asm), nullptr, false);
 
+        // This is for the button part
         static Hook button_text;
         auto *hold_button_text_call_sig = chimera.get_signature("hold_button_text_call_sig").data() + 11;
         write_code_s(hold_button_text_call_sig, nop_fn);
-        write_jmp_call(hold_button_text_call_sig, button_text, reinterpret_cast<const void *>(on_hold_to_pick_up_hud_text_button_asm), nullptr, false);
+        write_jmp_call(hold_button_text_call_sig, button_text, reinterpret_cast<const void *>(on_hud_text_esi_asm), nullptr, false);
 
+        // Picked up weapon
         static Hook picked_up_weapon;
         auto *picked_up_a_weapon_text_call_sig = chimera.get_signature("picked_up_a_weapon_text_call_sig").data() + 7;
         write_code_s(picked_up_a_weapon_text_call_sig, nop_fn);
         write_jmp_call(picked_up_a_weapon_text_call_sig, picked_up_weapon, reinterpret_cast<const void *>(on_weapon_pick_up_hud_text_asm), nullptr, false);
 
+        // F3 stuff
         if(chimera.feature_present("client_custom")) {
             static Hook widescreen_text_f3_name;
             auto *widescreen_text_f3_name_sig = chimera.get_signature("widescreen_text_f3_name_sig").data();
@@ -124,6 +128,13 @@ namespace Chimera {
             write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
         }
 
+        // Fix multiplayer text
+        static Hook hold_f1;
+        auto *multiplayer_spawn_timer_hold_f1_for_score_text_call_sig = chimera.get_signature("multiplayer_spawn_timer_hold_f1_for_score_text_call_sig").data() + 14;
+        write_code_s(multiplayer_spawn_timer_hold_f1_for_score_text_call_sig, nop_fn);
+        write_jmp_call(multiplayer_spawn_timer_hold_f1_for_score_text_call_sig, hold_f1, reinterpret_cast<const void *>(on_hud_text_esi_asm), nullptr, false);
+
+        // Make the line spacing use our font instead of the map's font
         static Hook line_spacing_1, line_spacing_2;
         static SigByte nop_flt[6] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
         auto *line_spacing_draw_text_1_sig = chimera.get_signature("line_spacing_draw_text_1_sig").data();
