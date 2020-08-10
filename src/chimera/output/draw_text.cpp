@@ -731,7 +731,7 @@ namespace Chimera {
             add_d3d9_reset_event(on_reset);
 
             // Hell yes
-            if(chimera_ini->get_value_book("font_override.hud_text_enabled").value_or(false)) {
+            if(chimera_ini->get_value_bool("font_override.hud_text_enabled").value_or(false)) {
                 initialize_hud_text();
             }
         }
