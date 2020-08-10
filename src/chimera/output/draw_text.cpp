@@ -16,6 +16,7 @@
 #include "../event/d3d9_reset.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../fix/widescreen_fix.hpp"
+#include "../custom_chat/hud_text.hpp"
 
 namespace Chimera {
     #include "color_codes.hpp"
@@ -728,6 +729,9 @@ namespace Chimera {
 
             add_d3d9_end_scene_event(on_add_scene);
             add_d3d9_reset_event(on_reset);
+
+            // Hell yes
+            initialize_hud_text();
         }
     }
 

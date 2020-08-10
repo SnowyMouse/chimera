@@ -21,7 +21,6 @@
 #include "signature/hook.hpp"
 #include "signature/signature.hpp"
 #include "chimera.hpp"
-#include "custom_chat/hud_text.hpp"
 #include "annoyance/auto_get_list.hpp"
 #include "annoyance/drm.hpp"
 #include "annoyance/keystone.hpp"
@@ -273,9 +272,6 @@ namespace Chimera {
 
                 // RAICHU
                 set_up_controller();
-
-                // Hell yes
-                initialize_hud_text();
             }
             else {
                 enable_output(true);
@@ -556,6 +552,9 @@ namespace Chimera {
     void initial_tick() {
         remove_preframe_event(initial_tick);
         if(chimera->feature_present("client")) {
+            // Set up the text hook?
+            setup_text_hook();
+
             // Set default settings
             if(chimera->get_ini()->get_value_bool("halo.optimal_defaults").value_or(false)) {
                 chimera->execute_command("chimera_block_mouse_acceleration true");
@@ -596,7 +595,6 @@ namespace Chimera {
             setup_death_reset_time_fix();
 
             chimera->reload_config();
-            setup_text_hook();
         }
         enable_output(true);
     }
