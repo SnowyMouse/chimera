@@ -21,8 +21,8 @@
 namespace Chimera {
     #include "color_codes.hpp"
 
-    static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr;
-    static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow;
+    static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr, smaller_font_override = nullptr;
+    static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow, smaller_font_shadow;
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
@@ -43,6 +43,8 @@ namespace Chimera {
                 return small_font_override;
             case GenericFont::FONT_LARGE:
                 return large_font_override;
+            case GenericFont::FONT_SMALLER:
+                return smaller_font_override;
             default:
                 std::terminate();
         }
@@ -59,6 +61,16 @@ namespace Chimera {
     }
 
     const TagID &get_generic_font(GenericFont font) noexcept {
+        if(font == GenericFont::FONT_SMALLER) {
+            auto *tag = get_tag("ui\\gamespy", TagClassInt::TAG_CLASS_FONT);
+            if(tag) {
+                return tag->id;
+            }
+            else {
+                return get_generic_font(GenericFont::FONT_SMALL);
+            }
+        }
+
         // Get the globals tag
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x144);
@@ -101,6 +113,9 @@ namespace Chimera {
         }
         else if(std::strcmp(str, "small") == 0) {
             return GenericFont::FONT_SMALL;
+        }
+        else if(std::strcmp(str, "smaller") == 0) {
+            return GenericFont::FONT_SMALLER;
         }
         else if(std::strcmp(str, "large") == 0) {
             return GenericFont::FONT_LARGE;
@@ -657,6 +672,7 @@ namespace Chimera {
             generate_font(console_font_override, "console", console_font_shadow);
             generate_font(small_font_override, "small", small_font_shadow);
             generate_font(large_font_override, "large", large_font_shadow);
+            generate_font(smaller_font_override, "smaller", smaller_font_shadow);
 
             #undef generate_font
         }
@@ -679,6 +695,10 @@ namespace Chimera {
         if(system_font_override) {
             system_font_override->Release();
             system_font_override = nullptr;
+        }
+        if(smaller_font_override) {
+            smaller_font_override->Release();
+            smaller_font_override = nullptr;
         }
         dev = nullptr;
     }

@@ -77,8 +77,9 @@ namespace Chimera {
         auto x_middle = avg * scale;
 
         auto y = *xy & 0xFFFF;
-        auto width = text_pixel_length(string, GenericFont::FONT_SMALL);
-        apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, GenericFont::FONT_SMALL, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        auto font_to_use = GenericFont::FONT_SMALLER;
+        auto width = text_pixel_length(string, font_to_use);
+        apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
     }
 
     static bool enabled = false;
