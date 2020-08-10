@@ -43,7 +43,7 @@ namespace Chimera {
         auto x = xy >> 16;
         auto y = (xy & 0xFFFF);
 
-        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
     extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
@@ -53,7 +53,7 @@ namespace Chimera {
         auto x = (*xy >> 16) - text_pixel_length(string, large_font_tag_id);
         auto y = (*xy & 0xFFFF);
 
-        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
 
         *xy = static_cast<std::uint16_t>(y);
         *xy |= (x + (text_pixel_length(string, GenericFont::FONT_LARGE))) << 16;
@@ -64,7 +64,7 @@ namespace Chimera {
 
         auto x = (xy >> 16);
         auto y = (xy & 0xFFFF);
-        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
     extern "C" void on_names_above_heads_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
@@ -80,7 +80,7 @@ namespace Chimera {
         auto y = *xy & 0xFFFF;
         auto font_to_use = GenericFont::FONT_SMALLER;
         auto width = text_pixel_length(string, font_to_use);
-        apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
     extern "C" void on_menu_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
@@ -112,7 +112,7 @@ namespace Chimera {
         auto x2 = (xy[1] >> 16) + add;
         auto y2 = (xy[1] & 0xFFFF);
 
-        apply_text(std::wstring(string), x1, y1, x2 - x1, y2 - y1, fd.color, font, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
+        apply_text(std::wstring(string), x1, y1, x2 - x1, y2 - y1, fd.color, font, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
     static bool enabled = false;

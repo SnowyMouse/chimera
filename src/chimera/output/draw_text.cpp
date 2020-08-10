@@ -270,6 +270,107 @@ namespace Chimera {
     static void *draw_text_8_bit = nullptr;
     static void *draw_text_16_bit = nullptr;
 
+    static void draw_text_now(const Text &text) {
+        auto old_font_data = *font_data;
+        if(text.override) {
+            auto res = get_resolution();
+            double scale = res.height / 480.0;
+
+            // Get our rects up
+            RECT rect;
+            rect.left = text.x * scale;
+            rect.right = (text.width) * scale;
+            rect.top = (text.y) * scale;
+            rect.bottom = (text.height) * scale;
+
+            // Figure out shadow
+            std::pair<int,int> shadow_offset;
+            if(system_font_override == text.override) {
+                shadow_offset = system_font_shadow;
+            }
+            else if(small_font_override == text.override) {
+                shadow_offset = small_font_shadow;
+            }
+            else if(large_font_override == text.override) {
+                shadow_offset = large_font_shadow;
+            }
+            else if(console_font_override == text.override) {
+                shadow_offset = console_font_shadow;
+            }
+            bool draw_shadow = shadow_offset.first != 0 || shadow_offset.second != 0;
+            RECT rshadow = rect;
+            if(draw_shadow) {
+                rshadow.left += shadow_offset.first;
+                rshadow.right += shadow_offset.first;
+                rshadow.top += shadow_offset.second;
+                rshadow.bottom += shadow_offset.second;
+            }
+
+            auto align = DT_LEFT;
+
+            // Colors
+            D3DCOLOR color = D3DCOLOR_ARGB(
+                static_cast<int>(UINT8_MAX * text.color.alpha),
+                static_cast<int>(UINT8_MAX * text.color.red),
+                static_cast<int>(UINT8_MAX * text.color.green),
+                static_cast<int>(UINT8_MAX * text.color.blue)
+            );
+            D3DCOLOR color_shadow = D3DCOLOR_ARGB(
+                static_cast<int>(UINT8_MAX * (text.color.alpha * 0.75)),
+                static_cast<int>(UINT8_MAX * (text.color.red * 0.15)),
+                static_cast<int>(UINT8_MAX * (text.color.green * 0.15)),
+                static_cast<int>(UINT8_MAX * (text.color.blue * 0.15))
+            );
+
+            switch(text.alignment) {
+                case ALIGN_LEFT:
+                    align = DT_LEFT;
+                    break;
+                case ALIGN_CENTER:
+                    align = DT_CENTER;
+                    break;
+                case ALIGN_RIGHT:
+                    align = DT_RIGHT;
+                    break;
+            }
+
+            auto *u8 = std::get_if<std::string>(&text.text);
+            auto *u16 = std::get_if<std::wstring>(&text.text);
+
+            auto *override_font = text.override;
+
+            if(u8) {
+                if(draw_shadow) {
+                    override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                }
+                override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
+            }
+            else {
+                if(draw_shadow) {
+                    override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                }
+                override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
+            }
+        }
+        else {
+            font_data->color = text.color;
+            font_data->alignment = text.alignment;
+            font_data->font = text.font;
+
+            // Depending on if we're using 8-bit or 16-bit, draw stuff
+            auto *u8 = std::get_if<std::string>(&text.text);
+            auto *u16 = std::get_if<std::wstring>(&text.text);
+
+            if(u8) {
+                display_text(u8->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_8_bit);
+            }
+            else {
+                display_text(u16->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_16_bit);
+            }
+        }
+        *font_data = old_font_data;
+    }
+
     // This is called every frame, giving us a chance to add text
     static void on_text() {
         if(text_list.size() == 0) {
@@ -280,102 +381,7 @@ namespace Chimera {
         auto old_font_data = *font_data;
 
         for(auto &text : text_list) {
-            if(text.override) {
-                auto res = get_resolution();
-                double scale = res.height / 480.0;
-
-                // Get our rects up
-                RECT rect;
-                rect.left = text.x * scale;
-                rect.right = (text.width) * scale;
-                rect.top = (text.y) * scale;
-                rect.bottom = (text.height) * scale;
-
-                // Figure out shadow
-                std::pair<int,int> shadow_offset;
-                if(system_font_override == text.override) {
-                    shadow_offset = system_font_shadow;
-                }
-                else if(small_font_override == text.override) {
-                    shadow_offset = small_font_shadow;
-                }
-                else if(large_font_override == text.override) {
-                    shadow_offset = large_font_shadow;
-                }
-                else if(console_font_override == text.override) {
-                    shadow_offset = console_font_shadow;
-                }
-                bool draw_shadow = shadow_offset.first != 0 || shadow_offset.second != 0;
-                RECT rshadow = rect;
-                if(draw_shadow) {
-                    rshadow.left += shadow_offset.first;
-                    rshadow.right += shadow_offset.first;
-                    rshadow.top += shadow_offset.second;
-                    rshadow.bottom += shadow_offset.second;
-                }
-
-                auto align = DT_LEFT;
-
-                // Colors
-                D3DCOLOR color = D3DCOLOR_ARGB(
-                    static_cast<int>(UINT8_MAX * text.color.alpha),
-                    static_cast<int>(UINT8_MAX * text.color.red),
-                    static_cast<int>(UINT8_MAX * text.color.green),
-                    static_cast<int>(UINT8_MAX * text.color.blue)
-                );
-                D3DCOLOR color_shadow = D3DCOLOR_ARGB(
-                    static_cast<int>(UINT8_MAX * (text.color.alpha * 0.75)),
-                    static_cast<int>(UINT8_MAX * (text.color.red * 0.15)),
-                    static_cast<int>(UINT8_MAX * (text.color.green * 0.15)),
-                    static_cast<int>(UINT8_MAX * (text.color.blue * 0.15))
-                );
-
-                switch(text.alignment) {
-                    case ALIGN_LEFT:
-                        align = DT_LEFT;
-                        break;
-                    case ALIGN_CENTER:
-                        align = DT_CENTER;
-                        break;
-                    case ALIGN_RIGHT:
-                        align = DT_RIGHT;
-                        break;
-                }
-
-                auto *u8 = std::get_if<std::string>(&text.text);
-                auto *u16 = std::get_if<std::wstring>(&text.text);
-
-                auto *override_font = text.override;
-
-                if(u8) {
-                    if(draw_shadow) {
-                        override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
-                    }
-                    override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
-                }
-                else {
-                    if(draw_shadow) {
-                        override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
-                    }
-                    override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
-                }
-            }
-            else {
-                font_data->color = text.color;
-                font_data->alignment = text.alignment;
-                font_data->font = text.font;
-
-                // Depending on if we're using 8-bit or 16-bit, draw stuff
-                auto *u8 = std::get_if<std::string>(&text.text);
-                auto *u16 = std::get_if<std::wstring>(&text.text);
-
-                if(u8) {
-                    display_text(u8->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_8_bit);
-                }
-                else {
-                    display_text(u16->data(), text.x * 0x10000 + text.y, text.width * 0x10000 + text.height, draw_text_16_bit);
-                }
-            }
+            draw_text_now(text);
         }
 
         *font_data = old_font_data;
@@ -502,7 +508,7 @@ namespace Chimera {
 
     float widescreen_width_480p = 640.0;
 
-    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, FontAlignment alignment, TextAnchor anchor) noexcept {
+    void apply_text(std::variant<std::string, std::wstring> text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, FontAlignment alignment, TextAnchor anchor, bool immediate) noexcept {
         // Find the font
         TagID font_tag = get_generic_font_if_generic(font);
         LPD3DXFONT override_font = get_override_font(font);
@@ -534,20 +540,32 @@ namespace Chimera {
 
         if(u8) {
             for(auto &i : handle_formatting_call(u8)) {
-                text_list.emplace_back(Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font } );
+                auto text = Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font };
+                if(immediate) {
+                    draw_text_now(text);
+                }
+                else {
+                    text_list.emplace_back(text);
+                }
             }
         }
 
         if(u16) {
             for(auto &i : handle_formatting_call(u16)) {
-                text_list.emplace_back(Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font } );
+                auto text = Text { i.text, i.x, i.y, static_cast<std::int16_t>(i.x + i.width), static_cast<std::int16_t>(i.y + i.height), color, font_tag, i.align, override_font };
+                if(immediate) {
+                    draw_text_now(text);
+                }
+                else {
+                    text_list.emplace_back(text);
+                }
             }
         }
 
         #undef handle_formatting_call
     }
 
-    template<class T> static void apply_text_quake_colors_t(T text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) {
+    template<class T> static void apply_text_quake_colors_t(T text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor, bool immediate) {
         std::vector<std::tuple<char,T>> segments;
 
         // Find the font
@@ -634,7 +652,13 @@ namespace Chimera {
             color_for_code(color_int, chosen_color);
 
             // Add the color to the list
-            text_list.emplace_back(Text { string, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), chosen_color, font_tag, FontAlignment::ALIGN_LEFT, override });
+            Text text = Text { string, x, y, static_cast<std::int16_t>(x + width), static_cast<std::int16_t>(y + height), chosen_color, font_tag, FontAlignment::ALIGN_LEFT, override };
+            if(immediate) {
+                draw_text_now(text);
+            }
+            else {
+                text_list.emplace_back(text);
+            }
 
             // Offset, giving up if we're overflowing or exceed y
             x += text_pixel_length(string.data(), font);
@@ -644,15 +668,15 @@ namespace Chimera {
         }
     }
 
-    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
+    void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor, bool immediate) noexcept {
         for(auto &i : handle_formatting(text, x, y, width, height, FontAlignment::ALIGN_LEFT, font)) {
-            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor);
+            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor, immediate);
         }
     }
 
-    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor) noexcept {
+    void apply_text_quake_colors(std::string text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor, bool immediate) noexcept {
         for(auto &i : handle_formatting(text, x, y, width, height, FontAlignment::ALIGN_LEFT, font)) {
-            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor);
+            apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor, immediate);
         }
     }
 
