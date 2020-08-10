@@ -119,9 +119,10 @@ namespace Chimera {
         write_code_s(picked_up_a_weapon_text_call_sig, nop_fn);
         write_jmp_call(picked_up_a_weapon_text_call_sig, picked_up_weapon, reinterpret_cast<const void *>(on_weapon_pick_up_hud_text_asm), nullptr, false);
 
-        static Hook widescreen_text_f3_name;
-        auto *widescreen_text_f3_name_sig = chimera.get_signature("widescreen_text_f3_name_sig").data();
-        write_code_s(widescreen_text_f3_name_sig, nop_fn);
-        write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
-    }
+        if(chimera.feature_present("client_custom")) {
+            static Hook widescreen_text_f3_name;
+            auto *widescreen_text_f3_name_sig = chimera.get_signature("widescreen_text_f3_name_sig").data();
+            write_code_s(widescreen_text_f3_name_sig, nop_fn);
+            write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
+        }
 }
