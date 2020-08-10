@@ -20,11 +20,10 @@ _on_pickup_hud_text_asm:
 _on_hold_to_pick_up_hud_text_asm:
     pushfd
     pushad
-    push dword ptr [esp+0x68]
     push esi
-    push dword ptr [esp+0x38]
+    push dword ptr [esp+0x34]
     call _on_hold_hud_text
-    add esp, 0xC
+    add esp, 0x8
     popad
     popfd
     ret
@@ -46,8 +45,7 @@ _on_hold_to_pick_up_hud_text_button_asm:
 _on_weapon_pick_up_hud_text_asm:
     pushfd
     pushad
-    lea eax, dword ptr [esp+0x48]
-    push eax
+    push dword ptr [esp+0x48]
     push dword ptr [esp+0x34]
     call _on_weapon_pick_up_hud_text
     add esp, 0x8

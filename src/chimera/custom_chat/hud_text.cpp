@@ -46,17 +46,12 @@ namespace Chimera {
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
     }
 
-    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy, std::uint32_t element) noexcept {
+    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
         auto &fd = get_current_font_data();
 
         auto large_font_tag_id = get_generic_font(GenericFont::FONT_LARGE);
         auto x = (*xy >> 16) - text_pixel_length(string, large_font_tag_id);
         auto y = (*xy & 0xFFFF);
-
-        // Offset the y coordinate if this is the first element
-        if(element == 0) {
-            y += hud_line_size();
-        }
 
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
 
@@ -64,15 +59,12 @@ namespace Chimera {
         *xy |= (x + (text_pixel_length(string, GenericFont::FONT_LARGE))) << 16;
     }
 
-    extern "C" void on_weapon_pick_up_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+    extern "C" void on_weapon_pick_up_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {
         auto &fd = get_current_font_data();
 
-        auto x = (*xy >> 16);
-        auto y = (*xy & 0xFFFF);
+        auto x = (xy >> 16);
+        auto y = (xy & 0xFFFF);
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT);
-
-        *xy = static_cast<std::uint16_t>(y + hud_line_size());
-        *xy |= x << 16;
     }
 
     extern "C" void on_names_above_heads_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
