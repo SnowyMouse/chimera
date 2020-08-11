@@ -153,6 +153,7 @@ namespace Chimera {
     static TextAnchor server_message_anchor = TextAnchor::ANCHOR_TOP_RIGHT;
     static bool server_message_hide_on_console = false;
     static GenericFont server_message_font = GenericFont::FONT_LARGE;
+    static float server_message_line_height = 1.0F;
 
     ////////////////////////////////////////////////////////////////////////////
     // Chat messages
@@ -168,6 +169,7 @@ namespace Chimera {
     static TextAnchor chat_message_anchor = TextAnchor::ANCHOR_TOP_LEFT;
     static bool chat_message_hide_on_console = true;
     static GenericFont chat_message_font = GenericFont::FONT_SMALL;
+    static float chat_message_line_height = 1.0F;
 
     ////////////////////////////////////////////////////////////////////////////
     // Chat input
@@ -208,9 +210,9 @@ namespace Chimera {
     }
 
     static void on_custom_chat_frame() noexcept {
-        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font, float slide_time_length, float time_up, float fade_out_time) {
+        auto handle_messages = [](auto array, auto x, auto y, auto w, auto h, auto anchor, bool ignore_age, std::size_t scroll, GenericFont font, float slide_time_length, float time_up, float fade_out_time, float line_height_multiplier) {
             // Define the font
-            std::uint16_t line_height = font_pixel_height(font);
+            std::uint16_t line_height = font_pixel_height(font) * line_height_multiplier;
             if(line_height == 0) {
                 line_height = 1;
             }
@@ -290,10 +292,10 @@ namespace Chimera {
         bool console_is_open = get_console_open();
 
         if((!console_is_open || !server_message_hide_on_console) && !server_messages_blocked()) {
-            handle_messages(server_messages, server_message_x, server_message_y, server_message_w, chat_input_open ? server_message_h_chat_open : server_message_h, server_message_anchor, chat_input_open, 0, server_message_font, server_slide_time_length, server_time_up, server_fade_out_time);
+            handle_messages(server_messages, server_message_x, server_message_y, server_message_w, chat_input_open ? server_message_h_chat_open : server_message_h, server_message_anchor, chat_input_open, 0, server_message_font, server_slide_time_length, server_time_up, server_fade_out_time, server_message_line_height);
         }
         if(!console_is_open || !chat_message_hide_on_console) {
-            handle_messages(chat_messages, chat_message_x, chat_message_y, chat_message_w, chat_input_open ? chat_message_h_chat_open : chat_message_h, chat_message_anchor, chat_input_open, chat_message_scroll, chat_message_font, chat_slide_time_length, chat_time_up, chat_fade_out_time);
+            handle_messages(chat_messages, chat_message_x, chat_message_y, chat_message_w, chat_input_open ? chat_message_h_chat_open : chat_message_h, chat_message_anchor, chat_input_open, chat_message_scroll, chat_message_font, chat_slide_time_length, chat_time_up, chat_fade_out_time, chat_message_line_height);
         }
 
         // Handle chat input
@@ -830,6 +832,9 @@ namespace Chimera {
         LOAD_IF_POSSIBLE_SETTING(chat_input_x, std::stoi)
         LOAD_IF_POSSIBLE_SETTING(chat_input_y, std::stoi)
         LOAD_IF_POSSIBLE_SETTING(chat_input_w, std::stoi)
+
+        LOAD_IF_POSSIBLE(server_line_height, server_message_line_height, std::stof)
+        LOAD_IF_POSSIBLE(chat_line_height, chat_message_line_height, std::stof)
 
         LOAD_IF_POSSIBLE(server_message_color_a, server_message_color.alpha, std::stof)
         LOAD_IF_POSSIBLE(server_message_color_r, server_message_color.red, std::stof)
