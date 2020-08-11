@@ -683,8 +683,6 @@ namespace Chimera {
     extern "C" {
         const void *draw_text_8_bit_original;
         const void *draw_text_16_bit_original;
-        extern "C" void display_text_8_scaled() noexcept;
-        extern "C" void display_text_16_scaled() noexcept;
     }
 
     static void on_add_scene(LPDIRECT3DDEVICE9 device) noexcept {
@@ -755,11 +753,6 @@ namespace Chimera {
         draw_text_8_bit = get_chimera().get_signature("draw_8_bit_text_sig").data();
         draw_text_16_bit = get_chimera().get_signature("draw_16_bit_text_sig").data();
         font_data = *reinterpret_cast<FontData **>(get_chimera().get_signature("text_font_data_sig").data() + 13);
-
-        static Hook draw_scale_8, draw_scale_16;
-        // void write_function_override(void *jmp_at, Hook &hook, const void *new_function, const void **original_function);
-        write_function_override(draw_text_8_bit, draw_scale_8, reinterpret_cast<const void *>(display_text_8_scaled), &draw_text_8_bit_original);
-        write_function_override(draw_text_16_bit, draw_scale_16, reinterpret_cast<const void *>(display_text_16_scaled), &draw_text_16_bit_original);
 
         auto *chimera_ini = get_chimera().get_ini();
         if(chimera_ini->get_value_bool("font_override.enabled").value_or(false)) {
