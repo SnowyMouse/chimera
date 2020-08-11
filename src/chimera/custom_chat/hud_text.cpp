@@ -220,6 +220,11 @@ namespace Chimera {
         write_code_s(connection_established_text_call_sig, nop_fn);
         write_jmp_call(connection_established_text_call_sig, connection_established_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
 
+        static Hook pgcr_text;
+        auto *widescreen_text_pgcr_sig = chimera.get_signature("widescreen_text_pgcr_sig").data();
+        write_code_s(widescreen_text_pgcr_sig, nop_fn);
+        write_jmp_call(widescreen_text_pgcr_sig, pgcr_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
         // Enter/Cancel buttons
         static Hook main_menu_text_input;
         auto *main_menu_text_input_sig = chimera.get_signature("main_menu_text_input_sig").data() + 24;

@@ -185,19 +185,36 @@ namespace Chimera {
 
         std::size_t start = 0;
         auto font_height = font_pixel_height(font);
-        int tabs = 0;
+        std::size_t tabs = 0;
         auto original_align = align;
+        auto &font_data = get_current_font_data();
 
-        auto append_thing = [&fmt, &x, &y, &width, &height, &align, &text, &tabs, &start](std::size_t end) {
+        auto append_thing = [&fmt, &x, &y, &width, &height, &align, &text, &tabs, &start, &font_data](std::size_t end) {
             auto substr_size = end - start;
             if(substr_size == 0) {
                 return;
             }
             auto &new_fmt = fmt.emplace_back();
-            auto tab_width = (0.25 * width);
-            new_fmt.x = x + tabs * tab_width;
+            new_fmt.x = x;
+            new_fmt.width = width;
+
+            if(tabs == 0) {
+                new_fmt.x = x;
+                new_fmt.width = width;
+            }
+            else {
+                int end_x = font_data.tabs[tabs + 1];
+                int start_x = font_data.tabs[tabs];
+
+                new_fmt.x = x + start_x;
+                //new_fmt.width = end_x - start_x;
+
+                if(new_fmt.width > width) {
+                    new_fmt.width = width;
+                }
+            }
+
             new_fmt.y = y;
-            new_fmt.width = tabs ? tab_width : width;
             new_fmt.height = height;
             new_fmt.text = text.substr(start, substr_size);
             new_fmt.align = align;
@@ -205,9 +222,10 @@ namespace Chimera {
 
         for(std::size_t i = 0; i < size - 1 && height > 0; i++) {
             bool break_it_up = false;
+            bool tabbed = text[i] == '\t';
 
             // Check if we hit an escape character
-            if(text[i] == '|') {
+            if(text[i] == '|' || tabbed) {
                 char control_char = text[i+1];
                 switch(control_char) {
                     case 'n':
@@ -217,6 +235,12 @@ namespace Chimera {
                     case 't':
                         break_it_up = true;
                         break;
+                }
+
+                // Are we tabbed from some other meme?
+                if(tabbed) {
+                    control_char = 't';
+                    break_it_up = true;
                 }
 
                 // If we did, break it up
@@ -243,12 +267,16 @@ namespace Chimera {
                             break;
                         case 't':
                             align = FontAlignment::ALIGN_LEFT;
-                            if(tabs < 4) {
+                            if(tabs < sizeof(font_data.tabs) / sizeof(*font_data.tabs)) {
                                 tabs++;
                             }
                             break;
                     }
-                    i += 1;
+
+                    // If a |, skip this character too
+                    if(text[i] == '|') {
+                        i += 1;
+                    }
                     start = i + 1;
                 }
             }

@@ -399,6 +399,12 @@ namespace Chimera {
             more_lines_below = 0;
         }
 
+        // Set up font data
+        auto &font_data = get_current_font_data();
+        for(int i = 0; i < 5; i++) {
+            font_data.tabs[i] = width / 4 * i;
+        }
+
         // Show the text input?
         if(open) {
             // Get the prompt color
@@ -426,7 +432,7 @@ namespace Chimera {
                 right_side += more_lines_below_width;
                 apply_text(more_lines_below_text, width - right_side, y, more_lines_below_width, height, color, font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_TOP_LEFT);
             }
-            
+
             // Get the console text
             const auto *console_text = get_console_text();
             const auto *prompt_pre = console_text - 32;

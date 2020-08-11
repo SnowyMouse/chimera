@@ -69,8 +69,11 @@ namespace Chimera {
 
         // Text to use
         ColorARGB color;
+
+        // Tabs!
+        std::int16_t tabs[0x12];
     };
-    static_assert(sizeof(FontData) == 0x1C);
+    static_assert(sizeof(FontData) == 0x40);
 
     /**
      * Get the font data for the text currently being drawn
