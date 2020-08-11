@@ -372,7 +372,9 @@ namespace Chimera {
 
             static Hook text_stare_name;
             auto &widescreen_text_stare_name_sig = get_chimera().get_signature("widescreen_text_stare_name_sig");
-            write_function_override(reinterpret_cast<void *>(widescreen_text_stare_name_sig.data()), text_stare_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_stare_name), &widescreen_element_position_text_stare_name_fn);
+            if(!hud_text_mod) {
+                write_function_override(reinterpret_cast<void *>(widescreen_text_stare_name_sig.data()), text_stare_name, reinterpret_cast<const void *>(widescreen_element_reposition_text_stare_name), &widescreen_element_position_text_stare_name_fn);
+            }
 
             static Hook text_f3_name;
             if(ce && !hud_text_mod) {
@@ -482,8 +484,10 @@ namespace Chimera {
                 }
                 widescreen_text_pgcr_sig.rollback();
                 widescreen_element_motion_sensor_scaling_sig.rollback();
-                widescreen_text_stare_name_sig.rollback();
-                if(ce && !hud_text_mod_initialized()) {
+                if(!hud_text_mod) {
+                    widescreen_text_stare_name_sig.rollback();
+                }
+                if(ce && !hud_text_mod) {
                     auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
                     widescreen_text_f3_name_sig.rollback();
                 }

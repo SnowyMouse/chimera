@@ -78,7 +78,7 @@ namespace Chimera {
         auto x_middle = avg * scale;
 
         auto y = *xy & 0xFFFF;
-        auto font_to_use = GenericFont::FONT_SMALLER;
+        auto font_to_use = fd.font == get_generic_font(GenericFont::FONT_SMALLER) ? GenericFont::FONT_SMALLER : GenericFont::FONT_SMALL;
         auto width = text_pixel_length(string, font_to_use);
         apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
@@ -162,6 +162,11 @@ namespace Chimera {
             write_jmp_call(widescreen_text_f3_name_sig, widescreen_text_f3_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
         }
 
+        static Hook stare_name;
+        auto *widescreen_text_stare_name_sig = chimera.get_signature("widescreen_text_stare_name_sig").data();
+        write_code_s(widescreen_text_stare_name_sig, nop_fn);
+        write_jmp_call(widescreen_text_stare_name_sig, stare_name, reinterpret_cast<const void *>(on_names_above_heads_hud_text_asm), nullptr, false);
+
         // Fix multiplayer text
         static Hook hold_f1;
         auto *multiplayer_spawn_timer_hold_f1_for_score_text_call_sig = chimera.get_signature("multiplayer_spawn_timer_hold_f1_for_score_text_call_sig").data() + 14;
@@ -174,7 +179,6 @@ namespace Chimera {
         write_code_s(widescreen_menu_text_sig, nop_fn);
         write_jmp_call(widescreen_menu_text_sig, widescreen_menu_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
 
-// main_menu_prompt_text_sig
         static Hook main_menu_prompt_text;
         auto *main_menu_prompt_text_sig = chimera.get_signature("main_menu_prompt_text_sig").data() + 28;
         write_code_s(main_menu_prompt_text_sig, nop_fn);
