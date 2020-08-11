@@ -305,6 +305,7 @@ namespace Chimera {
 
     void set_widescreen_fix(bool new_setting) noexcept {
         if(new_setting != setting) {
+            bool demo = get_chimera().feature_present("client_demo");
             ce = get_chimera().feature_present("client_widescreen_custom_edition");
             tabs_ptr = *reinterpret_cast<std::uint16_t **>(get_chimera().get_signature("widescreen_text_tab_sig").data() + 0x3);
             f1 = get_chimera().feature_present("client_widescreen_f1");
@@ -353,14 +354,17 @@ namespace Chimera {
             text_max_x = reinterpret_cast<std::int32_t *>(widescreen_text_max_x_sig.data() + 1);
 
             static Hook text_f1;
-            auto &widescreen_text_f1_sig = get_chimera().get_signature("widescreen_text_f1_sig");
+            auto &widescreen_text_f1_sig = get_chimera().get_signature(demo ? "widescreen_text_f1_demo_sig" : "widescreen_text_f1_sig");
             auto &widescreen_text_f1_server_ip_position_sig = get_chimera().get_signature("widescreen_text_f1_server_ip_position_sig");
             auto &widescreen_text_f1_server_name_position_sig = get_chimera().get_signature("widescreen_text_f1_server_name_position_sig");
 
             if(f1) {
                 f1_server_ip_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_ip_position_sig.data() + 5);
                 f1_server_name_x2 = reinterpret_cast<std::int16_t *>(widescreen_text_f1_server_name_position_sig.data() + 5);
-                write_function_override(reinterpret_cast<void *>(widescreen_text_f1_sig.data()), text_f1, reinterpret_cast<const void *>(widescreen_element_reposition_text_f1), &widescreen_element_position_text_f1_fn);
+
+                if(!hud_text_mod) {
+                    write_function_override(reinterpret_cast<void *>(widescreen_text_f1_sig.data()), text_f1, reinterpret_cast<const void *>(widescreen_element_reposition_text_f1), &widescreen_element_position_text_f1_fn);
+                }
             }
 
             static Hook text_pgcr;
@@ -474,13 +478,15 @@ namespace Chimera {
                 widescreen_element_position_letterbox_sig.rollback();
                 widescreen_text_scaling_sig.rollback();
                 widescreen_console_input_sig.rollback();
-                if(hud_text_mod) {
+                if(!hud_text_mod) {
                     widescreen_menu_text_sig.rollback();
                     widescreen_menu_text_2_sig.rollback();
                 }
                 widescreen_text_max_x_sig.rollback();
                 if(f1) {
-                    widescreen_text_f1_sig.rollback();
+                    if(!hud_text_mod) {
+                        widescreen_text_f1_sig.rollback();
+                    }
                     widescreen_text_f1_server_ip_position_sig.rollback();
                     widescreen_text_f1_server_name_position_sig.rollback();
                 }
@@ -594,7 +600,7 @@ namespace Chimera {
             overwrite(console_width, static_cast<std::int32_t>(widescreen_width_480p));
             overwrite(text_max_x, static_cast<std::uint32_t>(widescreen_width_480p));
 
-            if(f1) {
+            if(f1 && !hud_text_mod_initialized()) {
                 overwrite(f1_server_ip_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
                 overwrite(f1_server_name_x2, static_cast<std::uint16_t>(widescreen_width_480p - 5));
             }

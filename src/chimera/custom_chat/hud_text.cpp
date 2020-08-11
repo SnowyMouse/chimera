@@ -225,6 +225,31 @@ namespace Chimera {
         write_code_s(widescreen_text_pgcr_sig, nop_fn);
         write_jmp_call(widescreen_text_pgcr_sig, pgcr_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
 
+        static Hook f1_text;
+        bool demo = chimera.feature_present("client_demo");
+        auto *widescreen_text_f1_sig = chimera.get_signature(demo ? "widescreen_text_f1_demo_sig" : "widescreen_text_f1_sig").data();
+        write_code_s(widescreen_text_f1_sig, nop_fn);
+        write_jmp_call(widescreen_text_f1_sig, f1_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        static Hook f1_server_name;
+        std::byte *server_name_text_call_sig;
+        if(chimera.feature_present("client_custom_edition")) {
+            server_name_text_call_sig = chimera.get_signature("server_name_text_call_custom_edition_sig").data() + 10;
+        }
+        else if(demo) {
+            server_name_text_call_sig = chimera.get_signature("server_name_text_call_demo_sig").data() + 6;
+        }
+        else {
+            server_name_text_call_sig = chimera.get_signature("server_name_text_call_retail_sig").data() + 6;
+        }
+        write_code_s(server_name_text_call_sig, nop_fn);
+        write_jmp_call(server_name_text_call_sig, f1_server_name, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        static Hook f1_ip;
+        auto *server_ip_text_call_sig = chimera.get_signature("server_ip_text_call_sig").data() + 10;
+        write_code_s(server_ip_text_call_sig, nop_fn);
+        write_jmp_call(server_ip_text_call_sig, f1_ip, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
         // Enter/Cancel buttons
         static Hook main_menu_text_input;
         auto *main_menu_text_input_sig = chimera.get_signature("main_menu_text_input_sig").data() + 24;
