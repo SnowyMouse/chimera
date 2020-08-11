@@ -23,6 +23,7 @@ namespace Chimera {
 
     static LPD3DXFONT system_font_override = nullptr, console_font_override = nullptr, small_font_override = nullptr, large_font_override = nullptr, smaller_font_override = nullptr, ticker_font_override = nullptr;
     static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow, smaller_font_shadow, ticker_font_shadow;
+    static std::pair<int, int> system_font_offset, console_font_offset, small_font_offset, large_font_offset, smaller_font_offset, ticker_font_offset;
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
@@ -203,7 +204,7 @@ namespace Chimera {
                 new_fmt.width = width;
             }
             else {
-                int end_x = font_data.tabs[tabs + 1];
+                // int end_x = font_data.tabs[tabs + 1];
                 int start_x = font_data.tabs[tabs];
 
                 new_fmt.x = x + start_x;
@@ -304,27 +305,40 @@ namespace Chimera {
             auto res = get_resolution();
             double scale = res.height / 480.0;
 
-            // Get our rects up
-            RECT rect;
-            rect.left = text.x * scale;
-            rect.right = (text.width) * scale;
-            rect.top = (text.y) * scale;
-            rect.bottom = (text.height) * scale;
-
             // Figure out shadow
-            std::pair<int,int> shadow_offset;
+            std::pair<int,int> shadow_offset, offset;
             if(system_font_override == text.override) {
                 shadow_offset = system_font_shadow;
+                offset = system_font_offset;
             }
             else if(small_font_override == text.override) {
                 shadow_offset = small_font_shadow;
+                offset = small_font_offset;
+            }
+            else if(smaller_font_override == text.override) {
+                shadow_offset = smaller_font_shadow;
+                offset = smaller_font_offset;
             }
             else if(large_font_override == text.override) {
                 shadow_offset = large_font_shadow;
+                offset = large_font_offset;
             }
             else if(console_font_override == text.override) {
                 shadow_offset = console_font_shadow;
+                offset = console_font_offset;
             }
+            else if(ticker_font_override == text.override) {
+                shadow_offset = ticker_font_shadow;
+                offset = ticker_font_offset;
+            }
+
+            // Get our rects up
+            RECT rect;
+            rect.left = (text.x) * scale + offset.first;
+            rect.right = (text.width) * scale + offset.first;
+            rect.top = (text.y) * scale + offset.second;
+            rect.bottom = (text.height) * scale + offset.second;
+
             bool draw_shadow = shadow_offset.first != 0 || shadow_offset.second != 0;
             RECT rshadow = rect;
             if(draw_shadow) {
@@ -720,7 +734,7 @@ namespace Chimera {
             auto *ini = get_chimera().get_ini();
             auto scale = get_resolution().height / 480.0;
 
-            #define generate_font(override_var, override_name, shadow) \
+            #define generate_font(override_var, override_name, shadow, offset) \
                 if(ini->get_value_bool("font_override." override_name "_font_override").value_or(false)) { \
                     auto size = ini->get_value_long("font_override." override_name "_font_size").value_or(12); \
                     auto weight = ini->get_value_long("font_override." override_name "_font_weight").value_or(400); \
@@ -730,15 +744,17 @@ namespace Chimera {
                     } \
                     shadow.first = ini->get_value_long("font_override." override_name "_font_shadow_offset_x").value_or(2) * (scale/2); \
                     shadow.second = ini->get_value_long("font_override." override_name "_font_shadow_offset_y").value_or(2) * (scale/2); \
+                    offset.first = ini->get_value_long("font_override." override_name "_font_offset_x").value_or(0) * (scale/2); \
+                    offset.second = ini->get_value_long("font_override." override_name "_font_offset_y").value_or(0) * (scale/2); \
                     D3DXCreateFont(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
                 }
 
-            generate_font(system_font_override, "system", system_font_shadow);
-            generate_font(console_font_override, "console", console_font_shadow);
-            generate_font(small_font_override, "small", small_font_shadow);
-            generate_font(large_font_override, "large", large_font_shadow);
-            generate_font(smaller_font_override, "smaller", smaller_font_shadow);
-            generate_font(ticker_font_override, "ticker", ticker_font_shadow);
+            generate_font(system_font_override, "system", system_font_shadow, system_font_offset);
+            generate_font(console_font_override, "console", console_font_shadow, console_font_offset);
+            generate_font(small_font_override, "small", small_font_shadow, small_font_offset);
+            generate_font(large_font_override, "large", large_font_shadow, large_font_offset);
+            generate_font(smaller_font_override, "smaller", smaller_font_shadow, smaller_font_offset);
+            generate_font(ticker_font_override, "ticker", ticker_font_shadow, ticker_font_offset);
 
             #undef generate_font
         }
