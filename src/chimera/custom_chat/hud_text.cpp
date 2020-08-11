@@ -17,6 +17,7 @@ namespace Chimera {
         void on_names_above_heads_hud_text_asm() noexcept;
         void hud_text_fmul_with_0_asm() noexcept;
         void on_menu_hud_text_asm() noexcept;
+        void on_menu_hud_text_unscaled_asm() noexcept;
         float hud_text_new_line_spacing = 0.0F;
     }
 
@@ -83,11 +84,11 @@ namespace Chimera {
         apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
-    extern "C" void on_menu_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+    extern "C" void on_menu_hud_text(const wchar_t *string, std::uint32_t *xy, std::uint32_t scale) noexcept {
         auto &fd = get_current_font_data();
 
         auto res = get_resolution();
-        int add = static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f;
+        int add = scale ? (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f) : 0;
 
         GenericFont font;
         if(fd.font == get_generic_font(GenericFont::FONT_LARGE)) {
@@ -178,6 +179,26 @@ namespace Chimera {
         auto *widescreen_menu_text_sig = chimera.get_signature("widescreen_menu_text_sig").data() + 9;
         write_code_s(widescreen_menu_text_sig, nop_fn);
         write_jmp_call(widescreen_menu_text_sig, widescreen_menu_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        static Hook connection_text;
+        auto *connecting_text_call_sig = chimera.get_signature("connecting_text_call_sig").data() + 9;
+        write_code_s(connecting_text_call_sig, nop_fn);
+        write_jmp_call(connecting_text_call_sig, connection_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
+
+        static Hook esrb_text;
+        auto *esrb_text_call_sig = chimera.get_signature("esrb_text_call_sig").data() + 9;
+        write_code_s(esrb_text_call_sig, nop_fn);
+        write_jmp_call(esrb_text_call_sig, esrb_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
+
+        static Hook hold_to_cancel_text;
+        auto *hold_to_cancel_connect_sig = chimera.get_signature("hold_to_cancel_connect_text_call_sig").data() + 9;
+        write_code_s(hold_to_cancel_connect_sig, nop_fn);
+        write_jmp_call(hold_to_cancel_connect_sig, hold_to_cancel_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
+
+        static Hook connecting_to_server_text;
+        auto *connecting_to_server_text_call_sig = chimera.get_signature("connecting_to_server_text_call_sig").data() + 9;
+        write_code_s(connecting_to_server_text_call_sig, nop_fn);
+        write_jmp_call(connecting_to_server_text_call_sig, connecting_to_server_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
 
         static Hook main_menu_prompt_text;
         auto *main_menu_prompt_text_sig = chimera.get_signature("main_menu_prompt_text_sig").data() + 28;
