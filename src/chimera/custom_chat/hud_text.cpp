@@ -205,6 +205,16 @@ namespace Chimera {
         write_code_s(main_menu_prompt_text_sig, nop_fn);
         write_jmp_call(main_menu_prompt_text_sig, main_menu_prompt_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
 
+        static Hook hosting_server_text;
+        auto *hosting_server_text_call_sig = chimera.get_signature("hosting_server_text_call_sig").data() + 9;
+        write_code_s(hosting_server_text_call_sig, nop_fn);
+        write_jmp_call(hosting_server_text_call_sig, hosting_server_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
+
+        static Hook hosting_loading_map_text;
+        auto *hosting_loading_map_text_call_sig = chimera.get_signature("hosting_loading_map_text_call_sig").data() + 13;
+        write_code_s(hosting_loading_map_text_call_sig, nop_fn);
+        write_jmp_call(hosting_loading_map_text_call_sig, hosting_loading_map_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
+
         // Enter/Cancel buttons
         static Hook main_menu_text_input;
         auto *main_menu_text_input_sig = chimera.get_signature("main_menu_text_input_sig").data() + 24;
