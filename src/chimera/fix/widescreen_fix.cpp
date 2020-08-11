@@ -398,7 +398,9 @@ namespace Chimera {
 
             static Hook cutscene_text;
             auto &widescreen_text_cutscene_sig = get_chimera().get_signature("widescreen_text_cutscene_sig");
-            write_jmp_call(widescreen_text_cutscene_sig.data() + 8, cutscene_text, reinterpret_cast<const void *>(widescreen_cutscene_text_before_asm), reinterpret_cast<const void *>(widescreen_cutscene_text_after_asm), false);
+            if(!hud_text_mod) {
+                write_jmp_call(widescreen_text_cutscene_sig.data() + 8, cutscene_text, reinterpret_cast<const void *>(widescreen_cutscene_text_before_asm), reinterpret_cast<const void *>(widescreen_cutscene_text_after_asm), false);
+            }
 
             if(ce) {
                 auto &widescreen_text_f2_text_position_motd_sig = get_chimera().get_signature("widescreen_text_f2_text_position_motd_sig");
@@ -481,6 +483,9 @@ namespace Chimera {
                 if(!hud_text_mod) {
                     widescreen_menu_text_sig.rollback();
                     widescreen_menu_text_2_sig.rollback();
+                    widescreen_text_stare_name_sig.rollback();
+                    widescreen_text_pgcr_sig.rollback();
+                    widescreen_text_cutscene_sig.rollback();
                 }
                 widescreen_text_max_x_sig.rollback();
                 if(f1) {
@@ -491,10 +496,6 @@ namespace Chimera {
                     widescreen_text_f1_server_name_position_sig.rollback();
                 }
                 widescreen_element_motion_sensor_scaling_sig.rollback();
-                if(!hud_text_mod) {
-                    widescreen_text_stare_name_sig.rollback();
-                    widescreen_text_pgcr_sig.rollback();
-                }
                 if(ce && !hud_text_mod) {
                     auto &widescreen_text_f3_name_sig = get_chimera().get_signature("widescreen_text_f3_name_sig");
                     widescreen_text_f3_name_sig.rollback();
@@ -528,7 +529,6 @@ namespace Chimera {
                     widescreen_input_text_sig.rollback();
                 }
                 widescreen_mouse_sig.rollback();
-                widescreen_text_cutscene_sig.rollback();
 
                 widescreen_text_x_offset = 0;
 

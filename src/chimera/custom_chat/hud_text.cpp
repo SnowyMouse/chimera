@@ -221,6 +221,11 @@ namespace Chimera {
         write_code_s(connection_established_text_call_sig, nop_fn);
         write_jmp_call(connection_established_text_call_sig, connection_established_text, reinterpret_cast<const void *>(on_menu_hud_text_unscaled_asm), nullptr, false);
 
+        static Hook cutscene_text;
+        auto *widescreen_text_cutscene_sig = chimera.get_signature("widescreen_text_cutscene_sig").data() + 8;
+        write_code_s(widescreen_text_cutscene_sig, nop_fn);
+        write_jmp_call(widescreen_text_cutscene_sig, cutscene_text, reinterpret_cast<const void *>(on_menu_hud_text_double_scaled_asm), nullptr, false);
+
         static Hook pgcr_text;
         auto *widescreen_text_pgcr_sig = chimera.get_signature("widescreen_text_pgcr_sig").data();
         write_code_s(widescreen_text_pgcr_sig, nop_fn);
