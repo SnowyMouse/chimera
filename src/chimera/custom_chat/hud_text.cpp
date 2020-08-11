@@ -174,6 +174,23 @@ namespace Chimera {
         write_code_s(widescreen_menu_text_sig, nop_fn);
         write_jmp_call(widescreen_menu_text_sig, widescreen_menu_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
 
+// main_menu_prompt_text_sig
+        static Hook main_menu_prompt_text;
+        auto *main_menu_prompt_text_sig = chimera.get_signature("main_menu_prompt_text_sig").data() + 28;
+        write_code_s(main_menu_prompt_text_sig, nop_fn);
+        write_jmp_call(main_menu_prompt_text_sig, main_menu_prompt_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        // Enter/Cancel buttons
+        static Hook main_menu_text_input;
+        auto *main_menu_text_input_sig = chimera.get_signature("main_menu_text_input_sig").data() + 24;
+        write_code_s(main_menu_text_input_sig, nop_fn);
+        write_jmp_call(main_menu_text_input_sig, main_menu_text_input, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
+        static Hook main_menu_text_input_text;
+        auto *widescreen_input_text_sig = get_chimera().get_signature("widescreen_input_text_sig").data();
+        write_code_s(widescreen_input_text_sig, nop_fn);
+        write_jmp_call(widescreen_input_text_sig, main_menu_text_input_text, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+
         static Hook widescreen_menu_2_text;
         auto *widescreen_menu_text_2_sig = chimera.get_signature("widescreen_menu_text_2_sig").data();
         write_code_s(widescreen_menu_text_2_sig, nop_fn);

@@ -445,7 +445,9 @@ namespace Chimera {
 
             static Hook input_text;
             auto &widescreen_input_text_sig = get_chimera().get_signature("widescreen_input_text_sig");
-            write_jmp_call(reinterpret_cast<void *>(widescreen_input_text_sig.data()), input_text, reinterpret_cast<const void *>(widescreen_input_text), reinterpret_cast<const void *>(widescreen_input_text_undo));
+            if(!hud_text_mod) {
+                write_jmp_call(reinterpret_cast<void *>(widescreen_input_text_sig.data()), input_text, reinterpret_cast<const void *>(widescreen_input_text), reinterpret_cast<const void *>(widescreen_input_text_undo));
+            }
 
             static Hook widescreen_mouse_hook;
             const void *old_fn;
@@ -510,7 +512,9 @@ namespace Chimera {
                 widescreen_text_loading_screen_sig.rollback();
                 widescreen_screen_effect_sig.rollback();
                 widescreen_console_tabs_sig.rollback();
-                widescreen_input_text_sig.rollback();
+                if(!hud_text_mod) {
+                    widescreen_input_text_sig.rollback();
+                }
                 widescreen_mouse_sig.rollback();
                 widescreen_text_cutscene_sig.rollback();
 
