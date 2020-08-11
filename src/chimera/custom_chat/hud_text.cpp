@@ -16,6 +16,7 @@ namespace Chimera {
         void on_weapon_pick_up_hud_text_asm() noexcept;
         void on_names_above_heads_hud_text_asm() noexcept;
         void hud_text_fmul_with_0_asm() noexcept;
+        void on_menu_hud_text_double_scaled_asm() noexcept;
         void on_menu_hud_text_asm() noexcept;
         void on_menu_hud_text_unscaled_asm() noexcept;
         float hud_text_new_line_spacing = 0.0F;
@@ -88,7 +89,7 @@ namespace Chimera {
         auto &fd = get_current_font_data();
 
         auto res = get_resolution();
-        int add = scale ? (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f) : 0;
+        int add = scale * (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f);
 
         GenericFont font;
         if(fd.font == get_generic_font(GenericFont::FONT_LARGE)) {
@@ -243,12 +244,12 @@ namespace Chimera {
             server_name_text_call_sig = chimera.get_signature("server_name_text_call_retail_sig").data() + 6;
         }
         write_code_s(server_name_text_call_sig, nop_fn);
-        write_jmp_call(server_name_text_call_sig, f1_server_name, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+        write_jmp_call(server_name_text_call_sig, f1_server_name, reinterpret_cast<const void *>(on_menu_hud_text_double_scaled_asm), nullptr, false);
 
         static Hook f1_ip;
         auto *server_ip_text_call_sig = chimera.get_signature("server_ip_text_call_sig").data() + 10;
         write_code_s(server_ip_text_call_sig, nop_fn);
-        write_jmp_call(server_ip_text_call_sig, f1_ip, reinterpret_cast<const void *>(on_menu_hud_text_asm), nullptr, false);
+        write_jmp_call(server_ip_text_call_sig, f1_ip, reinterpret_cast<const void *>(on_menu_hud_text_double_scaled_asm), nullptr, false);
 
         // Enter/Cancel buttons
         static Hook main_menu_text_input;

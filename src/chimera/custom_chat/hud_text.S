@@ -52,6 +52,19 @@ _on_names_above_heads_hud_text_asm:
     popfd
     ret
 
+.globl _on_menu_hud_text_double_scaled_asm
+_on_menu_hud_text_double_scaled_asm:
+    pushfd
+    pushad
+    push 2
+    push ecx
+    push dword ptr [esp+0x38]
+    call _on_menu_hud_text
+    add esp, 0xC
+    popad
+    popfd
+    ret
+
 .globl _on_menu_hud_text_asm
 _on_menu_hud_text_asm:
     pushfd
