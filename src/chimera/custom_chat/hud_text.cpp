@@ -6,6 +6,7 @@
 #include "../halo_data/tag.hpp"
 #include "../output/output.hpp"
 #include "../halo_data/resolution.hpp"
+#include "../fix/widescreen_fix.hpp"
 #include "../event/frame.hpp"
 #include "../chimera.hpp"
 
@@ -76,7 +77,7 @@ namespace Chimera {
         auto x0 = xy[0] >> 16;
         auto x1 = xy[1] >> 16;
         auto avg = (x0 + x1) / 2;
-        float scale = (static_cast<float>(res.width) / static_cast<float>(res.height) * 480) / 640.0;
+        double scale = widescreen_fix_enabled() ? ((static_cast<float>(res.width) / static_cast<float>(res.height) * 480) / 640.0) : 1.0;
         auto x_middle = avg * scale;
 
         auto y = *xy & 0xFFFF;
@@ -89,7 +90,7 @@ namespace Chimera {
         auto &fd = get_current_font_data();
 
         auto res = get_resolution();
-        int add = scale * (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f);
+        int add = widescreen_fix_enabled() ? (scale * (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f)) : 0;
 
         GenericFont font;
         if(fd.font == get_generic_font(GenericFont::FONT_LARGE)) {
@@ -125,6 +126,7 @@ namespace Chimera {
 
     void initialize_hud_text() noexcept {
         enabled = true;
+        set_widescreen_fix(true);
 
         auto &chimera = get_chimera();
 
