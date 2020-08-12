@@ -542,12 +542,15 @@ namespace Chimera {
 
         // Get player name
         auto player_name = u16_to_u8(player_info.name);
+        // Re-encode from UTF-16 to UTF-8, as wcrtomb is producing unreliable results
+        std::string message_u8 = u16_to_u8(message);
 
         // Format a message
         char entire_message[MAX_MESSAGE_LENGTH];
-        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_name.c_str(), message);
+        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_name.c_str(), message_u8.c_str());
 
-        // Initialize
+        // Initialize; any UTF-8 codepoints that were cut off by the format will be replaced by 
+        // U+FFFD (or other appropriate character) as detailed in the documentation for MultiByteToWideChar.
         initialize_chat_message(chat_message, entire_message, color_to_use);
         add_message_to_array(chat_messages, chat_message);
 

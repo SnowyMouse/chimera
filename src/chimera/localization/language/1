@@ -14,9 +14,9 @@ chimera_custom_chat_to_all                                                      
 chimera_custom_chat_to_team                                                     Equipo
 chimera_custom_chat_to_vehicle                                                  Vehículo
 
-chimera_custom_chat_from_all                                                    ^%s%s^;^;: %S
-chimera_custom_chat_from_team                                                   ^%s%s^;^; (equipo): %S
-chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehículo): %S
+chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
+chimera_custom_chat_from_team                                                   ^%s%s^;^; (equipo): %s
+chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehículo): %s
 
 chimera_category_bookmark                                                       bookmark
 chimera_category_core                                                           esencial
