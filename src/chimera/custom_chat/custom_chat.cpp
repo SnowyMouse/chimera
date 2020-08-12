@@ -39,6 +39,26 @@ namespace Chimera {
     static void check_for_quit_players();
     static void load_chat_settings();
 
+    static std::wstring u8_to_u16(const char *str) {
+        wchar_t strw[1024] = {};
+        if(MultiByteToWideChar(CP_UTF8, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
+            return std::wstring();
+        }
+        else {
+            return std::wstring(strw);
+        }
+    }
+
+    static std::string u16_to_u8(const wchar_t *strw) {
+        char str[1024] = {};
+        if(WideCharToMultiByte(CP_UTF8, 0, strw, -1, str, sizeof(str) / sizeof(*str), nullptr, nullptr) == 0) {
+            return std::string();
+        }
+        else {
+            return std::string(str);
+        }
+    }
+
     extern "C" std::uint32_t chat_get_local_rcon_id() noexcept {
         auto *list = ServerInfoPlayerList::get_server_info_player_list();
         auto *player = PlayerTable::get_player_table().get_client_player();
@@ -107,7 +127,7 @@ namespace Chimera {
     #define MAX_MESSAGE_LENGTH 256
     struct ChatMessage {
         /** Message text */
-        char message[MAX_MESSAGE_LENGTH];
+        wchar_t message[MAX_MESSAGE_LENGTH];
 
         /** Just for padding */
         std::uint32_t zero = 0;
@@ -282,7 +302,7 @@ namespace Chimera {
 
                 // Print the damn thing
                 if(color.alpha > 0.0) {
-                    apply_text_quake_colors(std::string(array[i].message), x, y_offset, w, line_height, color, font, anchor);
+                    apply_text_quake_colors(std::wstring(array[i].message), x, y_offset, w, line_height, color, font, anchor);
                 }
 
                 y_offset -= line_height;
@@ -376,17 +396,6 @@ namespace Chimera {
 
     static void initialize_chat_message(ChatMessage &message, const char *message_text, const ColorARGB &color);
 
-    static void u16_to_u8(char *u8, std::size_t u8_len, const wchar_t *u16, std::size_t u16_len) {
-        std::size_t i;
-        for(i = 0; i * sizeof(*u8) < u8_len - sizeof(*u8) && i * sizeof(*u16) < u16_len; i++) {
-            u8[i] = static_cast<char>(u16[i]);
-            if(!u8[i]) {
-                break;
-            }
-        }
-        u8[i] = 0;
-    }
-
     // Determine what color ID to use for a player
     static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use) {
         auto &player_info = ServerInfoPlayerList::get_server_info_player_list()->players[player];
@@ -447,14 +456,14 @@ namespace Chimera {
         return name_color_to_use;
     }
 
-    static void draw_chat_message(const char *message, std::uint32_t p_int, std::uint32_t c_int) {
+    extern "C" void draw_chat_message(const wchar_t *message, std::uint32_t p_int, std::uint32_t c_int) {
         ChatMessage chat_message;
 
-        std::string message_filtered;
+        std::wstring message_filtered;
         if(block_ips) {
             std::regex r("(\\d(\\^\\d)*){1,3}(\\.((\\^\\d)*\\d(\\&\\d)*){1,3}){3}");
-            message_filtered = std::regex_replace(message, r, "#.#.#.#");
-            message = message_filtered.data();
+            message_filtered = u8_to_u16(std::regex_replace(u16_to_u8(message), r, "#.#.#.#").c_str());
+            message = message_filtered.c_str();
         }
 
         std::uint8_t player_index = static_cast<std::uint8_t>(p_int);
@@ -468,7 +477,9 @@ namespace Chimera {
         // This is a server message. No need to format.
         if(channel_index == 3 || player_index > 15) {
             // First, get the length
-            std::size_t length = std::strlen(message);
+            std::size_t length = lstrlenW(message);
+
+            printf("%S - %zu\n", message, length);
             char s[256] = {};
             if(length >= sizeof(s)) {
                 length = 255;
@@ -530,12 +541,11 @@ namespace Chimera {
         auto *name_color_to_use = color_id_for_player(player_index, &color_to_use);
 
         // Get player name
-        char player_u8[256];
-        u16_to_u8(player_u8, sizeof(player_u8), player_info.name, sizeof(player_info.name));
+        auto player_name = u16_to_u8(player_info.name);
 
         // Format a message
         char entire_message[MAX_MESSAGE_LENGTH];
-        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_u8, message);
+        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_name.c_str(), message);
 
         // Initialize
         initialize_chat_message(chat_message, entire_message, color_to_use);
@@ -547,20 +557,27 @@ namespace Chimera {
     }
 
     void add_server_message(const char *message) {
-        draw_chat_message(message, 255, 3);
+        draw_chat_message(u8_to_u16(message).c_str(), 255, 3);
     }
 
-    extern "C" void draw_chat_message(const wchar_t *message, std::uint32_t p_int, std::uint32_t c_int) {
-        char message_u8[256] = {};
-        u16_to_u8(message_u8, sizeof(message_u8), message, sizeof(message_u8) * sizeof(wchar_t));
+    static void initialize_chat_message(ChatMessage &message, const wchar_t *message_text, const ColorARGB &color) {
+        message.created = clock::now();
+        message.color = color;
 
-        draw_chat_message(message_u8, p_int, c_int);
+        // Zero it out
+        std::memset(message.message, 0, sizeof(message.message));
+
+        // Copy it over
+        std::size_t max_size = lstrlenW(message_text);
+        std::size_t limit = sizeof(message.message) / sizeof(*message.message) - 1;
+        if(max_size > limit) {
+            max_size = limit;
+        }
+        std::copy(message_text, message_text + max_size, message.message);
     }
 
     static void initialize_chat_message(ChatMessage &message, const char *message_text, const ColorARGB &color) {
-        message.created = clock::now();
-        message.color = color;
-        std::strncpy(message.message, message_text, sizeof(message.message));
+        initialize_chat_message(message, u8_to_u16(message_text).c_str(), color);
     }
 
     static void add_message_to_array(ChatMessage *array, const ChatMessage &message) {
@@ -705,26 +722,24 @@ namespace Chimera {
         }
     }
 
-    std::string get_string_from_string_list(const char *tag, std::uint32_t index) {
+    std::wstring get_string_from_string_list(const char *tag, std::uint32_t index) {
         auto *ustr = get_tag(tag, TagClassInt::TAG_CLASS_UNICODE_STRING_LIST);
         if(!ustr) {
-            return std::string();
+            return std::wstring();
         }
 
         auto *ustr_tag_data = ustr->data;
         std::uint32_t strings_count = *reinterpret_cast<std::uint32_t *>(ustr_tag_data);
         if(index >= strings_count) {
-            return std::string();
+            return std::wstring();
         }
         auto *strings = *reinterpret_cast<std::byte **>(ustr_tag_data + 0x4);
         auto *str_ref = strings + 0x14 * index;
         auto str_len = *reinterpret_cast<std::size_t *>(str_ref + 0x0);
         auto *str = *reinterpret_cast<wchar_t **>(str_ref + 0xC);
 
-        // Convert
-        char s[256];
-        u16_to_u8(s, sizeof(s), str, str_len);
-        return std::string(s);
+        // Truncate down to this
+        return std::wstring(str, str_len);
     }
 
     extern "C" void welcome_message(PlayerID player_a) {
@@ -733,22 +748,19 @@ namespace Chimera {
 
         // Get the player name
         auto get_player_name = [&server_info](PlayerID id, ColorARGB *color_to_use) -> std::string {
-            char name[256];
             auto *player = server_info->get_player(id);
-            u16_to_u8(name, sizeof(name), player->name, sizeof(player->name));
-
-            return std::string("^") + color_id_for_player(player - server_info->players, color_to_use) + name + "^;";
+            return std::string("^") + color_id_for_player(player - server_info->players, color_to_use) + u16_to_u8(player->name).c_str() + "^;";
         };
 
         // Show a single message
         auto single_message = [&get_player_name](PlayerID id, int index) {
-            auto str = get_string_from_string_list("ui\\multiplayer_game_text", index);
+            auto str = u16_to_u8(get_string_from_string_list("ui\\multiplayer_game_text", index).c_str());
             ColorARGB color_to_use = {1.0, 1.0, 1.0, 1.0};
 
             std::string player_name = get_player_name(id, &color_to_use);
 
             char message[256];
-            std::snprintf(message, sizeof(message), str.data(), player_name.data());
+            std::snprintf(message, sizeof(message), str.c_str(), player_name.c_str());
 
             ChatMessage chat_message;
             initialize_chat_message(chat_message, message, color_to_use);
@@ -788,8 +800,8 @@ namespace Chimera {
             if(server_info->players[index].player_id == 0xFF) {
                 s = false;
                 ChatMessage chat_message;
-                auto s = get_string_from_string_list("ui\\multiplayer_game_text", 80);
-                std::snprintf(message, sizeof(message), s.data(), player_name[index]);
+                auto s = u16_to_u8(get_string_from_string_list("ui\\multiplayer_game_text", 80).c_str());
+                std::snprintf(message, sizeof(message), s.c_str(), player_name[index]);
                 initialize_chat_message(chat_message, message, {1.0, 1.0, 1.0, 1.0});
                 add_message_to_array(chat_messages, chat_message);
             }

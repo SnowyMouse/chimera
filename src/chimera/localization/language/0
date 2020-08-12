@@ -28,9 +28,9 @@ chimera_custom_chat_to_vehicle                                                  
 chimera_color_red                                                               red
 chimera_color_blue                                                              blue
 
-chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
-chimera_custom_chat_from_team                                                   ^%s%s^;^; (team): %s
-chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehicle): %s
+chimera_custom_chat_from_all                                                    ^%s%s^;^;: %S
+chimera_custom_chat_from_team                                                   ^%s%s^;^; (team): %S
+chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (vehicle): %S
 
 chimera_category_bookmark                                                       bookmark
 chimera_category_controller                                                     controller

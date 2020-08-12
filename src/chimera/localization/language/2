@@ -11,9 +11,9 @@ chimera_custom_chat_to_all                                                      
 chimera_custom_chat_to_team                                                     ^5Vaaap^;
 chimera_custom_chat_to_vehicle                                                  ^5Vaaaaaap^;
 
-chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
-chimera_custom_chat_from_team                                                   ^%s%s^;^; (^5vaaap^;): %s
-chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (^5vaaaaaap^;): %s
+chimera_custom_chat_from_all                                                    ^%s%s^;^;: %S
+chimera_custom_chat_from_team                                                   ^%s%s^;^; (^5vaaap^;): %S
+chimera_custom_chat_from_vehicle                                                ^%s%s^;^; (^5vaaaaaap^;): %S
 
 chimera_command_error_no_such_category_or_command                               VAP! *flicks away %s with tailfin*
 chimera_language_command_error_invalid_language                                 VAP! *flicks away %s with tailfin*
