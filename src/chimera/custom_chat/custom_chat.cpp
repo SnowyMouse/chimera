@@ -342,7 +342,8 @@ namespace Chimera {
 
             auto chat_input_u8 = u16_to_u8(chat_input_buffer);
             std::snprintf(buffer_to_show, sizeof(buffer_to_show), "%s - %s", localize(channel_name), chat_input_u8.c_str());
-            apply_text_quake_colors(buffer_to_show, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
+            auto buffer_u16 = u8_to_u16(buffer_to_show);
+            apply_text_quake_colors(buffer_u16.c_str(), chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
             std::size_t length_of_shown_buffer = std::strlen(buffer_to_show);
             std::size_t length_of_input_buffer = chat_input_u8.size();
