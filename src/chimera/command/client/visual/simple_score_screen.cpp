@@ -10,44 +10,47 @@
 #include "../../../halo_data/hud_fonts.hpp"
 
 namespace Chimera {
-    #define CENTER_POS 300
-    #define NAME_POS CENTER_POS - 70
-    #define PLACE_POS NAME_POS - 50
-    #define SCORE_POS CENTER_POS + 60
-    #define PING_POS SCORE_POS + 60
-    #define HEADER_POS PLACE_POS - 20
-
     bool simple_score_screen_command(int argc, const char **argv) {
         static bool simple_score_screen_active = false;
+        static auto &chimera = get_chimera();
         if(argc == 1) {
             bool new_value = STR_TO_BOOL(argv[0]);
             if(new_value != simple_score_screen_active) {
-                auto &ss_elements_sig_a = get_chimera().get_signature("ss_elements_sig_a");
-                auto &ss_elements_sig_b = get_chimera().get_signature("ss_elements_sig_b");
-                auto &ss_score_background_sig = get_chimera().get_signature("ss_score_background_sig");
-                auto &ss_score_position_sig = get_chimera().get_signature("ss_score_position_sig");
+                auto &ss_elements_sig_a = chimera.get_signature("ss_elements_sig_a");
+                auto &ss_elements_sig_b = chimera.get_signature("ss_elements_sig_b");
+                auto &ss_score_background_sig = chimera.get_signature("ss_score_background_sig");
+                auto &ss_score_position_sig = chimera.get_signature("ss_score_position_sig");
 
                 auto *ss_elements_addr_b = ss_elements_sig_b.data();
 
                 // Get the address from the jmp instruction of the scoreboard font hook
                 auto jmp_offset = *reinterpret_cast<std::uint32_t *>(ss_elements_addr_b + 1);
                 auto *jmp_address = reinterpret_cast<std::byte *>(ss_elements_addr_b + 5 + jmp_offset);
-                auto *placement_position = jmp_address + 0x0A;
+                auto *placement_pos_address = jmp_address + 0x0A;
 
                 simple_score_screen_active = new_value;
                 if(new_value) {
+                    static bool text_override = chimera.get_ini()->get_value_bool("font_override.enabled").value_or(false);
+
+                    static std::int16_t center_pos = text_override ? 142 : 312;
+                    static std::int16_t name_pos = center_pos - 70;
+                    static std::int16_t placement_pos = name_pos - 55;
+                    static std::int16_t score_pos = center_pos + 60;
+                    static std::int16_t ping_pos = score_pos + 60;
+                    static std::int16_t header_pos = text_override ? (center_pos + 30) : (placement_pos - 18);
+
                     auto *ss_elements_addr_a = ss_elements_sig_a.data();
                     overwrite(ss_elements_addr_a + 0, static_cast<std::uint8_t>(0xB9));
-                    overwrite(ss_elements_addr_a + 1, (static_cast<std::uint16_t>(HEADER_POS) << 16) | (static_cast<uint16_t>(HEADER_POS)));
+                    overwrite(ss_elements_addr_a + 1, (header_pos << 16) | (header_pos));
                     overwrite(ss_elements_addr_a + 5, static_cast<std::uint8_t>(0x90));
 
-                    overwrite(placement_position, static_cast<std::int16_t>(PLACE_POS));           // placement
-                    overwrite(ss_elements_addr_b + 7*1 + 5, static_cast<std::int16_t>(NAME_POS));  // name
-                    overwrite(ss_elements_addr_b + 7*2 + 5, static_cast<std::int16_t>(SCORE_POS)); // score
-                    overwrite(ss_elements_addr_b + 7*3 + 5, static_cast<std::int16_t>(0x6FFF));    // kills
-                    overwrite(ss_elements_addr_b + 7*4 + 5, static_cast<std::int16_t>(0x6FFF));    // assists
-                    overwrite(ss_elements_addr_b + 7*5 + 5, static_cast<std::int16_t>(0x6FFF));    // deaths
-                    overwrite(ss_elements_addr_b + 7*6 + 2, static_cast<std::int16_t>(PING_POS));  // ping
+                    overwrite(placement_pos_address, placement_pos);
+                    overwrite(ss_elements_addr_b + 7*1 + 5, name_pos);
+                    overwrite(ss_elements_addr_b + 7*2 + 5, score_pos);
+                    overwrite(ss_elements_addr_b + 7*3 + 5, static_cast<std::int16_t>(0x6FFF)); // kills
+                    overwrite(ss_elements_addr_b + 7*4 + 5, static_cast<std::int16_t>(0x6FFF)); // assists
+                    overwrite(ss_elements_addr_b + 7*5 + 5, static_cast<std::int16_t>(0x6FFF)); // deaths
+                    overwrite(ss_elements_addr_b + 7*6 + 2, ping_pos);
 
                     auto *ss_score_position_addr = ss_score_position_sig.data();
                     overwrite(ss_score_position_addr + 2, static_cast<std::int8_t>(0x10));
