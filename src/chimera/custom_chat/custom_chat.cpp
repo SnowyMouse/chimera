@@ -479,7 +479,6 @@ namespace Chimera {
             // First, get the length
             std::size_t length = lstrlenW(message);
 
-            printf("%S - %zu\n", message, length);
             char s[256] = {};
             if(length >= sizeof(s)) {
                 length = 255;

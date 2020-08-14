@@ -316,7 +316,7 @@ namespace Chimera {
 
                         // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
                         if(!do_maps_in_ram) {
-                            std::printf("Okay then!\n");
+                            //std::printf("Okay then!\n");
                             new_path = tmp_path;
                             last_loaded_map = new_index;
                             if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
