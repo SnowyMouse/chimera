@@ -219,7 +219,7 @@ namespace Chimera {
     static clock::time_point chat_open_state_changed;
 
     static bool player_in_server[16] = {};
-    static char player_name[16][14];
+    static char player_name[16][16];
 
     static bool show_chat_color_help = false;
     void set_show_color_help(bool show_help) noexcept {
@@ -534,21 +534,18 @@ namespace Chimera {
                 break;
         }
 
-        // Get player info
-        auto &player_info = ServerInfoPlayerList::get_server_info_player_list()->players[player_index];
+        // Get color info
         ColorARGB color_to_use;
         auto *name_color_to_use = color_id_for_player(player_index, &color_to_use);
 
-        // Get player name
-        auto player_name = u16_to_u8(player_info.name);
         // Re-encode from UTF-16 to UTF-8, as wcrtomb is producing unreliable results
         std::string message_u8 = u16_to_u8(message);
 
         // Format a message
         char entire_message[MAX_MESSAGE_LENGTH];
-        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_name.c_str(), message_u8.c_str());
+        std::snprintf(entire_message, sizeof(entire_message) - 1, format_to_use, name_color_to_use, player_name[player_index], message_u8.c_str());
 
-        // Initialize; any UTF-8 codepoints that were cut off by the format will be replaced by 
+        // Initialize; any UTF-8 codepoints that were cut off by the format will be replaced by
         // U+FFFD (or other appropriate character) as detailed in the documentation for MultiByteToWideChar.
         initialize_chat_message(chat_message, entire_message, color_to_use);
         add_message_to_array(chat_messages, chat_message);
@@ -769,12 +766,15 @@ namespace Chimera {
             add_message_to_array(chat_messages, chat_message);
         };
 
+        // Copy the name if we need to
         if(!player_in_server[player_a.index.index]) {
             auto *player_table_player = PlayerTable::get_player_table().get_player(player_a);
             single_message(player_a, 74);
             player_in_server[player_a.index.index] = true;
 
-            std::copy(player_table_player->name, player_table_player->name + sizeof(player_table_player->name) / sizeof(*player_table_player->name) + 1, player_name[player_a.index.index]);
+            auto *u8_name_hold = player_name[player_a.index.index];
+            auto u8_player_name = u16_to_u8(player_table_player->name);
+            std::strcpy(u8_name_hold, u8_player_name.c_str());
             char *t;
             for(t = player_name[player_a.index.index]; *t; t++);
             t[0] = '^';
