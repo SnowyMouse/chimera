@@ -219,7 +219,7 @@ namespace Chimera {
     static clock::time_point chat_open_state_changed;
 
     static bool player_in_server[16] = {};
-    static char player_name[16][16];
+    static char player_name[16][64];
 
     static bool show_chat_color_help = false;
     void set_show_color_help(bool show_help) noexcept {
