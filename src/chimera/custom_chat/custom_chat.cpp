@@ -349,7 +349,7 @@ namespace Chimera {
 
             // Calculate color stuff
             auto substring = std::wstring(chat_input_buffer, chat_input_cursor);
-            std::size_t cursor_x = text_pixel_length(substring.c_str(), chat_input_font);
+            long cursor_x = text_pixel_length(substring.c_str(), chat_input_font);
 
             // Subtract color codes
             char cursor_code[4];
@@ -357,7 +357,7 @@ namespace Chimera {
             cursor_code[1] = ';';
             cursor_code[2] = 0;
             for(std::size_t i = 0; i < chat_input_cursor; i++) {
-                if(buffer_to_show[i] == '^' && substring[i + 1] != 0) {
+                if(substring[i] == '^' && substring[i + 1] != 0) {
                     if(buffer_to_show[i + 1] == '^') {
                         cursor_x -= text_pixel_length("^", chat_input_font);
                         i++;
