@@ -212,7 +212,7 @@ namespace Chimera {
     static bool block_ips = false;
 
     #define INPUT_BUFFER_SIZE 64
-    static char chat_input_buffer[INPUT_BUFFER_SIZE];
+    static wchar_t chat_input_buffer[INPUT_BUFFER_SIZE];
     static std::size_t chat_input_cursor = 0;
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
@@ -340,11 +340,12 @@ namespace Chimera {
 
             std::size_t adjusted_y = chat_input_y + line_height * 2;
 
-            std::snprintf(buffer_to_show, sizeof(buffer_to_show), "%s - %s", localize(channel_name), chat_input_buffer);
+            auto chat_input_u8 = u16_to_u8(chat_input_buffer);
+            std::snprintf(buffer_to_show, sizeof(buffer_to_show), "%s - %s", localize(channel_name), chat_input_u8.c_str());
             apply_text_quake_colors(buffer_to_show, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
             std::size_t length_of_shown_buffer = std::strlen(buffer_to_show);
-            std::size_t length_of_input_buffer = std::strlen(chat_input_buffer);
+            std::size_t length_of_input_buffer = chat_input_u8.size();
             std::size_t input_buffer_start = length_of_shown_buffer - length_of_input_buffer;
             std::size_t cursor_location = input_buffer_start + chat_input_cursor;
             buffer_to_show[cursor_location] = 0;
@@ -653,7 +654,7 @@ namespace Chimera {
                 else if(key_code == 0x1D) {
                     // static bool ignore_next_key = false; // no longer necessary since deduplication
                     if(chat_input_cursor > 0) {
-                        std::size_t length = std::strlen(chat_input_buffer);
+                        std::size_t length = lstrlenW(chat_input_buffer);
                         // Move everything after the cursor down a character
                         for(std::size_t i = chat_input_cursor - 1; i < length; i++) {
                             chat_input_buffer[i] = chat_input_buffer[i + 1];
@@ -664,7 +665,7 @@ namespace Chimera {
                 }
                 // Del
                 else if(key_code == 0x54) {
-                    std::size_t length = std::strlen(chat_input_buffer);
+                    std::size_t length = lstrlenW(chat_input_buffer);
 
                     // Move everything after the cursor down a character
                     for(std::size_t i = chat_input_cursor; i < length; i++) {
@@ -673,9 +674,8 @@ namespace Chimera {
                 }
                 // Enter
                 else if(key_code == 0x38) {
-                    if(std::strlen(chat_input_buffer) && server_type() != ServerType::SERVER_NONE) {
-                        auto buffer = u8_to_u16(chat_input_buffer);
-                        chat_out(chat_input_channel, buffer.c_str());
+                    if(chat_input_buffer[0] != 0 && server_type() != ServerType::SERVER_NONE) {
+                        chat_out(chat_input_channel, chat_input_buffer);
                     }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
@@ -685,7 +685,7 @@ namespace Chimera {
             }
             // Insert a character
             else if (!std::iscntrl(character)) { // prevents keys like backspace from inserting characters into the buffer
-                std::size_t length = std::strlen(chat_input_buffer);
+                std::size_t length = lstrlenW(chat_input_buffer);
                 if(length + 1 < INPUT_BUFFER_SIZE) {
                     // Null terminate so we don't get blown up
                     chat_input_buffer[length + 1] = 0;
