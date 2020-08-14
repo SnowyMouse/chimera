@@ -350,7 +350,7 @@ namespace Chimera {
             std::size_t input_buffer_start = length_of_shown_buffer - length_of_input_buffer;
             std::size_t cursor_location = input_buffer_start + chat_input_cursor;
             buffer_to_show[cursor_location] = 0;
-            std::size_t cursor_x = text_pixel_length(buffer_to_show, chat_input_font);
+            std::size_t cursor_x = text_pixel_length(buffer_u16.c_str(), chat_input_font);
 
             // Subtract color codes
             char cursor_code[4];
