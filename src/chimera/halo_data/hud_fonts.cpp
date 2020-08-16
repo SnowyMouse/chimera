@@ -168,6 +168,8 @@ namespace Chimera {
         int add = widescreen_fix_enabled() ? (scale * (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f)) : 0;
 
         std::variant<TagID, GenericFont> font;
+
+        // Determine the font tag based on the tag path
         if(force == 0xFFFFFFFF) {
             auto *tag = get_tag(fd.font);
             if(tag == nullptr) {
@@ -188,9 +190,11 @@ namespace Chimera {
                 font = GenericFont::FONT_TICKER;
             }
             else {
-                font = fd.font;
+                font = fd.font; // give up - use a crappy bitmap font instead
             }
         }
+
+        // Some things should just be the same font regardless of map
         else {
             font = static_cast<GenericFont>(force);
         }
