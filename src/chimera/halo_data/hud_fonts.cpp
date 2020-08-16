@@ -156,7 +156,7 @@ namespace Chimera {
         auto x_middle = avg * scale;
 
         auto y = *xy & 0xFFFF;
-        auto font_to_use = stare ? GenericFont::FONT_SMALLER : name_font;
+        auto font_to_use = (!stare) ? GenericFont::FONT_SMALLER : name_font;
         auto width = text_pixel_length(string, font_to_use);
         apply_text(std::wstring(string), x_middle - width / 2, y, width, 1024, fd.color, font_to_use, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
@@ -169,7 +169,7 @@ namespace Chimera {
 
         std::variant<TagID, GenericFont> font;
 
-        if(true || force != 0xFFFFFFFF) {
+        if(force != 0xFFFFFFFF) {
             auto *tag_path = get_tag(fd.font)->path;
             if(std::strcmp(tag_path, "ui\\large_ui") == 0) {
                 font = GenericFont::FONT_LARGE;
