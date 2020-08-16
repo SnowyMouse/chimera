@@ -16,7 +16,7 @@
 #include "../event/d3d9_reset.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../fix/widescreen_fix.hpp"
-#include "../custom_chat/hud_text.hpp"
+#include "../halo_data/hud_fonts.hpp"
 
 namespace Chimera {
     #include "color_codes.hpp"

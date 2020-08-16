@@ -11,7 +11,7 @@
 #include "../signature/hook.hpp"
 #include "../event/tick.hpp"
 #include "../output/output.hpp"
-#include "../custom_chat/hud_text.hpp"
+#include "../halo_data/hud_fonts.hpp"
 
 #include "../halo_data/tag.hpp"
 #include "../halo_data/resolution.hpp"

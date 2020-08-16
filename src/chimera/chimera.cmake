@@ -41,8 +41,6 @@ add_library(chimera STATIC
     src/chimera/console/console.S
     src/chimera/custom_chat/custom_chat.cpp
     src/chimera/custom_chat/custom_chat.S
-    src/chimera/custom_chat/hud_text.cpp
-    src/chimera/custom_chat/hud_text.S
     src/chimera/event/camera.cpp
     src/chimera/event/command.cpp
     src/chimera/event/connect.cpp

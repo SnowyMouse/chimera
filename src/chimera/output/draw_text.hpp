@@ -15,22 +15,22 @@ namespace Chimera {
      */
     enum GenericFont {
         /** Fonts used for console */
-        FONT_CONSOLE,
+        FONT_CONSOLE = 0,
 
         /** Fonts used for system (e.g. menu text) */
-        FONT_SYSTEM,
+        FONT_SYSTEM = 1,
 
         /** Fonts used for small text */
-        FONT_SMALL,
+        FONT_SMALL = 2,
 
         /** Fonts used for large text */
-        FONT_LARGE,
+        FONT_LARGE = 3,
 
         /** Fonts used for names above heads (basically small but smaller) */
-        FONT_SMALLER,
+        FONT_SMALLER = 4,
 
         /** Fonts used for the ticker in the user interface */
-        FONT_TICKER
+        FONT_TICKER = 5
     };
 
     /**

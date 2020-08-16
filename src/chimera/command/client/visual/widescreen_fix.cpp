@@ -3,7 +3,7 @@
 #include "../../../fix/widescreen_fix.hpp"
 #include "../../../output/output.hpp"
 #include "../../../localization/localization.hpp"
-#include "../../../custom_chat/hud_text.hpp"
+#include "../../../halo_data/hud_fonts.hpp"
 #include "../../command.hpp"
 
 namespace Chimera {
