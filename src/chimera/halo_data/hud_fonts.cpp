@@ -168,9 +168,13 @@ namespace Chimera {
         int add = widescreen_fix_enabled() ? (scale * (static_cast<std::int16_t>((static_cast<double>(res.width) / res.height) * 480.000f - 640.000f) / 2.0f)) : 0;
 
         std::variant<TagID, GenericFont> font;
-
-        if(force != 0xFFFFFFFF) {
-            auto *tag_path = get_tag(fd.font)->path;
+        if(force == 0xFFFFFFFF) {
+            auto *tag = get_tag(fd.font);
+            if(tag == nullptr) {
+                std::printf("You just tried to call bullshit. Get fucked.\n");
+                return;
+            }
+            auto *tag_path = tag->path;
             if(std::strcmp(tag_path, "ui\\large_ui") == 0) {
                 font = GenericFont::FONT_LARGE;
             }
@@ -188,7 +192,7 @@ namespace Chimera {
             }
         }
         else {
-            force = static_cast<GenericFont>(force);
+            font = static_cast<GenericFont>(force);
         }
 
         auto x1 = (*xy >> 16) + add;
