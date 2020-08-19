@@ -472,6 +472,7 @@ namespace Chimera {
                 add_tick_event(on_tick);
                 add_map_load_event(on_map_load);
                 on_map_load();
+                on_tick();
             }
             else {
                 remove_tick_event(on_tick);
