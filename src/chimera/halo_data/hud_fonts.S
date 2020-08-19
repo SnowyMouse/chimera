@@ -162,6 +162,7 @@ _on_menu_hud_text_scoreboard_asm:
     call _get_scoreboard_font_generic
     push eax
     push 1
+    add dword ptr [ecx], 0x40000 ;# add an extra 4 virtual pixels to account for widescreen fix memery
     push ecx
     push dword ptr [esp+0x3C]
     call _on_menu_hud_text

@@ -38,6 +38,7 @@ _widescreen_element_reposition_text_f1:
 
 pushfd
 pushad
+add dword ptr [ecx], 0x40000 ;# add an extra 4 virtual pixels to account for widescreen fix memery
 push ecx
 call _reposition_menu_text_element
 add esp, 4
