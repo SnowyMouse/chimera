@@ -15,6 +15,7 @@
 
 #include "../halo_data/tag.hpp"
 #include "../halo_data/resolution.hpp"
+#include "../event/map_load.hpp"
 
 extern "C" {
     void widescreen_element_reposition_hud() noexcept;
@@ -84,6 +85,7 @@ namespace Chimera {
     std::uint16_t setting = 0;
 
     static void on_tick() noexcept;
+    static void on_map_load() noexcept;
     static float *scope_width;
     static float aspect_ratio = 4.0f / 3.0f;
     extern float widescreen_width_480p;
@@ -468,9 +470,12 @@ namespace Chimera {
 
             if(new_setting) {
                 add_tick_event(on_tick);
+                add_map_load_event(on_map_load);
+                on_map_load();
             }
             else {
                 remove_tick_event(on_tick);
+                remove_map_load_event(on_map_load);
 
                 widescreen_scope.rollback();
                 widescreen_element_scaling_sig.rollback();
@@ -556,32 +561,33 @@ namespace Chimera {
         }
     }
 
+    static void on_map_load() noexcept {
+        // Make it so these things do NOT stretch
+        auto jason_jones_tag = [](const char *tag_path) {
+            auto *tag = get_tag(tag_path, TagClassInt::TAG_CLASS_UI_WIDGET_DEFINITION);
+            if(!tag) {
+                return;
+            }
+            std::int16_t &bounds_top = *reinterpret_cast<std::int16_t *>(tag->data + 0x24);
+            std::int16_t &bounds_left = *reinterpret_cast<std::int16_t *>(tag->data + 0x26);
+            std::int16_t &bounds_bottom = *reinterpret_cast<std::int16_t *>(tag->data + 0x28);
+            std::int16_t &bounds_right = *reinterpret_cast<std::int16_t *>(tag->data + 0x2A);
+
+            if(bounds_top == 0 && bounds_bottom == 480 && bounds_left == 0 && bounds_right == 640) {
+                bounds_bottom = 478;
+            }
+        };
+        jason_jones_tag("ui\\shell\\main_menu\\multiplayer_type_select\\join_game\\join_game_items_list");
+        jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\controls_setup\\controls_options_menu");
+        jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\gamepad_setup\\gamepad_setup_options");
+    }
+
     static void on_tick() noexcept {
         aspect_ratio = static_cast<float>(get_resolution().width) / static_cast<float>(get_resolution().height);
         widescreen_left_offset_add = static_cast<std::int16_t>((aspect_ratio * 480.000f - 640.000f) / 2.0f);
 
         // Change instructions if we need them to be changed
         widescreen_width_480p = aspect_ratio * 480.0f;
-
-        if(get_tick_count() == 0) {
-            auto jason_jones_tag = [](const char *tag_path) {
-                auto *tag = get_tag(tag_path, TagClassInt::TAG_CLASS_UI_WIDGET_DEFINITION);
-                if(!tag) {
-                    return;
-                }
-                std::int16_t &bounds_top = *reinterpret_cast<std::int16_t *>(tag->data + 0x24);
-                std::int16_t &bounds_left = *reinterpret_cast<std::int16_t *>(tag->data + 0x26);
-                std::int16_t &bounds_bottom = *reinterpret_cast<std::int16_t *>(tag->data + 0x28);
-                std::int16_t &bounds_right = *reinterpret_cast<std::int16_t *>(tag->data + 0x2A);
-
-                if(bounds_top == 0 && bounds_bottom == 480 && bounds_left == 0 && bounds_right == 640) {
-                    bounds_bottom = 478;
-                }
-            };
-            jason_jones_tag("ui\\shell\\main_menu\\multiplayer_type_select\\join_game\\join_game_items_list");
-            jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\controls_setup\\controls_options_menu");
-            jason_jones_tag("ui\\shell\\main_menu\\settings_select\\player_setup\\player_profile_edit\\gamepad_setup\\gamepad_setup_options");
-        }
 
         if(*console_width != static_cast<std::int32_t>(widescreen_width_480p)) {
             overwrite(scope_width, widescreen_width_480p);
