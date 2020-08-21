@@ -1,0 +1,31 @@
+; Applies to: Nintendo Switch Wired Pro controllers on Windows 10
+
+axis_1_n=Right Stick Up
+axis_1_p=Right Stick Down
+axis_2_n=Right Stick Left
+axis_2_p=Right Stick Right
+
+axis_3_n=Left Stick Up
+axis_3_p=Left Stick Down
+axis_4_n=Left Stick Left
+axis_4_p=Left Stick Right
+
+button_1=Y
+button_2=B
+button_3=A
+button_4=X
+button_5=L
+button_6=R
+button_7=ZL
+button_8=ZR
+button_9=-
+button_10=+
+button_11=Left Stick
+button_12=Right Stick
+button_13=Home
+button_14=Capture
+
+pov_1_w=D-Pad Left
+pov_1_e=D-Pad Right
+pov_1_n=D-Pad Up
+pov_1_s=D-Pad Down

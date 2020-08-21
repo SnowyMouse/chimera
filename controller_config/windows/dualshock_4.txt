@@ -28,4 +28,4 @@ button_14=Touch Pad
 pov_1_w=D-Pad Left
 pov_1_e=D-Pad Right
 pov_1_n=D-Pad Up
-pov_1_s=D-Pad Down 
+pov_1_s=D-Pad Down
