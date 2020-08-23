@@ -25,8 +25,26 @@ chimera_warning_command_will_take_effect_on_next_load                           
 chimera_custom_chat_to_all                                                      All
 chimera_custom_chat_to_team                                                     Team
 chimera_custom_chat_to_vehicle                                                  Vehicle
+
+chimera_color_white                                                             white
+chimera_color_black                                                             black
 chimera_color_red                                                               red
 chimera_color_blue                                                              blue
+chimera_color_gray                                                              gray
+chimera_color_yellow                                                            yellow
+chimera_color_green                                                             green
+chimera_color_pink                                                              pink
+chimera_color_purple                                                            purple
+chimera_color_cyan                                                              cyan
+chimera_color_cobalt                                                            cobalt
+chimera_color_orange                                                            orange
+chimera_color_teal                                                              teal
+chimera_color_sage                                                              sage
+chimera_color_brown                                                             brown
+chimera_color_tan                                                               tan
+chimera_color_maroon                                                            maroon
+chimera_color_salmon                                                            salmon
+chimera_color_random                                                            random
 
 chimera_custom_chat_from_all                                                    ^%s%s^;^;: %s
 chimera_custom_chat_from_team                                                   ^%s%s^;^; (team): %s
@@ -131,6 +149,8 @@ chimera_player_list_command_none_found                                          
 chimera_send_chat_message_help                                                  Send a chat message on the given channel.
 chimera_send_chat_message_invalid_channel                                       Invalid channel number %i
 chimera_send_chat_message_throttled                                             You are sending messages too quickly!
+chimera_set_color_command_help                                                  Set your color.
+chimera_set_color_command_invalid_color                                         Invalid color %s specified.
 chimera_set_name_help                                                           Set your name.
 chimera_set_name_invalid_name_error                                             Invalid name \"%s\". Argument must be between 0 and 11 characters.
 chimera_show_coordinates_help                                                   Display your coordinates.

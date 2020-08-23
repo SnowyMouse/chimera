@@ -115,8 +115,27 @@ chimera_simple_score_screen_command_help                                        
 chimera_split_screen_hud_command_help                                           Usa el HUD de pantalla dividida como HUD principal.
 
 chimera_category_server                                                         servidor
+
+chimera_color_white                                                             blanco
+chimera_color_black                                                             negro
 chimera_color_red                                                               rojo
 chimera_color_blue                                                              azul
+chimera_color_gray                                                              gris
+chimera_color_yellow                                                            amarillo
+chimera_color_green                                                             verde
+chimera_color_pink                                                              rosa
+chimera_color_purple                                                            morado
+chimera_color_cyan                                                              aguamarina
+chimera_color_cobalt                                                            cobalto
+chimera_color_orange                                                            naranja
+chimera_color_teal                                                              verde azulado
+chimera_color_sage                                                              verde oscuro
+chimera_color_brown                                                             marrón
+chimera_color_tan                                                               canela
+chimera_color_maroon                                                            granate
+chimera_color_salmon                                                            salmón
+chimera_color_random                                                            random
+
 chimera_error_takes_player_number                                               Este comando toma el número de un jugador de chimera_players.
 chimera_player_list_command_help                                                Muestra a los jugadores del servidor en una lista.
 chimera_player_list_command_none_found                                          No hay jugadores en el servidor.

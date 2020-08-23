@@ -196,6 +196,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_block_extra_weapon", "chimera_category_enhancement", "client_block_extra_weapon", block_extra_weapon_command, false, 0, 0);
         ADD_COMMAND("chimera_unblock_all_extra_weapons", "chimera_category_enhancement", "client_block_extra_weapon", unblock_all_extra_weapons_command, false, 0, 0);
         ADD_COMMAND("chimera_set_name", "chimera_category_enhancement", "client", set_name_command, true, 0, 1);
+        ADD_COMMAND("chimera_set_color", "chimera_category_enhancement", "client", set_color_command, true, 0, 1);
         ADD_COMMAND("chimera_throttle_fps", "chimera_category_enhancement", "client", throttle_fps_command, true, 0, 1);
         ADD_COMMAND("chimera_fp_reverb", "chimera_category_enhancement", "client_fp_reverb", fp_reverb_command, true, 0, 1);
 

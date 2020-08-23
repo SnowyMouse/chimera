@@ -38,6 +38,8 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.S
     ${COMMAND_DIR}/client/enhancement/fp_reverb.cpp
+    ${COMMAND_DIR}/client/enhancement/set_color.cpp
+    ${COMMAND_DIR}/client/enhancement/set_color.S
     ${COMMAND_DIR}/client/enhancement/set_name.cpp
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp

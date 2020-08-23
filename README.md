@@ -418,6 +418,7 @@ the chimera folder created by Chimera.
 - [Player info](#player-info)
 - [Player list](#player-list)
 - [Send chat message](#send-chat-message)
+- [Set color](#set-color)
 - [Set name](#set-name)
 - [Show coordinates](#show-coordinates)
 - [Show FPS](#show-fps)
@@ -712,6 +713,11 @@ Send a chat message. Channel 0 is "all", channel 1 is "team", and channel 2 is
 "vehicle". Other channels may be used by mods.
 
 **Usage:** `chimera_set_name <channel> <message>`
+
+#### Set color
+Set your in-game color for free-for-all gametypes.
+
+**Usage:** `chimera_set_color [color]`
 
 #### Set name
 Set your in-game name.
