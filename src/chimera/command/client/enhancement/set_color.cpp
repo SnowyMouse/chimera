@@ -133,6 +133,71 @@ namespace Chimera {
             }
         }
 
+        const char *color;
+        switch(chimera_set_color_override) {
+            case PLAYER_COLOR_WHITE:
+                color = localize("chimera_color_white");
+                break;
+            case PLAYER_COLOR_BLACK:
+                color = localize("chimera_color_black");
+                break;
+            case PLAYER_COLOR_RED:
+                color = localize("chimera_color_red");
+                break;
+            case PLAYER_COLOR_BLUE:
+                color = localize("chimera_color_blue");
+                break;
+            case PLAYER_COLOR_GRAY:
+                color = localize("chimera_color_gray");
+                break;
+            case PLAYER_COLOR_YELLOW:
+                color = localize("chimera_color_yellow");
+                break;
+            case PLAYER_COLOR_GREEN:
+                color = localize("chimera_color_green");
+                break;
+            case PLAYER_COLOR_PINK:
+                color = localize("chimera_color_pink");
+                break;
+            case PLAYER_COLOR_PURPLE:
+                color = localize("chimera_color_purple");
+                break;
+            case PLAYER_COLOR_CYAN:
+                color = localize("chimera_color_cyan");
+                break;
+            case PLAYER_COLOR_COBALT:
+                color = localize("chimera_color_cobalt");
+                break;
+            case PLAYER_COLOR_ORANGE:
+                color = localize("chimera_color_orange");
+                break;
+            case PLAYER_COLOR_TEAL:
+                color = localize("chimera_color_teal");
+                break;
+            case PLAYER_COLOR_SAGE:
+                color = localize("chimera_color_sage");
+                break;
+            case PLAYER_COLOR_BROWN:
+                color = localize("chimera_color_brown");
+                break;
+            case PLAYER_COLOR_TAN:
+                color = localize("chimera_color_tan");
+                break;
+            case PLAYER_COLOR_MAROON:
+                color = localize("chimera_color_maroon");
+                break;
+            case PLAYER_COLOR_SALMON:
+                color = localize("chimera_color_salmon");
+                break;
+            case PLAYER_COLOR_RANDOM:
+                color = localize("chimera_color_random");
+                break;
+            default:
+                color = "off";
+                break;
+        }
+        console_output("%s", color);
+
         return true;
     }
 }
