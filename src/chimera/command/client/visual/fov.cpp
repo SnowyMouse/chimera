@@ -82,28 +82,28 @@ namespace Chimera {
 
     static bool fov_command_action(int argc, const char **args, std::optional<float> &setting, bool &vertical) {
         if(argc) {
-            char *end = nullptr;
-
             // Automatic FoV
             if(std::strcmp(args[0], "auto") == 0) {
                 setting = 2.0f * static_cast<float>(std::atan(static_cast<float>(std::tan(DEG_TO_RAD(70.0f) / 2.0f)) * 3.0f / 4.0f));
                 vertical = true;
             }
 
-            // We know what we want
-            else {
-                setting = DEG_TO_RAD(static_cast<float>(strtof(args[0], &end)));
-                vertical = (end && *end == 'v');
+            // Off?
+            else if(std::strcmp(args[0], "off") == 0) {
+                setting = std::nullopt;
             }
 
-            // Disable if someone put 0 there
-            if(setting == 0.0F) {
-                if(std::strcmp(args[0], "off") == 0 || setting == 0) {
+            // We know what we want
+            else {
+                std::size_t end = 0;
+                try {
+                    setting = DEG_TO_RAD(static_cast<float>(std::stof(args[0], &end)));
+                }
+                catch(std::exception &) {
                     console_error(localize("chimera_fov_error_invalid_fov_given"));
                     return false;
                 }
-
-                setting = std::nullopt;
+                vertical = (end && args[0][end] == 'v');
             }
 
             // Unregister everything
