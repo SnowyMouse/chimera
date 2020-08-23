@@ -4,6 +4,7 @@
 #include "../../../halo_data/camera.hpp"
 #include "../../../halo_data/resolution.hpp"
 #include "../../../output/output.hpp"
+#include "../../../localization/localization.hpp"
 #include "../../../chimera.hpp"
 #include "../../../signature/signature.hpp"
 #include "../../../signature/hook.hpp"
@@ -97,6 +98,11 @@ namespace Chimera {
 
             // Disable if someone put 0 there
             if(setting == 0.0F) {
+                if(std::strcmp(args[0], "off") == 0 || setting == 0) {
+                    console_error(localize("chimera_fov_error_invalid_fov_given"));
+                    return false;
+                }
+
                 setting = std::nullopt;
             }
 
