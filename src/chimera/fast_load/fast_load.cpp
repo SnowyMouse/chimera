@@ -4,6 +4,7 @@
 #include <cctype>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
 #include <shlwapi.h>
 
 #include "../chimera.hpp"
@@ -437,7 +438,18 @@ namespace Chimera {
             }
             index.file_name = names_vector[i].first.get();
             if(sizeof(index) >= sizeof(MapIndexRetail)) {
-                reinterpret_cast<MapIndexRetail *>(&index)->loaded = 1;
+                bool exists;
+                if(i >= 0x13) {
+                    exists = true;
+                }
+                else {
+                    // Stock maps: Make sure the file exists and it's at least as large enough as a header
+                    auto path = std::filesystem::path("maps") / (std::string(index.file_name) + ".map");
+                    exists = std::filesystem::exists(path) && std::filesystem::file_size(path) >= 0x800;
+                }
+
+                // Make sure it exists if it's a stock map
+                reinterpret_cast<MapIndexRetail *>(&index)->loaded = exists;
             }
 
             // If it's demo, do this
