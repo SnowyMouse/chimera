@@ -266,9 +266,6 @@ namespace Chimera {
                 if(allow) {
                     unblock_error();
                 }
-                else {
-                    console_text[0] = 0;
-                }
                 break;
             }
             case CommandResult::COMMAND_RESULT_FAILED_NOT_ENOUGH_ARGUMENTS:
