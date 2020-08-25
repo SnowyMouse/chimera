@@ -44,6 +44,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/set_color.S
     ${COMMAND_DIR}/client/enhancement/set_name.cpp
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
+    ${COMMAND_DIR}/client/lua/reload_scripts.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp
     ${COMMAND_DIR}/client/mouse/mouse_sensitivity.cpp
     ${COMMAND_DIR}/client/server/custom_edition_netcode.cpp

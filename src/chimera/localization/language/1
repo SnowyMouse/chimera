@@ -22,6 +22,7 @@ chimera_category_bookmark                                                       
 chimera_category_core                                                           esencial
 chimera_category_debug                                                          debug
 chimera_category_enhancement                                                    mejora
+chimera_category_lua                                                          	lua
 chimera_category_mouse                                                          mouse
 chimera_category_visual                                                         visual
 
@@ -76,6 +77,7 @@ chimera_delete_empty_weapons_help                                               
 chimera_devmode_command_help                                                    Habilita el devmode. Esto habilitará los comandos de cheats y de desarrollador.
 chimera_language_command_available_languages                                    Lenguajes disponibles:
 chimera_language_command_error_invalid_language                                 Lenguaje inválido %s.
+chimera_reload_scripts_command_help												Recarga todos los scripts de Lua.
 chimera_language_command_help                                                   Establece el idioma de Chimera.
 chimera_mouse_sensitivity_command_help                                          Cambia la sensibilidad del mouse.
 chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical

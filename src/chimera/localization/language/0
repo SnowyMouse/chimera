@@ -56,6 +56,7 @@ chimera_category_core                                                           
 chimera_category_custom_chat                                                    custom_chat
 chimera_category_debug                                                          debug
 chimera_category_enhancement                                                    enhancement
+chimera_category_lua                                                          	lua
 chimera_category_mouse                                                          mouse
 chimera_category_server                                                         server
 chimera_category_visual                                                         visual
@@ -140,6 +141,7 @@ chimera_interpolate_help                                                        
 chimera_language_command_available_languages                                    Available languages:
 chimera_language_command_error_invalid_language                                 Invalid language %s.
 chimera_language_command_help                                                   Set the language of Chimera.
+chimera_reload_scripts_command_help												Reload all Lua scripts.
 chimera_model_detail_command_help                                               Change Halo's model detail.
 chimera_mouse_sensitivity_command_help                                          Change mouse sensitivity.
 chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical

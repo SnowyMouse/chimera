@@ -239,6 +239,11 @@ namespace Chimera {
             return;
         }
 
+        if (std::strcmp(console_text, "rs") == 0) { // Reload scripts shorthand command
+            get_chimera().execute_command("chimera_reload_scripts");
+            return;
+        }
+
         // If this is the rcon command, we may need to do special things
         if(std::strncmp(console_text, "rcon", 4) == 0 && get_chimera().feature_present("client") && server_type() == ServerType::SERVER_DEDICATED) {
             rcon_command_used_recently = true;
