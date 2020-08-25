@@ -53,10 +53,11 @@ _on_pickup_hud_text_asm:
 _on_hud_text_esi_asm:
     pushfd
     pushad
+    push dword ptr [ecx]
     push esi
-    push dword ptr [esp+0x34]
+    push dword ptr [esp+0x38]
     call _on_hold_hud_text
-    add esp, 0x8
+    add esp, 0xC
     popad
     popfd
     ret

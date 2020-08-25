@@ -124,17 +124,41 @@ namespace Chimera {
         apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
     }
 
-    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy) noexcept {
+    extern "C" void on_hold_hud_text(const wchar_t *string, std::uint32_t *xy_to, std::uint32_t xy) noexcept {
         auto &fd = get_current_font_data();
 
-        auto large_font_tag_id = get_generic_font(GenericFont::FONT_LARGE);
-        auto x = (*xy >> 16) - text_pixel_length(string, large_font_tag_id);
-        auto y = (*xy & 0xFFFF);
+        auto x = xy >> 16;
+        auto y = xy & 0xFFFF;
+        auto font = GenericFont::FONT_LARGE;
 
-        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, GenericFont::FONT_LARGE, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
+        apply_text(std::wstring(string), x, y, 1024, 1024, fd.color, font, fd.alignment, TextAnchor::ANCHOR_TOP_LEFT, true);
 
-        *xy = static_cast<std::uint16_t>(y);
-        *xy |= (x + (text_pixel_length(string, GenericFont::FONT_LARGE))) << 16;
+        // Do we have a newline? If so, reset xy_to. Otherwise, continue it
+        bool new_line_present = false;
+        std::size_t next_line_length = 0;
+        for(auto *c = string; *c; c++) {
+            std::size_t l = 0;
+            if(*c == '\n') {
+                l = 1;
+            }
+            else if(*c == '|' && c[1] == 'n') {
+                l = 2;
+            }
+            if(l) {
+                new_line_present = true;
+                next_line_length = text_pixel_length(c + l, font);
+            }
+        }
+
+        // If we do have a newline, we need to put the cursor at the next line after the text we just drew
+        if(new_line_present) {
+            *xy_to = static_cast<std::uint16_t>(y + font_pixel_height(font));
+            *xy_to |= ((xy >> 16) + next_line_length) << 16;
+        }
+        else {
+            *xy_to = static_cast<std::uint16_t>(y);
+            *xy_to |= (x + (fd.xy_offset >> 16) + (text_pixel_length(string, font))) << 16;
+        }
     }
 
     extern "C" void on_weapon_pick_up_hud_text(const wchar_t *string, std::uint32_t xy) noexcept {

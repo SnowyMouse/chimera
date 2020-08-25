@@ -72,8 +72,11 @@ namespace Chimera {
 
         // Tabs!
         std::int16_t tabs[0x12];
+
+        // Offset
+        std::uint32_t xy_offset;
     };
-    static_assert(sizeof(FontData) == 0x40);
+    static_assert(sizeof(FontData) == 0x44);
 
     /**
      * Get the font data for the text currently being drawn

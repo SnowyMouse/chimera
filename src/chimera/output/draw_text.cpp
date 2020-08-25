@@ -190,6 +190,9 @@ namespace Chimera {
         auto original_align = align;
         auto &font_data = get_current_font_data();
 
+        auto original_x = x;
+        x += font_data.xy_offset >> 16;
+
         auto append_thing = [&fmt, &x, &y, &width, &height, &align, &text, &tabs, &start, &font_data](std::size_t end) {
             auto substr_size = end - start;
             if(substr_size == 0) {
@@ -253,6 +256,7 @@ namespace Chimera {
                             y += font_height;
                             height -= font_height;
                             align = original_align;
+                            x = original_x;
                             break;
                         case 'r':
                             tabs = 0;
@@ -456,6 +460,20 @@ namespace Chimera {
         TagID font_tag = get_generic_font_if_generic(font);
         LPD3DXFONT override_font = get_override_font(font);
 
+        // Do the buffer thing
+        T buffer[1024];
+        std::size_t buffer_length = 0;
+        for(const T *i = text; *i && buffer_length + 1 < sizeof(buffer) / sizeof(T); i++, buffer_length++) {
+            if(*i == '|' && (i[1] == 'n')) {
+                buffer[buffer_length] = '\n';
+                i++;
+            }
+            else {
+                buffer[buffer_length] = *i;
+            }
+        }
+        buffer[buffer_length] = 0;
+
         if(override_font) {
             RECT rect;
 
@@ -478,10 +496,10 @@ namespace Chimera {
             int trailing_space = (space_dot - dot) * trailing;
 
             if(sizeof(T) == sizeof(char)) {
-                override_font->DrawText(NULL, reinterpret_cast<const char *>(text), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+                override_font->DrawText(NULL, reinterpret_cast<const char *>(buffer), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
             }
             else {
-                override_font->DrawTextW(NULL, reinterpret_cast<const wchar_t *>(text), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+                override_font->DrawTextW(NULL, reinterpret_cast<const wchar_t *>(buffer), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
             }
 
             auto res = get_resolution();
