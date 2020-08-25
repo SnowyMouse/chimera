@@ -97,7 +97,15 @@ namespace Chimera {
      * @param  tag_class class of the tag
      * @return           pointer to the tag if found, nullptr if not
      */
-    Tag *get_tag(const char *path, TagClassInt tag_class) noexcept;
+    Tag *get_tag(const char *path, std::uint32_t tag_class) noexcept;
+
+    /**
+     * Get the tag
+     * @param  path      path of the tag
+     * @param  tag_class int of the tag class
+     * @return           pointer to the tag if found, nullptr if not
+     */
+    Tag *get_tag(const char *path, const char *tag_class) noexcept;
 
     /**
      * Get the tag

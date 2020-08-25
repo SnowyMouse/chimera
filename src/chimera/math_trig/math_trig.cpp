@@ -197,5 +197,15 @@ namespace Chimera {
         return std::sqrt(distance_squared(a.x, a.y, b.x, b.y));
     }
 
+    double counter_time_elapsed(const LARGE_INTEGER &before) noexcept {
+        LARGE_INTEGER now;
+        QueryPerformanceCounter(&now);
+        return counter_time_elapsed(before, now);
+    }
 
+    double counter_time_elapsed(const LARGE_INTEGER &before, const LARGE_INTEGER &after) noexcept {
+        static LARGE_INTEGER performance_frequency = {};
+        if(performance_frequency.QuadPart == 0) QueryPerformanceFrequency(&performance_frequency);
+        return static_cast<double>(after.QuadPart - before.QuadPart) / performance_frequency.QuadPart;
+    }
 }

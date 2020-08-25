@@ -6,6 +6,7 @@
 #include "../signature/signature.hpp"
 #include "../custom_chat/custom_chat.hpp"
 #include "../console/console.hpp"
+#include "../event/rcon_message.hpp"
 #include "../chimera.hpp"
 
 namespace Chimera {
@@ -55,7 +56,10 @@ namespace Chimera {
 
     extern "C" void before_rcon_message() noexcept;
     extern "C" bool on_rcon_message(const char *message) noexcept {
-        if(rcon_used_recently()) {
+        if (!call_rcon_message_events(message)) {
+            return false;
+        }
+        else if(rcon_used_recently()) {
             return true;
         }
         else if(custom_chat_enabled()) {
@@ -68,6 +72,12 @@ namespace Chimera {
     }
 
     void set_up_rcon_message_hook() noexcept {
+        static bool enabled = false;
+        if(enabled) {
+            return;
+        }
+        enabled = true;
+        
         static Hook hook;
         if(get_chimera().feature_present("client_rcon")) {
             write_jmp_call(get_chimera().get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));

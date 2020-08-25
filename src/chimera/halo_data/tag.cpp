@@ -8,7 +8,7 @@
 #include <optional>
 
 namespace Chimera {
-    Tag *get_tag(const char *path, TagClassInt tag_class) noexcept {
+    Tag *get_tag(const char *path, std::uint32_t tag_class) noexcept {
         auto &tag_data_header = get_tag_data_header();
         auto *tag = tag_data_header.tag_array;
         auto tag_count = tag_data_header.tag_count;
@@ -18,6 +18,32 @@ namespace Chimera {
             }
         }
         return nullptr;
+    }
+
+    Tag *get_tag(const char *path, const char *tag_class) noexcept {
+        std::uint32_t tag_class_int = tag_class_from_string(tag_class);
+
+        if(tag_class_int == TagClassInt::TAG_CLASS_NULL) {
+            if(std::strlen(tag_class) == 4) {
+                char buffer[5] = {};
+                bool fill = false;
+                for(std::size_t i = 0; i < 4; i++) {
+                    if(tag_class[i] == 0x0 || fill) {
+                        buffer[3 - i] = 0x20;
+                        fill = true;
+                    }
+                    else {
+                        buffer[3 - i] = tag_class[i];
+                    }
+                }
+                tag_class_int = *reinterpret_cast<uint32_t *>(buffer);
+            }
+            else {
+                return nullptr;
+            }
+        }
+
+        return get_tag(path, tag_class_int);
     }
 
     Tag *get_tag(TagID tag_id) noexcept {

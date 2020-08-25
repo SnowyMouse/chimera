@@ -68,7 +68,13 @@ namespace Chimera {
         /** Calculated with CRC32 of BSPs, models, and tag data */
         std::uint32_t crc32_unused;
 
-        PAD(0x794);
+        PAD(0x2A8);
+
+        /** Lua script data */
+        std::uint32_t lua_script_data;
+        std::uint32_t lua_script_size;
+
+        PAD(0x4E4);
 
         /** Must be equal to 0x666F6F74 */
         std::uint32_t foot = 0x666F6F74;

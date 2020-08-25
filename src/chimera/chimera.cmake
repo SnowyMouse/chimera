@@ -53,6 +53,7 @@ add_library(chimera STATIC
     src/chimera/event/damage.S
     src/chimera/event/frame.cpp
     src/chimera/event/map_load.cpp
+    src/chimera/event/rcon_message.cpp
     src/chimera/event/tick.cpp
     src/chimera/fast_load/crc32.c
     src/chimera/fast_load/fast_load.cpp
@@ -134,6 +135,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/effect.cpp
     src/chimera/halo_data/flag.cpp
     src/chimera/halo_data/game_engine.cpp
+    src/chimera/halo_data/globals.cpp
     src/chimera/halo_data/hud_fonts.cpp
     src/chimera/halo_data/hud_fonts.S
     src/chimera/halo_data/keyboard.cpp
@@ -146,6 +148,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/multiplayer.cpp
     src/chimera/halo_data/object.cpp
     src/chimera/halo_data/object.S
+    src/chimera/halo_data/spawn_object.cpp
     src/chimera/halo_data/particle.cpp
     src/chimera/halo_data/path.cpp
     src/chimera/halo_data/pause.cpp
@@ -156,7 +159,12 @@ add_library(chimera STATIC
     src/chimera/halo_data/script.S
     src/chimera/halo_data/server.cpp
     src/chimera/halo_data/tag.cpp
+    src/chimera/halo_data/tag_class.cpp
     src/chimera/localization/localization.cpp
+    src/chimera/lua/lua_callback.cpp
+    src/chimera/lua/lua_game.cpp
+    src/chimera/lua/lua_io.cpp
+    src/chimera/lua/lua.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
@@ -196,10 +204,11 @@ target_include_directories(chimera
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/include"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/lua/include"
 )
 
 # Set the name
-target_link_libraries(chimera shlwapi hac_map_downloader ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32)
+target_link_libraries(chimera shlwapi hac_map_downloader ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ${CMAKE_CURRENT_SOURCE_DIR}/ext/lua/lib/liblua53.a ws2_32)
 
 # Target this
 target_include_directories(chimera PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include)

@@ -16,6 +16,7 @@
 #include "event/frame.hpp"
 #include "halo_data/path.hpp"
 #include "halo_data/hud_fonts.hpp"
+#include "lua/lua.hpp"
 #include "output/draw_text.hpp"
 #include "output/output.hpp"
 #include "signature/hook.hpp"
@@ -603,6 +604,9 @@ namespace Chimera {
 
             // Fix the death reset time
             setup_death_reset_time_fix();
+
+            // Set up Lua scripting
+            setup_lua_scripting();
 
             chimera->reload_config();
         }
