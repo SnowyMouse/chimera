@@ -98,6 +98,7 @@ These are features that are always (or are on).
 - [Removed Watson](#removed-watson)
 - [Multi-team vehicle fix](#multi-team-vehicle-fix)
 - [Map downloading](#map-downloading)
+- [Lua scripting](#lua-scripting)
 
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
@@ -267,6 +268,9 @@ Chimera will automatically attempt to download maps off of the
 [HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that
 is playing a map you don't have. These maps are stored under `chimera/maps` in
 your Halo profiles folder.
+
+#### Lua scripting
+[Lua scripting from Chimera -572](https://docs.google.com/document/d/1F3Q0blvHPgc7VfLJmhATIJrWZ0gMQ_KenkMsOQ7KKS0/edit?usp=sharing). Scripts in the global folder are loaded on startup. They remain permanently loaded unless the user uses chimera_reload_scripts. Scripts in the map folder is loaded when a map is loaded and unloaded when a map is unloaded. Scripts may also be contained inside of map files.
 
 ### Ini features
 Chimera has a very customizable chimera.ini text file that you can use to
