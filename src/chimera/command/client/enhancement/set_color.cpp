@@ -120,7 +120,7 @@ namespace Chimera {
                 return false;
             }
 
-            auto &sig = chimera.get_signature(chimera.feature_present("client_trial") ? "player_color_demo_sig" : "player_color_sig");
+            auto &sig = chimera.get_signature(chimera.feature_present("client_demo") ? "player_color_trial_sig" : "player_color_sig");
 
             if(chimera_set_color_override == 0xFFFFFFFF) {
                 sig.rollback();
