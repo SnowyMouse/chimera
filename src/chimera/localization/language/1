@@ -56,7 +56,7 @@ chimera_block_extra_weapon_help                                                 
 chimera_unblock_all_extra_weapons_fail                                          No se bloquearon armas.
 chimera_unblock_all_extra_weapons_help                                          Desbloquea todas las armas extra.
 chimera_unblock_all_extra_weapons_success                                       Todas las armas fueron bloqueadas.
-chimera_block_equipment_rotation_command_help                                   Deshabilita la rotación de los equipos cuando se es el anfitrión (Emula el comportamiento que tienen en Xbox).
+chimera_block_equipment_rotation_command_help                                   Deshabilita la rotación de los equipos cuando se es el anfitrión (emula el comportamiento de Xbox).
 chimera_block_gametype_indicator_command_help                                   Oculta el indicador de tipo de partida.
 chimera_block_gametype_rules_command_help                                       Deshabilita las reglas del tipo de juego al comienzo de una partida.
 chimera_block_hold_f1_command_help                                              Deshabilita el aviso \"Mantén presionado F1 para puntajes\".
