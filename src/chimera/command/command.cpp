@@ -182,7 +182,8 @@ namespace Chimera {
         }
         ADD_COMMAND("chimera_load_ui_map", "chimera_category_debug", "client", load_ui_map_command, false, 0, 0);
         ADD_COMMAND("chimera_player_info", "chimera_category_debug", "core", player_info_command, false, 0, 1);
-        ADD_COMMAND("chimera_damage_test", "chimera_category_debug", "core", damage_test_command, false, 2, 5);
+        ADD_COMMAND("chimera_apply_damage", "chimera_category_debug", "core", apply_damage_command, false, 2, 5);
+        ADD_COMMAND("chimera_block_damage", "chimera_category_debug", "core", block_damage_command, false, 0, 1);
         ADD_COMMAND("chimera_show_coordinates", "chimera_category_debug", "client", show_coordinates_command, true, 0, 1);
         ADD_COMMAND("chimera_show_fps", "chimera_category_debug", "client", show_fps_command, true, 0, 1);
         ADD_COMMAND("chimera_tps", "chimera_category_debug", "core", tps_command, false, 0, 1);

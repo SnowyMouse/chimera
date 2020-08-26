@@ -19,9 +19,7 @@ namespace Chimera {
         }
     }
 
-    // damage_effect, object_id, multiplier, causer_player, causer_object
-
-    bool damage_test_command(int argc, const char **argv) {
+    bool apply_damage_command(int argc, const char **argv) {
         // Get the damage effect
         auto *tag = get_tag(argv[0], TagClassInt::TAG_CLASS_DAMAGE_EFFECT);
         if(!tag) {
