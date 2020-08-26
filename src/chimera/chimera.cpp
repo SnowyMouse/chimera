@@ -516,6 +516,12 @@ namespace Chimera {
         return chimera->get_signature(signature).data();
     }
 
+    extern "C" void address_for_signature_if_null(const char *signature, std::byte **address) {
+        if(*address == nullptr) {
+            *address = chimera->get_signature(signature).data();
+        }
+    }
+
     const char *Chimera::get_path() noexcept {
         if(this->p_path.size() == 0) {
             this->p_path = halo_path();

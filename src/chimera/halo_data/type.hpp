@@ -17,12 +17,16 @@ namespace Chimera {
             std::uint16_t id;
         } index;
 
+        static HaloID null_id() noexcept {
+            return { 0xFFFFFFFF };
+        }
+
         /**
          * Check if the tag is null (0xFFFFFFFF)
          * @return true if the tag is null
          */
         bool is_null() const noexcept {
-            return this->whole_id == 0xFFFFFFFF;
+            return *this == null_id();
         }
 
         bool operator==(const HaloID &other) const noexcept {
