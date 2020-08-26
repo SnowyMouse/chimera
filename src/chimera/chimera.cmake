@@ -134,6 +134,8 @@ add_library(chimera STATIC
     src/chimera/halo_data/light.cpp
     src/chimera/halo_data/map.cpp
     src/chimera/halo_data/map.S
+    src/chimera/halo_data/menu.cpp
+    src/chimera/halo_data/menu.S
     src/chimera/halo_data/main_menu_music.cpp
     src/chimera/halo_data/multiplayer.cpp
     src/chimera/halo_data/object.cpp
