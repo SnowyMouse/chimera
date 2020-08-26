@@ -47,6 +47,16 @@ chimera_history_list_command_querying                                           
 chimera_block_buffering_command_help                                            Deshabilita el buffering. Puede mejorar la respuesta de entrada del mouse.
 chimera_block_buffering_command_warning                                         ¡La deshabilitación del buffering ya está activada (probablemente a través de config.txt)!
 chimera_block_camera_shake_command_help                                         Deshabilita la sacudida de cámara al recibir daños.
+chimera_block_extra_weapon_blocked                                              %s bloqueada
+chimera_block_extra_weapon_error_cannot_get_object                              No se pudo leer tu objeto (estás muerto)
+chimera_block_extra_weapon_error_cannot_get_weapon                              No se pudo leer el arma
+chimera_block_extra_weapon_error_not_enough_weapons                             Necesitas tener al menos 3 armas desbloqueadas.
+chimera_block_extra_weapon_error_weapon_already_blocked                         Tu arma ya está bloqueada.
+chimera_block_extra_weapon_help                                                 Bloquea el arma que estás sosteniendo (debes tener al menos 3 armas)
+chimera_unblock_all_extra_weapons_fail                                          No se bloquearon armas.
+chimera_unblock_all_extra_weapons_help                                          Desbloquea todas las armas extra.
+chimera_unblock_all_extra_weapons_success                                       Todas las armas fueron bloqueadas.
+chimera_block_equipment_rotation_command_help                                   Deshabilita la rotación de los equipos cuando se es el anfitrión (emula el comportamiento de Xbox).
 chimera_block_gametype_indicator_command_help                                   Oculta el indicador de tipo de partida.
 chimera_block_gametype_rules_command_help                                       Deshabilita las reglas del tipo de juego al comienzo de una partida.
 chimera_block_hold_f1_command_help                                              Deshabilita el aviso \"Mantén presionado F1 para puntajes\".
@@ -60,6 +70,9 @@ chimera_command_help                                                            
 chimera_command_info_for_command                                                Información para %s:
 chimera_command_version                                                         Chimera versión %s por Kavawuvi ^v^
 chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
+custom_edition_netcode_command_help                                             Habilita el soporte para la edición personalizada (custom edition).
+custom_edition_netcode_command_error_needs_custom_edition_map_support           El soporte para mapas de la edición personalizada no está habilitado en tu cliente.
+chimera_delete_empty_weapons_help                                               Elimina las armas vacías cuando se es el anfitrión (emula el comportamiento de Xbox).
 chimera_devmode_command_help                                                    Habilita el devmode. Esto habilitará los comandos de cheats y de desarrollador.
 chimera_language_command_available_languages                                    Lenguajes disponibles:
 chimera_language_command_error_invalid_language                                 Lenguaje inválido %s.
@@ -72,6 +85,12 @@ chimera_signature_info_command_signature_address                                
 chimera_signature_info_command_signature_feature                                Característica
 chimera_signature_info_command_signature_info                                   Información de signatura para %s:
 chimera_throttle_fps_help                                                       Bloquea la velocidad de cuadros de Halo.
+chimera_teleport_help                                                           Teletransportarse a un jugador o a unas coordenadas.
+chimera_teleport_invalid_arguments                                              Argumentos inválidos.
+chimera_teleport_dead                                                           No se pudo teletransportar: el objetivo no está vivo
+chimera_teleport_dead_self                                                      No se pudo teletransportar: el jugador a teletransportar no está vivo
+chimera_teleport_success_mp                                                     %s teletransportado a %f %f %f
+chimera_teleport_success_sp                                                     Teletransportado a %f %f %f
 
 chimera_about_command_credits_header                                            Créditos
 chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
@@ -79,15 +98,23 @@ chimera_about_command_license_header                                            
 chimera_about_command_license                                                   Copyright (C) 2020 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
+chimera_allow_all_passengers_command_help                                       Deshabilita las restricciones de equipo para vehículos.
 chimera_block_all_bullshit_help                                                 Deshabilita varias cosas que la mayoría de la gente puede encontrar molestas.
+chimera_block_auto_center_command_help                                          Establece si el centrado automático está desactivado.
+chimera_block_button_quotes_command_help                                        Establece si eliminar o no las comillas de las indicaciones de los botones.
 chimera_category_controller                                                     mando
 chimera_category_custom_chat                                                    chat_custom
 chimera_chat_block_ips_command_help                                             Oculta las IPs mostradas en los mensajes.
 chimera_chat_block_server_messages_command_help                                 Oculta los mensajes del servidor.
 chimera_chat_color_help_command_help                                            Muestra una lista de los colores del chat al ingresar mensajes en éste.
 chimera_fov_command_help                                                        Establece el campo de visión. Usa \"auto\" para FOV automático o el sufijo \"v\" para bloquearlo a un FOV vertical.
+chimera_fov_vehicle_command_help                                                Establece el campo de visión para vehículos. Usa \"auto\" para FOV automático o el sufijo \"v\" para bloquear a un FOV vertical.
+chimera_fov_cinematic_command_help                                              Establece el campo de visión para cinemáticas. Usa \"auto\" para FOV automático o el sufijo \"v\" para bloquear a un FOV vertical.
+chimera_fov_error_invalid_fov_given                                             FOV invalido. Se esperaba \"auto\", <FOV>, <FOV>v, o \"off\"
+chimera_fp_reverb_command_help                                                  Establece si los sonidos en primera persona deberían tener o no reverberación cuando EAX está habilitado.
 chimera_player_info_command_help                                                Muestra información sobre un jugador mediante indice de rcon o a usted mismo si no se proporciona ningun número.
 chimera_set_name_help                                                           Establece tu nombre.
+chimera_set_name_invalid_name_error                                             Nombre \"%s\" invalido. El argumento debe tener entre 0 y 16 caracteres.
 chimera_show_coordinates_help                                                   Muestra tus coordenadas en el mapa.
 chimera_show_fps_help                                                           Muestra tu velocidad de fotogramas actual.
 chimera_signature_info_command_dumped                                           Se volcaron todas las signaturas a %s
@@ -100,7 +127,10 @@ chimera_enable_console_command_help                                             
 chimera_enable_console_command_warning                                          La consola fue habilitada antes de iniciar el juego (-console) y no puede ser deshabilitada.
 
 chimera_error_must_be_host                                                      Debes ser el host del servidor para hacer eso.
+chimera_error_must_be_in_a_server                                               Tienes que estar en un servidor para poder hacer eso.
 chimera_error_player_not_found                                                  El/la jugador/ra %s no fue encontrado/da.
+
+chimera_tag_map_is_protected                                                    El mapa está protegido (desconocido)
 
 chimera_warning_command_will_take_effect_on_next_load                           Este comando tendrá efecto la próxima vez que cargue.
 
@@ -137,10 +167,18 @@ chimera_color_salmon                                                            
 chimera_color_random                                                            aleatorio
 
 chimera_error_takes_player_number                                               Este comando toma el número de un jugador de chimera_players.
+chimera_error_failed_to_open_init                                               No se pudo abrir el archivo ini %s
+chimera_error_cannot_download_retail_maps_1                                     El descargador de mapas no soporta mapas de Halo PC y Halo MD.
+chimera_error_cannot_download_retail_maps_2                                     Modifica el archivo chimera.ini y establece la opción \"download_retail_maps\" bajo la sección \"memory\" para habilitarla.
 chimera_player_list_command_help                                                Muestra a los jugadores del servidor en una lista.
 chimera_player_list_command_none_found                                          No hay jugadores en el servidor.
+chimera_send_chat_message_help                                                  Envía un mensaje por el chat en un canal dado.
+chimera_send_chat_message_invalid_channel                                       Número de canal %i inválido
+chimera_send_chat_message_throttled                                             ¡Estás enviando mensajes muy rápido!
+chimera_set_color_command_help                                                  Establece tu color.
+chimera_set_color_command_invalid_color                                         Color %s inválido.
 chimera_spectate_command_help                                                   Cambia tu perspectiva a la perspectiva de otro jugador.
-chimera_spectate_command_now_spectating                                         Observando a %S
+chimera_spectate_command_now_spectating                                         Observando a %s
 chimera_spectate_next_command_help                                              Cambia al siguiente jugador.
 chimera_spectate_next_command_nobody_to_spectate                                No hay nadie más a quien puedas observar.
 chimera_spectate_previous_command_help                                          Cambia al jugador anterior.
@@ -154,3 +192,4 @@ chimera_map_info_command_ram_buffer                                             
 chimera_map_info_command_map_tag_count                                          Contador de tags
 chimera_map_info_command_map_tag_data_size                                      Tamaño de datos de tags
 chimera_map_info_command_map_protected                                          Protegido
+chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     No se puede desactivar el arreglo de pantalla ancha mientras la anulación de texto esté habilitada.
