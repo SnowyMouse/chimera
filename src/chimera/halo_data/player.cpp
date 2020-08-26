@@ -37,8 +37,14 @@ namespace Chimera {
         if(!server_info) {
             return nullptr;
         }
-        if(rcon_id < server_info->player_count) {
-            return server_info->players[rcon_id].get_player_table_player();
+
+        // Make sure we have enough thingies
+        if(rcon_id < sizeof(server_info->players) / sizeof(server_info->players[rcon_id])) {
+            auto *player = server_info->players[rcon_id].get_player_table_player();
+            if(player && player->player_id == 0xFFFF) {
+                return nullptr;
+            }
+            return player;
         }
         else {
             return nullptr;
