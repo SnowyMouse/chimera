@@ -213,6 +213,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_block_equipment_rotation", "chimera_category_server", "core_null_rotation", block_equipment_rotation_command, true, 0, 1);
         ADD_COMMAND("chimera_allow_all_passengers", "chimera_category_server", "core_mtv", allow_all_passengers_command, true, 0, 1);
         ADD_COMMAND("chimera_master_server", "chimera_category_server", "core", master_server_command, true, 0, 4);
+        ADD_COMMAND("chimera_client_side_hit_detection", "chimera_category_core" /* "chimera_category_server" */, "client", client_side_hit_detection_command, true, 0, 1);
 
         // Visuals
         ADD_COMMAND("chimera_af", "chimera_category_visual", "client_af", af_command, true, 0, 1);

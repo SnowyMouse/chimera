@@ -28,6 +28,7 @@ namespace Chimera {
         if(!output_enabled) {
             return;
         }
+        std::printf("[CONSOLE] %s\n", message);
         char message_copy[256];
         if(output_prefix) {
             std::snprintf(message_copy, sizeof(message_copy), "%s: %s", output_prefix, message);
