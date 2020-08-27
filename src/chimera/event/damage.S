@@ -9,9 +9,8 @@ _on_damage_asm:
     pushfd
     pushad
 
-    lea eax, dword ptr [esp+0x28]
-    push eax
-    lea eax, dword ptr [esp+0x28]
+    push dword ptr [esp+0x28]
+    lea eax, dword ptr [esp+0x30]
     push eax
     call _do_damage_event
     add esp, 8

@@ -6,6 +6,7 @@
 #include "../../../output/output.hpp"
 #include "../../../localization/localization.hpp"
 #include "../../../halo_data/multiplayer.hpp"
+#include "../../../halo_data/tag.hpp"
 
 namespace Chimera {
     static bool negate_damage(ObjectID &, TagID &, float &, PlayerID &, ObjectID &) {
