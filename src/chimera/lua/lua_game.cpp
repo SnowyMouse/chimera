@@ -219,13 +219,14 @@ namespace Chimera {
 
     static int lua_get_tag(lua_State *state) noexcept {
         int args = lua_gettop(state);
+        Tag *tag = nullptr;
+
         if(args == 1) {
             TagID tag_id;
             tag_id.whole_id = luaL_checkinteger(state, 1);
 
             if(!tag_id.is_null()) {
-                auto *tag = get_tag(tag_id);
-                lua_pushinteger(state, reinterpret_cast<std::uint32_t>(tag));
+                tag = get_tag(tag_id);
             }
             else {
                 lua_pushnil(state);
@@ -234,7 +235,6 @@ namespace Chimera {
         else if(args == 2) {
             const char *tag_class = luaL_checkstring(state, 1);
             const char *tag_path = luaL_checkstring(state, 2);
-            Tag *tag = nullptr;
 
             auto tag_class_int = tag_class_from_string(tag_class);
             
@@ -244,11 +244,16 @@ namespace Chimera {
             else {
                 tag = get_tag(tag_path, tag_class);
             }
-            
-            lua_pushinteger(state, reinterpret_cast<std::uint32_t>(tag));
         }
         else {
             return luaL_error(state, "wrong number of arguments in get_tag");
+        }
+        
+        if(tag) {
+            lua_pushinteger(state, reinterpret_cast<std::uint32_t>(tag));
+        }
+        else {
+            lua_pushnil(state);
         }
         
         return 1;
