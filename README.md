@@ -810,7 +810,7 @@ worth answering in a readme.
 - [Will Chimera run on my system?]
 - [Can I use Chimera under a license besides GNU GPL version 3?]
 - [Why does Halo's gamma setting not work when Chimera is installed?]
-- [Why is there no auto updater?]
+- [Why is there no auto updater built into Chimera?]
 - [Why do I get an error when joining Custom Edition servers with modded maps?]
 
 
@@ -880,7 +880,7 @@ instead.
 
 [dgVoodoo2]: http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2.html
 
-### Why is there no auto updater?
+### Why is there no auto updater built into Chimera?
 Short answer: Auto updating is *not* actually a feature you want. For the best
 experience, the responsibility for keeping Chimera up-to-date falls upon you,
 the user.
@@ -893,41 +893,69 @@ to install and update. So, it is not necessary to add one even for novice users.
 Updates are generally announced on both the Discord server as well as on Open
 Carnage at https://opencarnage.net/index.php?/topic/6916-chimera-10-beta/.
 
-Actually, there are many reasons *against* having an auto updater.
+In fact, there are many reasons *against* having an auto updater built into the
+mod.
 
-For a start, adding an auto updater presents a security risk. You're assuming
-that the server used to host the update is never going to be hijacked. Signing
-the update *can* be used to mitigate this, preventing unauthorized builds from
-being installed due to validation failing on the client side, but that's only
+First, you need write access to the mod DLL. Chimera is written to be a single
+strings.dll. When the game is running, this file cannot be written to due to it
+being in use. This can be worked around by having Chimera, itself, be a separate
+DLL, but this would require rewriting how Chimera is loaded. We decided to use
+one DLL because a number of users ran into issues with it due to user error.
+
+Also, most people do not have write access to the Halo: Combat Evolved game
+files as they installed it into the default "Program Files" folder. To bypass
+this, you would have to manually give yourself permission (too complicated for
+some users to figure out), or you run the .exe as an administrator (very foolish
+to do on an Internet-connected game from 2003 that more-or-less assumes that
+cache files are "safe").
+
+Having an auto updater or even an update notifier would also require contacting
+a server whenever the game starts. Doing that increases startup time, and it is
+error prone.
+
+For example, an auto updater presents a security risk. You're assuming that the
+server used to host the update is never going to be hijacked. Signing the update
+*can* be used to mitigate this, preventing unauthorized builds from being
+installed due to validation failing on the client side, but that's only
 effective if the signing mechanism is not compromised. Also, there's the chance
 that a developer could decide to go rogue and deliberately push a bad update out
-of spite. We would never do that, but should you still take the chance?
+of spite. We would NEVER do that, but should you still take the chance?
 
 Also, existing auto updater implementations in Halo mods have all proven to
-cause issues.
+cause issues, some of which are actively killing the game.
 
 For example, SAPP, a popular server mod, has auto updating. However, some
-versions would crash Halo with an exception error when run on Wine. Note that
-the reason for the crash is *not* a fault of the mod developer but a fault of
-Wine. However, that doesn't change the fact that leaving auto updating turned on
-(which is default) can result in the server crashing if you are on Wine, thus
-requiring you to install a version that does work and negating any sort of
-convenience auto updating had.
+versions would crash Halo with an exception error when run on Wine. The reason
+for the crash is due to how the mod developer obfuscates the DLL. Wine has
+issues loading these DLLs, requiring them to be unpacked. However, because the
+DLL has been tampered with, doing this is not possible without reverting the DLL
+manually.
 
 As another example, HAC2, a popular client mod, also has auto updating.
-Periodically, the HAC2 domain would go down, and for whatever reason, HAC2 was
+Periodically, the HAC2 server may go down, and for whatever reason, HAC2 was
 written to not allow the user to start the game with HAC2 if auto updating
-failed, resulting in the player base being decimated.  Also, at some point, the
-HAC2 project changed developers, and later updates became closed source (the
-[public HAC2 repository](https://github.com/Chaosvex/HAC2) is not maintained and
-is years out of date). This meant that people updated from an free and open
-source build to a nonfree and closed source build.
+failed, resulting in the player base permanently being decimated. This behavior
+is not unlike "always online" DRM although the intentions are not malicious. In
+fact, HAC2's loader.dll does not even come with HAC2 and requires an initial
+connection to the Internet to work.
 
-No mod developer should have that kind of power. No mod should suddenly update
-automatically to a build that no longer works when it was working before. And
-most importantly, **no mod should change the terms of your agreement to use said
-software without your consent**. Also, no user should have the option to consent
-to any of that, because absolutely nothing good comes from having it enabled.
+Newer versions of the HAC2 loader do not exhibit this issue, but many people use
+the older version of the loader as it's what's most distributed. Either way,
+the damage is done.
+
+Also, at some point, the HAC2 project changed developers, and updates became
+closed source (the [public HAC2 repository](https://github.com/Chaosvex/HAC2) is
+not maintained and is years out of date, and it isn't even complete enough to
+build). This meant that people updated from a mostly free and open source build
+to a nonfree and closed source build.
+
+No mod developer should be able to do any of the following:
+- Update to a build that no longer works when it was working before
+- Restrict you from playing the game unless it can communicate with a server
+- **Change the terms of your agreement to said software without your consent**
+
+Also, no user should have the option to consent to any of the above, because
+absolutely nothing good comes from having it enabled.
 
 Since it's easy to keep your version of Chimera up-to-date, anyway, it was
 decided against implementing auto updating functionality in Chimera.
@@ -960,5 +988,5 @@ Halo Custom Edition server, then you should forge the CRC32.
 [Will Chimera run on my system?]: #will-chimera-run-on-my-system
 [Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
 [Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
-[Why is there no auto updater?]: #why-is-there-no-auto-updater
+[Why is there no auto updater built into Chimera?]: #why-is-there-no-auto-updater-built-into-chimera
 [Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
