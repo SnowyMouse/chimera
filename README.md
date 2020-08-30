@@ -935,9 +935,10 @@ As another example, HAC2, a popular client mod, also has auto updating.
 Periodically, the HAC2 server may go down, and for whatever reason, HAC2 was
 written to not allow the user to start the game with HAC2 if auto updating
 failed, resulting in the player base permanently being decimated. This behavior
-is not unlike "always online" DRM although the intentions are not malicious. In
-fact, HAC2's loader.dll does not even come with HAC2 and requires an initial
-connection to the Internet to work.
+is not unlike "always online" DRM although the intentions are not malicious - it
+is merely an oversight (albeit an expensive one). In fact, HAC2's loader.dll
+does not even come with HAC2 and requires an initial connection to the Internet
+to work.
 
 Newer versions of the HAC2 loader do not exhibit this issue, but many people use
 the older version of the loader as it's what's most distributed. Either way,
