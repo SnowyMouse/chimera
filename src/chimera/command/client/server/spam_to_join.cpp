@@ -45,6 +45,7 @@ namespace Chimera {
     }
 
     extern "C" void on_spam_to_join() {
+        // Set to 3000 ms because a certain popular server mod thinks it's better to be spamfucked by massive, CPU intensive query packets rather than small connection requests
         next_spam = clock::now() + std::chrono::milliseconds(game_engine() == GameEngine::GAME_ENGINE_DEMO ? 800 : 3000);
         next_spam_give_up = std::nullopt;
         add_preframe_event(on_frame);
