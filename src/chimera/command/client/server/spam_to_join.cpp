@@ -13,6 +13,7 @@
 #include "../../../halo_data/keyboard.hpp"
 #include "../../../halo_data/main_menu_music.hpp"
 #include "../../../halo_data/map.hpp"
+#include "../../../halo_data/game_engine.hpp"
 
 namespace Chimera {
     extern "C" void on_error_dialog_asm();
@@ -35,7 +36,7 @@ namespace Chimera {
         auto now = clock::now();
         if(now > next_spam && !next_spam_give_up.has_value()) {
             get_chimera().execute_command("chimera_history_connect 1");
-            next_spam_give_up = now + std::chrono::milliseconds(800);
+            next_spam_give_up = now + std::chrono::milliseconds(500);
         }
         else if(now > next_spam_give_up && next_spam_give_up.has_value()) {
             remove_preframe_event(on_frame);
@@ -44,7 +45,7 @@ namespace Chimera {
     }
 
     extern "C" void on_spam_to_join() {
-        next_spam = clock::now() + std::chrono::milliseconds(800);
+        next_spam = clock::now() + std::chrono::milliseconds(game_engine() == GameEngine::GAME_ENGINE_DEMO ? 800 : 3000);
         next_spam_give_up = std::nullopt;
         add_preframe_event(on_frame);
         set_force_block_main_menu_music(true);
