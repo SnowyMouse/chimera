@@ -113,7 +113,7 @@ namespace Chimera {
                     auto op2 = *reinterpret_cast<const std::uint8_t *>(at + 2);
                     // mov [reg]
                     if(op1 == 0x89) {
-                        if(op2 == 0x45) {
+                        if(op2 == 0x45 || op2 == 0x4A) {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 4);
                             at += 4;
@@ -295,7 +295,7 @@ namespace Chimera {
                 // mov bl, [eax+esi]
                 case 0x8A: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(a == 0x1C) {
+                    if(a == 0x1C || a == 0x48) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

@@ -164,6 +164,8 @@ chimera_signature_info_command_signature_feature                                
 chimera_signature_info_command_signature_info                                   Signature info for %s:
 chimera_simple_score_screen_command_help                                        Show a simplified classic-style score screen.
 chimera_split_screen_hud_command_help                                           Use the split screen HUD.
+chimera_spam_to_join_command_help                                               Set whether or not to retry automatically if the server is full.
+chimera_spam_to_join_retrying                                                   Server is full! Retrying...\n(Hold ESCAPE to cancel)
 chimera_spectate_command_help                                                   Change your perspective to another player's perspective.
 chimera_spectate_command_now_spectating                                         Now spectating %S
 chimera_spectate_next_command_help                                              Switch to the next player.

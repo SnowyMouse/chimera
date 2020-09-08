@@ -423,6 +423,7 @@ the chimera folder created by Chimera.
 - [Show coordinates](#show-coordinates)
 - [Show FPS](#show-fps)
 - [Shrink empty weapons](#shrink-empty-weapons)
+- [Spam to join](#spam-to-join)
 - [Split screen HUD](#split-screen-hud)
 - [Spectate](#spectate)
 - [Spectate next](#spectate-next)
@@ -738,6 +739,11 @@ Show your in-game FPS.
 Make empty weapons appear smaller so they're easier to spot.
 
 **Usage:** `chimera_shrink_empty_weapons [true/false]`
+
+#### Spam to join
+Set whether or not to automatically reattempt connecting if the server is full.
+
+**Usage:** `chimera_spam_to_join [true/false]`
 
 #### Split screen HUD
 Override the HUD with the split screen HUD.
