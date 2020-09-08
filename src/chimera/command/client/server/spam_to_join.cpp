@@ -40,19 +40,11 @@ namespace Chimera {
     static bool requery_sapp_server() {
         if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
             latest_query_packet = std::nullopt;
-            std::printf("DEMO!\n");
             return false;
         }
         latest_query_packet = query_server(get_latest_connection());
-        if(latest_query_packet->error) {
+        if(latest_query_packet->error || latest_query_packet->get_data_for_key("sappflags")) {
             latest_query_packet = std::nullopt;
-            std::printf("ERROR!\n");
-            return false;
-        }
-
-        if(latest_query_packet->get_data_for_key("sappflags")) {
-            latest_query_packet = std::nullopt;
-            std::printf("NO SAPP FLAGS!\n");
             return false;
         }
         return true;
@@ -81,10 +73,8 @@ namespace Chimera {
                     auto num = std::stoi(latest_query_packet->get_data_for_key("numplayers"));
                     auto max = std::stoi(latest_query_packet->get_data_for_key("maxplayers"));
                     retry = max > num;
-                    std::printf("REQUERIED!\n");
                 }
                 catch(std::exception &) {
-                    std::printf("FAILED!\n");
                     retry = true;
                 }
             }
@@ -112,7 +102,6 @@ namespace Chimera {
     extern "C" void on_spam_to_join() {
         if(!checked_query_packet) {
             checked_query_packet = true;
-            std::printf("TEST!\n");
             requery_sapp_server();
         }
 
