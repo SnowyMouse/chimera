@@ -161,125 +161,108 @@ namespace Chimera {
         f.flush();
         f.close();
     }
+    static std::vector<QueryPacketDone> finished_packets;
 
     static std::mutex querying;
-    struct QueryPacketDone {
-        enum Error {
-            NONE,
-            FAILED_TO_RESOLVE,
-            TIMED_OUT
-        };
 
-        Bookmark b;
-        std::vector<std::pair<std::string, std::string>> query_data;
-        bool timed_out;
-        Error error;
-        std::size_t ping = 0;
+    QueryPacketDone query_server(const Bookmark &what) {
+        QueryPacketDone finished_packet;
+        finished_packet.b = what;
+        struct addrinfo *address;
 
-        const char *get_data_for_key(const char *key) {
-            for(auto &q : this->query_data) {
-                if(q.first == key) {
-                    return q.second.data();
+        // Lookup it
+        char port[6] = {};
+        std::snprintf(port, sizeof(port), "%u", what.port);
+        int q = getaddrinfo(what.address, port, nullptr, &address);
+        if(q != 0) {
+            finished_packet.error = QueryPacketDone::Error::FAILED_TO_RESOLVE;
+            return finished_packet;
+        }
+        auto family = address->ai_family;
+        if(family != AF_INET && family != AF_INET6) {
+            freeaddrinfo(address);
+            finished_packet.error = QueryPacketDone::Error::FAILED_TO_RESOLVE;
+            return finished_packet;
+        }
+
+        // Do the thing
+        struct sockaddr_storage saddr = {};
+        std::size_t saddr_size = address->ai_addrlen;
+
+        // Free it all
+        std::memcpy(&saddr, address->ai_addr, saddr_size);
+        freeaddrinfo(address);
+
+        // Do socket things
+        SOCKET s = socket(family, SOCK_DGRAM, IPPROTO_UDP);
+        DWORD opt = 700;
+        setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&opt), sizeof(opt));
+        static constexpr char PACKET_QUERY[] = "\\query";
+        q = sendto(s, PACKET_QUERY, sizeof(PACKET_QUERY) - 1, 0, reinterpret_cast<sockaddr *>(&saddr), saddr_size);
+
+        // Receive things
+        char data[4096] = {};
+        struct sockaddr_storage dev_null;
+        socklen_t l = saddr_size;
+        auto start = std::chrono::steady_clock::now();
+        auto data_received = recvfrom(s, data, sizeof(data) - 2, 0, reinterpret_cast<struct sockaddr *>(&dev_null), &l);
+        auto end = std::chrono::steady_clock::now();
+        if(data_received != SOCKET_ERROR) {
+            finished_packet.ping = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            std::pair<std::string, std::string> kv;
+            bool key = true;
+            char *str_start = data + 1;
+            for(char *c = str_start; *c; c++) {
+                bool break_now = false;
+                if(*c != '\\' && c[1] == 0) {
+                    c++;
+                    break_now = true;
+                }
+                if(*c == '\\') {
+                    if(key) {
+                        kv.first = std::string(str_start, c - str_start);
+                    }
+                    else {
+                        // Strip invalid/whitespace characters from the start. If the string is all invalid, don't strip the last character.
+                        for(char *k = str_start; k + 1 < c && *k <= 0x20; k++, str_start++);
+
+                        // And here we go!
+                        kv.second = std::string(str_start, c - str_start);
+
+                        // Next, replace any unknown characters with '?'
+                        for(char &c : kv.second) {
+                            if(c < 0x20) {
+                                c = '?';
+                            }
+                        }
+
+                        finished_packet.query_data.insert_or_assign(kv.first, kv.second);
+                        kv = {};
+                    }
+                    key = !key;
+                    str_start = c + 1;
+                }
+                if(break_now) {
+                    break;
                 }
             }
-            return nullptr;
+
+            // = std::vector<char>(data, data + data_received);
+            finished_packet.error = QueryPacketDone::Error::NONE;
         }
-    };
-    static std::vector<QueryPacketDone> finished_packets;
+        else {
+            finished_packet.error = QueryPacketDone::Error::TIMED_OUT;
+        }
+        closesocket(s);
+
+        return finished_packet;
+    }
 
     static void query_list(const std::vector<Bookmark> &bookmarks) {
         finished_packets.clear();
 
         for(auto &b : bookmarks) {
-            auto &finished_packet = finished_packets.emplace_back();
-            finished_packet.b = b;
-
-            struct addrinfo *address;
-
-            // Lookup it
-            char port[6] = {};
-            std::snprintf(port, sizeof(port), "%u", b.port);
-            int q = getaddrinfo(b.address, port, nullptr, &address);
-            if(q != 0) {
-                finished_packet.error = QueryPacketDone::Error::FAILED_TO_RESOLVE;
-                continue;
-            }
-            auto family = address->ai_family;
-            if(family != AF_INET && family != AF_INET6) {
-                freeaddrinfo(address);
-                finished_packet.error = QueryPacketDone::Error::FAILED_TO_RESOLVE;
-                continue;
-            }
-
-            // Do the thing
-            struct sockaddr_storage saddr = {};
-            std::size_t saddr_size = address->ai_addrlen;
-
-            // Free it all
-            std::memcpy(&saddr, address->ai_addr, saddr_size);
-            freeaddrinfo(address);
-
-            // Do socket things
-            SOCKET s = socket(family, SOCK_DGRAM, IPPROTO_UDP);
-            DWORD opt = 700;
-            setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&opt), sizeof(opt));
-            static constexpr char PACKET_QUERY[] = "\\query";
-            q = sendto(s, PACKET_QUERY, sizeof(PACKET_QUERY) - 1, 0, reinterpret_cast<sockaddr *>(&saddr), saddr_size);
-
-            // Receive things
-            char data[4096] = {};
-            struct sockaddr_storage dev_null;
-            socklen_t l = saddr_size;
-            auto start = std::chrono::steady_clock::now();
-            auto data_received = recvfrom(s, data, sizeof(data) - 2, 0, reinterpret_cast<struct sockaddr *>(&dev_null), &l);
-            auto end = std::chrono::steady_clock::now();
-            if(data_received != SOCKET_ERROR) {
-                finished_packet.ping = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-                std::pair<std::string, std::string> kv;
-                bool key = true;
-                char *str_start = data + 1;
-                for(char *c = str_start; *c; c++) {
-                    bool break_now = false;
-                    if(*c != '\\' && c[1] == 0) {
-                        c++;
-                        break_now = true;
-                    }
-                    if(*c == '\\') {
-                        if(key) {
-                            kv.first = std::string(str_start, c - str_start);
-                        }
-                        else {
-                            // Strip invalid/whitespace characters from the start. If the string is all invalid, don't strip the last character.
-                            for(char *k = str_start; k + 1 < c && *k <= 0x20; k++, str_start++);
-
-                            // And here we go!
-                            kv.second = std::string(str_start, c - str_start);
-
-                            // Next, replace any unknown characters with '?'
-                            for(char &c : kv.second) {
-                                if(c < 0x20) {
-                                    c = '?';
-                                }
-                            }
-
-                            finished_packet.query_data.push_back(std::move(kv));
-                            kv = {};
-                        }
-                        key = !key;
-                        str_start = c + 1;
-                    }
-                    if(break_now) {
-                        break;
-                    }
-                }
-
-                // = std::vector<char>(data, data + data_received);
-                finished_packet.error = QueryPacketDone::Error::NONE;
-            }
-            else {
-                finished_packet.error = QueryPacketDone::Error::TIMED_OUT;
-            }
-            closesocket(s);
+            finished_packets.push_back(query_server(b));
         }
 
         querying.unlock();

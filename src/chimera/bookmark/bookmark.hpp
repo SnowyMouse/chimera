@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <unordered_map>
 
 namespace Chimera {
     struct Bookmark {
@@ -14,6 +15,36 @@ namespace Chimera {
         char password[9];
         bool brackets;
     };
+
+    struct QueryPacketDone {
+        enum Error {
+            NONE = 0,
+            FAILED_TO_RESOLVE,
+            TIMED_OUT
+        };
+
+        Bookmark b;
+        std::unordered_map<std::string, std::string> query_data;
+        bool timed_out;
+        Error error;
+        std::size_t ping = 0;
+
+        const char *get_data_for_key(const char *key) {
+            for(auto &q : this->query_data) {
+                if(q.first == key) {
+                    return q.second.data();
+                }
+            }
+            return nullptr;
+        }
+    };
+
+    /**
+     * Query server?
+     * @param  what server to query
+     * @return      packet
+     */
+    QueryPacketDone query_server(const Bookmark &what);
 
     /**
      * Get the latest connection made
