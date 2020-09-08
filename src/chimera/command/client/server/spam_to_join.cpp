@@ -21,6 +21,17 @@ namespace Chimera {
     static clock::time_point next_spam;
     static std::optional<clock::time_point> next_spam_give_up;
 
+    static void force_loading_screen(bool do_it) {
+        auto sig = get_chimera().get_signature("do_show_loading_screen_sig");
+        const SigByte signature_data[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
+        if(do_it) {
+            write_code_s(sig.data(), signature_data);
+        }
+        else {
+            sig.rollback();
+        }
+    }
+
     static void on_frame() {
         apply_text(localize("chimera_spam_to_join_retrying"), -240, 100, 480, 500, ColorARGB(1.0F,1.0F,1.0F,1.0F), GenericFont::FONT_SMALL, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
 
@@ -28,6 +39,7 @@ namespace Chimera {
         if(get_keyboard_keys().escape) {
             remove_preframe_event(on_frame);
             set_force_block_main_menu_music(false);
+            force_loading_screen(false);
             get_chimera().execute_command("chimera_load_ui_map");
             return;
         }
@@ -41,6 +53,7 @@ namespace Chimera {
         else if(now > next_spam_give_up && next_spam_give_up.has_value()) {
             remove_preframe_event(on_frame);
             set_force_block_main_menu_music(false);
+            force_loading_screen(false);
         }
     }
 
@@ -50,6 +63,7 @@ namespace Chimera {
         next_spam_give_up = std::nullopt;
         add_preframe_event(on_frame);
         set_force_block_main_menu_music(true);
+        force_loading_screen(true);
     }
 
     bool spam_to_join_command(int argc, const char **argv) {
