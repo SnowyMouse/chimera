@@ -139,6 +139,15 @@ namespace Chimera {
                         }
                         break;
                     }
+                    // sub dword ptr [reg+op4], reg
+                    else if(op1 == 0x29) {
+                        if(op2 == 0x8B) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 7);
+                            at += 7;
+                        }
+                        break;
+                    }
                     // mov [addr], ax
                     else if(op1 == 0xA3) {
                         offsets.push_back(at - at_start);

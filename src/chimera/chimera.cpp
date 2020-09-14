@@ -42,6 +42,7 @@
 #include "fix/extend_limits.hpp"
 #include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
+#include "fix/camera_shake_fix.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/floor_decal_memery.hpp"
 #include "fix/inverted_flag.hpp"
@@ -144,6 +145,9 @@ namespace Chimera {
 
                 // Set up this hook
                 set_up_rcon_message_hook();
+
+                // Fix camera shake
+                set_up_camera_shake_fix();
 
                 // No more updates
                 enable_block_update_check();

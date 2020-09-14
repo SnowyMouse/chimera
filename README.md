@@ -71,6 +71,7 @@ These are features that are always (or are on).
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)
+- [Camera shake fix](#camera-shake-fix)
 - [Reduced DRM](#reduced-drm)
 - [Descope fix](#descope-fix)
 - [Extended description fix](#extended-description-fix)
@@ -122,6 +123,9 @@ algorithm, drastically cutting down map size.
 If [maps in RAM](#memory-settings) is enabled, compressed maps will be
 decompressed directly into RAM. Otherwise, temp files will be used (placed in
 Chimera's folder).
+
+#### Camera shake fix
+Chimera fixes a bug where camera shaking does not work at high frame rates.
 
 #### Reduced DRM
 Normally, Halo does not allow you to join servers with someone that has the
