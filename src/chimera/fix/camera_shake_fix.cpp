@@ -13,7 +13,6 @@ namespace Chimera {
     }
 
     void set_up_camera_shake_fix() noexcept {
-        std::printf("RAICHUUUUUUUU\n");
         auto &camera_shake_counter_sig = get_chimera().get_signature("camera_shake_counter_sig");
         add_pretick_event(camera_shake_tick_asm);
         static Hook hook;
