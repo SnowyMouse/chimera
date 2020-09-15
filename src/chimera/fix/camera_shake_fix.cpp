@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#include <cmath>
+
 #include "fov_fix.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
@@ -54,8 +56,14 @@ namespace Chimera {
 
         // Interpolate
         if(interpolation_enabled) {
+            // If we're doing a 1-tick camera shake, use a curve that makes it take "before" take longer in the curve
+            float adjusted_interpolation = interpolation_tick_progress;
+            if(offset_interpolation_progress > 0) {
+                adjusted_interpolation = (std::pow(10.0, (interpolation_tick_progress - offset_interpolation_progress)) - 1.0) / 9.0;
+            }
+
             Quaternion shake_interpolated;
-            interpolate_quat(shake_before, shake_after, shake_interpolated, interpolation_tick_progress - offset_interpolation_progress);
+            interpolate_quat(shake_before, shake_after, shake_interpolated, adjusted_interpolation);
             matrix = shake_interpolated;
         }
 
