@@ -49,25 +49,18 @@ namespace Chimera {
         QueryPerformanceCounter(&pc);
 
         char saved_with_line[81];
-        switch(pc.LowPart % 10) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#         Chimera version %-28s by Kavawuvi ^v^         #", CHIMERA_VERSION_STRING);
-            break;
-
-            case 7:
-            case 8:
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#         Chimera version %-28s Vap! Vap! Vap!~         #", CHIMERA_VERSION_STRING);
-            break;
-
-            case 9:
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#         Chimera version %-17s HELP I'M TRAPPED IN A FILE         #", CHIMERA_VERSION_STRING);
-            break;
+        auto meme = pc.LowPart % 20;
+        if(meme == 9 || meme == 2) {
+            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-34s Chu! Chu! Chu!!!!     #", CHIMERA_VERSION_STRING);
+        }
+        else if(meme == 10 || meme == 3) {
+            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-36s Vap! Vap! Vap!~     #", CHIMERA_VERSION_STRING);
+        }
+        else if(meme == 11) {
+            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-25s HELP I'M TRAPPED IN A FILE     #", CHIMERA_VERSION_STRING);
+        }
+        else {
+            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-36s by Kavawuvi ^v^     #", CHIMERA_VERSION_STRING);
         }
         config << saved_with_line << "\n";
         config << "# ---------------------------------------------------------------------------- #\n";
