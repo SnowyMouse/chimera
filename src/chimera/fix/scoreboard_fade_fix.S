@@ -35,3 +35,24 @@ _scoreboard_fade_fix_asm:
 
     ;# Done
     ret
+
+.globl _f2_fade_fix_asm
+_f2_fade_fix_asm:
+    ;# Store ecx (the float) into the stack and have eax point to it
+    push eax
+    push ecx
+    mov eax, esp
+
+    ;# Push registers/flags to not get wrecked, passing eax (which is just a pointer) into the interpolate function, and then restoring registers/flags
+    pushfd
+    pushad
+    push eax
+    call _interpolate_f2_fade
+    add esp, 4
+    popad
+    popfd
+
+    ;# Pop ecx (which will now hold the new float) and eax
+    pop ecx
+    pop eax
+    ret

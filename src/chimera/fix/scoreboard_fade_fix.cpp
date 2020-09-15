@@ -11,15 +11,22 @@
 namespace Chimera {
     extern "C" {
         void scoreboard_fade_fix_asm();
+        void f2_fade_fix_asm();
     }
 
-    static float *current_value;
     static float fade_time = 0.5F;
 
     static float scoreboard_up = 0.0F;
     static float scoreboard_down = 0.0F;
     static float scoreboard_current = 0.0F;
     static int scoreboard_direction = 0;
+    static float *scoreboard_value;
+
+    static float f2_up = 0.0F;
+    static float f2_down = 0.0F;
+    static float f2_current = 0.0F;
+    static int f2_direction = 0;
+    static float *f2_value;
 
     static void interpolate_fn(float &new_value, float &current_value, float up, float down, float current, int &direction) {
         // If it's the same, do nothing
@@ -49,7 +56,11 @@ namespace Chimera {
     }
 
     extern "C" void interpolate_scoreboard_fade(float *new_value) {
-        interpolate_fn(*new_value, *current_value, scoreboard_up, scoreboard_down, scoreboard_current, scoreboard_direction);
+        interpolate_fn(*new_value, *scoreboard_value, scoreboard_up, scoreboard_down, scoreboard_current, scoreboard_direction);
+    }
+
+    extern "C" void interpolate_f2_fade(float *new_value) {
+        interpolate_fn(*new_value, *f2_value, f2_up, f2_down, f2_current, f2_direction);
     }
 
     static void normalize_fn(float &up, float &down, float &current, int &direction) {
@@ -70,6 +81,7 @@ namespace Chimera {
 
     static void on_tick() {
         normalize_fn(scoreboard_up, scoreboard_down, scoreboard_current, scoreboard_direction);
+        normalize_fn(f2_up, f2_down, f2_current, f2_direction);
     }
 
     void set_up_scoreboard_fade_fix() noexcept {
@@ -81,6 +93,10 @@ namespace Chimera {
         }
         else if(chimera.feature_present("client_scoreboard_ce")) {
             code_to_use = chimera.get_signature("scoreboard_ce_timing_sig").data() + 10;
+
+            static Hook hook;
+            auto *f2_ce_timing_sig = chimera.get_signature("f2_ce_timing_sig").data();
+            write_jmp_call(f2_ce_timing_sig, hook, nullptr, reinterpret_cast<const void *>(f2_fade_fix_asm), false);
         }
         else {
             return;
@@ -90,7 +106,8 @@ namespace Chimera {
         fade_time = static_cast<float>(std::max(0.001, chimera.get_ini()->get_value_float("scoreboard.fade_time").value_or(0.5)));
 
         static Hook hook;
-        current_value = *reinterpret_cast<float **>(code_to_use + 3);
+        scoreboard_value = *reinterpret_cast<float **>(code_to_use + 3);
+        f2_value = scoreboard_value + 1;
         write_jmp_call(code_to_use, hook, reinterpret_cast<const void *>(scoreboard_fade_fix_asm), nullptr, false);
         add_tick_event(on_tick);
     }
