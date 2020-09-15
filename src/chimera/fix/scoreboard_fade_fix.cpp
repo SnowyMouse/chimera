@@ -16,15 +16,15 @@ namespace Chimera {
     static float *current_value;
     static float fade_time = 0.5F;
 
-    static float up = 0.0F;
-    static float down = 0.0F;
-    static float current = 0.0F;
-    static int direction = 0;
+    static float scoreboard_up = 0.0F;
+    static float scoreboard_down = 0.0F;
+    static float scoreboard_current = 0.0F;
+    static int scoreboard_direction = 0;
 
-    extern "C" void interpolate_scoreboard_fade(float *new_value) {
+    static void interpolate_fn(float &new_value, float &current_value, float up, float down, float current, int &direction) {
         // If it's the same, do nothing
-        float nv = *new_value;
-        float cv = *current_value;
+        float nv = new_value;
+        float cv = current_value;
         if(nv == cv) {
             if(cv < 0.5F) {
                 direction = -1;
@@ -38,17 +38,21 @@ namespace Chimera {
         // We're going up!
         else if(nv > cv) {
             direction = 1;
-            *new_value = get_tick_progress() * (up - current) + current;
+            new_value = get_tick_progress() * (up - current) + current;
         }
 
         // We're going down
         else {
             direction = -1;
-            *new_value = get_tick_progress() * (down - current) + current;
+            new_value = get_tick_progress() * (down - current) + current;
         }
     }
 
-    static void on_tick() {
+    extern "C" void interpolate_scoreboard_fade(float *new_value) {
+        interpolate_fn(*new_value, *current_value, scoreboard_up, scoreboard_down, scoreboard_current, scoreboard_direction);
+    }
+
+    static void normalize_fn(float &up, float &down, float &current, int &direction) {
         switch(direction) {
             case 1:
                 current = up;
@@ -60,10 +64,12 @@ namespace Chimera {
 
         // Set our range
         float increment = 1.0F / (fade_time * effective_tick_rate());
-        down = current - increment;
-        up = current + increment;
-        down = std::max(down, 0.0F);
-        up = std::min(up, 1.0F);
+        down = std::max(current - increment, 0.0F);
+        up = std::min(current + increment, 1.0F);
+    }
+
+    static void on_tick() {
+        normalize_fn(scoreboard_up, scoreboard_down, scoreboard_current, scoreboard_direction);
     }
 
     void set_up_scoreboard_fade_fix() noexcept {
