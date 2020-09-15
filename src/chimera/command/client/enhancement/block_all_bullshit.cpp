@@ -7,7 +7,6 @@ namespace Chimera {
     bool Chimera::block_all_bullshit_command(int, const char **) noexcept {
         get_chimera().p_config->set_saving(false);
         get_chimera().execute_command("chimera_block_buffering 1", nullptr, true);
-        get_chimera().execute_command("chimera_block_camera_shake 1", nullptr, true);
         get_chimera().execute_command("chimera_block_gametype_indicator 1", nullptr, true);
         get_chimera().execute_command("chimera_block_gametype_rules 1", nullptr, true);
         get_chimera().execute_command("chimera_block_hold_f1 1", nullptr, true);
