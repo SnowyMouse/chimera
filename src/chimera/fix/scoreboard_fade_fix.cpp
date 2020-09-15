@@ -17,46 +17,55 @@ namespace Chimera {
     static float value_current_tick = 0.0F;
     static float fade_time = 0.5F;
 
+    static float up = 0.0F;
+    static float down = 0.0F;
+    static float current = 0.0F;
+    static int direction = 0;
+
     extern "C" void interpolate_scoreboard_fade(float *new_value) {
-        float fade_amount_per_tick = 1.0F / (fade_time * effective_tick_rate());
-
-        float sign;
-
         // If it's the same, do nothing
         float nv = *new_value;
         float cv = *current_value;
         if(nv == cv) {
+            if(cv < 0.5F) {
+                direction = -1;
+            }
+            else {
+                direction = 1;
+            }
             return;
         }
 
         // We're going up!
         else if(nv > cv) {
-            sign = 1.0F;
+            direction = 1;
+            *new_value = get_tick_progress() * (up - current) + current;
         }
 
         // We're going down
         else {
-            sign = -1.0F;
+            direction = -1;
+            *new_value = get_tick_progress() * (down - current) + current;
         }
-
-        // Now let's see how far we take it
-        float value_diff = fade_amount_per_tick * sign;
-        float value_next_tick = value_current_tick + value_diff;
-        float v = value_current_tick + (value_next_tick - value_current_tick) * get_tick_progress();
-
-        // Okay!
-        if(v > 1.0F) {
-            v = 1.0F;
-        }
-        else if(v < 0.0F) {
-            v = 0.0F;
-        }
-
-        *new_value = v;
     }
 
     static void on_tick() {
+        switch(direction) {
+            case 1:
+                current = up;
+                break;
+            case -1:
+                current = down;
+                break;
+        }
         value_current_tick = *current_value;
+
+        // Set our range
+        float increment = 1.0F / (fade_time * effective_tick_rate());
+        down = current - increment;
+        up = current + increment;
+        down = std::max(down, 0.0F);
+        up = std::min(up, 1.0F);
     }
 
     void set_up_scoreboard_fade_fix() noexcept {
