@@ -389,7 +389,6 @@ the chimera folder created by Chimera.
 - [Block auto center](#block-auto-center)
 - [Block buffering](#block-buffering)
 - [Block button quotes](#block-button-quotes)
-- [Block camera shaking](#block-camera-shaking)
 - [Block equipment rotation](#block-equipment-rotation)
 - [Block extra weapon](#block-extra-weapon)
 - [Block gametype indicator](#block-gametype-indicator)
@@ -470,7 +469,6 @@ full speed. You can re-enable this behavior if you want.
 #### Block all bullshit
 This feature runs the following commands:
 - `chimera_block_buffering 1`
-- `chimera_block_camera_shake 1`
 - `chimera_block_gametype_indicator 1`
 - `chimera_block_gametype_rules 1`
 - `chimera_block_hold_f1 1`
@@ -495,12 +493,6 @@ config.txt. You can enable this behavior if you want.
 Remove the quotation marks in button prompts (e.g. Hold "E")
 
 **Usage:** `chimera_block_button_quotes [true/false]`
-
-#### Block camera shaking
-Camera shaking from taking damage or firing weapons is broken in Halo PC. You
-can disable it if you want.
-
-**Usage:** `chimera_block_camera_shake [true/false]`
 
 #### Block equipment rotation
 Netgame equipment rotation was added in Halo PC. You can disable it if you want
