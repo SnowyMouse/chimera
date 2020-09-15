@@ -48,20 +48,31 @@ namespace Chimera {
         LARGE_INTEGER pc;
         QueryPerformanceCounter(&pc);
 
-        char saved_with_line[81];
+        // Make our line thingy
+        static constexpr const std::size_t LEN = 81;
+        char saved_with_line[LEN];
+        std::memset(saved_with_line, ' ', sizeof(saved_with_line));
+        char chimera_version[] = "#   Chimera version " CHIMERA_VERSION_STRING;
+        static_assert(sizeof(chimera_version) < LEN / 2, "out-of-bounds for chimera_version size");
+        std::memcpy(saved_with_line, chimera_version, sizeof(chimera_version) - 1);
+
+        // Randomly select a line
+        const char *random_text;
         auto meme = pc.LowPart % 20;
         if(meme == 9 || meme == 2) {
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-34s Chu! Chu! Chu!!!!     #", CHIMERA_VERSION_STRING);
+            random_text = "Chu! Chu! Chu!!!!";
         }
         else if(meme == 10 || meme == 3) {
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-36s Vap! Vap! Vap!~     #", CHIMERA_VERSION_STRING);
+            random_text = "Vap! Vap! Vap!~";
         }
         else if(meme == 11) {
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-25s HELP I'M TRAPPED IN A FILE     #", CHIMERA_VERSION_STRING);
+            random_text = "HELP I'M TRAPPED IN A FILE";
         }
         else {
-            std::snprintf(saved_with_line, sizeof(saved_with_line), "#     Chimera version %-36s by Kavawuvi ^v^     #", CHIMERA_VERSION_STRING);
+            random_text = "by Kavawuvi ^v^";
         }
+        std::snprintf(saved_with_line + LEN/2, sizeof(saved_with_line) - LEN/2, "%36s   #", random_text);
+
         config << saved_with_line << "\n";
         config << "# ---------------------------------------------------------------------------- #\n";
         config << localize("chimera_config_note") << "\n";
