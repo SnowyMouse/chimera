@@ -16,15 +16,14 @@ namespace Chimera {
         void camera_shake_tick_asm() noexcept;
         std::uint16_t *camera_shake_counter_ptr = nullptr;
         std::uint32_t camera_shaking = 0;
-        float offset_interpolation_progress = 0.0F;
     }
 
     static int last_shake_counter = 0;
     static Quaternion shake_before = {};
     static Quaternion shake_after = {};
-    extern float interpolation_tick_progress;
     extern bool interpolation_enabled;
     static Quaternion shake_done = {};
+    extern float interpolation_tick_progress;
 
     extern "C" void decrease_counter() {
         if(--last_shake_counter < 0) {
@@ -43,11 +42,9 @@ namespace Chimera {
                 last_shake_counter = 2;
             }
 
-            // If the counter is less than 2, interpolate from outward to inwards
-            if(interpolation_enabled && camera_shake_counter_ptr && *camera_shake_counter_ptr < 2) {
-                offset_interpolation_progress = interpolation_tick_progress;
+            // If the counter is less than 2, don't interpolate
+            if(camera_shake_counter_ptr && *camera_shake_counter_ptr < 2) {
                 shake_before = matrix;
-                shake_after = shake_done;
             }
 
             // Note that we're shaking the camera this tick
@@ -56,14 +53,8 @@ namespace Chimera {
 
         // Interpolate
         if(interpolation_enabled) {
-            // If we're doing a 1-tick camera shake, use a curve that makes it take "before" take longer in the curve
-            float adjusted_interpolation = interpolation_tick_progress;
-            if(offset_interpolation_progress > 0) {
-                adjusted_interpolation = (std::pow(10.0, (interpolation_tick_progress - offset_interpolation_progress)) - 1.0) / 9.0;
-            }
-
             Quaternion shake_interpolated;
-            interpolate_quat(shake_before, shake_after, shake_interpolated, adjusted_interpolation);
+            interpolate_quat(shake_before, shake_after, shake_interpolated, interpolation_tick_progress);
             matrix = shake_interpolated;
         }
 

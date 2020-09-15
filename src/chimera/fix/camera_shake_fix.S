@@ -40,7 +40,6 @@ _camera_shake_tick_asm:
     ;# Reset these to 0 so we know that it's a new tick!
     mov dword ptr [_camera_shake_counter_ptr], 0
     mov dword ptr [_camera_shaking], 0
-    mov dword ptr [_offset_interpolation_progress], 0
 
     skip:
     pop eax
