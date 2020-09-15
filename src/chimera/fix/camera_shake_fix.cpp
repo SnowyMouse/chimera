@@ -12,7 +12,9 @@ namespace Chimera {
     extern "C" {
         void camera_shake_fix_asm() noexcept;
         void camera_shake_tick_asm() noexcept;
-        void *camera_shake_ptr = nullptr;
+        std::uint16_t *camera_shake_counter_ptr = nullptr;
+        std::uint32_t camera_shaking = 0;
+        float offset_interpolation_progress = 0.0F;
     }
 
     static int last_shake_counter = 0;
@@ -20,6 +22,7 @@ namespace Chimera {
     static Quaternion shake_after = {};
     extern float interpolation_tick_progress;
     extern bool interpolation_enabled;
+    static Quaternion shake_done = {};
 
     extern "C" void decrease_counter() {
         if(--last_shake_counter < 0) {
@@ -28,24 +31,35 @@ namespace Chimera {
     }
 
     extern "C" void meme_up_camera_shake_thing(RotationMatrix &matrix) noexcept {
-        if(!camera_shake_ptr) {
+        if(!camera_shaking) {
             shake_before = shake_after;
             shake_after = matrix;
 
+            // If it's been a while since we shook the camera, shake from 0 to our new thing
             if(last_shake_counter == 0) {
-                shake_before.w = 1.0F;
-                shake_before.x = 0.0F;
-                shake_before.y = 0.0F;
-                shake_before.z = 0.0F;
+                shake_before = shake_done;
                 last_shake_counter = 2;
             }
+
+            // If the counter is less than 2, interpolate from outward to inwards
+            if(interpolation_enabled && camera_shake_counter_ptr && *camera_shake_counter_ptr < 2) {
+                offset_interpolation_progress = interpolation_tick_progress;
+                shake_before = matrix;
+                shake_after = shake_done;
+            }
+
+            // Note that we're shaking the camera this tick
+            camera_shaking = 1;
         }
 
+        // Interpolate
         if(interpolation_enabled) {
             Quaternion shake_interpolated;
-            interpolate_quat(shake_before, shake_after, shake_interpolated, interpolation_tick_progress);
+            interpolate_quat(shake_before, shake_after, shake_interpolated, interpolation_tick_progress - offset_interpolation_progress);
             matrix = shake_interpolated;
         }
+
+        // If interpolation is disabled, just make it look like 30 FPS camera shaking
         else {
             matrix = shake_after;
         }
@@ -55,6 +69,7 @@ namespace Chimera {
         auto &camera_shake_counter_sig = get_chimera().get_signature("camera_shake_counter_sig");
         add_pretick_event(camera_shake_tick_asm);
         add_pretick_event(decrease_counter);
+        shake_done.w = 1.0F;
         static Hook hook;
         write_jmp_call(camera_shake_counter_sig.data() + 7, hook, reinterpret_cast<const void *>(camera_shake_fix_asm), nullptr, false);
     }
