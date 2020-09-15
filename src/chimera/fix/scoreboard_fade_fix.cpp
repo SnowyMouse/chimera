@@ -14,7 +14,6 @@ namespace Chimera {
     }
 
     static float *current_value;
-    static float value_current_tick = 0.0F;
     static float fade_time = 0.5F;
 
     static float up = 0.0F;
@@ -58,7 +57,6 @@ namespace Chimera {
                 current = down;
                 break;
         }
-        value_current_tick = *current_value;
 
         // Set our range
         float increment = 1.0F / (fade_time * effective_tick_rate());
