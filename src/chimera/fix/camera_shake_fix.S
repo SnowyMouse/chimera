@@ -9,6 +9,7 @@
 _camera_shake_fix_asm:
     pushfd
     pushad
+    add edx, 4
     push edx
     call _meme_up_camera_shake_thing
     add esp, 4

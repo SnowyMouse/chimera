@@ -33,6 +33,9 @@ namespace Chimera {
     // This is the assumed tick rate of the first person camera.
     static float *first_person_camera_tick_rate = nullptr;
 
+    // Set for if interpolation is enabled
+    bool interpolation_enabled = false;
+
     static void on_tick() noexcept {
         // Prevent interpolation when the game is paused
         if(game_paused()) {
@@ -92,6 +95,7 @@ namespace Chimera {
         add_precamera_event(interpolate_camera_before);
         add_camera_event(interpolate_camera_after);
         write_jmp_call(fp_interp_ptr, fp_interp_hook, reinterpret_cast<const void *>(interpolate_fp_before), reinterpret_cast<const void *>(interpolate_fp_after));
+        interpolation_enabled = true;
     }
 
     void disable_interpolation() noexcept {
@@ -101,5 +105,6 @@ namespace Chimera {
         remove_frame_event(on_frame);
         remove_precamera_event(interpolate_camera_before);
         remove_camera_event(interpolate_camera_after);
+        interpolation_enabled = false;
     }
 }
