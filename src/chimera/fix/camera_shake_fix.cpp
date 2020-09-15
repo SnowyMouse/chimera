@@ -42,11 +42,6 @@ namespace Chimera {
                 last_shake_counter = 2;
             }
 
-            // If the counter is less than 2, don't interpolate
-            if(camera_shake_counter_ptr && *camera_shake_counter_ptr < 2) {
-                shake_before = matrix;
-            }
-
             // Note that we're shaking the camera this tick
             camera_shaking = 1;
         }
