@@ -268,68 +268,79 @@ namespace Chimera {
 
                     // Attempt to decompress
                     auto &compressed_map_to_use = compressed_maps[new_index];
-                    try {
-                        get_tmp_path(compressed_maps[new_index], tmp_path);
-                        //std::printf("Trying to decompress %s @ %s -> %s...\n", map_name, new_path, tmp_path);
-                        auto start = std::chrono::steady_clock::now();
+                    get_tmp_path(compressed_maps[new_index], tmp_path);
+                    //std::printf("Trying to decompress %s @ %s -> %s...\n", map_name, new_path, tmp_path);
+                    auto start = std::chrono::steady_clock::now();
 
-                        // If we're doing maps in RAM, output directly to the region allowed
-                        if(do_maps_in_ram) {
-                            std::size_t offset;
-                            if(ui_map) {
-                                buffer_size = UI_SIZE;
-                                offset = UI_OFFSET;
-                            }
-                            else {
-                                buffer_size = UI_OFFSET;
-                                offset = 0;
-                            }
-
-                            buffer = maps_in_ram_region + offset;
-                            buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
-
-                            if(ui_map) {
-                                ui_map_file_size = buffer_used;
-                            }
-                            else {
-                                map_file_size = buffer_used;
-                            }
+                    // If we're doing maps in RAM, output directly to the region allowed
+                    if(do_maps_in_ram) {
+                        std::size_t offset;
+                        if(ui_map) {
+                            buffer_size = UI_SIZE;
+                            offset = UI_OFFSET;
                         }
-
-                        // Otherwise do a map file
                         else {
-                            Invader::Compression::decompress_map_file(new_path, tmp_path);
-
-                            if(ui_map) {
-                                ui_map_file_size = size_from_file(tmp_path);
-                            }
-                            else {
-                                map_file_size = size_from_file(tmp_path);
-                            }
-                        }
-                        auto end = std::chrono::steady_clock::now();
-
-                        // Benchmark
-                        if(do_benchmark) {
-                            console_output("Decompressed %s in %zu ms", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+                            buffer_size = UI_OFFSET;
+                            offset = 0;
                         }
 
-                        // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
-                        if(!do_maps_in_ram) {
-                            //std::printf("Okay then!\n");
-                            new_path = tmp_path;
-                            last_loaded_map = new_index;
-                            if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
-                                last_loaded_map = 0;
-                            }
-                            compressed_map_to_use.date_modified = mtime;
-                            std::strncpy(compressed_map_to_use.map_name, map_name, sizeof(compressed_map_to_use.map_name));
+                        buffer = maps_in_ram_region + offset;
+                        try {
+                            buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
+                        }
+                        catch (std::exception &) {
+                            char error_message[256];
+                            std::snprintf(error_message, sizeof(error_message), "Failed to load %s: Map is invalid, or not enough space is allocated to load this map", new_path);
+                            MessageBox(nullptr, error_message, "Decompression Error", MB_ICONERROR | MB_OK);
+                            std::exit(1);
+                            return;
+                        }
+
+                        if(ui_map) {
+                            ui_map_file_size = buffer_used;
+                        }
+                        else {
+                            map_file_size = buffer_used;
                         }
                     }
-                    catch (std::exception &e) {
-                        compressed_map_to_use = {};
-                        //std::printf("Failed to decompress %s @ %s: %s\n", map_name, new_path, e.what());
-                        return;
+
+                    // Otherwise do a map file
+                    else {
+                        try {
+                            Invader::Compression::decompress_map_file(new_path, tmp_path);
+                        }
+                        catch (std::exception &) {
+                            char error_message[256];
+                            std::snprintf(error_message, sizeof(error_message), "Failed to load %s: Map is invalid", new_path);
+                            MessageBox(nullptr, error_message, "Decompression Error", MB_ICONERROR | MB_OK);
+                            std::exit(1);
+                            return;
+                        }
+
+                        if(ui_map) {
+                            ui_map_file_size = size_from_file(tmp_path);
+                        }
+                        else {
+                            map_file_size = size_from_file(tmp_path);
+                        }
+                    }
+                    auto end = std::chrono::steady_clock::now();
+
+                    // Benchmark
+                    if(do_benchmark) {
+                        console_output("Decompressed %s in %zu ms", map_name, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+                    }
+
+                    // If we're not doing maps in RAM, change the path to the tmp file, increment loaded maps by 1
+                    if(!do_maps_in_ram) {
+                        //std::printf("Okay then!\n");
+                        new_path = tmp_path;
+                        last_loaded_map = new_index;
+                        if(last_loaded_map > sizeof(compressed_maps) / sizeof(*compressed_maps)) {
+                            last_loaded_map = 0;
+                        }
+                        compressed_map_to_use.date_modified = mtime;
+                        std::strncpy(compressed_map_to_use.map_name, map_name, sizeof(compressed_map_to_use.map_name));
                     }
                 }
                 else if(do_maps_in_ram) {
@@ -350,6 +361,15 @@ namespace Chimera {
                     buffer = maps_in_ram_region + offset;
                     std::fseek(f, 0, SEEK_END);
                     buffer_used = std::ftell(f);
+
+                    // Make sure we have enough space for it!
+                    if(buffer_used > buffer_size) {
+                        char error_message[256];
+                        std::snprintf(error_message, sizeof(error_message), "Failed to load %s: Not enough space is allocated in memory to load this map", new_path);
+                        MessageBox(nullptr, error_message, "Load Error", MB_ICONERROR | MB_OK);
+                        std::exit(1);
+                    }
+
                     std::fseek(f, 0, SEEK_SET);
                     std::fread(buffer, buffer_size, 1, f);
                     std::fclose(f);
