@@ -5,8 +5,23 @@ but never got.
 It is licensed under version 3.0 of the GNU General Public License. See LICENSE
 for more information.
 
+This fork is a **custom version** of Chimera. The main difference from the
+upstream version is that this one includes support for Lua scripts (ported from
+the build -572).
+
 The official repository is hosted at https://github.com/SnowyMouse/chimera
 
+
+
+
+## Things to keep in mind
+This version only meant to serve as a "workaround" until the upstream version
+gets Lua scripting support. If you find weird things or bugs with some Lua scripts
+**please do not report it on the Chimera discord server**, alternatively you can
+report it on the ShadowMods server (https://shadowmods.net/discord).
+
+You need the Lua dynamic library to get this working. You can find it in
+`ext/lua/bin` folder.
 
 
 
@@ -270,7 +285,11 @@ is playing a map you don't have. These maps are stored under `chimera/maps` in
 your Halo profiles folder.
 
 #### Lua scripting
-[Lua scripting from Chimera -572](https://docs.google.com/document/d/1F3Q0blvHPgc7VfLJmhATIJrWZ0gMQ_KenkMsOQ7KKS0/edit?usp=sharing). Scripts in the global folder are loaded on startup. They remain permanently loaded unless the user uses chimera_reload_scripts. Scripts in the map folder is loaded when a map is loaded and unloaded when a map is unloaded. Scripts may also be contained inside of map files.
+Lua scripting ported from Chimera -572. Scripts in the global folder are loaded
+on startup. They remain permanently loaded unless the user uses the scripts
+reload command. Scripts in the map folder is loaded when a map is loaded and
+unloaded when a map is unloaded. Scripts may also be contained inside of map
+files.
 
 ### Ini features
 Chimera has a very customizable chimera.ini text file that you can use to
