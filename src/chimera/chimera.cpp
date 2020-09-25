@@ -605,10 +605,11 @@ namespace Chimera {
             // Fix the death reset time
             setup_death_reset_time_fix();
 
+            chimera->reload_config();
+        }
+        if(chimera->feature_present("core_custom_edition")) {
             // Set up Lua scripting
             setup_lua_scripting();
-
-            chimera->reload_config();
         }
         enable_output(true);
     }
