@@ -64,3 +64,8 @@ include("src/monolith/monolith.cmake")
 #
 # We need this to download maps from the HAC2 / HaloNet repo
 include("src/hac_map_downloader/hac_map_downloader.cmake")
+
+# Lua library
+#
+# This is required by Chimera
+include("src/lua/lua.cmake")

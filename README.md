@@ -20,9 +20,6 @@ gets Lua scripting support. If you find weird things or bugs with some Lua scrip
 **please do not report it on the Chimera discord server**, alternatively you can
 report it on the ShadowMods server (https://shadowmods.net/discord).
 
-You need the Lua dynamic library to get this working. You can find it in
-`ext/lua/bin` folder.
-
 
 
 
