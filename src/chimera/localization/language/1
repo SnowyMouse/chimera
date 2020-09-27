@@ -68,7 +68,7 @@ chimera_command_commands_in_category                                            
 chimera_command_error_no_such_category_or_command                               No existe tal categoría o comando %s
 chimera_command_help                                                            Obtén información acerca de Chimera.
 chimera_command_info_for_command                                                Información para %s:
-chimera_command_version                                                         Chimera versión %s por Kavawuvi ^v^
+chimera_command_version                                                         Chimera versión %s por Snowy ^.^
 chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
 custom_edition_netcode_command_help                                             Habilita el soporte para la edición personalizada (custom edition).
 custom_edition_netcode_command_error_needs_custom_edition_map_support           El soporte para mapas de la edición personalizada no está habilitado en tu cliente.
@@ -93,9 +93,9 @@ chimera_teleport_success_mp                                                     
 chimera_teleport_success_sp                                                     Teletransportado a %f %f %f
 
 chimera_about_command_credits_header                                            Créditos
-chimera_about_command_credits                                                   DESARROLLO\n    Kavawuvi - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
+chimera_about_command_credits                                                   DESARROLLO\n    Snowy - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
 chimera_about_command_license_header                                            Licencia
-chimera_about_command_license                                                   Copyright (C) 2020 Kavawuvi\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
+chimera_about_command_license                                                   Copyright (C) 2020 Snowy\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
 chimera_allow_all_passengers_command_help                                       Deshabilita las restricciones de equipo para vehículos.

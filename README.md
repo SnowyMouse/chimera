@@ -5,7 +5,7 @@ but never got.
 It is licensed under version 3.0 of the GNU General Public License. See LICENSE
 for more information.
 
-The official repository is hosted at https://github.com/Kavawuvi/chimera
+The official repository is hosted at https://github.com/SnowyMouse/chimera
 
 
 
@@ -116,7 +116,7 @@ increases:
 - Draw distance increased to 2250 world units (~6.86 km)
 
 #### Compressed maps
-Chimera supports [Invader](https://github.com/Kavawuvi/invader)-compressed
+Chimera supports [Invader](https://github.com/SnowyMouse/invader)-compressed
 maps. This allows you to take advantage of the blazingly fast zstd compression
 algorithm, drastically cutting down map size.
 
@@ -342,7 +342,7 @@ These settings allow you to configure gamepads. See the included chimera.ini
 file for more information on these settings. You can also get [premade configs]
 in the Chimera repository if you want to use a premade configuration file.
 
-[example configs]: https://github.com/Kavawuvi/chimera/tree/master/controller_config
+[example configs]: https://github.com/SnowyMouse/chimera/tree/master/controller_config
 
 #### Custom chat settings
 This allows you to customize the different colors, positioning, and timings of
@@ -853,7 +853,7 @@ Short answer: Probably not.
 
 Long answer: It's not impossible. You would first need to ask *all* of the
 developers of upstream Chimera for permission. Chimera, however, also depends
-on [Invader](https://github.com/Kavawuvi/invader) for map compression, and this
+on [Invader](https://github.com/SnowyMouse/invader) for map compression, and this
 is licensed under the GPL as well. So, you'd have to either remove the Invader
 dependency (thus no map compression - required for map downloading!) or ask
 *all* of the developers of upstream Invader for permission, too.

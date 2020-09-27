@@ -69,7 +69,7 @@ namespace Chimera {
             random_text = "HELP I'M TRAPPED IN A FILE";
         }
         else {
-            random_text = "by Kavawuvi ^v^";
+            random_text = "by Snowy ^.^";
         }
         std::snprintf(saved_with_line + LEN/2, sizeof(saved_with_line) - LEN/2, "%36s   #", random_text);
 

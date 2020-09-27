@@ -11,14 +11,14 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "Comments",         "It's still not finished"
-            VALUE "CompanyName",      "Kavawuvi ^v^"
+            VALUE "CompanyName",      "Snowy ^.^"
             VALUE "FileDescription",  "The Halo PC update that never was."
             VALUE "FileVersion",      CHIMERA_VERSION_STRING
             VALUE "InternalName",     "chimera"
             VALUE "OriginalFilename", "strings.dll"
             VALUE "ProductName",      "Chimera"
             VALUE "ProductVersion",   CHIMERA_VERSION_STRING
-            VALUE "LegalCopyright",   "'16'17'18 Kavawuvi"
+            VALUE "LegalCopyright",   "'16'17'18 Snowy"
         END
     END
     BLOCK "VarFileInfo"
