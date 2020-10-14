@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "../../../localization/localization.hpp"
+#include "../../../lua/lua_script.hpp"
 #include "../../../output/output.hpp"
 #include "../../../chimera.hpp"
 #include "../../../version.hpp"
@@ -44,8 +45,11 @@ namespace Chimera {
                 }
             }
 
+            ConsoleColor blue_color = { 1.0, 0.3, 0.6, 1 };
+
             // Show everything
             console_output(ConsoleColor::header_color(), localize("chimera_command_version"), CHIMERA_VERSION_STRING);
+            console_output(blue_color, "Lua API version %.3f (based on version 2.042 from build -572)", CHIMERA_LUA_VERSION);
             console_output(ConsoleColor::header_color(), localize("chimera_command_categories"));
             for(auto &category : categories) {
                 console_output(ConsoleColor::body_color(), "  - %s", category.data());

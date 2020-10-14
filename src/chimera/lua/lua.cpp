@@ -167,11 +167,11 @@ namespace Chimera {
 
         if(lua_isnumber(state, -1)) {
             double version = lua_tonumber(state, -1);
-            if(version > CHIMERA_LUA_INTERPRETER) {
+            if(version > CHIMERA_LUA_VERSION) {
                 console_warning("%s was made for a newer version of Chimera.", script_name);
                 console_warning("It may possibly not work as intended.");
             }
-            else if(static_cast<int>(version) < static_cast<int>(CHIMERA_LUA_INTERPRETER)) {
+            else if(static_cast<int>(version) < static_cast<int>(CHIMERA_LUA_VERSION)) {
                 console_warning("%s was made for a much older version of Chimera.", script_name);
                 console_warning("It may possibly not work as intended.");
             }

@@ -120,7 +120,7 @@ chimera_command_no_commands_available_in_category                               
 chimera_command_error_no_such_category_or_command                               No such category or command %s
 chimera_command_help                                                            Get information about Chimera.
 chimera_command_info_for_command                                                Info for %s:
-chimera_command_version                                                         Chimera version %s by Snowy ^.^
+chimera_command_version                                                         Chimera version %s by Snowy ^.^, JerryBrick
 chimera_config_note                                                             #         NOTE: This file is autosaved and may be overwritten on load.         #
 chimera_console_prompt_color_command_help                                       Change the console prompt color.
 chimera_console_prompt_color_command_output                                     %.02f red, %.02f green, %.02f blue

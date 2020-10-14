@@ -10,7 +10,7 @@
 #include "../event/event.hpp"
 
 namespace Chimera {
-    #define CHIMERA_LUA_INTERPRETER 2.042
+    #define CHIMERA_LUA_VERSION 2.042
 
     struct LuaScriptCallback {
         std::string callback_function;
@@ -46,7 +46,7 @@ namespace Chimera {
 
         std::vector<LuaScriptTimer> timers;
 
-        double version = CHIMERA_LUA_INTERPRETER;
+        double version = CHIMERA_LUA_VERSION;
 
         std::string name;
         bool loaded = false;

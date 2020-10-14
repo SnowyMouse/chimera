@@ -69,7 +69,7 @@ chimera_command_commands_in_category                                            
 chimera_command_error_no_such_category_or_command                               No existe tal categoría o comando %s
 chimera_command_help                                                            Obtén información acerca de Chimera.
 chimera_command_info_for_command                                                Información para %s:
-chimera_command_version                                                         Chimera versión %s por Snowy ^.^
+chimera_command_version                                                         Chimera versión %s por Snowy ^.^, JerryBrick
 chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
 custom_edition_netcode_command_help                                             Habilita el soporte para la edición personalizada (custom edition).
 custom_edition_netcode_command_error_needs_custom_edition_map_support           El soporte para mapas de la edición personalizada no está habilitado en tu cliente.
