@@ -27,3 +27,5 @@ _load_ui_map_asm:
     add esp, 4
     popad
     popfd
+
+    ret
