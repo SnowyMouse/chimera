@@ -40,3 +40,5 @@ _load_main_menu_asm:
     call dword ptr load_main_menu_addr ;# function address by Sledmine
     popad
     popfd
+
+    ret
