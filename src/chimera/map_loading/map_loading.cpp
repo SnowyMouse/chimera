@@ -1070,6 +1070,13 @@ namespace Chimera {
             return get_chimera().get_ini()->get_value_bool(what).value_or(false);
         };
 
+        // Bump to 64 MiB
+        auto &allocate_main_tag_data_sig = get_chimera().get_signature("memory_allocation_amount_sig");
+        auto *allocate_memory_amount = reinterpret_cast<std::uint32_t *>(allocate_main_tag_data_sig.data() + 1);
+        auto old_amount = *allocate_memory_amount;
+        auto new_amount = old_amount - (23 * 1024 * 1024) + (64 * 1024 * 1024);
+        overwrite(allocate_memory_amount, new_amount);
+
         static Hook hook;
         auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
         write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(get_chimera().feature_present("client") ? map_loading_asm : map_loading_server_asm));
