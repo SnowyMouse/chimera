@@ -12,9 +12,11 @@
 #include "../signature/hook.hpp"
 #include "../event/frame.hpp"
 #include "../event/tick.hpp"
+#include "../event/map_load.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../halo_data/multiplayer.hpp"
 #include "../map_loading/map_loading.hpp"
 #include "../output/output.hpp"
 
@@ -101,7 +103,7 @@ namespace Chimera {
 
     extern std::byte *maps_in_ram_region;
 
-    std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
+    template <typename MapHeader> std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
         std::uint32_t crc = 0;
         std::uint32_t current_offset = 0;
 
@@ -175,6 +177,41 @@ namespace Chimera {
     }
 
     extern std::uint32_t maps_in_ram_crc32;
+    std::uint32_t current_loaded_crc32 = 0xFFFFFFFF;
+
+    // Function for getting CRC32 without a Custom Edition map index
+    template <typename MapHeader> static void on_get_crc32_non_custom() noexcept {
+        const MapHeader *header;
+        if(get_chimera().feature_present("client_demo")) {
+            header = &reinterpret_cast<MapHeader &>(get_demo_map_header());
+        }
+        else {
+            header = &reinterpret_cast<MapHeader &>(get_map_header());
+        }
+
+        auto *path = path_for_map(header->name, true);
+        if(path) {
+            // Load the header
+            std::FILE *f = nullptr;
+
+            if(!maps_in_ram_region) {
+                f = std::fopen(path, "rb");
+                if(!f) {
+                    return;
+                }
+                current_loaded_crc32 = ~calculate_crc32_of_map_file(f, *header);
+
+                // Close if open
+                if(f) {
+                    std::fclose(f);
+                    f = nullptr;
+                }
+            }
+            else {
+                current_loaded_crc32 = maps_in_ram_crc32;
+            }
+        }
+    }
 
     extern "C" void on_get_crc32() noexcept {
         // Get the loading map and all map indices so we can find which map is loading
@@ -190,42 +227,50 @@ namespace Chimera {
 
                 // Do what we need to do
                 if(map_already_crc || !path) {
-                    return;
-                }
-
-                // Load the header
-                std::FILE *f = nullptr;
-
-                MapHeader header;
-                if(!maps_in_ram_region) {
-                    f = std::fopen(path, "rb");
-                    if(!f) {
-                        return;
-                    }
-                    std::fread(&header, sizeof(header), 1, f);
-                    indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
-
-                    // Close if open
-                    if(f) {
-                        std::fclose(f);
-                        f = nullptr;
-                    }
+                    goto set_current_loaded_crc32;
                 }
                 else {
-                    indices[i].crc32 = maps_in_ram_crc32;
+                    // Load the header
+                    std::FILE *f = nullptr;
+
+                    MapHeader header;
+                    if(!maps_in_ram_region) {
+                        f = std::fopen(path, "rb");
+                        if(!f) {
+                            goto set_current_loaded_crc32;
+                        }
+                        std::fread(&header, sizeof(header), 1, f);
+                        indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
+
+                        // Close if open
+                        if(f) {
+                            std::fclose(f);
+                            f = nullptr;
+                        }
+                    }
+                    else {
+                        indices[i].crc32 = maps_in_ram_crc32;
+                    }
                 }
+
+                set_current_loaded_crc32:
+                current_loaded_crc32 = indices[i].crc32;
+
                 return;
             }
         }
     }
 
-    static void (*function_to_use)() = nullptr;
-
-    static void on_get_crc32_first_tick() {
-        if(get_tick_count() == 0) {
+    static void on_get_crc32_deferred() {
+        if(server_type() == ServerType::SERVER_NONE) {
+            on_get_crc32_non_custom<MapHeader>();
+        }
+        else {
             on_get_crc32();
         }
     }
+
+    static void (*function_to_use)() = nullptr;
 
     void initialize_fast_load() noexcept {
         auto engine = game_engine();
@@ -238,11 +283,7 @@ namespace Chimera {
                 overwrite(get_crc, nop7, sizeof(nop7));
                 overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
-
-                // Do bullshit every frame
-                if(get_chimera().feature_present("server")) {
-                    add_pretick_event(on_get_crc32_first_tick);
-                }
+                add_map_load_event(on_get_crc32_deferred);
 
                 // Prevent Halo from loading the map list (speed up loading)
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -260,6 +301,9 @@ namespace Chimera {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
 
+                // Get the thing
+                add_map_load_event(on_get_crc32_non_custom<MapHeader>);
+
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list);
                 function_to_use = do_load_multiplayer_maps<MapIndexRetail>;
@@ -272,6 +316,9 @@ namespace Chimera {
             case GameEngine::GAME_ENGINE_DEMO: {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
+
+                // Get the thing
+                add_map_load_event(on_get_crc32_non_custom<MapHeaderDemo>);
 
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list);

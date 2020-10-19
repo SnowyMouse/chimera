@@ -438,7 +438,6 @@ namespace Chimera {
         return file_size;
     }
 
-    extern std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept;
     std::uint32_t maps_in_ram_crc32;
 
     std::uint32_t calculate_crc32_of_current_map_file() noexcept {

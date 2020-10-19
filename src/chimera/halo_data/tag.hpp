@@ -27,7 +27,7 @@ namespace Chimera {
         /** Tag ID of the tag */
         TagID id;
 
-        /** Tag path; this value *can* be invalid for some tags on protected maps; always check if it's within 0x40440000 - 0x41B00000 before trying to read it!! */
+        /** Tag path; this value *can* be invalid for some tags on protected maps; always check if it's within 0x40440000 - 0x41B40000 before trying to read it!! */
         char *path;
 
         /**

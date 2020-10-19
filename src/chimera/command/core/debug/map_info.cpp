@@ -26,6 +26,8 @@ namespace Chimera {
     extern std::size_t ui_buffer_used;
     extern std::size_t map_buffer_used;
 
+    extern std::uint32_t current_loaded_crc32;
+
     bool map_info_command(int, const char **) {
         // Remove output prefix
         extern const char *output_prefix;
@@ -37,12 +39,16 @@ namespace Chimera {
         const char *map_build = nullptr;
         float tag_data_size = 0;
         std::uint32_t crc32 = 0;
+        bool crc32_matches;
+        CacheFileEngine engine;
 
         #define INFO_FROM_HEADER(map_header) { \
             map_name = map_header.name; \
             map_build = map_header.build; \
             tag_data_size = map_header.tag_data_size; \
-            crc32 = map_header.crc32_unused; \
+            crc32 = current_loaded_crc32; \
+            crc32_matches = crc32 == map_header.crc32_unused; \
+            engine = map_header.engine_type; \
         }
 
         if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
@@ -69,12 +75,42 @@ namespace Chimera {
         auto header_color = ConsoleColor::header_color();
         auto body_color = ConsoleColor::body_color();
 
+
         // Print header
         console_output(header_color, "%s", localize("chimera_map_info_command_current_map_info"));
 
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_name"), map_name);
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_build"), map_build);
-        OUTPUT_WITH_COLOR("CRC32: 0x%.08X", crc32);
+
+        const char *target_engine;
+        switch(engine) {
+            case CacheFileEngine::CACHE_FILE_DEMO:
+                target_engine = "Halo Demo / Trial";
+                break;
+            case CacheFileEngine::CACHE_FILE_RETAIL:
+                target_engine = "Halo: Combat Evolved (PC)";
+                break;
+            case CacheFileEngine::CACHE_FILE_CUSTOM_EDITION:
+                target_engine = "Halo: Custom Edition";
+                break;
+            // case CacheFileEngine::CACHE_FILE_INVADER:
+            //     target_engine = "Invader (Native)";
+            //     break;
+            // case CacheFileEngine::CACHE_FILE_XBOX:
+            //     target_engine = "Halo: Combat Evolved (Xbox)";
+            //     break;
+            default:
+                target_engine = "Bullshit (what did you think was going to be here? lol)";
+                break;
+        }
+        OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_target_engine"), target_engine);
+
+        if(crc32_matches) {
+            OUTPUT_WITH_COLOR("CRC32: 0x%.08X", crc32);
+        }
+        else {
+            console_error("CRC32: 0x%.08X (%s)", crc32, localize("chimera_map_info_command_mismatched"));
+        }
 
         const char *map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_compressed"), map_is_compressed);
@@ -110,8 +146,14 @@ namespace Chimera {
         OUTPUT_WITH_COLOR("%s: %d / %d", localize("chimera_map_info_command_map_tag_count"), tag_count, MAX_TAG_COUNT);
         OUTPUT_WITH_COLOR("%s: %.2f MiB / %.2f MiB", localize("chimera_map_info_command_map_tag_data_size"), SIZE_IN_MIB(tag_data_size), MAX_TAG_DATA_SIZE_MIB);
 
-        const char *map_protected = map_is_protected() ? localize("common_yes") : localize("common_no");
-        OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_protected"), map_protected);
+        bool map_protected_bool = map_is_protected();
+        const char *map_protected = map_protected_bool ? localize("common_yes") : localize("common_no");
+        if(!map_protected_bool) {
+            OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_map_protected"), map_protected);
+        }
+        else {
+            console_error("%s: %s", localize("chimera_map_info_command_map_protected"), map_protected);
+        }
 
         // Restore the output prefix
         output_prefix = prefix;

@@ -23,6 +23,14 @@ namespace Chimera {
      * @param stock_map stock map CRC32 if present
      */
     std::optional<std::uint32_t> crc32_for_stock_map(const char *stock_map) noexcept;
+
+    /**
+     * Calculate CRC32 of a map file
+     * @param  f      file descriptor
+     * @param  header map header reference
+     * @return        crc32
+     */
+    template <typename MapHeader> std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept;
 }
 
 #endif

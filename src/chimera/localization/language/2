@@ -21,3 +21,5 @@ chimera_signature_info_command_error                                            
 
 chimera_teleport_success_mp                                                     *flicks %S to %f %f %f*
 chimera_teleport_success_sp                                                     *flicks you to %f %f %f*
+
+chimera_map_info_command_mismatched                                             VAP! >.< *flicks map with tailfin*

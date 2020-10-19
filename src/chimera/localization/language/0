@@ -189,4 +189,6 @@ chimera_map_info_command_ram_buffer                                             
 chimera_map_info_command_map_tag_count                                          Tag count
 chimera_map_info_command_map_tag_data_size                                      Tag data size
 chimera_map_info_command_map_protected                                          Protected
+chimera_map_info_command_mismatched                                             Mismatched
+chimera_map_info_command_target_engine                                          Target engine
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     Cannot disable widescreen fix while font_override is enabled
