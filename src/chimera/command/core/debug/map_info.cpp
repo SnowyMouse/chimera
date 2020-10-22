@@ -105,12 +105,15 @@ namespace Chimera {
         }
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_target_engine"), target_engine);
 
+        /*
+        TODO: REIMPLEMENT
         if(crc32_matches) {
             OUTPUT_WITH_COLOR("CRC32: 0x%.08X", crc32);
         }
         else {
             console_error("CRC32: 0x%.08X (%s)", crc32, localize("chimera_map_info_command_mismatched"));
         }
+        */
 
         const char *map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_compressed"), map_is_compressed);
