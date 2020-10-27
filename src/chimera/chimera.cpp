@@ -40,6 +40,7 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
+#include "fix/flashlight_fix.hpp"
 #include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/camera_shake_fix.hpp"
@@ -202,6 +203,9 @@ namespace Chimera {
 
                 // Fix this massive gameplay issue
                 set_up_weapon_swap_ticks_fix();
+
+                // Set up flashlight memes
+                set_up_flashlight_fix();
 
                 // Why is this broken?
                 if(chimera->feature_present("client_widescreen_custom_edition")) {

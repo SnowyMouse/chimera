@@ -427,10 +427,22 @@ namespace Chimera {
                     std::terminate();
                 }
 
-                // fld
+                // fmul
+                case 0xD8: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    if(op1 == 0x4F) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
+                    std::terminate();
+                }
+
+                // fld / fst
                 case 0xD9: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0x47) {
+                    if(op1 == 0x47 || op1 == 0x55) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

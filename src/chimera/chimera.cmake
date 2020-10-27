@@ -78,6 +78,8 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
     src/chimera/fix/extended_description_fix.cpp
+    src/chimera/fix/flashlight_fix.cpp
+    src/chimera/fix/flashlight_fix.S
     src/chimera/fix/floor_decal_memery.cpp
     src/chimera/fix/floor_decal_memery.S
     src/chimera/fix/force_crash.cpp
