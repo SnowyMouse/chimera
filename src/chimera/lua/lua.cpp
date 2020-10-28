@@ -14,6 +14,7 @@
 #include "../version.hpp"
 #include "../chimera.hpp"
 #include "lua_callback.hpp"
+#include "lua_filesystem.hpp"
 #include "lua_game.hpp"
 #include "lua_io.hpp"
 
@@ -113,6 +114,7 @@ namespace Chimera {
         }
 
         // Set up functions
+        set_fs_functions(state);
         set_io_functions(state);
         set_game_functions(state);
 

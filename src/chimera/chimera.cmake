@@ -162,6 +162,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/tag_class.cpp
     src/chimera/localization/localization.cpp
     src/chimera/lua/lua_callback.cpp
+    src/chimera/lua/lua_filesystem.cpp
     src/chimera/lua/lua_game.cpp
     src/chimera/lua/lua_io.cpp
     src/chimera/lua/lua.cpp

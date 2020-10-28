@@ -194,3 +194,6 @@ chimera_map_info_command_map_protected                                          
 chimera_map_info_command_mismatched                                             Mismatched
 chimera_map_info_command_target_engine                                          Target engine
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     Cannot disable widescreen fix while font_override is enabled
+
+chimera_lua_wrong_number_of_arguments                                           wrong number of arguments in %s
+chimera_lua_scope_path_error                                                    invalid path (filesystem functions are scoped to script data directory)
