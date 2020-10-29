@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include <windows.h>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,6 +20,8 @@
 #include "lua_filesystem.hpp"
 #include "lua_game.hpp"
 #include "lua_io.hpp"
+
+namespace fs = std::filesystem;
 
 namespace Chimera {
     std::vector<std::unique_ptr<LuaScript>> scripts;
@@ -193,72 +197,62 @@ namespace Chimera {
 
     void load_map_script() noexcept {
         auto &map_header = get_map_header();
-        std::string chimera_path = get_chimera().get_path();
-        std::string script_path = chimera_path + "\\lua\\map\\" + get_map_header().name + ".lua";
-
-        FILE *f = fopen(script_path.c_str(), "rb+");
-        if(f) {
-            fseek(f, 0, SEEK_END);
-            size_t size = ftell(f);
-            fseek(f, 0, SEEK_SET);
-            auto d = std::make_unique<char[]>(size);
-            fread(d.get(), size, 1, f);
-
-            auto script_filename = std::string(map_header.name) + ".lua";
-            load_lua_script(script_filename.c_str(), d.get(), size, false, false);
-
-            fclose(f);
+        auto chimera_path = fs::path(get_chimera().get_path());
+        auto script_path = chimera_path / "lua" / "map" / (std::string(map_header.name) + ".lua");
+        if(fs::exists(script_path)) {
+            std::ifstream file;
+            file.open(script_path);
+            if(file.is_open()) {
+                std::stringstream file_content;
+                std::string line_buffer;
+                while(file.good() && std::getline(file, line_buffer)) {
+                    file_content << line_buffer << std::endl;
+                }
+                auto script = file_content.str();
+                auto script_name = script_path.filename().string();
+                load_lua_script(script_name.c_str(), script.c_str(), script.size(), false, false);
+                file.close();
+            }
         }
         else {
-            auto *script_data = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
-            if(script_size && script_data) {
+            auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
+            if(script_size && script) {
                 auto map_filename = std::string(map_header.name) + ".map";
-                load_lua_script(map_filename.data(), script_data, script_size, true, false);
+                load_lua_script(map_filename.c_str(), script, script_size, true, false);
             }
         }
     }
 
     static void setup_lua_folder() {
-        std::string chimera_path = get_chimera().get_path();
-        char path[512] = {};
-
-        std::sprintf(path,"%s\\lua", chimera_path.c_str());
-        CreateDirectory(path, nullptr);
-
-        std::sprintf(path,"%s\\lua\\map", chimera_path.c_str());
-        CreateDirectory(path, nullptr);
-
-        std::sprintf(path,"%s\\lua\\global", chimera_path.c_str());
-        CreateDirectory(path, nullptr);
+        auto chimera_path = fs::path(get_chimera().get_path());
+        fs::create_directory(chimera_path / "lua");
+        fs::create_directory(chimera_path / "lua" / "map");
+        fs::create_directory(chimera_path / "lua" / "global");
     }
 
-    void open_lua_scripts() {
-        std::string chimera_path = get_chimera().get_path();
-        std::string folder = chimera_path + "\\lua\\global\\";
-        std::string query = folder + "*.lua";
-
-        WIN32_FIND_DATA find_file_data;
-        auto handle = FindFirstFile(query.c_str(), &find_file_data);
-        bool ok = handle != INVALID_HANDLE_VALUE;
-        while(ok) {
-            auto path = folder + find_file_data.cFileName;
-            FILE *f = fopen(path.data(), "rb+");
-            if(f) {
-                fseek(f, 0, SEEK_END);
-                size_t size = ftell(f);
-                fseek(f, 0, SEEK_SET);
-                auto d = std::make_unique<char[]>(size);
-                fread(d.get(), size, 1, f);
-                load_lua_script(find_file_data.cFileName, d.get(), size, false, true);
-                fclose(f);
+    void open_lua_scripts() noexcept {
+        auto chimera_path = fs::path(get_chimera().get_path());
+        for(auto &entry : fs::directory_iterator(chimera_path / "lua" / "global")) {
+            auto file_path = entry.path();
+            if(file_path.extension() == ".lua") {
+                std::ifstream file;
+                file.open(file_path);
+                if(file.is_open()) {
+                    std::stringstream file_content;
+                    std::string line_buffer;
+                    while(file.good() && std::getline(file, line_buffer)) {
+                        file_content << line_buffer << std::endl;
+                    }
+                    auto script = file_content.str();
+                    auto script_name = file_path.filename().string();
+                    load_lua_script(script_name.c_str(), script.c_str(), script.size(), false, true);
+                    file.close();
+                }
             }
-            ok = FindNextFile(handle, &find_file_data);
         }
-
         load_map_script();
     }
-
 
     void setup_lua_scripting() {
         static bool already_setup = false;
