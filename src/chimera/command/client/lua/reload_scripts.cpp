@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include "../../command.hpp"
+#include "../../../localization/localization.hpp"
 #include "../../../output/output.hpp"
 #include "../../../chimera.hpp"
 #include "../../../lua/lua_script.hpp"
@@ -21,7 +22,7 @@ namespace Chimera {
         extern const char *output_prefix;
         output_prefix = nullptr;
         
-        console_output({1, 0.235, 0.82, 0}, "Lua scripts were reloaded.");
+        console_output({1, 0.235, 0.82, 0}, localize("chimera_lua_scripts_were_reloaded"));
         return true;
     }
 }

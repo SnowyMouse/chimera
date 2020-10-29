@@ -8,6 +8,7 @@
 #include "../event/rcon_message.hpp"
 #include "../event/tick.hpp"
 #include "../halo_data/camera.hpp"
+#include "../localization/localization.hpp"
 #include "../math_trig/math_trig.hpp"
 #include "../output/output.hpp"
 #include "../chimera.hpp"
@@ -290,12 +291,12 @@ namespace Chimera {
             else if_callback_then_set(pretick)
             else if_callback_then_set(unload)
             else {
-                char message[256] = {};
-                sprintf(message, "invalid callback %s given in set_callback.", callback_name);
-                return luaL_error(state, message);
+                return luaL_error(state, localize("chimera_lua_error_invalid_callback"), callback_name);
             }
         }
-        else luaL_error(state,"wrong number of arguments in set_callback");
+        else {
+            luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"));
+        }
         return 0;
     }
 

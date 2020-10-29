@@ -10,6 +10,7 @@
 #include "../halo_data/multiplayer.hpp"
 #include "../halo_data/player.hpp"
 #include "../halo_data/table.hpp"
+#include "../localization/localization.hpp"
 #include "../output/output.hpp"
 #include "../version.hpp"
 #include "../chimera.hpp"
@@ -153,7 +154,7 @@ namespace Chimera {
             output_prefix = nullptr;
 
             // Print error messages
-            console_error("Failed to load %s", script_name);
+            console_error(localize("chimera_lua_error_failed_to_load_script"), script_name);
             print_error(state);
 
             // Close state and erase broken script
@@ -170,20 +171,20 @@ namespace Chimera {
         if(lua_isnumber(state, -1)) {
             double version = lua_tonumber(state, -1);
             if(version > CHIMERA_LUA_VERSION) {
-                console_warning("%s was made for a newer version of Chimera.", script_name);
-                console_warning("It may possibly not work as intended.");
+                console_warning(localize("chimera_lua_warning_script_too_updated"), script_name);
+                console_warning(localize("chimera_lua_warning_script_possibly_not_work"));
             }
             else if(static_cast<int>(version) < static_cast<int>(CHIMERA_LUA_VERSION)) {
-                console_warning("%s was made for a much older version of Chimera.", script_name);
-                console_warning("It may possibly not work as intended.");
+                console_warning(localize("chimera_lua_warning_script_too_outdated"), script_name);
+                console_warning(localize("chimera_lua_warning_script_possibly_not_work"));
             }
             else {
                 script_from_state(state).version = version;
             }
         }
         else {
-            console_warning("%s does not have clua_version defined.", script_name);
-            console_warning("It may possibly not work as intended.");
+            console_warning(localize("chimera_lua_warning_script_undefined_api_version"), script_name);
+            console_warning(localize("chimera_lua_warning_script_possibly_not_work"));
         }
         lua_pop(state, 1);
 
@@ -326,7 +327,7 @@ namespace Chimera {
             argument.argument_type = LuaAmbiguousTypeArgument::ARGUMENT_NIL;
         }
         else {
-            if(do_lua_error) luaL_error(script.state, "timer argument must be boolean, string, number, or nil");
+            if(do_lua_error) luaL_error(script.state, localize("chimera_lua_error_invalid_timer_argument"));
             else throw std::exception();
         }
         return argument;

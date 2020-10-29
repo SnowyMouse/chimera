@@ -2,12 +2,13 @@
 
 #include <windows.h>
 #include <cstring>
+#include "../localization/localization.hpp"
 #include "lua_io.hpp"
 
 namespace Chimera {
     #define bail_if_not_unlocked \
         if((address < 0x40000000 || address > 0x41B00000) && script_from_state(state).sandbox) { \
-            luaL_error(state, "invalid address specified (script is sandboxed)"); \
+            luaL_error(state, localize("chimera_lua_error_script_sandbox_invalid_address")); \
             return 0; \
         }
 
@@ -20,7 +21,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "read_int");
         }
     }
 
@@ -34,7 +35,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "write_int");
         }
     }
 
@@ -47,7 +48,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "read_float");
         }
     }
 
@@ -61,7 +62,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "write_float");
         }
     }
 
@@ -73,7 +74,7 @@ namespace Chimera {
             return 1;
         }
         else{
-            return luaL_error(state, "wrong number of arguments in read_string8");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "read_string");
         }
     }
 
@@ -87,7 +88,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in write_string8");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "write_string");
         }
     }
 
@@ -98,13 +99,13 @@ namespace Chimera {
             uint32_t &address_ptr = *reinterpret_cast<uint32_t *>(address);
             uint32_t bit = luaL_checkinteger(state,2);
             if(bit >= (sizeof(address_ptr) * 8)) {
-                return luaL_error(state, "invalid argument #2 in read_bit");
+                return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 2, "read_bit");
             }
             lua_pushinteger(state, (address_ptr >> bit) & 1);
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in read_bit");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "read_bit");
         }
     }
 
@@ -116,14 +117,14 @@ namespace Chimera {
             auto &address_ptr = *reinterpret_cast<uint32_t *>(address);
             uint32_t bit = luaL_checkinteger(state,2);
             if(bit >= (sizeof(address_ptr) * 8)) {
-                return luaL_error(state, "invalid argument #2 in write_bit");
+                return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 2, "write_bit");
             }
             char bit_to_set;
             if(lua_isboolean(state, 3)) bit_to_set = lua_toboolean(state, 3) == true;
             else {
                 auto new_bit = luaL_checkinteger(state, 3);
                 if(new_bit > 1) {
-                    return luaL_error(state, "invalid argument #3 in write_bit");
+                    return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 3, "write_bit");
                 }
                 bit_to_set = new_bit;
             }
@@ -140,7 +141,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state,"wrong number of arguments in write_bit");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "write_bit");
         }
     }
 

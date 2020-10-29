@@ -11,6 +11,7 @@
 #include "../halo_data/tag_class.hpp"
 #include "../halo_data/tag.hpp"
 #include "../event/tick.hpp"
+#include "../localization/localization.hpp"
 #include "../math_trig/math_trig.hpp"
 #include "../output/output.hpp"
 #include "../chimera.hpp"
@@ -28,7 +29,7 @@ namespace Chimera {
         if(args == 1 || args == 4 || args == 5) {
             const char *message;
             if(lua_isboolean(state, 1)) {
-                message = lua_toboolean(state, 1) ? "true" : "false";
+                message = localize(lua_toboolean(state, 1) ? "common_true" : "common_false");
             }
             else if(lua_isnil(state, 1)) {
                 message = "(nil)";
@@ -60,7 +61,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in console_out");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "console_out");
         }
     }
 
@@ -70,13 +71,13 @@ namespace Chimera {
             ObjectID object_id;
             object_id.whole_id = luaL_checknumber(state, 1);
             if(object_id.is_null()) {
-                return luaL_error(state, "invalid object id");
+                return luaL_error(state, localize("chimera_lua_error_invalid_object_id"));
             }
             delete_object(object_id);
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in delete_object");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "delete_object");
         }
     }
 
@@ -88,7 +89,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in execute_script");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "execute_script");
         }
     }
 
@@ -123,7 +124,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in get_dynamic_player");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_dynamic_player");
         }
     }
 
@@ -135,7 +136,7 @@ namespace Chimera {
             switch(s.type) {
                 case SCRIPTING_GLOBAL_NOT_FOUND:
                 case SCRIPTING_GLOBAL_UNIMPLEMENTED:
-                    return luaL_error(state, "global not found or not implemented");
+                    return luaL_error(state, localize("chimera_lua_error_global_not_found"));
                 case SCRIPTING_GLOBAL_BOOLEAN:
                     lua_pushboolean(state, s.value.boolean);
                     return 1;
@@ -152,7 +153,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in set_global");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_global");
         }
     }
 
@@ -185,7 +186,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in get_object");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_object");
         }
     }
 
@@ -213,7 +214,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in get_player");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_player");
         }
     }
 
@@ -246,7 +247,7 @@ namespace Chimera {
             }
         }
         else {
-            return luaL_error(state, "wrong number of arguments in get_tag");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_tag");
         }
         
         if(tag) {
@@ -264,7 +265,7 @@ namespace Chimera {
         if(args == 1) {
             const char *message;
             if(lua_isboolean(state, 1)) {
-                message = lua_toboolean(state, 1) ? "true" : "false";
+                message = localize(lua_toboolean(state, 1) ? "common_true" : "common_false");
             }
             else if(lua_isnil(state, 1)) {
                 message = "(nil)";
@@ -275,7 +276,9 @@ namespace Chimera {
             hud_output_raw(message);
             return 0;
         }
-        return luaL_error(state, "wrong number of arguments in hud_message");
+        else {
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "hud_message");
+        }
     }
 
     static int lua_set_global(lua_State *state) noexcept {
@@ -286,7 +289,7 @@ namespace Chimera {
             switch(value.type) {
                 case SCRIPTING_GLOBAL_NOT_FOUND:
                 case SCRIPTING_GLOBAL_UNIMPLEMENTED:
-                    return luaL_error(state, "global not found or not implemented");
+                    return luaL_error(state, localize("chimera_lua_error_global_not_found"));
                 case SCRIPTING_GLOBAL_BOOLEAN:
                     if(lua_isboolean(state, 2)) {
                         value.value.boolean = lua_toboolean(state, 2);
@@ -295,7 +298,7 @@ namespace Chimera {
                         value.value.boolean = lua_tointeger(state, 2) != 0;
                     }
                     else {
-                        return luaL_error(state, "expected a number or boolean in argument 2");
+                        return luaL_error(state, localize("chimera_lua_error_expected_number_or_boolean"), 2);
                     }
                     break;
                 case SCRIPTING_GLOBAL_REAL:
@@ -303,7 +306,7 @@ namespace Chimera {
                         value.value.real = lua_tonumber(state, 2);
                     }
                     else {
-                        return luaL_error(state, "expected a number in argument 2");
+                        return luaL_error(state, localize("chimera_lua_error_expected_number"), 2);
                     }
                     break;
                 case SCRIPTING_GLOBAL_SHORT:
@@ -311,7 +314,7 @@ namespace Chimera {
                         value.value.short_int = lua_tointeger(state, 2);
                     }
                     else {
-                        return luaL_error(state, "expected a number in argument 2");
+                        return luaL_error(state, localize("chimera_lua_error_expected_number"), 2);
                     }
                     break;
                 case SCRIPTING_GLOBAL_LONG:
@@ -319,7 +322,7 @@ namespace Chimera {
                         value.value.long_int = lua_tointeger(state, 2);
                     }
                     else {
-                        return luaL_error(state, "expected a number in argument 2");
+                        return luaL_error(state, localize("chimera_lua_error_expected_number"), 2);
                     }
                     break;
             }
@@ -327,7 +330,7 @@ namespace Chimera {
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in set_global");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "set_global");
         }
     }
 
@@ -337,7 +340,7 @@ namespace Chimera {
             auto &script = script_from_state(state);
             auto interval = luaL_checknumber(state, 1);
             if(interval < 0.1) {
-                return luaL_error(state, "interval must be at least 0.1 millseconds");
+                return luaL_error(state, localize("chimera_lua_error_minimum_timer_interval"));
             }
             auto *function = luaL_checkstring(state, 2);
             LuaScriptTimer timer;
@@ -352,7 +355,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in set_timer");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "set_timer");
         }
     }
 
@@ -364,13 +367,13 @@ namespace Chimera {
             for(std::size_t i = 0; i < script.timers.size(); i++) {
                 if(script.timers[i].timer_id == id) {
                     script.timers.erase(script.timers.begin() + i);
-                    return luaL_error(state, "timer with that ID does not exist");
+                    return luaL_error(state, localize("chimera_lua_error_timer_does_not_exists"));
                 }
             }
             return 0;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in stop_timer");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "stop_timer");
         }
     }
 
@@ -384,7 +387,7 @@ namespace Chimera {
                 tag_id.whole_id = luaL_checknumber(state, 1);
 
                 if(tag_id.is_null() || tag_id.index.index >= get_tag_data_header().tag_count) {
-                    return luaL_error(state, "invalid tag ID specified in spawn_object");
+                    return luaL_error(state, localize("chimera_lua_error_spawn_object_invalid_id"));
                 }
 
                 args_offset = 2;
@@ -392,7 +395,7 @@ namespace Chimera {
             else {
                 auto *tag = get_tag(luaL_checkstring(state, 2), luaL_checkstring(state, 1));
                 if(!tag) {
-                    return luaL_error(state,"invalid tag specified in spawn_object");
+                    return luaL_error(state, localize("chimera_lua_error_spawn_object_invalid_path"));
                 }
                 tag_id = tag->id;
                 args_offset = 3;
@@ -410,7 +413,7 @@ namespace Chimera {
             return 1;
         }
         else {
-            return luaL_error(state, "wrong number of arguments in spawn_object");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "spawn_object");
         }
     }
 
@@ -418,7 +421,7 @@ namespace Chimera {
         int args = lua_gettop(state);
         if(args == 1) {
             auto value = luaL_checknumber(state, 1);
-            if(value < 0.01) return luaL_error(state, "tick rate must be at least 0.01");
+            if(value < 0.01) return luaL_error(state, localize("chimera_lua_error_minimum_tick_rate"));
             set_tick_rate(luaL_checknumber(state, 1));
         }
         lua_pushnumber(state, tick_rate());

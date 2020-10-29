@@ -2,6 +2,8 @@ chimera_language_shortened_name                                                 
 
 common_no                                                                       No
 common_yes                                                                      Yes
+common_false                                                                    False
+common_true                                                                     True
 
 chimera_error_config                                                            Chimera: Error opening config file %s
 chimera_error_command_not_found                                                 Command not found
@@ -141,7 +143,6 @@ chimera_interpolate_help                                                        
 chimera_language_command_available_languages                                    Available languages:
 chimera_language_command_error_invalid_language                                 Invalid language %s.
 chimera_language_command_help                                                   Set the language of Chimera.
-chimera_reload_scripts_command_help												Reload all Lua scripts.
 chimera_model_detail_command_help                                               Change Halo's model detail.
 chimera_mouse_sensitivity_command_help                                          Change mouse sensitivity.
 chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical
@@ -195,5 +196,25 @@ chimera_map_info_command_mismatched                                             
 chimera_map_info_command_target_engine                                          Target engine
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     Cannot disable widescreen fix while font_override is enabled
 
-chimera_lua_wrong_number_of_arguments                                           wrong number of arguments in %s
-chimera_lua_scope_path_error                                                    invalid path (filesystem functions are scoped to script data directory)
+chimera_lua_reload_scripts_command_help                                         Reload all Lua scripts.
+chimera_lua_scripts_were_reloaded                                               Lua scripts were reloaded.
+chimera_lua_warning_script_too_updated                                          %s was made for a newer version of Chimera.
+chimera_lua_warning_script_too_outdated                                         %s was made for a much older version of Chimera.
+chimera_lua_warning_script_possibly_not_work                                    It may possibly not work as intended.
+chimera_lua_warning_script_undefined_api_version                                %s does not have clua_version global defined.
+chimera_lua_error_failed_to_load_script                                         Failed to load %s
+chimera_lua_error_wrong_number_of_arguments                                     wrong number of arguments in %s
+chimera_lua_error_invalid_function_argument                                     invalid argument #%d in %s
+chimera_lua_error_scope_path                                                    invalid path (filesystem functions are scoped to script data directory)
+chimera_lua_error_invalid_object_id                                             invalid object ID
+chimera_lua_error_invalid_callback                                              invalid callback %s given in set_callback.
+chimera_lua_error_global_not_found                                              global not found or not implemented
+chimera_lua_error_expected_number                                               expected a number in argument #%d
+chimera_lua_error_expected_number_or_boolean                                    expected a number or boolean in argument #%d
+chimera_lua_error_invalid_timer_argument                                        timer argument must be boolean, string, number, or nil
+chimera_lua_error_minimum_timer_interval                                        interval must be at least 0.1 millseconds
+chimera_lua_error_timer_does_not_exists                                         timer with that ID does not exist
+chimera_lua_error_spawn_object_invalid_id                                       invalid tag ID specified in spawn_object
+chimera_lua_error_spawn_object_invalid_path                                     invalid tag path specified in spawn_object
+chimera_lua_error_minimum_tick_rate                                             tick rate must be at least 0.01
+chimera_lua_error_script_sandbox_invalid_address                                invalid address specified (script is sandboxed)

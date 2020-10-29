@@ -239,8 +239,9 @@ namespace Chimera {
             return;
         }
 
-        if (std::strcmp(console_text, "rs") == 0) { // Reload scripts shorthand command
-            get_chimera().execute_command("chimera_reload_scripts");
+        // Pls don't kill me
+        if (std::strcmp(console_text, "chimera_reload_scripts") == 0 || std::strcmp(console_text, "rs") == 0) {
+            get_chimera().execute_command("chimera_lua_reload_scripts");
             return;
         }
 

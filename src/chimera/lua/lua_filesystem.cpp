@@ -65,11 +65,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "create_directory");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "create_directory");
         }
     }
 
@@ -88,11 +88,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "remove_directory");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "remove_directory");
         }
     }
 
@@ -120,11 +120,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "list_directory");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "list_directory");
         }
     }
 
@@ -143,11 +143,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "directory_exists");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "directory_exists");
         }
     }
 
@@ -172,11 +172,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "write_file");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "write_file");
         }
     }
 
@@ -202,11 +202,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "read_file");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "read_file");
         }
     }
 
@@ -225,11 +225,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "delete_file");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "delete_file");
         }
     }
 
@@ -248,11 +248,11 @@ namespace Chimera {
                 return 1;
             }
             else {
-                return luaL_error(state, localize("chimera_lua_scope_path_error"));
+                return luaL_error(state, localize("chimera_lua_error_scope_path"));
             }
         }
         else {
-            return luaL_error(state, localize("chimera_lua_wrong_number_of_arguments"), "file_exists");
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "file_exists");
         }
     }
 

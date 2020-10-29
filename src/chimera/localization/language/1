@@ -2,6 +2,8 @@ chimera_language_shortened_name                                                 
 
 common_no                                                                       No
 common_yes                                                                      Sí
+common_false                                                                    Falso
+common_true                                                                     Verdadero
 
 chimera_error_config                                                            Chimera: Error al abrir el archivo de configuración %s
 chimera_error_command_not_found                                                 Comando no encontrado
@@ -77,7 +79,6 @@ chimera_delete_empty_weapons_help                                               
 chimera_devmode_command_help                                                    Habilita el devmode. Esto habilitará los comandos de cheats y de desarrollador.
 chimera_language_command_available_languages                                    Lenguajes disponibles:
 chimera_language_command_error_invalid_language                                 Lenguaje inválido %s.
-chimera_reload_scripts_command_help												Recarga todos los scripts de Lua.
 chimera_language_command_help                                                   Establece el idioma de Chimera.
 chimera_mouse_sensitivity_command_help                                          Cambia la sensibilidad del mouse.
 chimera_mouse_sensitivity_command_setting                                       %f horizontal; %f vertical
@@ -197,3 +198,10 @@ chimera_map_info_command_map_protected                                          
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     No se puede desactivar el arreglo de pantalla ancha mientras la anulación de texto esté habilitada.
 chimera_spam_to_join_command_help                                               Establece si reintentar conectar automáticamente o no cuando el servidor esté lleno.
 chimera_spam_to_join_retrying                                                   ¡El servidor está lleno! Reintentando...\n(Presiona ESCAPE para cancelar)
+
+chimera_lua_reload_scripts_command_help                                         Recarga todos los scripts Lua.
+chimera_lua_scripts_were_reloaded                                               Los scripts Lua han sido recargados.
+chimera_lua_warning_script_too_updated                                          %s fue hecho para una versión más nueva de Chimera.
+chimera_lua_warning_script_too_outdated                                         %s fue hecho para una versión más antigua de Chimera.
+chimera_lua_warning_script_possibly_not_work                                    Es posible que no funcione como se espera.
+chimera_lua_error_failed_to_load_script                                         No se pudo cargar %s
