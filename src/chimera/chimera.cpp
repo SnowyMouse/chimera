@@ -204,9 +204,6 @@ namespace Chimera {
                 // Fix this massive gameplay issue
                 set_up_weapon_swap_ticks_fix();
 
-                // Set up flashlight memes
-                set_up_flashlight_fix();
-
                 // Why is this broken?
                 if(chimera->feature_present("client_widescreen_custom_edition")) {
                     set_up_aim_assist_fix();
@@ -222,10 +219,11 @@ namespace Chimera {
                     set_up_demo_master_server();
                 }
 
-                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since Custom Edition really isn't worth fixing.
+                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since people will bitch.
                 #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
                 #endif
+                    set_up_flashlight_fix();
                     set_up_inverted_flag_fix();
                 #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 }
