@@ -197,8 +197,8 @@ namespace Chimera {
 
     void load_map_script() noexcept {
         auto &map_header = get_map_header();
-        auto chimera_path = fs::path(get_chimera().get_path());
-        auto script_path = chimera_path / "lua" / "map" / (std::string(map_header.name) + ".lua");
+        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+        auto script_path = lua_directory / "scripts" / "map" / (std::string(map_header.name) + ".lua");
         if(fs::exists(script_path)) {
             std::ifstream file;
             file.open(script_path);
@@ -224,16 +224,9 @@ namespace Chimera {
         }
     }
 
-    static void setup_lua_folder() {
-        auto chimera_path = fs::path(get_chimera().get_path());
-        fs::create_directory(chimera_path / "lua");
-        fs::create_directory(chimera_path / "lua" / "map");
-        fs::create_directory(chimera_path / "lua" / "global");
-    }
-
     void open_lua_scripts() noexcept {
-        auto chimera_path = fs::path(get_chimera().get_path());
-        for(auto &entry : fs::directory_iterator(chimera_path / "lua" / "global")) {
+        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+        for(auto &entry : fs::directory_iterator(lua_directory / "scripts" / "global")) {
             auto file_path = entry.path();
             if(file_path.extension() == ".lua") {
                 std::ifstream file;
@@ -252,6 +245,31 @@ namespace Chimera {
             }
         }
         load_map_script();
+    }
+
+    static void setup_lua_folder() {
+        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+
+        fs::create_directories(lua_directory / "scripts" / "global");
+        fs::create_directories(lua_directory / "scripts" / "map");
+        fs::create_directories(lua_directory / "data" / "global");
+        fs::create_directories(lua_directory / "data" / "map");
+        //fs::create_directories(lua_directory / "libraries");
+
+        //std::ofstream(lua_directory / "loaded-scripts.txt", std::ios::app).close();
+        //std::ofstream(lua_directory / "trusted-scripts.txt", std::ios::app).close();
+
+        // Move scripts from old directories
+        auto move_scripts = [](fs::path origin, fs::path destination) {
+            if(fs::exists(origin)) {
+                for(auto &entry : fs::directory_iterator(origin)) {
+                    fs::rename(entry.path(), destination / entry.path().filename());
+                }
+                fs::remove(origin);
+            }
+        };
+        move_scripts(lua_directory / "global", lua_directory / "scripts" / "global");
+        move_scripts(lua_directory / "map", lua_directory / "scripts" / "map");
     }
 
     void setup_lua_scripting() {
