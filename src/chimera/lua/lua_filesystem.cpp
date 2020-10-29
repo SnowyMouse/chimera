@@ -188,12 +188,17 @@ namespace Chimera {
                 std::ifstream file;
                 file.open(get_script_data_path(state) / path);
                 if(file.is_open()) {
-                    std::stringstream file_content;
+                    std::stringstream file_content_stream;
                     std::string line_buffer;
                     while(file.good() && std::getline(file, line_buffer)) {
-                        file_content << line_buffer;
+                        file_content_stream << line_buffer << std::endl;
                     }
-                    lua_pushstring(state, file_content.str().c_str());
+                    auto file_content = file_content_stream.str();
+                    if(!line_buffer.empty()) {
+                        // Remove last newline character
+                        file_content.pop_back();
+                    }
+                    lua_pushstring(state, file_content.c_str());
                     file.close();
                 }
                 else {
