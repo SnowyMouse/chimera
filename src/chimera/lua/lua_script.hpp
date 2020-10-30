@@ -6,18 +6,17 @@
 #include <string>
 #include <vector>
 #include <lua.hpp>
-#include "../output/output.hpp"
 #include "../event/event.hpp"
 
 namespace Chimera {
     #define CHIMERA_LUA_VERSION 2.042
 
+    struct LuaScript;
+
     struct LuaScriptCallback {
         std::string callback_function;
         EventPriority priority;
     };
-
-    struct LuaScript;
 
     struct LuaAmbiguousTypeArgument {
         enum {
@@ -72,10 +71,30 @@ namespace Chimera {
         ~LuaScript() noexcept;
     };
 
-    LuaScript &script_from_state(lua_State *state) noexcept;
-    void refresh_client_index(lua_State *state) noexcept;
-    void refresh_variables(lua_State *state) noexcept;
+    /**
+     * Load Lua global script
+     */
+    void load_global_scripts() noexcept;
+
+    /**
+     * Load map script
+     */
+    void load_map_script() noexcept;
+
+    /**
+     * Unload all Lua scripts
+     */
+    void unload_scripts() noexcept;
+
+    /**
+     * Print last error message from stack
+     */
     void print_error(lua_State *state) noexcept;
+
+    /**
+     * Look for a Lua script by a given Lua state
+     */
+    LuaScript &script_from_state(lua_State *state) noexcept;
 }
 
 #endif

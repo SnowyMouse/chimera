@@ -12,12 +12,14 @@
 #include "../math_trig/math_trig.hpp"
 #include "../output/output.hpp"
 #include "../chimera.hpp"
+#include "lua_variables.hpp"
 #include "lua_callback.hpp"
 
 namespace Chimera {
     static LARGE_INTEGER last_time;
 
     extern std::vector<std::unique_ptr<LuaScript>> scripts;
+    extern void load_map_script() noexcept;
 
     #define call_all_priorities(function) \
         function(EVENT_PRIORITY_BEFORE); \
@@ -25,7 +27,7 @@ namespace Chimera {
         function(EVENT_PRIORITY_AFTER); \
         function(EVENT_PRIORITY_FINAL) \
     
-    int pcall(lua_State *state, int args, int result_count) noexcept {
+    static int pcall(lua_State *state, int args, int result_count) noexcept {
         auto result = lua_pcall(state, args, result_count, 0);
         if(result != LUA_OK) {
             print_error(state);
@@ -44,8 +46,6 @@ namespace Chimera {
             } \
         } \
     };
-
-    extern void load_map_script() noexcept;
 
     static void check_timers() noexcept {
         LARGE_INTEGER now_time;

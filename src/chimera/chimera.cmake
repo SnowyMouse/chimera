@@ -165,7 +165,9 @@ add_library(chimera STATIC
     src/chimera/lua/lua_filesystem.cpp
     src/chimera/lua/lua_game.cpp
     src/chimera/lua/lua_io.cpp
-    src/chimera/lua/lua.cpp
+    src/chimera/lua/lua_script.cpp
+    src/chimera/lua/lua_variables.cpp
+    src/chimera/lua/scripting.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp

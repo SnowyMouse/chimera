@@ -96,8 +96,8 @@ namespace Chimera {
         int args = lua_gettop(state);
         if(args == 2) {
             auto address = luaL_checkinteger(state, 1);
-            uint32_t &address_ptr = *reinterpret_cast<uint32_t *>(address);
-            uint32_t bit = luaL_checkinteger(state,2);
+            std::uint32_t &address_ptr = *reinterpret_cast<std::uint32_t *>(address);
+            std::uint32_t bit = luaL_checkinteger(state,2);
             if(bit >= (sizeof(address_ptr) * 8)) {
                 return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 2, "read_bit");
             }
@@ -114,8 +114,8 @@ namespace Chimera {
         if(args == 3) {
             auto address = luaL_checkinteger(state, 1);
             bail_if_not_unlocked
-            auto &address_ptr = *reinterpret_cast<uint32_t *>(address);
-            uint32_t bit = luaL_checkinteger(state,2);
+            auto &address_ptr = *reinterpret_cast<std::uint32_t *>(address);
+            std::uint32_t bit = luaL_checkinteger(state,2);
             if(bit >= (sizeof(address_ptr) * 8)) {
                 return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 2, "write_bit");
             }
@@ -128,7 +128,7 @@ namespace Chimera {
                 }
                 bit_to_set = new_bit;
             }
-            if(bit_to_set != ((address_ptr >> bit) & 1)) {
+            if(bit_to_set != static_cast<char>((address_ptr >> bit) & 1)) {
                 switch((address_ptr >> bit) & 1) {
                     case 0:
                         address_ptr += (1 << bit);
@@ -160,12 +160,12 @@ namespace Chimera {
         #define lua_register_read_write_float(ttype) \
             lua_register_read_write_float_named(#ttype, ttype);
 
-        lua_register_read_write_int_named("i8", int8_t);
-        lua_register_read_write_int_named("i16", int16_t);
-        lua_register_read_write_int_named("i32", int32_t);
-        lua_register_read_write_int_named("u8", uint8_t);
-        lua_register_read_write_int_named("u16", uint16_t);
-        lua_register_read_write_int_named("u32", uint32_t);
+        lua_register_read_write_int_named("i8", std::int8_t);
+        lua_register_read_write_int_named("i16", std::int16_t);
+        lua_register_read_write_int_named("i32", std::int32_t);
+        lua_register_read_write_int_named("u8", std::uint8_t);
+        lua_register_read_write_int_named("u16", std::uint16_t);
+        lua_register_read_write_int_named("u32", std::uint32_t);
         lua_register_read_write_int_named("byte", BYTE);
         lua_register_read_write_int_named("word", WORD);
         lua_register_read_write_int_named("dword", DWORD);

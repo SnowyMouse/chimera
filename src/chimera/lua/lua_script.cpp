@@ -3,91 +3,23 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <memory>
 #include <string>
 #include <vector>
-#include <cmath>
 #include <lua.hpp>
 #include "../halo_data/map.hpp"
-#include "../halo_data/multiplayer.hpp"
-#include "../halo_data/player.hpp"
-#include "../halo_data/table.hpp"
 #include "../localization/localization.hpp"
 #include "../output/output.hpp"
 #include "../version.hpp"
 #include "../chimera.hpp"
-#include "lua_callback.hpp"
 #include "lua_filesystem.hpp"
 #include "lua_game.hpp"
+#include "lua_variables.hpp"
 #include "lua_io.hpp"
 
 namespace fs = std::filesystem;
 
 namespace Chimera {
     std::vector<std::unique_ptr<LuaScript>> scripts;
-
-    void refresh_client_index(lua_State *state) noexcept {
-        auto player_id = get_client_player_id();
-        if(!player_id.is_null()) {
-            lua_pushinteger(state, player_id.index.index);
-        }
-        else {
-            lua_pushnil(state);
-        }
-        lua_setglobal(state, "local_player_index");
-    }
-
-    void refresh_variables(lua_State *state) noexcept {
-        // Update client player index
-        refresh_client_index(state);
-
-        // Update map name
-        lua_pushstring(state, get_map_header().name);
-        lua_setglobal(state, "map");
-
-        // Update server type
-        const char *server = nullptr;
-        switch(server_type()) {
-            case SERVER_NONE:
-                server = "none";
-                break;
-            case SERVER_DEDICATED:
-                server = "dedicated";
-                break;
-            case SERVER_LOCAL:
-                server = "local";
-                break;
-        }
-        lua_pushstring(state, server);
-        lua_setglobal(state, "server_type");
-
-        // Update gametype
-        if(std::strcmp(server, "local") != 0) {
-            const char *current_gametype = nullptr;
-            switch(gametype()) {
-                case GAMETYPE_CTF:
-                    current_gametype = "ctf";
-                    break;
-                case GAMETYPE_SLAYER:
-                    current_gametype = "slayer";
-                    break;
-                case GAMETYPE_KING:
-                    current_gametype = "king";
-                    break;
-                case GAMETYPE_ODDBALL:
-                    current_gametype = "oddball";
-                    break;
-                case GAMETYPE_RACE:
-                    current_gametype = "race";
-                    break;
-            }
-            lua_pushstring(state, current_gametype);
-        }
-        else {
-            lua_pushnil(state);
-        }
-        lua_setglobal(state, "gametype");
-    }
 
     static std::string read_script_file(fs::path script_path) noexcept {
         std::ifstream file(script_path, std::ios::binary);
@@ -248,46 +180,7 @@ namespace Chimera {
         }
     }
 
-    static void setup_lua_folder() {
-        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
-
-        fs::create_directories(lua_directory / "scripts" / "global");
-        fs::create_directories(lua_directory / "scripts" / "map");
-        fs::create_directories(lua_directory / "data" / "global");
-        fs::create_directories(lua_directory / "data" / "map");
-        fs::create_directories(lua_directory / "modules");
-
-        //std::ofstream(lua_directory / "loaded-scripts.txt", std::ios::app).close();
-        //std::ofstream(lua_directory / "trusted-scripts.txt", std::ios::app).close();
-
-        // Move scripts from old directories
-        auto move_scripts = [](fs::path origin, fs::path destination) {
-            if(fs::exists(origin)) {
-                for(auto &entry : fs::directory_iterator(origin)) {
-                    fs::rename(entry.path(), destination / entry.path().filename());
-                }
-                fs::remove(origin);
-            }
-        };
-        move_scripts(lua_directory / "global", lua_directory / "scripts" / "global");
-        move_scripts(lua_directory / "map", lua_directory / "scripts" / "map");
-    }
-
-    void setup_lua_scripting() {
-        static bool already_setup = false;
-        if(already_setup) {
-            return;
-        }
-
-        setup_lua_folder();
-        setup_callbacks();
-        load_global_scripts();
-        load_map_script();
-
-        already_setup = true;
-    }
-
-    void destroy_lua_scripting() {
+    void unload_scripts() noexcept {
         scripts.clear();
     }
 
@@ -298,6 +191,7 @@ namespace Chimera {
                 return s;
             }
         }
+        // This shouldn't happen
         std::terminate();
     }
 

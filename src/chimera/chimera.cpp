@@ -16,7 +16,7 @@
 #include "event/frame.hpp"
 #include "halo_data/path.hpp"
 #include "halo_data/hud_fonts.hpp"
-#include "lua/lua.hpp"
+#include "lua/scripting.hpp"
 #include "output/draw_text.hpp"
 #include "output/output.hpp"
 #include "signature/hook.hpp"
