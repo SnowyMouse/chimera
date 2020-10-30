@@ -27,6 +27,10 @@ namespace Chimera {
         lua_pushstring(state, get_map_header().name);
         lua_setglobal(state, "map");
 
+        // map is protected?
+        lua_pushboolean(state, map_is_protected());
+        lua_setglobal(state, "map_is_protected");
+
         // Update server type
         const char *server = nullptr;
         switch(server_type()) {
