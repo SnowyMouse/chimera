@@ -218,3 +218,5 @@ chimera_lua_error_spawn_object_invalid_id                                       
 chimera_lua_error_spawn_object_invalid_path                                     invalid tag path specified in spawn_object
 chimera_lua_error_minimum_tick_rate                                             tick rate must be at least 0.01
 chimera_lua_error_script_sandbox_invalid_address                                invalid address specified (script is sandboxed)
+chimera_lua_error_draw_text_invalid_font_id                                     invalid font tag id in draw_text
+chimera_lua_error_draw_text_invalid_alignment                                   invalid text alignment in draw_text

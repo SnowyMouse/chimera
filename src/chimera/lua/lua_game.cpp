@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#include <cmath>
 #include "../console/console.hpp"
 #include "../halo_data/globals.hpp"
 #include "../halo_data/map.hpp"
@@ -13,6 +14,7 @@
 #include "../event/tick.hpp"
 #include "../localization/localization.hpp"
 #include "../math_trig/math_trig.hpp"
+#include "../output/draw_text.hpp"
 #include "../output/output.hpp"
 #include "../chimera.hpp"
 #include "lua_game.hpp"
@@ -78,6 +80,69 @@ namespace Chimera {
         }
         else {
             return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "delete_object");
+        }
+    }
+
+    static int lua_draw_text(lua_State *state) noexcept {
+        int args = lua_gettop(state);
+        if(args == 11) {
+            // Text
+            const char *text = luaL_checkstring(state, 1);
+
+            // Get the width scale
+            auto &resolution = get_resolution();
+            float aspect_ratio = static_cast<float>(resolution.width) / resolution.height;
+            float width_scale = (aspect_ratio * 480.0f) / 640.0f;
+            
+            // Frame bounds
+            std::int16_t offset_left = round(luaL_checknumber(state, 2) * width_scale);
+            std::int16_t offset_top = luaL_checknumber(state, 3);
+            std::int16_t offset_right = round(luaL_checknumber(state, 4) * width_scale);
+            std::int16_t offset_bottom = luaL_checknumber(state, 5);
+
+            // Font to use (Font tag id or generic font)
+            TagID font_tag_id;
+            if(lua_isnumber(state, 6)) {
+                font_tag_id.whole_id = luaL_checknumber(state, 6);
+                if(!get_tag(font_tag_id)) {
+                    return luaL_error(state, localize("chimera_lua_error_draw_text_invalid_font_id"));
+                }
+            }
+            else {
+                auto generic_font = generic_font_from_string(luaL_checkstring(state, 6));
+                font_tag_id = get_generic_font(generic_font);
+            }
+
+            // Text alignment
+            FontAlignment font_alignment;
+            const char *align = luaL_checkstring(state, 7);
+            if(std::strcmp(align, "left") == 0) {
+                font_alignment = ALIGN_LEFT;
+            }
+            else if (std::strcmp(align, "right") == 0) {
+                font_alignment = ALIGN_RIGHT;
+            }
+            else if (std::strcmp(align, "center") == 0) {
+                font_alignment = ALIGN_CENTER;
+            }
+            else {
+                return luaL_error(state, localize("chimera_lua_error_draw_text_invalid_alignment"));
+            }
+
+            // Text color
+            ColorARGB color;
+            color.alpha = luaL_checknumber(state, 8);
+            color.red = luaL_checknumber(state, 9);
+            color.green = luaL_checknumber(state, 10);
+            color.blue = luaL_checknumber(state, 11);
+
+            // Draw!
+            apply_text(text, offset_left, offset_top, offset_right, offset_bottom, color, font_tag_id, font_alignment, TextAnchor::ANCHOR_TOP_LEFT);
+
+            return 0;
+        }
+        else {
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "draw_text");
         }
     }
 
@@ -439,6 +504,7 @@ namespace Chimera {
         lua_register(state, "console_is_open", lua_console_is_open);
         lua_register(state, "console_out", lua_console_out);
         lua_register(state, "delete_object", lua_delete_object);
+        lua_register(state, "draw_text", lua_draw_text);
         lua_register(state, "execute_script", lua_execute_script);
         lua_register(state, "get_dynamic_player", lua_get_dynamic_player);
         lua_register(state, "get_global", lua_get_global);
