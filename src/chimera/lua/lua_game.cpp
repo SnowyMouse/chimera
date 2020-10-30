@@ -4,6 +4,7 @@
 #include "../console/console.hpp"
 #include "../halo_data/globals.hpp"
 #include "../halo_data/map.hpp"
+#include "../halo_data/menu.hpp"
 #include "../halo_data/player.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../halo_data/script.hpp"
@@ -346,6 +347,33 @@ namespace Chimera {
         }
     }
 
+    static int lua_load_ui_widget(lua_State *state) noexcept {
+        auto args = lua_gettop(state);
+        if(args == 1) {
+            if(lua_isstring(state, 1)) {
+                const char *path = luaL_checkstring(state, 1);
+                lua_pushboolean(state, load_ui_widget(path));
+                return 1;
+            }
+            else if(lua_isnumber(state, 1)) {
+                auto *tag = get_tag(luaL_checkinteger(state, 1));
+                if(tag) {
+                    lua_pushboolean(state, load_ui_widget(tag->path));
+                }
+                else {
+                    lua_pushboolean(state, false);
+                }
+                return 1;
+            }
+            else {
+                return luaL_error(state, localize("chimera_lua_error_invalid_function_argument"), 1, "load_ui_widget");
+            }
+        }
+        else {
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "load_ui_widget");
+        }
+    }
+
     static int lua_set_global(lua_State *state) noexcept {
         int args = lua_gettop(state);
         if(args == 2) {
@@ -512,6 +540,7 @@ namespace Chimera {
         lua_register(state, "get_player", lua_get_player);
         lua_register(state, "get_tag", lua_get_tag);
         lua_register(state, "hud_message", lua_hud_message);
+        lua_register(state, "load_ui_widget", lua_load_ui_widget);
         lua_register(state, "set_callback", lua_set_callback);
         lua_register(state, "set_global", lua_set_global);
         lua_register(state, "set_timer", lua_set_timer);

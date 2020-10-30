@@ -3,11 +3,42 @@
 .intel_syntax noprefix
 
 .data
+load_ui_widget_addr: .long 0
 load_main_menu_addr: .long 0
 
 .text
+load_ui_widget_sig: .string "load_ui_widget_sig"
 load_main_menu_sig: .string "load_main_menu_sig"
 load_main_menu_demo_sig: .string "load_main_menu_demo_sig"
+
+.globl _load_ui_widget_asm
+_load_ui_widget_asm:
+    pushfd
+    pushad
+    cmp dword ptr load_ui_widget_addr, 0
+    jnz load_ui_widget
+    lea eax, byte ptr load_ui_widget_sig
+    push eax
+    call _address_for_signature
+    mov load_ui_widget_addr, eax
+    pop eax
+
+    load_ui_widget:
+    mov eax, [esp+0x28]
+    push -1
+    push -1
+    push -1
+    push 0
+    push 0
+    push -1
+    push eax
+    call dword ptr load_ui_widget_addr ;# function address by Sledmine.
+    pop eax
+    add esp, 24
+    popad
+    popfd
+
+    ret
 
 .globl _load_main_menu_asm
 _load_main_menu_asm:
@@ -37,7 +68,7 @@ _load_main_menu_asm:
     pop eax
 
     load_main_menu:
-    call dword ptr load_main_menu_addr ;# function address by Sledmine
+    call dword ptr load_main_menu_addr
     popad
     popfd
 

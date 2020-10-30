@@ -5,6 +5,11 @@
 
 namespace Chimera {
     /**
+     * Load a UI widget
+     */
+    bool load_ui_widget(const char *tag_path) noexcept;
+
+    /**
      * Load the UI main menu
      */
     void load_main_menu() noexcept;
