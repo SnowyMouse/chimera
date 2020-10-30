@@ -192,6 +192,8 @@ chimera_map_info_command_ram_buffer                                             
 chimera_map_info_command_map_tag_count                                          Contador de tags
 chimera_map_info_command_map_tag_data_size                                      Tamaño de datos de tags
 chimera_map_info_command_map_protected                                          Protegido
+chimera_map_info_command_mismatched                                             No coincide
+chimera_map_info_command_target_engine                                          Motor de destino
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     No se puede desactivar el arreglo de pantalla ancha mientras la anulación de texto esté habilitada.
 chimera_spam_to_join_command_help                                               Establece si reintentar conectar automáticamente o no cuando el servidor esté lleno.
 chimera_spam_to_join_retrying                                                   ¡El servidor está lleno! Reintentando...\n(Presiona ESCAPE para cancelar)
