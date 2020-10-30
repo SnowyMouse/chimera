@@ -95,6 +95,13 @@ namespace Chimera {
 
         luaL_openlibs(state);
 
+        // Update Lua path
+        auto new_lua_path = fs::path(get_chimera().get_path()) / "lua" / "modules";
+        lua_getglobal(state, "package");
+        lua_pushstring(state, (new_lua_path.string() + "\\?.lua").c_str());
+        lua_setfield(state, -2, "path");
+        lua_pop(state, 1);
+
         if(sandbox) {
             const char *sandbox_script = "io = nil\
                                         dofile = nil\
@@ -254,7 +261,7 @@ namespace Chimera {
         fs::create_directories(lua_directory / "scripts" / "map");
         fs::create_directories(lua_directory / "data" / "global");
         fs::create_directories(lua_directory / "data" / "map");
-        //fs::create_directories(lua_directory / "libraries");
+        fs::create_directories(lua_directory / "modules");
 
         //std::ofstream(lua_directory / "loaded-scripts.txt", std::ios::app).close();
         //std::ofstream(lua_directory / "trusted-scripts.txt", std::ios::app).close();
