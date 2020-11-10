@@ -460,10 +460,10 @@ namespace Chimera {
             for(std::size_t i = 0; i < script.timers.size(); i++) {
                 if(script.timers[i].timer_id == id) {
                     script.timers.erase(script.timers.begin() + i);
-                    return luaL_error(state, localize("chimera_lua_error_timer_does_not_exists"));
+                    return 0;
                 }
             }
-            return 0;
+            return luaL_error(state, localize("chimera_lua_error_timer_does_not_exists"));
         }
         else {
             return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "stop_timer");
