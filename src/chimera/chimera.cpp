@@ -68,6 +68,7 @@
 #include "fix/weapon_swap_ticks.hpp"
 #include "halo_data/game_engine.hpp"
 #include "halo_data/main_menu_music.hpp"
+#include "halo_data/multiplayer.hpp"
 #include "miscellaneous/controller.hpp"
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
@@ -777,17 +778,11 @@ namespace Chimera {
 
     // Every 1st of April, the Master Chief gets down
     static void april_fools() noexcept {
-        static int count = 0;
-        if(++count <= 4) {
-            SYSTEMTIME time = {};
-            GetSystemTime(&time);
-            if(time.wMonth == 6 && time.wDay == 10) {
-                add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
-            }
-        }
-        else {
-            remove_preframe_event(cartridge_tilt);
-            remove_map_load_event(april_fools);
+        remove_preframe_event(cartridge_tilt);
+        SYSTEMTIME time = {};
+        GetSystemTime(&time);
+        if(time.wMonth == 4 && time.wDay == 1 && server_type() != ServerType::SERVER_DEDICATED) {
+            add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
         }
     }
 }
