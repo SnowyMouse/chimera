@@ -159,6 +159,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/server.cpp
     src/chimera/halo_data/tag.cpp
     src/chimera/localization/localization.cpp
+    src/chimera/map_loading/compression.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
