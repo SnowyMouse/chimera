@@ -156,6 +156,8 @@ namespace Chimera {
                 load_lua_script(script_name.c_str(), script.c_str(), script.size(), false, false);
             }
         }
+        
+        // TODO: Add a new method for handling Lua scripts in maps, since this gets destroyed by zstandard compression 
         else {
             auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
