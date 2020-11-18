@@ -14,15 +14,6 @@ The official repository is hosted at https://github.com/SnowyMouse/chimera
 
 
 
-## Things to keep in mind
-This version only meant to serve as a "workaround" until the upstream version
-gets Lua scripting support. If you find weird things or bugs with some Lua scripts
-**please do not report it on the Chimera discord server**, alternatively you can
-report it on the ShadowMods server (https://shadowmods.net/discord).
-
-
-
-
 ## Table of contents
 - [Installation](#installation)
 - [Mod support](#mod-support)
