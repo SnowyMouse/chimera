@@ -610,10 +610,10 @@ namespace Chimera {
 
             chimera->reload_config();
         }
-        if(chimera->feature_present("core_custom_edition")) {
-            // Set up Lua scripting
-            setup_lua_scripting();
-        }
+        
+        // Set up Lua scripting
+        setup_lua_scripting();
+        
         enable_output(true);
     }
 
