@@ -1,0 +1,95 @@
+name: build
+
+# Run manually and each time anything is pushed or a PR is made
+# Will only create a release for tagged commits
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: "Build Chimera"
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: "Install deps"
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common gnupg build-essential mingw-w64 cmake python3 p7zip-full curl git zstd
+
+          # Download Vulkan mingw headers
+          curl --silent --location "https://repo.msys2.org/mingw/i686/mingw-w64-i686-vulkan-headers-1.2.158-1-any.pkg.tar.zst" | sudo tar -x --zstd --strip-components=1 -C /usr/i686-w64-mingw32/
+
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Compile"
+        env:
+          # Enable stack protection
+          LDFLAGS: -fstack-protector
+        run: |-
+          # Make CMake toolchain file
+          printf '%s\n' \
+            'set(CMAKE_SYSTEM_NAME Windows)' \
+            'set(TOOLCHAIN i686-w64-mingw32)' \
+            'set(CMAKE_C_COMPILER ${TOOLCHAIN}-gcc-posix)' \
+            'set(CMAKE_CXX_COMPILER ${TOOLCHAIN}-g++-posix)' \
+            'set(CMAKE_RC_COMPILER ${TOOLCHAIN}-windres)' \
+            'set(CMAKE_AR ${TOOLCHAIN}-gcc-ar-posix)' \
+            'set(CMAKE_RANLIB ${TOOLCHAIN}-gcc-ranlib-posix)' \
+            'set(CMAKE_FIND_ROOT_PATH /usr/${TOOLCHAIN})' \
+            'set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)' \
+            'set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)' \
+            'set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)' \
+            'set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)' \
+          > toolchain.cmake
+
+          cmake . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake \
+            -DCMAKE_INSTALL_PREFIX=build
+
+          cd build
+          make -j $(nproc)
+
+      - name: "Package"
+        id: package
+        run: |-
+          7z a -mx=9 chimera.7z LICENSE README.md chimera.ini fonts ./build/strings.dll
+
+          # Set some variables to use when uploading the package
+          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+          echo ::set-output name=SHA::${GITHUB_SHA::8}
+
+      # Upload an artifact if building an untagged commit
+      - name: "Upload artifact"
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: chimera-${{ steps.package.outputs.SHA }}
+          path: ./chimera.7z
+
+      # Create a release and upload the build if building a tagged commit
+      - name: "Create release"
+        id: create_release
+        if: "startsWith(github.ref, 'refs/tags/')"
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package.outputs.VERSION }}
+          release_name: Chimera v${{ steps.package.outputs.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: "Upload build"
+        uses: actions/upload-release-asset@v1
+        if: "startsWith(github.ref, 'refs/tags/')"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chimera.7z
+          asset_name: chimera-${{ steps.package.outputs.VERSION }}.${{ steps.package.outputs.SHA }}.7z
+          asset_content_type: application/x-7z-compressed
