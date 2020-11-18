@@ -11,6 +11,7 @@
 #include "../output/output.hpp"
 #include "../version.hpp"
 #include "../chimera.hpp"
+#include "../halo_data/game_engine.hpp"
 #include "lua_filesystem.hpp"
 #include "lua_game.hpp"
 #include "lua_variables.hpp"
@@ -157,15 +158,15 @@ namespace Chimera {
             }
         }
         
-        // TODO: Add a new method for handling Lua scripts in maps, since this gets destroyed by zstandard compression 
-        else {
+        // TODO: Add a new method for handling Lua scripts in maps, since this gets destroyed by zstandard compression... and there may be invalid stuff in here 
+        /* else if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
             auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
             if(script && script_size) {
                 auto map_filename = std::string(map_header.name) + ".map";
                 load_lua_script(map_filename.c_str(), script, script_size, true, false);
             }
-        }
+        } */
     }
 
     void load_global_scripts() noexcept {
