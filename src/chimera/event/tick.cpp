@@ -3,12 +3,15 @@
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+#include "../math_trig/math_trig.hpp"
 #include <optional>
 
 #include "tick.hpp"
 
 namespace Chimera {
     static void enable_tick_hook();
+
+    static LARGE_INTEGER current_tick_time;
 
     static std::vector<Event<EventFunction>> pretick_events;
 
@@ -59,6 +62,7 @@ namespace Chimera {
     }
 
     static void on_tick() {
+        QueryPerformanceCounter(&current_tick_time);
         call_in_order(tick_events);
     }
 
@@ -86,6 +90,14 @@ namespace Chimera {
         return *tick_ptr;
     }
 
+    void set_tick_rate(float new_rate) noexcept {
+        float *tick_ptr = *reinterpret_cast<float **>(get_chimera().get_signature("tick_rate_sig").data() + 2);
+        DWORD prota, protb;
+        VirtualProtect(tick_ptr, sizeof(tick_ptr), PAGE_READWRITE, &prota);
+        *tick_ptr = new_rate;
+        VirtualProtect(tick_ptr, sizeof(tick_ptr), prota, &protb);
+    }
+
     float effective_tick_rate() noexcept {
         static const float *game_speed_ptr = nullptr;
         if(!game_speed_ptr) {
@@ -100,6 +112,12 @@ namespace Chimera {
             tick_count = reinterpret_cast<std::int32_t *>(**reinterpret_cast<std::byte ***>(get_chimera().get_signature("tick_counter_sig").data() + 1) + 0xC);
         }
         return *tick_count;
+    }
+
+    double get_tick_time() noexcept {
+        LARGE_INTEGER counter;
+        QueryPerformanceCounter(&counter);
+        return counter_time_elapsed(current_tick_time, counter);
     }
 
     float get_tick_progress() noexcept {

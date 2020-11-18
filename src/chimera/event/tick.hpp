@@ -40,6 +40,11 @@ namespace Chimera {
     float tick_rate() noexcept;
 
     /**
+     * Set the tick rate of the game.
+     */
+    void set_tick_rate(float new_rate) noexcept;
+
+    /**
      * Get the effective tick rate of the game, accounting for game_speed.
      * @return Return the effective tick rate of the game.
      */
@@ -50,6 +55,12 @@ namespace Chimera {
      * @return tick count
      */
     std::int32_t get_tick_count() noexcept;
+
+    /**
+     * Get the current tick time
+     * @return tick time
+     */
+    double get_tick_time() noexcept;
 
     /**
      * Get the current tick progress

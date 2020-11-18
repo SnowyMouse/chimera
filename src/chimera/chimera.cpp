@@ -16,6 +16,7 @@
 #include "event/frame.hpp"
 #include "halo_data/path.hpp"
 #include "halo_data/hud_fonts.hpp"
+#include "lua/scripting.hpp"
 #include "output/draw_text.hpp"
 #include "output/output.hpp"
 #include "signature/hook.hpp"
@@ -609,6 +610,10 @@ namespace Chimera {
 
             chimera->reload_config();
         }
+        
+        // Set up Lua scripting
+        setup_lua_scripting();
+        
         enable_output(true);
     }
 

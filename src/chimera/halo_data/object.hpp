@@ -71,6 +71,17 @@ namespace Chimera {
         void delete_object(std::uint32_t index) noexcept;
     };
 
+    /**
+     * Spawn an object with an tag id.
+     * @param  tag_id   Tag ID of the object.
+     * @param  x        Object X offset.
+     * @param  y        Object Y offset.
+     * @param  z        Object Z offset.
+     * @param  parent   Parent object.
+     * @return          ID of the spawned object.
+     */ 
+    ObjectID spawn_object(const TagID &tag_id, float x, float y, float z, const ObjectID &parent) noexcept;
+
     /** This is the type of object an object is. */
     enum ObjectType : std::uint16_t {
         /** Object -> Unit -> Biped */

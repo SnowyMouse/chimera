@@ -2,6 +2,8 @@ chimera_language_shortened_name                                                 
 
 common_no                                                                       No
 common_yes                                                                      Sí
+common_false                                                                    Falso
+common_true                                                                     Verdadero
 
 chimera_error_config                                                            Chimera: Error al abrir el archivo de configuración %s
 chimera_error_command_not_found                                                 Comando no encontrado
@@ -22,6 +24,7 @@ chimera_category_bookmark                                                       
 chimera_category_core                                                           esencial
 chimera_category_debug                                                          debug
 chimera_category_enhancement                                                    mejora
+chimera_category_lua                                                          	lua
 chimera_category_mouse                                                          mouse
 chimera_category_visual                                                         visual
 
@@ -68,7 +71,7 @@ chimera_command_commands_in_category                                            
 chimera_command_error_no_such_category_or_command                               No existe tal categoría o comando %s
 chimera_command_help                                                            Obtén información acerca de Chimera.
 chimera_command_info_for_command                                                Información para %s:
-chimera_command_version                                                         Chimera versión %s por Snowy ^.^
+chimera_command_version                                                         Chimera versión %s por Snowy ^.^, JerryBrick
 chimera_config_note                                                             #  NOTA:  Este archivo es autoguardado y podría ser sobreescrito al cargarse.  #
 custom_edition_netcode_command_help                                             Habilita el soporte para la edición personalizada (custom edition).
 custom_edition_netcode_command_error_needs_custom_edition_map_support           El soporte para mapas de la edición personalizada no está habilitado en tu cliente.
@@ -197,3 +200,10 @@ chimera_map_info_command_target_engine                                          
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     No se puede desactivar el arreglo de pantalla ancha mientras la anulación de texto esté habilitada.
 chimera_spam_to_join_command_help                                               Establece si reintentar conectar automáticamente o no cuando el servidor esté lleno.
 chimera_spam_to_join_retrying                                                   ¡El servidor está lleno! Reintentando...\n(Presiona ESCAPE para cancelar)
+
+chimera_lua_reload_scripts_command_help                                         Recarga todos los scripts Lua.
+chimera_lua_scripts_were_reloaded                                               Los scripts Lua han sido recargados.
+chimera_lua_warning_script_too_updated                                          %s fue hecho para una versión más nueva de Chimera.
+chimera_lua_warning_script_too_outdated                                         %s fue hecho para una versión más antigua de Chimera.
+chimera_lua_warning_script_possibly_not_work                                    Es posible que no funcione como se espera.
+chimera_lua_error_failed_to_load_script                                         No se pudo cargar %s

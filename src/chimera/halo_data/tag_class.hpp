@@ -51,6 +51,7 @@ namespace Chimera {
         TAG_CLASS_GBXMODEL = 0x6D6F6432,
         TAG_CLASS_MODEL = 0x6D6F6465,
         TAG_CLASS_MULTIPLAYER_SCENARIO_DESCRIPTION = 0x6D706C79,
+        TAG_CLASS_NULL = 0xFFFFFFFF,
         TAG_CLASS_PREFERENCES_NETWORK_GAME = 0x6E677072,
         TAG_CLASS_OBJECT = 0x6F626A65,
         TAG_CLASS_PARTICLE = 0x70617274,
@@ -91,6 +92,12 @@ namespace Chimera {
         TAG_CLASS_WIND = 0x77696E64,
         TAG_CLASS_WEAPON_HUD_INTERFACE = 0x77706869
     };
+
+    /**
+     * Get tag class from a given string
+     * @return  A tag class int
+    */
+    TagClassInt tag_class_from_string(const char *tag_class);
 }
 
 #endif

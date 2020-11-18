@@ -191,6 +191,16 @@ namespace Chimera {
      * @return   Return the distance.
      */
     float distance(const Point3D &a, const Point3D &b) noexcept;
+
+    /**
+     * Get the time elapsed since a counter.
+     */
+    double counter_time_elapsed(const LARGE_INTEGER &before) noexcept;
+
+    /**
+     * Get the time elapsed between two counters.
+     */
+    double counter_time_elapsed(const LARGE_INTEGER &before, const LARGE_INTEGER &after) noexcept;
 }
 
 #endif
