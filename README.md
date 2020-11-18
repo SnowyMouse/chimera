@@ -5,10 +5,6 @@ but never got.
 It is licensed under version 3.0 of the GNU General Public License. See LICENSE
 for more information.
 
-This fork is a **custom version** of Chimera. The main difference from the
-upstream version is that this one includes support for Lua scripts (ported from
-the build -572).
-
 The official repository is hosted at https://github.com/SnowyMouse/chimera
 
 
