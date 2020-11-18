@@ -79,6 +79,8 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
     src/chimera/fix/extended_description_fix.cpp
+    src/chimera/fix/flashlight_fix.cpp
+    src/chimera/fix/flashlight_fix.S
     src/chimera/fix/floor_decal_memery.cpp
     src/chimera/fix/floor_decal_memery.S
     src/chimera/fix/force_crash.cpp
@@ -168,6 +170,7 @@ add_library(chimera STATIC
     src/chimera/lua/lua_script.cpp
     src/chimera/lua/lua_variables.cpp
     src/chimera/lua/scripting.cpp
+    src/chimera/map_loading/compression.cpp
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp

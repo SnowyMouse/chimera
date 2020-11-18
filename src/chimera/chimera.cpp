@@ -41,6 +41,7 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
+#include "fix/flashlight_fix.hpp"
 #include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/camera_shake_fix.hpp"
@@ -68,6 +69,7 @@
 #include "fix/weapon_swap_ticks.hpp"
 #include "halo_data/game_engine.hpp"
 #include "halo_data/main_menu_music.hpp"
+#include "halo_data/multiplayer.hpp"
 #include "miscellaneous/controller.hpp"
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
@@ -219,10 +221,11 @@ namespace Chimera {
                     set_up_demo_master_server();
                 }
 
-                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since Custom Edition really isn't worth fixing.
+                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since people will bitch.
                 #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
                 #endif
+                    set_up_flashlight_fix();
                     set_up_inverted_flag_fix();
                 #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
                 }
@@ -780,17 +783,11 @@ namespace Chimera {
 
     // Every 1st of April, the Master Chief gets down
     static void april_fools() noexcept {
-        static int count = 0;
-        if(++count <= 4) {
-            SYSTEMTIME time = {};
-            GetSystemTime(&time);
-            if(time.wMonth == 6 && time.wDay == 10) {
-                add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
-            }
-        }
-        else {
-            remove_preframe_event(cartridge_tilt);
-            remove_map_load_event(april_fools);
+        remove_preframe_event(cartridge_tilt);
+        SYSTEMTIME time = {};
+        GetSystemTime(&time);
+        if(time.wMonth == 4 && time.wDay == 1 && server_type() != ServerType::SERVER_DEDICATED) {
+            add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
         }
     }
 }

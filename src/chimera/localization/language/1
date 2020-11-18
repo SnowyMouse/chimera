@@ -96,7 +96,7 @@ chimera_teleport_success_mp                                                     
 chimera_teleport_success_sp                                                     Teletransportado a %f %f %f
 
 chimera_about_command_credits_header                                            Créditos
-chimera_about_command_credits                                                   DESARROLLO\n    Snowy - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
+chimera_about_command_credits                                                   DESARROLLO\n    Snowy - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    dr.oldboi\n    Jerry\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
 chimera_about_command_license_header                                            Licencia
 chimera_about_command_license                                                   Copyright (C) 2020 Snowy\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
@@ -195,6 +195,8 @@ chimera_map_info_command_ram_buffer                                             
 chimera_map_info_command_map_tag_count                                          Contador de tags
 chimera_map_info_command_map_tag_data_size                                      Tamaño de datos de tags
 chimera_map_info_command_map_protected                                          Protegido
+chimera_map_info_command_mismatched                                             No coincide
+chimera_map_info_command_target_engine                                          Motor de destino
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     No se puede desactivar el arreglo de pantalla ancha mientras la anulación de texto esté habilitada.
 chimera_spam_to_join_command_help                                               Establece si reintentar conectar automáticamente o no cuando el servidor esté lleno.
 chimera_spam_to_join_retrying                                                   ¡El servidor está lleno! Reintentando...\n(Presiona ESCAPE para cancelar)

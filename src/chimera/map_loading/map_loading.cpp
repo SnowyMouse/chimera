@@ -24,12 +24,8 @@
 #include "../bookmark/bookmark.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../fix/custom_edition_bridge/map_support.hpp"
+#include "compression.hpp"
 #include <chrono>
-
-namespace Invader::Compression {
-    std::size_t decompress_map_file(const char *input, const char *output);
-    std::size_t decompress_map_file(const char *input, std::byte *output, std::size_t output_size);
-}
 
 #define BYTES_TO_MiB(bytes) (bytes / 1024.0F / 1024.0F)
 
@@ -286,7 +282,7 @@ namespace Chimera {
 
                         buffer = maps_in_ram_region + offset;
                         try {
-                            buffer_used = Invader::Compression::decompress_map_file(new_path, buffer, buffer_size);
+                            buffer_used = decompress_map_file(new_path, buffer, buffer_size);
                         }
                         catch (std::exception &) {
                             char error_message[256];
@@ -307,7 +303,7 @@ namespace Chimera {
                     // Otherwise do a map file
                     else {
                         try {
-                            Invader::Compression::decompress_map_file(new_path, tmp_path);
+                            decompress_map_file(new_path, tmp_path);
                         }
                         catch (std::exception &) {
                             char error_message[256];
