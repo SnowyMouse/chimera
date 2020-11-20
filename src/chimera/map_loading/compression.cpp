@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <filesystem>
+#include <cstring>
 #include <zstd.h>
 
 #include "../halo_data/map.hpp"
@@ -49,15 +50,16 @@ namespace Chimera {
         // if demo, convert the header, otherwise copy the header
         if(new_engine_version == CacheFileEngine::CACHE_FILE_DEMO) {
             auto &demo_header = *reinterpret_cast<MapHeaderDemo *>(header_output);
-            memcpy(demo_header.name, header_copy.name, sizeof(demo_header.name));
-            memcpy(demo_header.build, header_copy.build, sizeof(demo_header.build));
+            demo_header = {};
+            std::memcpy(demo_header.name, header_copy.name, sizeof(demo_header.name));
+            std::memcpy(demo_header.build, header_copy.build, sizeof(demo_header.build));
             demo_header.engine_type = header_copy.engine_type;
             demo_header.tag_data_offset = header_copy.tag_data_offset;
             demo_header.tag_data_size = header_copy.tag_data_size;
             demo_header.game_type = header_copy.game_type;
             demo_header.crc32_unused = header_copy.crc32_unused;
-            demo_header.head = 0x68656164;
-            demo_header.foot = 0x666F6F74;
+            demo_header.head = 0x45686564;
+            demo_header.foot = 0x47666F74;
         }
         else {
             *reinterpret_cast<MapHeader *>(header_output) = header_copy;
