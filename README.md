@@ -25,9 +25,8 @@ Here is the installation procedure for installing Chimera:
 
 1. Update Halo to version 1.10 (unless you're playing the trial).
 2. Back up your game's Strings.dll. Renaming it to `strings-old.dll` works.
-3. Copy strings.dll and chimera.ini into your game folder.
-4. Optionally add a fonts folder to load custom fonts.
-5. Optionally add a mods folder to load custom dll mods.
+3. Copy strings.dll, chimera.ini, and fonts into your game folder.
+4. Optionally add a mods folder to load custom dll mods.
 
 > **NOTE**: Each file goes into the main game folder, NOT controls. If you put
 > the files in controls, it will not work.
