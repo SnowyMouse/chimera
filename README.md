@@ -856,14 +856,8 @@ released in the year 2011 - over seven years ago at the time of writing this
 sentence.
 
 ### Can I use Chimera under a license besides GNU GPL version 3?
-Short answer: Probably not.
-
-Long answer: It's not impossible. You would first need to ask *all* of the
-developers of upstream Chimera for permission. Chimera, however, also depends
-on [Invader](https://github.com/SnowyMouse/invader) for map compression, and this
-is licensed under the GPL as well. So, you'd have to either remove the Invader
-dependency (thus no map compression - required for map downloading!) or ask
-*all* of the developers of upstream Invader for permission, too.
+Probably not. You would first need to ask *all* of the developers of Chimera for
+permission.
 
 ### Why am I seeing an error saying that strings.dll is missing?
 This error can occur when a required DirectX 9 library isn't installed. The fix
