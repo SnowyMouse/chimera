@@ -27,6 +27,15 @@ namespace Chimera {
     static bool rcon_command_used_recently = false;
     static void read_command();
     static char *console_text = NULL;
+    
+    using SteadyClock = std::chrono::steady_clock;
+    struct Line {
+        std::string text;
+        SteadyClock::time_point created;
+        ColorARGB color;
+    };
+    static std::deque<Line> custom_lines;
+    static std::size_t position = 0;
 
     extern std::vector<Event<CommandEventFunction>> command_events;
 
@@ -238,6 +247,12 @@ namespace Chimera {
             std::strcpy(console_text, "cls");
             return;
         }
+        
+        // Clear the text if needed
+        if(std::strcmp(console_text, "cls") == 0) {
+            position = 0;
+            custom_lines.clear();
+        }
 
         // Pls don't kill me
         if (std::strcmp(console_text, "chimera_reload_scripts") == 0 || std::strcmp(console_text, "rs") == 0) {
@@ -349,17 +364,8 @@ namespace Chimera {
         add_pretick_event(fade_out_console);
     }
 
-    using SteadyClock = std::chrono::steady_clock;
-
-    struct Line {
-        std::string text;
-        SteadyClock::time_point created;
-        ColorARGB color;
-    };
-    static std::deque<Line> custom_lines;
     static std::size_t max_lines;
     static std::size_t max_lines_soft;
-    static std::size_t position = 0;
     static bool use_scrollback = false;
     static std::size_t more_lines_below = 0;
 
@@ -541,17 +547,10 @@ namespace Chimera {
     }
 
     static void do_cls() noexcept {
-        // If we ran cls in the console, actually clear it
-        if(get_console_open()) {
-            position = 0;
-            custom_lines.clear();
-        }
-        // Otherwise, make it look like we cleared it but if we have scrollback, we can see those messages again
-        else {
-            auto invalid_time = SteadyClock::now() - std::chrono::microseconds(static_cast<int>((fade_start + fade_time) * 1000000));
-            for(auto &i : custom_lines) {
-                i.created =invalid_time;
-            }
+        // make it look like it was an accident
+        auto invalid_time = SteadyClock::now() - std::chrono::microseconds(static_cast<int>((fade_start + fade_time) * 1000000));
+        for(auto &i : custom_lines) {
+            i.created =invalid_time;
         }
     }
 
