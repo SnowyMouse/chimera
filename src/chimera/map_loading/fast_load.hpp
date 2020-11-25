@@ -18,6 +18,13 @@ namespace Chimera {
     };
     
     /**
+     * Get the map entry for the map
+     * @param  map_name map name
+     * @return          a pointer to the map entry, if found
+     */
+    MapEntry *map_entry_for_map(const char *map_name);
+    
+    /**
      * Add a map to the map list
      * @param map_name   map to add
      * @param name_index name index if valid

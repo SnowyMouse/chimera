@@ -371,22 +371,26 @@ namespace Chimera {
         }
     }
     
-    void add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
-        std::string name_lowercase = map_name;
-        for(auto &c : name_lowercase) {
-            c = std::tolower(c);
+    MapEntry *map_entry_for_map(const char *map_name) {
+        for(auto &map : multiplayer_maps) {
+            if(same_string_case_insensitive(map_name, map.name.c_str())) {
+                return &map;
+            }
         }
+        return nullptr;
+    }
     
+    void add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
         // Don't add maps we've already added
         for(auto &m : multiplayer_maps) {
-            if(m.name == map_name) {
+            if(same_string_case_insensitive(map_name, m.name.c_str())) {
                 return;
             }
         }
         
         // Add it!
         auto &map = multiplayer_maps.emplace_back();
-        map.name = name_lowercase;
+        map.name = map_name;
         map.index = map_index;
     }
 
