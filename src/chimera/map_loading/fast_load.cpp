@@ -449,21 +449,13 @@ namespace Chimera {
                     
                     // Get extension
                     auto extension = path.extension().string();
-                    for(auto &c : extension) {
-                        c = std::tolower(c);
-                    }
-                    
-                    if(extension == ".map") {
+                    if(same_string_case_insensitive(extension.c_str(), ".map")) {
                         // Get name
                         auto name = path.stem().string();
-                        auto name_lowercase = name;
-                        for(auto &c : name_lowercase) {
-                            c = std::tolower(c);
-                        }
                         
                         // Is it blacklisted?
                         for(auto &b : BLACKLISTED_MAPS) {
-                            if(name == b) {
+                            if(same_string_case_insensitive(name.c_str(), b)) {
                                 goto nope;
                             }
                         }
