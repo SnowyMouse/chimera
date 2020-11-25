@@ -4,7 +4,7 @@
 #include "../../chimera.hpp"
 #include "../../signature/hook.hpp"
 #include "../../output/output.hpp"
-#include "../../fast_load/fast_load.hpp"
+#include "../../map_loading/fast_load.hpp"
 #include "../../map_loading/map_loading.hpp"
 
 namespace Chimera {

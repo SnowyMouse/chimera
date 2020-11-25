@@ -31,7 +31,7 @@
 #include "annoyance/watson.hpp"
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
-#include "fast_load/fast_load.hpp"
+#include "map_loading/fast_load.hpp"
 #include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/blue_32bit_color_fix.hpp"

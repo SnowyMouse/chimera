@@ -15,7 +15,7 @@
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/script.hpp"
 #include "../halo_data/map.hpp"
-#include "../fast_load/fast_load.hpp"
+#include "../map_loading/fast_load.hpp"
 #include "../halo_data/tag.hpp"
 #include "../config/ini.hpp"
 #include "../event/frame.hpp"

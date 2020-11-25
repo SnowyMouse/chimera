@@ -55,9 +55,9 @@ add_library(chimera STATIC
     src/chimera/event/map_load.cpp
     src/chimera/event/rcon_message.cpp
     src/chimera/event/tick.cpp
-    src/chimera/fast_load/crc32.c
-    src/chimera/fast_load/fast_load.cpp
-    src/chimera/fast_load/fast_load.S
+    src/chimera/map_loading/crc32.c
+    src/chimera/map_loading/fast_load.cpp
+    src/chimera/map_loading/fast_load.S
     src/chimera/fix/abolish_safe_mode.cpp
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
