@@ -7,12 +7,17 @@
 ;# Here's the the on_get_crc32_hook function. We just need to call our function, do the stuff Halo PC does and return.
 .globl _on_get_crc32_hook
 _on_get_crc32_hook:
-    ;# Call our function
-    pushad
-    call _on_get_crc32
-    popad
-
-    ;# Do what Halo normally does at this moment
+    ;# Do this
     shl eax, 4
-    mov ecx, [eax + edx + 12]
+
+    ;# Call our function
+    pushfd
+    pushad
+    call _on_get_crc32_custom_edition_loading
+    
+    ;# Move the CRC32 value
+    mov dword ptr [esp + 0x18], eax
+    
+    popad
+    popfd
     ret

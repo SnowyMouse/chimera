@@ -436,7 +436,7 @@ namespace Chimera {
 
     std::uint32_t maps_in_ram_crc32;
 
-    std::uint32_t calculate_crc32_of_current_map_file() noexcept {
+    /*std::uint32_t calculate_crc32_of_current_map_file() noexcept {
         // If we're doing maps in RAM, this was already calculated
         if(do_maps_in_ram) {
             do_map_loading_handling(nullptr, latest_map_loaded_multiplayer);
@@ -453,7 +453,7 @@ namespace Chimera {
             std::fclose(f);
             return crc;
         }
-    }
+    }*/
 
     static void preload_assets_into_memory_buffer(std::byte *buffer, std::size_t &buffer_used, std::size_t buffer_size, const char *map_name) noexcept {
         auto start = std::chrono::steady_clock::now();
@@ -1150,5 +1150,9 @@ namespace Chimera {
         if(font_fam) {
             font_to_use = generic_font_from_string(font_fam);
         }
+    }
+    
+    std::byte *region_for_current_map() noexcept {
+        return maps_in_ram_region;
     }
 }

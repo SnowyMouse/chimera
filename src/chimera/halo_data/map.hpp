@@ -181,6 +181,12 @@ namespace Chimera {
      * Load ui.map
      */
     void load_ui_map() noexcept;
+    
+    /**
+     * Get the name of the currently loaded map
+     * @return name of currently loaded map
+     */
+    const char *get_map_name() noexcept;
 }
 
 #endif

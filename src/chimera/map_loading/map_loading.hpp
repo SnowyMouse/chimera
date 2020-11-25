@@ -4,6 +4,7 @@
 #define CHIMERA_MAP_LOADING_HPP
 
 #include <cstdint>
+#include <cstddef>
 
 namespace Chimera {
     #define BITMAPS_CUSTOM_MAP_NAME "custom_bitmaps"
@@ -26,6 +27,12 @@ namespace Chimera {
      * @return     path to the map if found
      */
     const char *path_for_map(const char *map, bool tmp = false) noexcept;
+    
+    /**
+     * Get the region for the currently loaded map
+     * @return region
+     */
+    std::byte *region_for_current_map() noexcept;
 
     /**
      * Calculate the crc32 of the currently loaded map

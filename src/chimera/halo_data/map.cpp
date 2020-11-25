@@ -204,4 +204,8 @@ namespace Chimera {
     void load_ui_map() noexcept {
         load_ui_map_asm();
     }
+    
+    const char *get_map_name() noexcept {
+        return game_engine() == GameEngine::GAME_ENGINE_DEMO ? get_demo_map_header().name : get_map_header().name;
+    }
 }

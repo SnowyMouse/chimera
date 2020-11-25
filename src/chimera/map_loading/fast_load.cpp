@@ -28,6 +28,10 @@ extern "C" {
 }
 
 namespace Chimera {
+    std::string MapEntry::get_file_path() {
+        return path_for_map(this->name.c_str(), false);
+    }
+    
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
         while(std::tolower(*a) == std::tolower(*b)) {
@@ -100,7 +104,7 @@ namespace Chimera {
     }
 
     extern std::byte *maps_in_ram_region;
-
+    
     template <typename MapHeader> std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
         std::uint32_t crc = 0;
         std::uint32_t current_offset = 0;
@@ -173,99 +177,64 @@ namespace Chimera {
 
         return crc;
     }
-
-    extern std::uint32_t maps_in_ram_crc32;
-    std::uint32_t current_loaded_crc32 = 0xFFFFFFFF;
-
-    // Function for getting CRC32 without a Custom Edition map index
-    template <typename MapHeader> static void on_get_crc32_non_custom() noexcept {
-        const MapHeader *header;
-        if(get_chimera().feature_present("client_demo")) {
-            header = &reinterpret_cast<MapHeader &>(get_demo_map_header());
+    
+    template <typename MapHeader> static std::uint32_t calculate_crc32_of_current_map_file_typed() noexcept {
+        auto *r = region_for_current_map();
+        if(r) {
+            return calculate_crc32_of_map_file(nullptr, *reinterpret_cast<MapHeader *>(*r));
         }
         else {
-            header = &reinterpret_cast<MapHeader &>(get_map_header());
-        }
-
-        auto *path = path_for_map(header->name, true);
-        if(path) {
-            // Load the header
-            std::FILE *f = nullptr;
-
-            if(!maps_in_ram_region) {
-                f = std::fopen(path, "rb");
-                if(!f) {
-                    return;
-                }
-                current_loaded_crc32 = ~calculate_crc32_of_map_file(f, *header);
-
-                // Close if open
-                if(f) {
-                    std::fclose(f);
-                    f = nullptr;
-                }
-            }
-            else {
-                current_loaded_crc32 = maps_in_ram_crc32;
-            }
+            auto *map = map_entry_for_map(get_map_name());
+            std::FILE *f = std::fopen(map->get_file_path().c_str(), "rb");
+            MapHeader h;
+            std::fread(&h, sizeof(h), 1, f); 
+            auto value = calculate_crc32_of_map_file(f, h);
+            std::fclose(f);
+            return value;
         }
     }
 
-    extern "C" void on_get_crc32() noexcept {
-        // Get the loading map and all map indices so we can find which map is loading
-        static char *loading_map = *reinterpret_cast<char **>(get_chimera().get_signature("loading_map_sig").data() + 1);
-        auto &map_list = get_map_list();
-        auto *indices = reinterpret_cast<MapIndexCustomEdition *>(map_list.map_list);
-
-        // Iterate through each map
-        for(std::size_t i=0;i<map_list.map_count;i++) {
-            if(same_string_case_insensitive(indices[i].file_name, loading_map)) {
-                auto *path = path_for_map(indices[i].file_name, true);
-                bool map_already_crc = indices[i].crc32 != 0xFFFFFFFF;
-
-                // Do what we need to do
-                if(map_already_crc || !path) {
-                    goto set_current_loaded_crc32;
-                }
-                else {
-                    // Load the header
-                    std::FILE *f = nullptr;
-
-                    MapHeader header;
-                    if(!maps_in_ram_region) {
-                        f = std::fopen(path, "rb");
-                        if(!f) {
-                            goto set_current_loaded_crc32;
-                        }
-                        std::fread(&header, sizeof(header), 1, f);
-                        indices[i].crc32 = ~calculate_crc32_of_map_file(f, header);
-
-                        // Close if open
-                        if(f) {
-                            std::fclose(f);
-                            f = nullptr;
-                        }
-                    }
-                    else {
-                        indices[i].crc32 = maps_in_ram_crc32;
-                    }
-                }
-
-                set_current_loaded_crc32:
-                current_loaded_crc32 = indices[i].crc32;
-
-                return;
-            }
+    std::uint32_t calculate_crc32_of_current_map_file() noexcept {
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+            return calculate_crc32_of_current_map_file_typed<MapHeaderDemo>();
+        }
+        else {
+            return calculate_crc32_of_current_map_file_typed<MapHeader>();
         }
     }
 
-    static void on_get_crc32_deferred() {
-        if(server_type() == ServerType::SERVER_NONE) {
-            on_get_crc32_non_custom<MapHeader>();
+    static void on_get_crc32() noexcept {
+        // Let's do this
+        auto *entry = map_entry_for_map(get_map_name());
+        if(!entry) {
+            entry = &add_map_to_map_list(get_map_name());
         }
-        else {
-            on_get_crc32();
+        
+        // Did we already do it? If not, do it!
+        if(!entry->crc32.has_value()) {
+            entry->crc32 = ~calculate_crc32_of_current_map_file();
+            resync_map_list();
         }
+    }
+
+    extern "C" std::uint32_t on_get_crc32_custom_edition_loading() noexcept {
+        // Let's do this
+        auto *entry = map_entry_for_map(get_map_name());
+        if(!entry) {
+            entry = &add_map_to_map_list(get_map_name());
+        }
+        
+        // Did we already do it? If not, do it!
+        if(!entry->crc32.has_value()) {
+            std::FILE *f = std::fopen(entry->get_file_path().c_str(), "rb");
+            MapHeader header;
+            std::fread(&header, sizeof(header), 1, f);
+            entry->crc32 = ~calculate_crc32_of_map_file(f, header);
+            std::fclose(f);
+            resync_map_list();
+        }
+        
+        return *entry->crc32;
     }
 
     void initialize_fast_load() noexcept {
@@ -279,7 +248,7 @@ namespace Chimera {
                 overwrite(get_crc, nop7, sizeof(nop7));
                 overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
-                add_map_load_event(on_get_crc32_deferred);
+                add_map_load_event(on_get_crc32);
 
                 // Prevent Halo from loading the map list (speed up loading)
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -295,9 +264,7 @@ namespace Chimera {
             case GameEngine::GAME_ENGINE_RETAIL: {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
-
-                // Get the thing
-                add_map_load_event(on_get_crc32_non_custom<MapHeader>);
+                add_map_load_event(on_get_crc32);
 
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list_frame);
@@ -310,9 +277,7 @@ namespace Chimera {
             case GameEngine::GAME_ENGINE_DEMO: {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
-
-                // Get the thing
-                add_map_load_event(on_get_crc32_non_custom<MapHeaderDemo>);
+                add_map_load_event(on_get_crc32);
 
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list_frame);
@@ -324,7 +289,7 @@ namespace Chimera {
         }
     }
     
-    static std::vector<MapEntry> multiplayer_maps;
+    static std::vector<MapEntry> all_maps;
     
     template <typename MapIndexType> static void resync_map_list() {
         // Hold our indices
@@ -337,7 +302,11 @@ namespace Chimera {
         count = reinterpret_cast<std::uint32_t *>(&map_list.map_count);
         indices_vector.clear();
         
-        for(auto &i : multiplayer_maps) {
+        for(auto &i : all_maps) {
+            if(!i.multiplayer) {
+                continue;
+            }
+            
             auto *map = &indices_vector.emplace_back();
             map->file_name = i.name.c_str();
             map->map_name_index = i.index.value_or(13);
@@ -346,13 +315,13 @@ namespace Chimera {
                 reinterpret_cast<MapIndexRetail *>(map)->loaded = 1;
                 
                 if(sizeof(*map) >= sizeof(MapIndexCustomEdition)) {
-                    reinterpret_cast<MapIndexCustomEdition *>(map)->crc32 = i.crc32.value_or(0xFFFFFFFF); // we're overriding this
+                    reinterpret_cast<MapIndexCustomEdition *>(map)->crc32 = i.crc32.value_or(0xFFFFFFFF);
                 }
             }
         }
         
         *indices = indices_vector.data();
-        *count = multiplayer_maps.size();
+        *count = indices_vector.size();
     }
     
     void resync_map_list() {
@@ -372,7 +341,7 @@ namespace Chimera {
     }
     
     MapEntry *map_entry_for_map(const char *map_name) {
-        for(auto &map : multiplayer_maps) {
+        for(auto &map : all_maps) {
             if(same_string_case_insensitive(map_name, map.name.c_str())) {
                 return &map;
             }
@@ -380,23 +349,46 @@ namespace Chimera {
         return nullptr;
     }
     
-    void add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
+    MapEntry &add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
         // Don't add maps we've already added
-        for(auto &m : multiplayer_maps) {
+        for(auto &m : all_maps) {
             if(same_string_case_insensitive(map_name, m.name.c_str())) {
-                return;
+                return m;
             }
         }
         
         // Add it!
-        auto &map = multiplayer_maps.emplace_back();
+        auto &map = all_maps.emplace_back();
         map.name = map_name;
         map.index = map_index;
+        map.multiplayer = true;
+        
+        // If it's known to not be a multiplayer map, set this
+        static const char *NON_MULTIPLAYER_MAPS[] = {
+            "a10",
+            "a30",
+            "a50",
+            "b30",
+            "b40",
+            "c10",
+            "c20",
+            "c40",
+            "d20",
+            "d40",
+            "ui"
+        };
+        for(auto &nmp : NON_MULTIPLAYER_MAPS) {
+            if(same_string_case_insensitive(nmp, map_name)) {
+                map.multiplayer = false;
+            }
+        }
+        
+        return map;
     }
 
     static void reload_map_list() {
         // Clear the bitch
-        multiplayer_maps.clear();
+        all_maps.clear();
         
         std::uint32_t stock_index = 0;
         #define ADD_STOCK_MAP(map_name) add_map_to_map_list(map_name, stock_index++)
@@ -428,20 +420,9 @@ namespace Chimera {
         
         auto add_map_folder = [](std::filesystem::path directory) {
             static const char *BLACKLISTED_MAPS[] = {
-                "a10",
-                "a30",
-                "a50",
-                "b30",
-                "b40",
-                "c10",
-                "c20",
-                "c40",
-                "d20",
-                "d40",
                 "bitmaps",
                 "sounds",
                 "loc",
-                "ui",
                 BITMAPS_CUSTOM_MAP_NAME,
                 SOUNDS_CUSTOM_MAP_NAME,
                 LOC_CUSTOM_MAP_NAME
