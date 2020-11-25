@@ -176,6 +176,14 @@ namespace Chimera {
             new_command->more_stuff = 0x15;
             new_entries_list.emplace_back(new_command.get());
         }
+        
+        auto &clear_command = new_entries_added.emplace_back(std::make_unique<CommandEntry>());
+        clear_command->return_type = 4;
+        clear_command->name = "clear";
+        clear_command->help_text = "see README.md";
+        clear_command->help_parameters = nullptr;
+        clear_command->more_stuff = 0x15;
+        new_entries_list.emplace_back(clear_command.get());
 
         overwrite(entry_count, static_cast<std::uint32_t>(new_entries_list.size()));
         overwrite(entries, new_entries_list.data());
