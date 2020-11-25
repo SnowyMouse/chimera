@@ -817,6 +817,7 @@ worth answering in a readme.
 
 - [Will Chimera run on my system?]
 - [Can I use Chimera under a license besides GNU GPL version 3?]
+- [Why am I seeing an error saying that strings.dll is missing?]
 - [Why does Halo's gamma setting not work when Chimera is installed?]
 - [Why is there no auto updater built into Chimera?]
 - [Why do I get an error when joining Custom Edition servers with modded maps?]
@@ -863,6 +864,11 @@ on [Invader](https://github.com/SnowyMouse/invader) for map compression, and thi
 is licensed under the GPL as well. So, you'd have to either remove the Invader
 dependency (thus no map compression - required for map downloading!) or ask
 *all* of the developers of upstream Invader for permission, too.
+
+### Why am I seeing an error saying that strings.dll is missing?
+This error can occur when a required DirectX 9 library isn't installed. The fix
+is to download and run the official DirectX installer from
+https://www.microsoft.com/en-us/download/details.aspx?id=35 .
 
 ### Why does Halo's gamma setting not work when Chimera is installed?
 Short answer: Halo's gamma setting was disabled as it does a lot more harm than
@@ -996,6 +1002,7 @@ Halo Custom Edition server, then you should forge the CRC32.
 
 [Will Chimera run on my system?]: #will-chimera-run-on-my-system
 [Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
+[Why am I seeing an error saying that strings.dll is missing?]: #why-am-i-seeing-an-error-saying-that-stringsdll-is-missing
 [Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
 [Why is there no auto updater built into Chimera?]: #why-is-there-no-auto-updater-built-into-chimera
 [Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
