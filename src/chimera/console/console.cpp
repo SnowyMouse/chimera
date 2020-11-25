@@ -245,13 +245,13 @@ namespace Chimera {
         // If "clear" is sent to the console, change it to "cls"
         if(std::strcmp(console_text, "clear") == 0) {
             std::strcpy(console_text, "cls");
-            return;
         }
         
         // Clear the text if needed
         if(std::strcmp(console_text, "cls") == 0) {
             position = 0;
             custom_lines.clear();
+            return;
         }
 
         // Pls don't kill me
