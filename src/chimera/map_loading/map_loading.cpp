@@ -944,7 +944,8 @@ namespace Chimera {
 
                 std::filesystem::rename(download_temp_file, to_path);
 
-                reload_map_list();
+                add_map_to_map_list(map_downloader->get_map().c_str());
+                resync_map_list();
 
                 auto &latest_connection = get_latest_connection();
                 std::snprintf(connect_command, sizeof(connect_command), "connect \"%s:%u\" \"%s\"", latest_connection.address, latest_connection.port, latest_connection.password);

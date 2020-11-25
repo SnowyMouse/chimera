@@ -28,8 +28,6 @@ extern "C" {
 }
 
 namespace Chimera {
-    template<typename MapIndexType> static void do_load_multiplayer_maps();
-
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
         while(std::tolower(*a) == std::tolower(*b)) {
@@ -270,8 +268,6 @@ namespace Chimera {
         }
     }
 
-    static void (*function_to_use)() = nullptr;
-
     void initialize_fast_load() noexcept {
         auto engine = game_engine();
 
@@ -289,8 +285,7 @@ namespace Chimera {
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
-                add_frame_event(reload_map_list);
-                function_to_use = do_load_multiplayer_maps<MapIndexCustomEdition>;
+                add_frame_event(reload_map_list_frame);
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
                 overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -305,8 +300,7 @@ namespace Chimera {
                 add_map_load_event(on_get_crc32_non_custom<MapHeader>);
 
                 // Load the maps list on the next tick
-                add_frame_event(reload_map_list);
-                function_to_use = do_load_multiplayer_maps<MapIndexRetail>;
+                add_frame_event(reload_map_list_frame);
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
                 overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -321,8 +315,7 @@ namespace Chimera {
                 add_map_load_event(on_get_crc32_non_custom<MapHeaderDemo>);
 
                 // Load the maps list on the next tick
-                add_frame_event(reload_map_list);
-                function_to_use = do_load_multiplayer_maps<MapIndex>;
+                add_frame_event(reload_map_list_frame);
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
                 overwrite(get_chimera().get_signature("free_map_index_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -330,80 +323,81 @@ namespace Chimera {
             }
         }
     }
-
-    template<typename MapIndexType> static void do_load_multiplayer_maps() {
-        static std::vector<std::pair<std::unique_ptr<char []>, std::size_t>> names_vector;
+    
+    static std::vector<MapEntry> multiplayer_maps;
+    
+    template <typename MapIndexType> static void resync_map_list() {
+        // Hold our indices
         static MapIndexType **indices = nullptr;
         static std::uint32_t *count = nullptr;
         static std::vector<MapIndexType> indices_vector;
-
-        static const char *BLACKLISTED_MAPS[] = {
-            "a10",
-            "a30",
-            "a50",
-            "b30",
-            "b40",
-            "c10",
-            "c20",
-            "c40",
-            "d20",
-            "d40",
-            "bitmaps",
-            "sounds",
-            "loc",
-            "ui",
-            BITMAPS_CUSTOM_MAP_NAME,
-            SOUNDS_CUSTOM_MAP_NAME,
-            LOC_CUSTOM_MAP_NAME
-        };
-
-        // If we've been here before, clear things. Otherwise, get addresses
-        if(indices) {
-            names_vector.clear();
-            indices_vector.clear();
-            *count = 0;
-        }
-        else {
-            // Find locations
-            auto &map_list = get_map_list();
-            indices = reinterpret_cast<MapIndexType **>(&map_list.map_list);
-            count = reinterpret_cast<std::uint32_t *>(&map_list.map_count);
-            *count = 0;
-        }
-
-        auto add_map = [](const char *map_name, std::size_t string_length) {
-            // Make sure we don't have the map already
-            for(auto &name : names_vector) {
-                if(string_length == name.second && std::memcmp(map_name, name.first.get(), string_length) == 0) {
-                    return;
+        
+        auto &map_list = get_map_list();
+        indices = reinterpret_cast<MapIndexType **>(&map_list.map_list);
+        count = reinterpret_cast<std::uint32_t *>(&map_list.map_count);
+        indices_vector.clear();
+        
+        for(auto &i : multiplayer_maps) {
+            auto *map = &indices_vector.emplace_back();
+            map->file_name = i.name.c_str();
+            map->map_name_index = i.index.value_or(13);
+            
+            if(sizeof(*map) >= sizeof(MapIndexRetail)) {
+                reinterpret_cast<MapIndexRetail *>(map)->loaded = 1;
+                
+                if(sizeof(*map) >= sizeof(MapIndexCustomEdition)) {
+                    reinterpret_cast<MapIndexCustomEdition *>(map)->crc32 = i.crc32.value_or(0xFFFFFFFF); // we're overriding this
                 }
             }
+        }
+        
+        *indices = indices_vector.data();
+        *count = multiplayer_maps.size();
+    }
+    
+    void resync_map_list() {
+        auto engine = game_engine();
 
-            // Make sure it's not blacklisted
-            for(auto &name : BLACKLISTED_MAPS) {
-                if(std::strcmp(map_name, name) == 0) {
-                    return;
-                }
+        switch(engine) {
+            case GameEngine::GAME_ENGINE_CUSTOM_EDITION:
+                resync_map_list<MapIndexCustomEdition>();
+                break;
+            case GameEngine::GAME_ENGINE_RETAIL:
+                resync_map_list<MapIndexRetail>();
+                break;
+            case GameEngine::GAME_ENGINE_DEMO:
+                resync_map_list<MapIndex>();
+                break;
+        }
+    }
+    
+    void add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
+        std::string name_lowercase = map_name;
+        for(auto &c : name_lowercase) {
+            c = std::tolower(c);
+        }
+    
+        // Don't add maps we've already added
+        for(auto &m : multiplayer_maps) {
+            if(m.name == map_name) {
+                return;
             }
+        }
+        
+        // Add it!
+        auto &map = multiplayer_maps.emplace_back();
+        map.name = name_lowercase;
+        map.index = map_index;
+    }
 
-            // Allocate name
-            auto map_name_copy = std::make_unique<char[]>(string_length + 1);
-            std::memcpy(map_name_copy.get(), map_name, string_length + 1);
-
-            // Add the string to the list
-            names_vector.emplace_back(std::move(map_name_copy), string_length);
-
-            // Increment the map count
-            (*count)++;
-
-            // Return true (we did it)
-            return;
-        };
-
-        #define ADD_STOCK_MAP(map_name) add_map(map_name, std::strlen(map_name))
-
-        // First, add the stock maps, only adding blood gulch if the demo
-        if(sizeof(MapIndexType) == sizeof(MapIndex)) {
+    static void reload_map_list() {
+        // Clear the bitch
+        multiplayer_maps.clear();
+        
+        std::uint32_t stock_index = 0;
+        #define ADD_STOCK_MAP(map_name) add_map_to_map_list(map_name, stock_index++)
+        
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
             ADD_STOCK_MAP("bloodgulch");
         }
         else {
@@ -427,93 +421,69 @@ namespace Chimera {
             ADD_STOCK_MAP("timberland");
             ADD_STOCK_MAP("gephyrophobia");
         }
-
-        std::vector<std::string> maps;
-
-        auto add_map_by_path = [&maps](const char *path) {
-            // Next, add new maps
-            WIN32_FIND_DATA find_file_data;
-            auto handle = FindFirstFile(path, &find_file_data);
-            BOOL ok = handle != INVALID_HANDLE_VALUE;
-            while(ok) {
-                // Cut off the extension
-                std::size_t len = strlen(find_file_data.cFileName);
-                find_file_data.cFileName[len - 4] = 0;
-                len -= 4;
-
-                // Make it all lowercase
-                for(std::size_t i = 0; i < len; i++) {
-                    find_file_data.cFileName[i] = std::tolower(find_file_data.cFileName[i]);
-                }
-
-                // Add it maybe
-                bool added = false;
-                std::string name(find_file_data.cFileName, len);
-                for(std::size_t m = 0; m < maps.size(); m++) {
-                    if(maps[m] > name) {
-                        maps.insert(maps.begin() + m, name);
-                        added = true;
-                        break;
+        
+        auto add_map_folder = [](std::filesystem::path directory) {
+            static const char *BLACKLISTED_MAPS[] = {
+                "a10",
+                "a30",
+                "a50",
+                "b30",
+                "b40",
+                "c10",
+                "c20",
+                "c40",
+                "d20",
+                "d40",
+                "bitmaps",
+                "sounds",
+                "loc",
+                "ui",
+                BITMAPS_CUSTOM_MAP_NAME,
+                SOUNDS_CUSTOM_MAP_NAME,
+                LOC_CUSTOM_MAP_NAME
+            };
+            
+            for(auto &map : std::filesystem::directory_iterator(directory)) {
+                if(map.is_regular_file()) {
+                    auto &path = map.path();
+                    
+                    // Get extension
+                    auto extension = path.extension().string();
+                    for(auto &c : extension) {
+                        c = std::tolower(c);
                     }
+                    
+                    if(extension == ".map") {
+                        // Get name
+                        auto name = path.stem().string();
+                        auto name_lowercase = name;
+                        for(auto &c : name_lowercase) {
+                            c = std::tolower(c);
+                        }
+                        
+                        // Is it blacklisted?
+                        for(auto &b : BLACKLISTED_MAPS) {
+                            if(name == b) {
+                                goto nope;
+                            }
+                        }
+                        
+                        add_map_to_map_list(name.c_str());
+                    }
+                    
+                    nope: continue;
                 }
-                if(!added) {
-                    maps.emplace_back(std::move(name));
-                }
-                ok = FindNextFile(handle, &find_file_data);
             }
         };
-
-        add_map_by_path("maps\\*.map");
-        char dir[MAX_PATH];
-        const char *chimera_path = get_chimera().get_path();
-        if(static_cast<std::size_t>(std::snprintf(dir, sizeof(dir), "%s\\maps\\*.map", chimera_path)) < sizeof(dir)) {
-            add_map_by_path(dir);
-        }
-
-        // Add the map list
-        for(auto &map : maps) {
-            add_map(map.data(), map.size());
-        }
-
-        // Lastly, allocate things
-        indices_vector.clear();
-        indices_vector.reserve(*count);
-        for(std::size_t i = 0; i < *count; i++) {
-            MapIndexType &index = indices_vector.emplace_back();
-            if(sizeof(index) == sizeof(MapIndexCustomEdition)) {
-                reinterpret_cast<MapIndexCustomEdition *>(&index)->crc32 = 0xFFFFFFFF;
-            }
-            index.file_name = names_vector[i].first.get();
-            if(sizeof(index) >= sizeof(MapIndexRetail)) {
-                bool exists;
-                if(i >= 0x13) {
-                    exists = true;
-                }
-                else {
-                    // Stock maps: Make sure the file exists and it's at least as large enough as a header
-                    auto path = std::filesystem::path("maps") / (std::string(index.file_name) + ".map");
-                    exists = std::filesystem::exists(path) && std::filesystem::file_size(path) >= 0x800;
-                }
-
-                // Make sure it exists if it's a stock map
-                reinterpret_cast<MapIndexRetail *>(&index)->loaded = exists;
-            }
-
-            // If it's demo, do this
-            if(sizeof(index) == sizeof(MapIndex)) {
-                index.map_name_index = std::strcmp(index.file_name, "bloodgulch") == 0 ? 0x9 : 0x13;
-            }
-            else {
-                index.map_name_index = i < 0x13 ? i : 0x13;
-            }
-        }
-
-        // Set pointers and such
-        *indices = indices_vector.data();
+        
+        add_map_folder("maps");
+        add_map_folder(std::filesystem::path(get_chimera().get_path()) / "maps");
+        
+        resync_map_list();
     }
 
-    void reload_map_list() noexcept {
+    void reload_map_list_frame() noexcept {
         remove_frame_event(reload_map_list);
-        function_to_use();
+        reload_map_list();
     }
 }

@@ -6,8 +6,30 @@
 #include <cstdio>
 #include <cstdint>
 #include <optional>
+#include <string>
+#include "../halo_data/map.hpp"
 
 namespace Chimera {
+    struct MapEntry {
+        std::optional<std::uint32_t> crc32;
+        std::optional<CacheFileEngine> engine;
+        std::string name;
+        std::optional<std::uint32_t> index;
+    };
+    
+    /**
+     * Add a map to the map list
+     * @param map_name   map to add
+     * @param name_index name index if valid
+     */
+    void add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> name_index = std::nullopt);
+    
+    /**
+     * Resync the map list in the game with our own map list
+     */
+    void resync_map_list();
+    
+    
     /**
      * Initialize fast loading
      */
@@ -16,7 +38,7 @@ namespace Chimera {
     /**
      * Reload the map list
      */
-    void reload_map_list() noexcept;
+    void reload_map_list_frame() noexcept;
 
     /**
      * Get the stock map CRC32

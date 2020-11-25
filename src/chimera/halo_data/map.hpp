@@ -139,7 +139,7 @@ namespace Chimera {
     /** This is an individual map index */
     struct MapIndex {
         /** Pointer to the file name, not including the extension */
-        char *file_name;
+        const char *file_name;
 
         /** Map name index; 13 = Unknown Level, first 13 maps must be the stock maps in order */
         std::uint32_t map_name_index;
