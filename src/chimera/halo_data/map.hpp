@@ -36,7 +36,7 @@ namespace Chimera {
         static const std::uint32_t FOOT_LITERAL = 0x666F6F74;
 
         /** Must be equal to 0x68656164 */
-        std::uint32_t head = 0x68656164;
+        std::uint32_t head;
 
         /** 7 if retail; 0x261 if Custom Edition; 5 if Xbox */
         CacheFileEngine engine_type;
@@ -46,7 +46,7 @@ namespace Chimera {
 
         PAD(0x4);
 
-        /** File offset to tag data (which is loaded to 0x40440000 in Halo's memory) */
+        /** File offset to tag data */
         std::uint32_t tag_data_offset;
 
         /** File size of tag data in bytes */
@@ -66,18 +66,16 @@ namespace Chimera {
         PAD(0x2);
 
         /** Calculated with CRC32 of BSPs, models, and tag data */
-        std::uint32_t crc32_unused;
+        std::uint32_t crc32;
 
-        PAD(0x2A8);
-
-        /** Lua script data */
-        std::uint32_t lua_script_data;
-        std::uint32_t lua_script_size;
+        PAD(0x2B0);
 
         PAD(0x4E4);
 
         /** Must be equal to 0x666F6F74 */
-        std::uint32_t foot = 0x666F6F74;
+        std::uint32_t foot;
+        
+        bool is_valid() const noexcept;
     };
     static_assert(sizeof(MapHeader) == 0x800);
 
@@ -93,12 +91,12 @@ namespace Chimera {
         PAD(0x2BC);
 
         /** Must be equal to 0x45686564 */
-        std::uint32_t head = 0x45686564;
+        std::uint32_t head;
 
         /** File size of tag data in bytes */
         std::uint32_t tag_data_size;
 
-        /** Unused on PC version of Halo; can be used to extend map name another 32 characters */
+        /** Unused on PC version of Halo */
         char build[32];
 
         PAD(0x2A0);
@@ -112,20 +110,22 @@ namespace Chimera {
         PAD(0x4);
 
         /** Calculated with CRC32 of BSPs, models, and tag data */
-        std::uint32_t crc32_unused;
+        std::uint32_t crc32;
 
         PAD(0x34);
 
         /** File size in bytes; Halo ignores map files that are >384 MiB */
         std::uint32_t file_size;
 
-        /** File offset to tag data (which is loaded to 0x40440000 in Halo's memory) */
+        /** File offset to tag data */
         std::uint32_t tag_data_offset;
 
         /** Must be equal to 0x47666F74 */
-        std::uint32_t foot = 0x47666F74;
+        std::uint32_t foot;
 
         PAD(0x20C);
+        
+        bool is_valid() const noexcept;
     };
     static_assert(sizeof(MapHeaderDemo) == 0x800);
 

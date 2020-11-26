@@ -32,6 +32,18 @@ namespace Chimera {
         }
         return **all_map_indices;
     }
+    
+    template <typename Header> static bool check_valid_header(const Header &header) {
+        return header.head != Header::HEAD_LITERAL || header.foot != Header::FOOT_LITERAL;
+    }
+    
+    bool MapHeader::is_valid() const noexcept {
+        return check_valid_header(*this);
+    }
+    
+    bool MapHeaderDemo::is_valid() const noexcept {
+        return check_valid_header(*this);
+    }
 
     // hack from Invader
     bool map_is_protected() noexcept {

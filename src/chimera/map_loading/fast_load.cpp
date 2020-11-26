@@ -28,8 +28,14 @@ extern "C" {
 }
 
 namespace Chimera {
-    std::string MapEntry::get_file_path() {
-        return path_for_map(this->name.c_str(), false);
+    std::filesystem::path MapEntry::get_file_path() {
+        auto p1 = std::filesystem::path("maps") / (this->name + ".map");
+        if(std::filesystem::exists(p1)) {
+            return p1;
+        }
+        else {
+            return std::filesystem::path(get_chimera().get_path()) / "maps" / (this->name + ".map");
+        }
     }
     
     static bool same_string_case_insensitive(const char *a, const char *b) {
@@ -103,138 +109,8 @@ namespace Chimera {
         return std::nullopt;
     }
 
-    extern std::byte *maps_in_ram_region;
-    
-    template <typename MapHeader> std::uint32_t calculate_crc32_of_map_file(std::FILE *f, const MapHeader &header) noexcept {
-        std::uint32_t crc = 0;
-        std::uint32_t current_offset = 0;
-
-        // Use a built-in CRC32 if possible (CRC32s from Invader)
-        if(header.engine_type == CACHE_FILE_RETAIL || header.engine_type == CACHE_FILE_RETAIL_COMPRESSED) {
-            auto crc = crc32_for_stock_map(header.name);
-            if(crc.has_value()) {
-                return *crc;
-            }
-        }
-
-        auto seek = [&f, &current_offset](std::size_t offset) {
-            if(f) {
-                std::fseek(f, offset, SEEK_SET);
-            }
-            else {
-                current_offset = offset;
-            }
-        };
-
-        auto read = [&f, &current_offset](void *where, std::size_t size) {
-            if(f) {
-                std::fread(where, size, 1, f);
-            }
-            else {
-                std::copy(maps_in_ram_region + current_offset, maps_in_ram_region + size + current_offset, reinterpret_cast<std::byte *>(where));
-            }
-            current_offset += size;
-        };
-
-        // Load tag data
-        auto *tag_data = new char[header.tag_data_size];
-        seek(header.tag_data_offset);
-        read(tag_data, header.tag_data_size);
-
-        // Get the scenario tag so we can get the BSPs
-        std::uint32_t tag_data_addr = reinterpret_cast<std::uint32_t>(get_tag_data_address());
-        auto *scenario_tag = tag_data + (*reinterpret_cast<std::uint32_t *>(tag_data) - tag_data_addr) + (*reinterpret_cast<std::uint32_t *>(tag_data + 4) & 0xFFFF) * 0x20;
-        auto *scenario_tag_data = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag + 0x14) - tag_data_addr);
-
-        // CRC32 the BSP(s)
-        auto &structure_bsp_count = *reinterpret_cast<std::uint32_t *>(scenario_tag_data + 0x5A4);
-        auto *structure_bsps = tag_data + (*reinterpret_cast<std::uint32_t *>(scenario_tag_data + 0x5A4 + 4) - tag_data_addr);
-        for(std::size_t b=0;b<structure_bsp_count;b++) {
-            char *bsp = structure_bsps + b * 0x20;
-            auto &bsp_offset = *reinterpret_cast<std::uint32_t *>(bsp);
-            auto &bsp_size = *reinterpret_cast<std::uint32_t *>(bsp + 4);
-
-            char *bsp_data = new char[bsp_size];
-            seek(bsp_offset);
-            read(bsp_data, bsp_size);
-            crc = crc32(crc, bsp_data, bsp_size);
-            delete[] bsp_data;
-        }
-
-        // Next, CRC32 the model data
-        auto &model_vertices_offset = *reinterpret_cast<std::uint32_t *>(tag_data + 0x14);
-        auto &vertices_size = *reinterpret_cast<std::uint32_t *>(tag_data + 0x20);
-
-        auto *model_vertices = new char[vertices_size];
-        seek(model_vertices_offset);
-        read(model_vertices, vertices_size);
-        crc = crc32(crc, model_vertices, vertices_size);
-        delete[] model_vertices;
-
-        // Lastly, CRC32 the tag data itself
-        crc = crc32(crc, tag_data, header.tag_data_size);
-        delete[] tag_data;
-
-        return crc;
-    }
-    
-    template <typename MapHeader> static std::uint32_t calculate_crc32_of_current_map_file_typed() noexcept {
-        auto *r = region_for_current_map();
-        if(r) {
-            return calculate_crc32_of_map_file(nullptr, *reinterpret_cast<MapHeader *>(*r));
-        }
-        else {
-            auto *map = map_entry_for_map(get_map_name());
-            std::FILE *f = std::fopen(map->get_file_path().c_str(), "rb");
-            MapHeader h;
-            std::fread(&h, sizeof(h), 1, f); 
-            auto value = calculate_crc32_of_map_file(f, h);
-            std::fclose(f);
-            return value;
-        }
-    }
-
-    std::uint32_t calculate_crc32_of_current_map_file() noexcept {
-        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-            return calculate_crc32_of_current_map_file_typed<MapHeaderDemo>();
-        }
-        else {
-            return calculate_crc32_of_current_map_file_typed<MapHeader>();
-        }
-    }
-
-    static void on_get_crc32() noexcept {
-        // Let's do this
-        auto *entry = map_entry_for_map(get_map_name());
-        if(!entry) {
-            entry = &add_map_to_map_list(get_map_name());
-        }
-        
-        // Did we already do it? If not, do it!
-        if(!entry->crc32.has_value()) {
-            entry->crc32 = ~calculate_crc32_of_current_map_file();
-            resync_map_list();
-        }
-    }
-
     extern "C" std::uint32_t on_get_crc32_custom_edition_loading() noexcept {
-        // Let's do this
-        auto *entry = map_entry_for_map(get_map_name());
-        if(!entry) {
-            entry = &add_map_to_map_list(get_map_name());
-        }
-        
-        // Did we already do it? If not, do it!
-        if(!entry->crc32.has_value()) {
-            std::FILE *f = std::fopen(entry->get_file_path().c_str(), "rb");
-            MapHeader header;
-            std::fread(&header, sizeof(header), 1, f);
-            entry->crc32 = ~calculate_crc32_of_map_file(f, header);
-            std::fclose(f);
-            resync_map_list();
-        }
-        
-        return *entry->crc32;
+        return get_map_entry(get_map_name())->crc32.value();
     }
 
     void initialize_fast_load() noexcept {
@@ -248,7 +124,6 @@ namespace Chimera {
                 overwrite(get_crc, nop7, sizeof(nop7));
                 overwrite(get_crc, static_cast<std::uint8_t>(0xE8));
                 overwrite(get_crc + 1, reinterpret_cast<std::uintptr_t>(on_get_crc32_hook) - reinterpret_cast<std::uintptr_t>(get_crc + 5));
-                add_map_load_event(on_get_crc32);
 
                 // Prevent Halo from loading the map list (speed up loading)
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
@@ -264,7 +139,6 @@ namespace Chimera {
             case GameEngine::GAME_ENGINE_RETAIL: {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_retail_sig").data(), static_cast<std::uint8_t>(0xC3));
-                add_map_load_event(on_get_crc32);
 
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list_frame);
@@ -277,7 +151,6 @@ namespace Chimera {
             case GameEngine::GAME_ENGINE_DEMO: {
                 // Meme Halo into showing custom maps
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_demo_sig").data(), static_cast<std::uint8_t>(0xC3));
-                add_map_load_event(on_get_crc32);
 
                 // Load the maps list on the next tick
                 add_frame_event(reload_map_list_frame);
@@ -340,7 +213,7 @@ namespace Chimera {
         }
     }
     
-    MapEntry *map_entry_for_map(const char *map_name) {
+    MapEntry *get_map_entry(const char *map_name) {
         for(auto &map : all_maps) {
             if(same_string_case_insensitive(map_name, map.name.c_str())) {
                 return &map;

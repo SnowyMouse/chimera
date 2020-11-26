@@ -14,7 +14,7 @@ namespace Chimera {
         void override_join_name_packet_asm() noexcept;
         void override_join_name_packet_size_asm() noexcept;
         void calculate_crc32_of_current_map_file_please(const std::uint8_t *key, std::uint8_t *output) {
-            auto crc = calculate_crc32_of_current_map_file();
+            auto crc = *get_map_entry(get_map_header().name)->crc32;
 
             // From "Halo Update" by Samuco (which I originally helped make) <https://github.com/ShadovvMoon/HaloMC/blob/e611b2319c40c101dfa35f83b798019933f505c6/HaloUpdate/HaloJS/SMHaloUP.m#L1269>
             std::uint8_t b0 = static_cast<std::uint8_t>(crc >> (8 * 3));

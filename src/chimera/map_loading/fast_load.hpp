@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <filesystem>
 #include "../halo_data/map.hpp"
 
 namespace Chimera {
@@ -17,7 +18,7 @@ namespace Chimera {
         std::string name;
         std::optional<std::uint32_t> index;
         
-        std::string get_file_path();
+        std::filesystem::path get_file_path();
     };
     
     /**
@@ -25,7 +26,7 @@ namespace Chimera {
      * @param  map_name map name
      * @return          a pointer to the map entry, if found
      */
-    MapEntry *map_entry_for_map(const char *map_name);
+    MapEntry *get_map_entry(const char *map_name);
     
     /**
      * Add a map to the map list if it does not exist

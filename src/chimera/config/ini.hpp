@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#ifndef CHIMERA_INI_HPP
+#define CHIMERA_INI_HPP
+
 #include <variant>
 #include <string>
 #include <vector>
@@ -105,3 +108,5 @@ namespace Chimera {
         void load_from_stream(std::istream &stream);
     };
 }
+
+#endif

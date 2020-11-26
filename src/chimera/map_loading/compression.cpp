@@ -57,7 +57,7 @@ namespace Chimera {
             demo_header.tag_data_offset = header_copy.tag_data_offset;
             demo_header.tag_data_size = header_copy.tag_data_size;
             demo_header.game_type = header_copy.game_type;
-            demo_header.crc32_unused = header_copy.crc32_unused;
+            demo_header.crc32 = header_copy.crc32;
             demo_header.head = 0x45686564;
             demo_header.foot = 0x47666F74;
         }
