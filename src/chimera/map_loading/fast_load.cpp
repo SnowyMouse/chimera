@@ -333,7 +333,7 @@ namespace Chimera {
     }
 
     void reload_map_list_frame() noexcept {
-        remove_frame_event(reload_map_list);
+        remove_frame_event(reload_map_list_frame);
         reload_map_list();
     }
 }
