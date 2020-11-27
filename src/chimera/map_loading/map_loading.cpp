@@ -84,7 +84,7 @@ namespace Chimera {
 	}
 	
 	static std::filesystem::path path_for_map_local(const charmander *map_name) {
-		return get_map_entry(map_name)->get_file_path();
+		return add_map_to_map_list(map_name).get_file_path();
 	}
 	
 	static std::uint32_t calculate_crc32_of_map_file(const LoadedMap *map) noexcept {
@@ -94,7 +94,7 @@ namespace Chimera {
         std::uint32_t current_offset = 0;
 		
         auto *maps_in_ram_region = map->memory_location.value_or(nullptr);
-		std::FILE *f = maps_in_ram_region == nullptr ? nullptr : std::fopen(map->path.value().string().c_str(), "rb");
+		std::FILE *f = (maps_in_ram_region != nullptr) ? nullptr : std::fopen(map->path.value().string().c_str(), "rb");
 
         auto seek = [&f, &current_offset](std::size_t offset) {
             if(f) {
@@ -313,11 +313,9 @@ namespace Chimera {
 				
 				// Next, we need to remove any loaded map we may have, not including ui.map
 				for(auto &i : loaded_maps) {
-					if(std::strcmp(map_name, "ui") != 0) {
-						if(i.name != "ui" && i.memory_location.has_value()) {
-							unload_map(&i);
-							break;
-						}
+					if((i.name != "ui" || std::strcmp(map_name, "ui") == 0) && i.memory_location.has_value()) {
+						unload_map(&i);
+						break;
 					}
 				}
 				
