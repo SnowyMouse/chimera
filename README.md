@@ -342,6 +342,7 @@ vidmode. You can even use refresh rates in excess of 120 Hz.
 - `refresh_rate` (refresh rate in Hertz)
 - `vsync` (enable double buffer vSync to reduce tearing)
 - `windowed` (display Halo in a window)
+- `borderless` (display Halo in borderless fullscreen - required windowed mode)
 
 #### Controller settings
 These settings allow you to configure gamepads. See the included chimera.ini
