@@ -37,7 +37,7 @@ namespace Chimera {
 
         int metric = 0;
         auto auto_or_i = [&metric](const char *w) {
-            if(std::strcmp(w,"auto") == 0) {
+            if(std::strcmp(w,"auto") == 0 || std::strcmp(w,"0") == 0) {
                 return GetSystemMetrics(metric);
             }
             else {
