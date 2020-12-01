@@ -95,36 +95,36 @@ namespace Chimera {
         write_jmp_call(windowed_sig, hook, reinterpret_cast<const void *>(on_windowed_check_force_windowed), nullptr, false);
         force_windowed_mode = ini->get_value_bool("video_mode.windowed").value_or(false);
     }
-    
+
     static void set_borderless_window() noexcept {
         HWND window;
         HMONITOR monitor;
         MONITORINFO monitor_info;
-        
+
         // Get our window
         window = GetActiveWindow();
         if(!window) {
             goto cleanup;
         }
-        
+
         // Query monitor information
         monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
         monitor_info.cbSize = sizeof(monitor_info);
 	    if(!GetMonitorInfo(monitor, &monitor_info)) {
             goto cleanup;
         }
-        
+
         // Work our magic!
         ShowWindow(window, SW_HIDE);
         SetWindowLong(window, GWL_STYLE, 0);
         SetWindowPos(window, NULL, 0, 0, monitor_info.rcMonitor.right, monitor_info.rcMonitor.bottom, 0);
-        
+
         cleanup:
         remove_preframe_event(set_borderless_window);
     }
-    
+
     extern "C" void now_set_borderless_windowed_mode() noexcept {
-        if(get_chimera().get_ini()->get_value_bool("video_mode.borderless").value_or(true)) {
+        if(get_chimera().get_ini()->get_value_bool("video_mode.borderless").value_or(false)) {
             add_preframe_event(set_borderless_window);
         }
     }
