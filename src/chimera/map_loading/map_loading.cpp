@@ -30,6 +30,7 @@
 #include "laa.hpp"
 
 using charmander = char; // charmander charrrr!
+using charmeleon = char16_t;
 
 namespace Chimera {
 	static std::deque<LoadedMap> loaded_maps;
@@ -49,7 +50,7 @@ namespace Chimera {
 		void on_read_map_file_data_asm() noexcept;
 		void on_map_load_multiplayer_asm() noexcept;
 		void on_server_join_text_asm() noexcept;
-		char16_t download_text_string[128] = {};
+		charmeleon download_text_string[128] = {};
 		void *on_map_load_multiplayer_fail = nullptr;
 	}
 	
@@ -419,7 +420,7 @@ namespace Chimera {
         }
     }
 	
-	extern "C" void do_map_loading_handling(char *map_path, const char *map_name) {
+	extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
 		auto *map = load_map(map_name);
 		if(!map->memory_location.has_value()) {
 			std::strcpy(map_path, map->path->string().c_str());
