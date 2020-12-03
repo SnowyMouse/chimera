@@ -227,7 +227,7 @@ namespace Chimera {
 			
 			charmander title[128];
 			std::snprintf(title, sizeof(title), "Failed to load %s", map_name);
-			MessageBox(nullptr, title, error, MB_ICONERROR | MB_OK);
+			MessageBox(nullptr, error, title, MB_ICONERROR | MB_OK);
 			std::exit(1);
 		};
 		
@@ -242,12 +242,15 @@ namespace Chimera {
 			MapHeaderDemo demo_header;
 			MapHeader fv_header;
 		} header;
-		std::fread(&header, sizeof(header), 1, f);
+		
+		if(std::fread(&header, sizeof(header), 1, f) != 1) {
+			invalid("Failed to read map header");
+		}
 		
 		bool needs_decompressed = false;
 		
 		if(game_engine() == GameEngine::GAME_ENGINE_DEMO && header.demo_header.is_valid()) {
-			switch(header.fv_header.engine_type) {
+			switch(header.demo_header.engine_type) {
 				case CacheFileEngine::CACHE_FILE_DEMO:
 					break;
 				default:
@@ -270,6 +273,9 @@ namespace Chimera {
 				default:
 					invalid("Invalid map type");
 			}
+		}
+		else {
+			invalid("Header is invalid");
 		}
 		
 		// Do we have enough space to load into memory?

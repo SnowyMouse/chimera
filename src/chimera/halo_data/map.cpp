@@ -34,7 +34,7 @@ namespace Chimera {
     }
     
     template <typename Header> static bool check_valid_header(const Header &header) {
-        return header.head != Header::HEAD_LITERAL || header.foot != Header::FOOT_LITERAL;
+        return header.head == Header::HEAD_LITERAL && header.foot == Header::FOOT_LITERAL;
     }
     
     bool MapHeader::is_valid() const noexcept {
