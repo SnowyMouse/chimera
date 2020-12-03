@@ -421,8 +421,13 @@ namespace Chimera {
     }
 	
 	extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
-		load_map(map_name);
-		std::strcpy(map_path, get_map_entry(map_name)->get_file_path().string().c_str());
+		auto *map = load_map(map_name);
+		if(map->path.has_value()) {
+			std::strcpy(map_path, map->path->string().c_str());
+		}
+		else {
+			std::strcpy(map_path, get_map_entry(map_name)->get_file_path().string().c_str());
+		}
 	}
 	
 	static void initiate_connection() {
