@@ -645,11 +645,15 @@ namespace Chimera {
         else {
 			auto *loaded_map = get_loaded_map(map_name);
 			if(!loaded_map) {
-				loaded_map = load_map(map_name);
+				if(get_map_entry(map_name)) {
+					loaded_map = load_map(map_name);
+				}
+				else {
+					return 0;
+				}
 			}
 			
 			if(loaded_map && loaded_map->memory_location.has_value()) {
-				std::printf("Reading data from %s: %08X->%08X\n", map_name, reinterpret_cast<std::size_t>(loaded_map), reinterpret_cast<std::size_t>(*loaded_map->memory_location));
 				std::memcpy(output, *loaded_map->memory_location + file_offset, size);
 				return 1;
 			}
