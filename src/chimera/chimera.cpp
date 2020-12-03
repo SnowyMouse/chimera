@@ -544,6 +544,8 @@ namespace Chimera {
             char maps_directory[MAX_PATH];
             std::snprintf(maps_directory, sizeof(maps_directory), "%s\\maps", this->p_path.data());
             CreateDirectory(maps_directory, nullptr);
+            std::snprintf(maps_directory, sizeof(maps_directory), "%s\\tmp", this->p_path.data());
+            CreateDirectory(maps_directory, nullptr);
         }
         return this->p_path.data();
     }
