@@ -245,7 +245,7 @@ namespace Chimera {
 		} header;
 		
 		if(std::fread(&header, sizeof(header), 1, f) != 1) {
-			invalid("Failed to read map header");
+			invalid("Failed to read map header into memory from the file");
 		}
 		
 		bool needs_decompressed = false;
@@ -421,10 +421,8 @@ namespace Chimera {
     }
 	
 	extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
-		auto *map = load_map(map_name);
-		if(!map->memory_location.has_value()) {
-			std::strcpy(map_path, map->path->string().c_str());
-		}
+		load_map(map_name);
+		std::strcpy(map_path, get_map_entry(map_name)->get_file_path().string().c_str());
 	}
 	
 	static void initiate_connection() {
@@ -646,7 +644,9 @@ namespace Chimera {
 			}
 			
 			if(loaded_map && loaded_map->memory_location.has_value()) {
+				std::printf("Reading data from %s: %08X->%08X\n", map_name, reinterpret_cast<std::size_t>(loaded_map), reinterpret_cast<std::size_t>(*loaded_map->memory_location));
 				std::memcpy(output, *loaded_map->memory_location + file_offset, size);
+				return 1;
 			}
         }
 
