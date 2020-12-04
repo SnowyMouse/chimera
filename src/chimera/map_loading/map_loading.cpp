@@ -75,6 +75,8 @@ namespace Chimera {
 				loaded_maps.erase(iterator);
 				return;
 			}
+			
+			iterator++;
 		}
 	}
 	
