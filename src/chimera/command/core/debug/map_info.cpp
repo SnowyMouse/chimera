@@ -28,7 +28,6 @@ namespace Chimera {
         const char *map_name = nullptr;
         const char *map_build = nullptr;
         float tag_data_size = 0;
-        std::uint32_t crc32 = 0;
         std::uint32_t expected_crc32;
         CacheFileEngine engine;
         MapEntry *entry = nullptr;
@@ -97,10 +96,10 @@ namespace Chimera {
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_target_engine"), target_engine);
 
         if(expected_crc32 == entry->crc32) {
-            OUTPUT_WITH_COLOR("CRC32: 0x%.08X", crc32);
+            OUTPUT_WITH_COLOR("CRC32: 0x%.08X", entry->crc32.value());
         }
         else {
-            console_error("CRC32: 0x%.08X (%s)", crc32, localize("chimera_map_info_command_mismatched"));
+            console_error("CRC32: 0x%.08X (%s)", entry->crc32.value(), localize("chimera_map_info_command_mismatched"));
         }
 
         const char *map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
