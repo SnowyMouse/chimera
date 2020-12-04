@@ -271,6 +271,7 @@ namespace Chimera {
 
     static void reload_map_list() {
         // Clear the bitch
+        auto old_maps = all_maps;
         all_maps.clear();
         
         std::uint32_t stock_index = 0;
@@ -338,6 +339,14 @@ namespace Chimera {
         
         add_map_folder("maps");
         add_map_folder(std::filesystem::path(get_chimera().get_path()) / "maps");
+        
+        // Reset CRC32
+        for(auto &i : old_maps) {
+            auto *map = get_map_entry(i.name.c_str());
+            if(map) {
+                map->crc32 = i.crc32;
+            }
+        }
         
         resync_map_list();
     }
