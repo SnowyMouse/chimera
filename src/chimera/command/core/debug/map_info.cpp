@@ -95,11 +95,16 @@ namespace Chimera {
         }
         OUTPUT_WITH_COLOR("%s: %s", localize("chimera_map_info_command_target_engine"), target_engine);
 
-        if(expected_crc32 == entry->crc32) {
-            OUTPUT_WITH_COLOR("CRC32: 0x%.08X", entry->crc32.value());
+        try {
+            if(expected_crc32 == entry->crc32) {
+                OUTPUT_WITH_COLOR("CRC32: 0x%.08X", entry->crc32.value());
+            }
+            else {
+                console_error("CRC32: 0x%.08X (%s)", entry->crc32.value(), localize("chimera_map_info_command_mismatched"));
+            }
         }
-        else {
-            console_error("CRC32: 0x%.08X (%s)", entry->crc32.value(), localize("chimera_map_info_command_mismatched"));
+        catch (std::exception &) {
+            console_error("CRC32: ?");
         }
 
         const char *map_is_compressed = compressed ? localize("common_yes") : localize("common_no");
