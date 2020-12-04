@@ -18,7 +18,8 @@ namespace Chimera {
     
 	struct LoadedMap {
 		std::string name;
-		std::optional<std::filesystem::path> path;
+		std::filesystem::path path;
+		std::filesystem::path absolute_path;
 		std::optional<std::uint32_t> tmp_file;
 		std::optional<std::byte *> memory_location;
         std::size_t buffer_size;

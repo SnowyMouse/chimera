@@ -97,7 +97,7 @@ namespace Chimera {
         std::uint32_t current_offset = 0;
 		
         auto *maps_in_ram_region = map->memory_location.value_or(nullptr);
-		std::FILE *f = (maps_in_ram_region != nullptr) ? nullptr : std::fopen(map->path.value().string().c_str(), "rb");
+		std::FILE *f = (maps_in_ram_region != nullptr) ? nullptr : std::fopen(map->path.string().c_str(), "rb");
 
         auto seek = [&f, &current_offset](std::size_t offset) {
             if(f) {
@@ -219,6 +219,7 @@ namespace Chimera {
 		new_map.timestamp = timestamp;
 		new_map.file_size = size;
 		new_map.decompressed_size = size;
+		new_map.path = map_path;
 		
 		// Load it
 		std::FILE *f = nullptr;
@@ -385,7 +386,7 @@ namespace Chimera {
 				
 				// Decompress it
 				try {
-					actual_size = decompress_map_file(map_path.string().c_str(), new_map.path->string().c_str());
+					actual_size = decompress_map_file(map_path.string().c_str(), new_map.path.string().c_str());
 				}
 				catch (std::exception &) {
 					invalid("Failed to read map");
@@ -405,6 +406,7 @@ namespace Chimera {
 		
 		// Calculate CRC32
 		get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
+		new_map.absolute_path = std::filesystem::absolute(new_map.path);
 		
 		return &loaded_maps.emplace_back(new_map);
 	}
@@ -423,13 +425,7 @@ namespace Chimera {
     }
 	
 	extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
-		auto *map = load_map(map_name);
-		if(map->path.has_value()) {
-			std::strcpy(map_path, map->path->string().c_str());
-		}
-		else {
-			std::strcpy(map_path, get_map_entry(map_name)->get_file_path().string().c_str());
-		}
+		std::strcpy(map_path, load_map(map_name)->path.string().c_str());
 	}
 	
 	static void initiate_connection() {
@@ -611,31 +607,14 @@ namespace Chimera {
 	
     extern "C" int on_read_map_file_data(HANDLE file_descriptor, std::byte *output, std::size_t size, LPOVERLAPPED overlapped) {
         std::size_t file_offset = overlapped->Offset;
-        charmander file_name[MAX_PATH + 1] = {};
-        GetFinalPathNameByHandle(file_descriptor, file_name, sizeof(file_name) - 1, 0);
+		
+		// Get the name
+        charmander file_path_chars[MAX_PATH + 1] = {};
+        GetFinalPathNameByHandle(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
+		auto file_path = std::filesystem::path(file_path_chars);
+        auto map_name = file_path.stem().string();
 
-        charmander *last_backslash = file_name - 1;
-        charmander *last_dot = nullptr;
-        for(charmander &c : file_name) {
-            if(c == '.') {
-                last_dot = &c;
-            }
-            if(c == '\\' || c == '/') {
-                last_backslash = &c;
-            }
-        }
-
-        // Is the path bullshit?
-        if(!last_backslash || !last_dot || last_dot < last_backslash) {
-            return 0;
-        }
-
-		if(last_dot) {
-        	*last_dot = 0;
-		}
-        const charmander *map_name = last_backslash + 1;
-
-        if(std::strcmp(map_name, "bitmaps") == 0 || std::strcmp(map_name, "sounds") == 0 || std::strcmp(map_name, "loc") == 0) {
+        if(map_name == "bitmaps" || map_name == "sounds" || map_name == "loc") {
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
             if(using_custom_map_on_retail()) {
                 // load_custom_edition_resource_data_in_retail(output, file_offset, size, map_name);
@@ -645,19 +624,12 @@ namespace Chimera {
         }
 
         else {
-			auto *loaded_map = get_loaded_map(map_name);
-			if(!loaded_map) {
-				if(get_map_entry(map_name)) {
-					loaded_map = load_map(map_name);
+			auto absolute_path = std::filesystem::absolute(file_path);
+			for(auto &i : loaded_maps) {
+				if(i.absolute_path == absolute_path && i.memory_location.has_value()) {
+					std::memcpy(output, *i.memory_location + file_offset, size);
+					return 1;
 				}
-				else {
-					return 0;
-				}
-			}
-			
-			if(loaded_map && loaded_map->memory_location.has_value()) {
-				std::memcpy(output, *loaded_map->memory_location + file_offset, size);
-				return 1;
 			}
         }
 
