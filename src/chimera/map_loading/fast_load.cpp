@@ -109,8 +109,18 @@ namespace Chimera {
         return std::nullopt;
     }
 
-    extern "C" std::uint32_t on_get_crc32_custom_edition_loading() noexcept {
-        return get_map_entry(get_map_name())->crc32.value();
+    extern "C" void on_get_crc32_custom_edition_loading() noexcept {
+        static char *loading_map = *reinterpret_cast<char **>(get_chimera().get_signature("loading_map_sig").data() + 1);
+        load_map(loading_map);
+        auto *entry = get_map_entry(loading_map);
+        auto &map_list = get_map_list();
+        auto *indices = reinterpret_cast<MapIndexCustomEdition *>(map_list.map_list);
+        for(std::size_t i=0; i<map_list.map_count; i++) {
+            if(entry->name == indices[i].file_name) {
+                indices[i].crc32 = entry->crc32.value();
+                break;
+            }
+        }
     }
 
     void initialize_fast_load() noexcept {
