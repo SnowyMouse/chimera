@@ -16,18 +16,18 @@ namespace Chimera {
     #define SOUNDS_CUSTOM_MAP "maps\\" SOUNDS_CUSTOM_MAP_NAME ".map"
     #define LOC_CUSTOM_MAP "maps\\" LOC_CUSTOM_MAP_NAME ".map"
     
-	struct LoadedMap {
-		std::string name;
-		std::filesystem::path path;
-		std::filesystem::path absolute_path;
-		std::optional<std::uint32_t> tmp_file;
-		std::optional<std::byte *> memory_location;
+    struct LoadedMap {
+        std::string name;
+        std::filesystem::path path;
+        std::filesystem::path absolute_path;
+        std::optional<std::uint32_t> tmp_file;
+        std::optional<std::byte *> memory_location;
         std::size_t buffer_size;
         std::size_t decompressed_size;
-		std::size_t loaded_size;
+        std::size_t loaded_size;
         std::size_t file_size;
-		std::filesystem::file_time_type timestamp; // time it was modified
-	};
+        std::filesystem::file_time_type timestamp; // time it was modified
+    };
     
     /**
      * Get the loaded map

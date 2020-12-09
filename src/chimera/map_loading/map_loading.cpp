@@ -13,6 +13,7 @@
 #include "crc32.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/map.hpp"
+#include "../halo_data/tag.hpp"
 #include "../signature/hook.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../halo_data/server.hpp"
@@ -33,71 +34,71 @@ using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
 
 namespace Chimera {
-	static std::deque<LoadedMap> loaded_maps;
-	static std::byte *buffer;
-	static std::size_t total_buffer_size = 0;
-	static std::size_t max_temp_files = 3;
-	static bool do_benchmark = false;
-	static bool download_retail_maps = false;
-	static bool custom_edition_maps_supported_on_retail;
-	static GenericFont download_font = GenericFont::FONT_CONSOLE;
-	
-	extern "C" {
-		void map_loading_asm() noexcept;
-		void map_loading_server_asm() noexcept;
-		void free_map_handle_bugfix_asm() noexcept;
-		void on_check_if_map_is_bullshit_asm() noexcept;
-		void on_read_map_file_data_asm() noexcept;
-		void on_map_load_multiplayer_asm() noexcept;
-		void on_server_join_text_asm() noexcept;
-		charmeleon download_text_string[128] = {};
-		void *on_map_load_multiplayer_fail = nullptr;
-	}
-	
-	extern "C" bool using_custom_map_on_retail() {
-		return get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && game_engine() == GameEngine::GAME_ENGINE_RETAIL;
-	}
-	
+    static std::deque<LoadedMap> loaded_maps;
+    static std::byte *buffer;
+    static std::size_t total_buffer_size = 0;
+    static std::size_t max_temp_files = 3;
+    static bool do_benchmark = false;
+    static bool download_retail_maps = false;
+    static bool custom_edition_maps_supported_on_retail;
+    static GenericFont download_font = GenericFont::FONT_CONSOLE;
+    
+    extern "C" {
+        void map_loading_asm() noexcept;
+        void map_loading_server_asm() noexcept;
+        void free_map_handle_bugfix_asm() noexcept;
+        void on_check_if_map_is_bullshit_asm() noexcept;
+        void on_read_map_file_data_asm() noexcept;
+        void on_map_load_multiplayer_asm() noexcept;
+        void on_server_join_text_asm() noexcept;
+        charmeleon download_text_string[128] = {};
+        void *on_map_load_multiplayer_fail = nullptr;
+    }
+    
+    extern "C" bool using_custom_map_on_retail() {
+        return get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && game_engine() == GameEngine::GAME_ENGINE_RETAIL;
+    }
+    
     LoadedMap *get_loaded_map(const charmander *name) noexcept {
-		for(auto &i : loaded_maps) {
-			if(i.name == name) {
-				return &i;
-			}
-		}
-		return nullptr;
-	}
-	
-	static void unload_map(LoadedMap *map) {
-		auto iterator = loaded_maps.begin();
-		auto last = loaded_maps.end();
-		while(iterator != last) {
-			if(iterator.operator->() == map) {
-				loaded_maps.erase(iterator);
-				return;
-			}
-			
-			iterator++;
-		}
-	}
-	
-	static std::filesystem::path path_for_tmp(std::size_t tmp) {
-		charmander tmp_name[64];
-		std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", tmp);
-		return std::filesystem::path(get_chimera().get_path()) / "tmp" / tmp_name;
-	}
-	
-	static std::filesystem::path path_for_map_local(const charmander *map_name) {
-		return add_map_to_map_list(map_name).get_file_path();
-	}
-	
-	static std::uint32_t calculate_crc32_of_map_file(const LoadedMap *map) noexcept {
+        for(auto &i : loaded_maps) {
+            if(i.name == name) {
+                return &i;
+            }
+        }
+        return nullptr;
+    }
+    
+    static void unload_map(LoadedMap *map) {
+        auto iterator = loaded_maps.begin();
+        auto last = loaded_maps.end();
+        while(iterator != last) {
+            if(iterator.operator->() == map) {
+                loaded_maps.erase(iterator);
+                return;
+            }
+            
+            iterator++;
+        }
+    }
+    
+    static std::filesystem::path path_for_tmp(std::size_t tmp) {
+        charmander tmp_name[64];
+        std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", tmp);
+        return std::filesystem::path(get_chimera().get_path()) / "tmp" / tmp_name;
+    }
+    
+    static std::filesystem::path path_for_map_local(const charmander *map_name) {
+        return add_map_to_map_list(map_name).get_file_path();
+    }
+    
+    static std::uint32_t calculate_crc32_of_map_file(const LoadedMap *map) noexcept {
         std::uint32_t crc = 0;
-		std::uint32_t tag_data_size;
-		std::uint32_t tag_data_offset;
+        std::uint32_t tag_data_size;
+        std::uint32_t tag_data_offset;
         std::uint32_t current_offset = 0;
-		
+        
         auto *maps_in_ram_region = map->memory_location.value_or(nullptr);
-		std::FILE *f = (maps_in_ram_region != nullptr) ? nullptr : std::fopen(map->path.string().c_str(), "rb");
+        std::FILE *f = (maps_in_ram_region != nullptr) ? nullptr : std::fopen(map->path.string().c_str(), "rb");
 
         auto seek = [&f, &current_offset](std::size_t offset) {
             if(f) {
@@ -117,39 +118,39 @@ namespace Chimera {
             }
             current_offset += size;
         };
-		
-		CacheFileEngine engine;
-		union {
-			MapHeaderDemo demo_header;
-			MapHeader fv_header;
-		} header;
-		seek(0);
-		read(&header, sizeof(header));
-		
-		if(game_engine() == GameEngine::GAME_ENGINE_DEMO && header.demo_header.is_valid()) {
-			engine = header.demo_header.engine_type;
-			tag_data_size = header.demo_header.tag_data_size;
-			tag_data_offset = header.demo_header.tag_data_offset;
-		}
-		else {
-			engine = header.fv_header.engine_type;
-			tag_data_size = header.fv_header.tag_data_size;
-			tag_data_offset = header.fv_header.tag_data_offset;
-		}
-		
-		std::uint32_t tag_data_addr;
-		switch(engine) {
-			case CacheFileEngine::CACHE_FILE_DEMO:
-				tag_data_addr = 0x4BF10000;
-				break;
-			default:
-				tag_data_addr = 0x40440000;
-				break;
-		}
+        
+        CacheFileEngine engine;
+        union {
+            MapHeaderDemo demo_header;
+            MapHeader fv_header;
+        } header;
+        seek(0);
+        read(&header, sizeof(header));
+        
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO && header.demo_header.is_valid()) {
+            engine = header.demo_header.engine_type;
+            tag_data_size = header.demo_header.tag_data_size;
+            tag_data_offset = header.demo_header.tag_data_offset;
+        }
+        else {
+            engine = header.fv_header.engine_type;
+            tag_data_size = header.fv_header.tag_data_size;
+            tag_data_offset = header.fv_header.tag_data_offset;
+        }
+        
+        std::uint32_t tag_data_addr;
+        switch(engine) {
+            case CacheFileEngine::CACHE_FILE_DEMO:
+                tag_data_addr = 0x4BF10000;
+                break;
+            default:
+                tag_data_addr = 0x40440000;
+                break;
+        }
 
         // Load tag data
         auto tag_data_ptr = std::make_unique<std::byte []>(tag_data_size);
-		auto *tag_data = tag_data_ptr.get();
+        auto *tag_data = tag_data_ptr.get();
         seek(tag_data_offset);
         read(tag_data, tag_data_size);
 
@@ -185,237 +186,284 @@ namespace Chimera {
 
         return crc;
     }
-	
-	std::unique_ptr<HACMapDownloader> map_downloader;
-	
-	// Load the map
-	LoadedMap *load_map(const charmander *map_name) {
-		// Get the map path
-		auto map_path = path_for_map_local(map_name);
-		auto timestamp = std::filesystem::last_write_time(map_path);
-		std::size_t actual_size;
-		
-		// Is the map already loaded?
-		for(auto &i : loaded_maps) {
-			if(i.name == map_name) {
-				// If the map is loaded and it hasn't been modified, do not reload it
-				if(i.timestamp == timestamp) {
-					// Move it to the front of the array, though
-					auto copy = i;
-					unload_map(&i);
-					return &loaded_maps.emplace_back(copy);
-				}
-				
-				// Remove the map from the list; we're reloading it
-				unload_map(&i);
-				break;
-			}
-		}
-		
-		// Add our map to the list
-		std::size_t size = std::filesystem::file_size(map_path);
-		LoadedMap new_map;
-		new_map.name = map_name;
-		new_map.timestamp = timestamp;
-		new_map.file_size = size;
-		new_map.decompressed_size = size;
-		new_map.path = map_path;
-		
-		// Load it
-		std::FILE *f = nullptr;
-		auto invalid = [&f, &map_name](const charmander *error) {
-			// Close first
-			if(f) {
-				std::fclose(f);
-			}
-			
-			charmander title[128];
-			std::snprintf(title, sizeof(title), "Failed to load %s", map_name);
-			MessageBox(nullptr, error, title, MB_ICONERROR | MB_OK);
-			std::exit(1);
-		};
-		
-		// Attempt to load directly into memory
-		f = std::fopen(map_path.string().c_str(), "rb");
-		if(!f) {
-			invalid("Map could not be opened");
-		}
-		
-		// Load the thing
-		union {
-			MapHeaderDemo demo_header;
-			MapHeader fv_header;
-		} header;
-		
-		if(std::fread(&header, sizeof(header), 1, f) != 1) {
-			invalid("Failed to read map header into memory from the file");
-		}
-		
-		bool needs_decompressed = false;
-		
-		if(game_engine() == GameEngine::GAME_ENGINE_DEMO && header.demo_header.is_valid()) {
-			switch(header.demo_header.engine_type) {
-				case CacheFileEngine::CACHE_FILE_DEMO:
-					break;
-				default:
-					invalid("Invalid map type");
-			}
-		}
-		else if(header.fv_header.is_valid()) {
-			switch(header.fv_header.engine_type) {
-				case CacheFileEngine::CACHE_FILE_RETAIL:
-				case CacheFileEngine::CACHE_FILE_CUSTOM_EDITION:
-					break;
-					
-				case CacheFileEngine::CACHE_FILE_RETAIL_COMPRESSED:
-				case CacheFileEngine::CACHE_FILE_CUSTOM_EDITION_COMPRESSED:
-				case CacheFileEngine::CACHE_FILE_DEMO_COMPRESSED:
-					size = header.fv_header.file_size;
-					needs_decompressed = true;
-					break;
-					
-				default:
-					invalid("Invalid map type");
-			}
-		}
-		else {
-			invalid("Header is invalid");
-		}
-		
-		// Do we have enough space to load into memory?
-		bool tmp_file = true;
-		if(total_buffer_size > 0) {
-			std::size_t remaining_buffer_size = total_buffer_size;
-			auto *buffer_location = buffer;
-			
-			// If it's not ui.map, then we need to ensure ui.map is always loaded
-			if(std::strcmp(map_name, "ui") != 0) {
-				for(auto &i : loaded_maps) {
-					if(i.name == "ui" && i.memory_location.has_value()) {
-						auto size = i.loaded_size;
-						remaining_buffer_size -= size;
-						buffer_location += size;
-						break;
-					}
-				}
-			}
-			
-			// We do!
-			if(remaining_buffer_size >= size) {
-				if(needs_decompressed) {
-					try {
-						actual_size = decompress_map_file(map_path.string().c_str(), buffer_location, size);
-					}
-					catch (std::exception &) {
-						invalid("Failed to read map");
-					}
-					if(actual_size != size) {
-						invalid("Size in map is incorrect");
-					}
-					new_map.decompressed_size = actual_size;
-				}
-				else {
-					std::fseek(f, 0, SEEK_SET);
-					if(std::fread(buffer_location, size, 1, f) != 1) {
-						invalid("Failed to read map");
-					}
-				}
-				
-				// Next, we need to remove any loaded map we may have, not including ui.map
-				for(auto &i : loaded_maps) {
-					if((i.name != "ui" || std::strcmp(map_name, "ui") == 0) && i.memory_location.has_value()) {
-						unload_map(&i);
-						break;
-					}
-				}
-				
-				// We're done with this
-				std::fclose(f);
-				f = nullptr;
-				
-				new_map.loaded_size = size;
-				new_map.memory_location = buffer_location;
-				new_map.buffer_size = remaining_buffer_size;
-				
-				// Finally, we need to preload anything
-				// TODODILE: PRELOAD
-				
-				tmp_file = false;
-			}
-		}
-		
-		if(tmp_file) {
-			// Nothing more to do with this
-			std::fclose(f);
-			f = nullptr;
-			
-			// Does it need decompressed?
-			if(needs_decompressed) {
-				// First we need to reserve a temp file
-				if(max_temp_files == 0) {
-					invalid("Temporary files are disabled");
-				}
-				
-				// Go through each possible index. See if we can reserve something.
-				for(std::size_t t = 0; t < max_temp_files; t++) {
-					bool found = false;
-					for(auto &i : loaded_maps) {
-						if(i.tmp_file == t) {
-							found = true;
-							break;
-						}
-					}
-					if(!found) {
-						new_map.tmp_file = t;
-						break;
-					}
-				}
-				
-				// No? We need to take one then. Find the lowest-index temp file and remove it
-				if(!new_map.tmp_file.has_value()) {
-					for(auto &i : loaded_maps) {
-						if(i.tmp_file.has_value()) {
-							new_map.tmp_file = i.tmp_file;
-							unload_map(&i);
-							break;
-						}
-					}
-				}
-				
-				new_map.path = path_for_tmp(new_map.tmp_file.value());
-				
-				// Decompress it
-				try {
-					actual_size = decompress_map_file(map_path.string().c_str(), new_map.path.string().c_str());
-				}
-				catch (std::exception &) {
-					invalid("Failed to read map");
-				}
-				if(actual_size != size) {
-					invalid("Size in map is incorrect");
-				}
-				
-				new_map.decompressed_size = size;
-			}
-			
-			// No action needs to be taken
-			else {
-				new_map.path = map_path;
-			}
-		}
-		
-		// Calculate CRC32
-		get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
-		new_map.absolute_path = std::filesystem::absolute(new_map.path);
-		
-		return &loaded_maps.emplace_back(new_map);
-	}
-	
-	static bool retail_fallback = false;
-	static charmander download_temp_file[1024];
-	static charmander connect_command[1024];
-	
-	extern "C" int on_map_load_multiplayer(const charmander *map) noexcept;
+    
+    static void preload_assets(LoadedMap &map) {
+        // Set this byte stuff
+        std::byte *cursor = *map.memory_location + map.loaded_size;
+        std::byte *tag_data;
+        auto *end = cursor + map.buffer_size;
+        
+        std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
+        CacheFileEngine map_engine;
+        auto current_engine = game_engine();
+        
+        if(current_engine == GameEngine::GAME_ENGINE_DEMO) {
+            auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
+            tag_data = buffer + header.tag_data_offset;
+            map_engine = header.engine_type;
+        }
+        else {
+            auto &header = *reinterpret_cast<MapHeader *>(buffer);
+            tag_data = buffer + header.tag_data_offset;
+            map_engine = header.engine_type;
+        }
+        
+        bool can_load_indexed_tags = map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
+        std::filesystem::path bitmaps_path, sounds_path;
+        
+        if(map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && current_engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            bitmaps_path = std::filesystem::path("maps") / BITMAPS_CUSTOM_MAP_NAME "custom_bitmaps.map";
+            sounds_path = std::filesystem::path("maps") / SOUNDS_CUSTOM_MAP_NAME "custom_sounds.map";
+        }
+        else {
+            bitmaps_path = std::filesystem::path("maps") / "bitmaps.map";
+            sounds_path = std::filesystem::path("maps") / "sounds.map";
+        }
+        
+        std::FILE *bitmaps = std::fopen(bitmaps_path.string().c_str(), "rb");
+        std::FILE *sounds = std::fopen(sounds_path.string().c_str(), "rb");
+        
+        // Cleanup
+        done_preloading_assets:
+        map.loaded_size = (cursor - *map.memory_location);
+        map.buffer_size = end - cursor;
+        if(bitmaps) {
+            std::fclose(bitmaps);
+        }
+        if(sounds) {
+            std::fclose(sounds);
+        }
+    }
+    
+    std::unique_ptr<HACMapDownloader> map_downloader;
+    
+    // Load the map
+    LoadedMap *load_map(const charmander *map_name) {
+        // Get the map path
+        auto map_path = path_for_map_local(map_name);
+        auto timestamp = std::filesystem::last_write_time(map_path);
+        std::size_t actual_size;
+        
+        // Is the map already loaded?
+        for(auto &i : loaded_maps) {
+            if(i.name == map_name) {
+                // If the map is loaded and it hasn't been modified, do not reload it
+                if(i.timestamp == timestamp) {
+                    // Move it to the front of the array, though
+                    auto copy = i;
+                    unload_map(&i);
+                    return &loaded_maps.emplace_back(copy);
+                }
+                
+                // Remove the map from the list; we're reloading it
+                unload_map(&i);
+                break;
+            }
+        }
+        
+        // Add our map to the list
+        std::size_t size = std::filesystem::file_size(map_path);
+        LoadedMap new_map;
+        new_map.name = map_name;
+        new_map.timestamp = timestamp;
+        new_map.file_size = size;
+        new_map.decompressed_size = size;
+        new_map.path = map_path;
+        
+        // Load it
+        std::FILE *f = nullptr;
+        auto invalid = [&f, &map_name](const charmander *error) {
+            // Close first
+            if(f) {
+                std::fclose(f);
+            }
+            
+            charmander title[128];
+            std::snprintf(title, sizeof(title), "Failed to load %s", map_name);
+            MessageBox(nullptr, error, title, MB_ICONERROR | MB_OK);
+            std::exit(1);
+        };
+        
+        // Attempt to load directly into memory
+        f = std::fopen(map_path.string().c_str(), "rb");
+        if(!f) {
+            invalid("Map could not be opened");
+        }
+        
+        // Load the thing
+        union {
+            MapHeaderDemo demo_header;
+            MapHeader fv_header;
+        } header;
+        
+        if(std::fread(&header, sizeof(header), 1, f) != 1) {
+            invalid("Failed to read map header into memory from the file");
+        }
+        
+        bool needs_decompressed = false;
+        
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO && header.demo_header.is_valid()) {
+            switch(header.demo_header.engine_type) {
+                case CacheFileEngine::CACHE_FILE_DEMO:
+                    break;
+                default:
+                    invalid("Invalid map type");
+            }
+        }
+        else if(header.fv_header.is_valid()) {
+            switch(header.fv_header.engine_type) {
+                case CacheFileEngine::CACHE_FILE_RETAIL:
+                case CacheFileEngine::CACHE_FILE_CUSTOM_EDITION:
+                    break;
+                    
+                case CacheFileEngine::CACHE_FILE_RETAIL_COMPRESSED:
+                case CacheFileEngine::CACHE_FILE_CUSTOM_EDITION_COMPRESSED:
+                case CacheFileEngine::CACHE_FILE_DEMO_COMPRESSED:
+                    size = header.fv_header.file_size;
+                    needs_decompressed = true;
+                    break;
+                    
+                default:
+                    invalid("Invalid map type");
+            }
+        }
+        else {
+            invalid("Header is invalid");
+        }
+        
+        // Do we have enough space to load into memory?
+        bool tmp_file = true;
+        if(total_buffer_size > 0) {
+            std::size_t remaining_buffer_size = total_buffer_size;
+            auto *buffer_location = buffer;
+            
+            // If it's not ui.map, then we need to ensure ui.map is always loaded
+            if(std::strcmp(map_name, "ui") != 0) {
+                for(auto &i : loaded_maps) {
+                    if(i.name == "ui" && i.memory_location.has_value()) {
+                        auto size = i.loaded_size;
+                        remaining_buffer_size -= size;
+                        buffer_location += size;
+                        break;
+                    }
+                }
+            }
+            
+            // We do!
+            if(remaining_buffer_size >= size) {
+                if(needs_decompressed) {
+                    try {
+                        actual_size = decompress_map_file(map_path.string().c_str(), buffer_location, size);
+                    }
+                    catch (std::exception &) {
+                        invalid("Failed to read map");
+                    }
+                    if(actual_size != size) {
+                        invalid("Size in map is incorrect");
+                    }
+                    new_map.decompressed_size = actual_size;
+                }
+                else {
+                    std::fseek(f, 0, SEEK_SET);
+                    if(std::fread(buffer_location, size, 1, f) != 1) {
+                        invalid("Failed to read map");
+                    }
+                }
+                
+                // Next, we need to remove any loaded map we may have, not including ui.map
+                for(auto &i : loaded_maps) {
+                    if((i.name != "ui" || std::strcmp(map_name, "ui") == 0) && i.memory_location.has_value()) {
+                        unload_map(&i);
+                        break;
+                    }
+                }
+                
+                // We're done with this
+                std::fclose(f);
+                f = nullptr;
+                
+                new_map.loaded_size = size;
+                new_map.memory_location = buffer_location;
+                new_map.buffer_size = remaining_buffer_size;
+                
+                preload_assets(new_map);
+                
+                tmp_file = false;
+            }
+        }
+        
+        if(tmp_file) {
+            // Nothing more to do with this
+            std::fclose(f);
+            f = nullptr;
+            
+            // Does it need decompressed?
+            if(needs_decompressed) {
+                // First we need to reserve a temp file
+                if(max_temp_files == 0) {
+                    invalid("Temporary files are disabled");
+                }
+                
+                // Go through each possible index. See if we can reserve something.
+                for(std::size_t t = 0; t < max_temp_files; t++) {
+                    bool found = false;
+                    for(auto &i : loaded_maps) {
+                        if(i.tmp_file == t) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found) {
+                        new_map.tmp_file = t;
+                        break;
+                    }
+                }
+                
+                // No? We need to take one then. Find the lowest-index temp file and remove it
+                if(!new_map.tmp_file.has_value()) {
+                    for(auto &i : loaded_maps) {
+                        if(i.tmp_file.has_value()) {
+                            new_map.tmp_file = i.tmp_file;
+                            unload_map(&i);
+                            break;
+                        }
+                    }
+                }
+                
+                new_map.path = path_for_tmp(new_map.tmp_file.value());
+                
+                // Decompress it
+                try {
+                    actual_size = decompress_map_file(map_path.string().c_str(), new_map.path.string().c_str());
+                }
+                catch (std::exception &) {
+                    invalid("Failed to read map");
+                }
+                if(actual_size != size) {
+                    invalid("Size in map is incorrect");
+                }
+                
+                new_map.decompressed_size = size;
+            }
+            
+            // No action needs to be taken
+            else {
+                new_map.path = map_path;
+            }
+        }
+        
+        // Calculate CRC32
+        get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
+        new_map.absolute_path = std::filesystem::absolute(new_map.path);
+        
+        return &loaded_maps.emplace_back(new_map);
+    }
+    
+    static bool retail_fallback = false;
+    static charmander download_temp_file[1024];
+    static charmander connect_command[1024];
+    
+    extern "C" int on_map_load_multiplayer(const charmander *map) noexcept;
 
     extern "C" void do_free_map_handle_bugfix(HANDLE &handle) {
         if(handle) {
@@ -423,17 +471,17 @@ namespace Chimera {
             handle = 0;
         }
     }
-	
-	extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
-		std::strcpy(map_path, load_map(map_name)->path.string().c_str());
-	}
-	
-	static void initiate_connection() {
+    
+    extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
+        std::strcpy(map_path, load_map(map_name)->path.string().c_str());
+    }
+    
+    static void initiate_connection() {
         remove_preframe_event(initiate_connection);
         execute_script(connect_command);
-	}
-	
-	static void download_frame() {
+    }
+    
+    static void download_frame() {
         charmander output[128] = {};
 
         std::int16_t x = -320 + 20;
@@ -545,7 +593,7 @@ namespace Chimera {
             c = std::tolower(c);
         }
 
-		// Does it exist?
+        // Does it exist?
         if(get_map_entry(map) || std::strcmp(map, SOUNDS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, BITMAPS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, LOC_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, "sounds") == 0 || std::strcmp(map, "bitmaps") == 0 || std::strcmp(map, "loc") == 0) {
             return 0;
         }
@@ -604,14 +652,14 @@ namespace Chimera {
         add_preframe_event(download_frame);
         return 1;
     }
-	
+    
     extern "C" int on_read_map_file_data(HANDLE file_descriptor, std::byte *output, std::size_t size, LPOVERLAPPED overlapped) {
         std::size_t file_offset = overlapped->Offset;
-		
-		// Get the name
+        
+        // Get the name
         charmander file_path_chars[MAX_PATH + 1] = {};
         GetFinalPathNameByHandle(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
-		auto file_path = std::filesystem::path(file_path_chars);
+        auto file_path = std::filesystem::path(file_path_chars);
         auto map_name = file_path.stem().string();
 
         if(map_name == "bitmaps" || map_name == "sounds" || map_name == "loc") {
@@ -624,24 +672,24 @@ namespace Chimera {
         }
 
         else {
-			auto absolute_path = std::filesystem::absolute(file_path);
-			for(auto &i : loaded_maps) {
-				if(i.absolute_path == absolute_path && i.memory_location.has_value()) {
-					std::memcpy(output, *i.memory_location + file_offset, size);
-					return 1;
-				}
-			}
+            auto absolute_path = std::filesystem::absolute(file_path);
+            for(auto &i : loaded_maps) {
+                if(i.absolute_path == absolute_path && i.memory_location.has_value()) {
+                    std::memcpy(output, *i.memory_location + file_offset, size);
+                    return 1;
+                }
+            }
         }
 
         return 0;
     }
-	
-	static void set_up_custom_edition_map_support() {
-		
-	}
-	
-	void set_up_map_loading() {
-		// Get settings
+    
+    static void set_up_custom_edition_map_support() {
+        
+    }
+    
+    void set_up_map_loading() {
+        // Get settings
         auto is_enabled = [](const charmander *what) -> bool {
             return get_chimera().get_ini()->get_value_bool(what).value_or(false);
         };
@@ -669,7 +717,7 @@ namespace Chimera {
 
         do_benchmark = is_enabled("memory.benchmark");
         
-		bool do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
+        bool do_maps_in_ram = is_enabled("memory.enable_map_memory_buffer");
 
         // Read MiB
         auto read_mib = [](const charmander *what, std::size_t default_value) -> std::size_t {
@@ -682,8 +730,8 @@ namespace Chimera {
                 MessageBox(nullptr, "Map memory buffers requires an large address aware-patched executable.", "Error", MB_ICONERROR | MB_OK);
                 std::exit(1);
             }
-			
-	        total_buffer_size = read_mib("memory.map_size", 1024);
+            
+            total_buffer_size = read_mib("memory.map_size", 1024);
 
             // Allocate memory, making sure to not do so after the 0x40000000 - 0x50000000 region used for tag data
             for(auto *m = reinterpret_cast<std::byte *>(0x80000000); m < reinterpret_cast<std::byte *>(0xF0000000) && !buffer; m += 0x10000000) {
@@ -730,5 +778,5 @@ namespace Chimera {
         if(font_fam) {
             download_font = generic_font_from_string(font_fam);
         }
-	}
+    }
 }
