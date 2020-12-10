@@ -593,8 +593,6 @@ namespace Chimera {
                 new_map.memory_location = buffer_location;
                 new_map.buffer_size = remaining_buffer_size;
                 
-                preload_assets(new_map);
-                
                 tmp_file = false;
             }
         }
@@ -662,6 +660,11 @@ namespace Chimera {
         // Calculate CRC32
         get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
         new_map.absolute_path = std::filesystem::absolute(new_map.path);
+        
+        // Preload if need be
+        if(!tmp_file) {
+            preload_assets(new_map);
+        }
         
         return &loaded_maps.emplace_back(new_map);
     }
@@ -898,7 +901,7 @@ namespace Chimera {
         }
 
         if(origin.has_value()) {
-            // load it!
+            // load this map now!
             load_map(get_map_name());
             
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
@@ -930,9 +933,13 @@ namespace Chimera {
         }
 
         else {
+            // Get the path
             auto absolute_path = std::filesystem::absolute(file_path);
+            
+            // Load the map if it's not loaded
             load_map(map_name.c_str());
             
+            // Do it
             for(auto &i : loaded_maps) {
                 if(i.absolute_path == absolute_path && i.memory_location.has_value()) {
                     std::memcpy(output, *i.memory_location + file_offset, size);
