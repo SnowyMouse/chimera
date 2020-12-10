@@ -292,6 +292,8 @@ namespace Chimera {
                             break;
                             
                         case TagClassInt::TAG_CLASS_SOUND: {
+                            // tag_array[i].indexed = 0;
+                            
                             // Do this fucking meme
                             const char *path = reinterpret_cast<char *>(translate_ptr(tag_array[i].path));
                             std::optional<std::size_t> path_index;
@@ -309,7 +311,10 @@ namespace Chimera {
                             auto *old_data = translate_ptr(tag_array[i].data);
                             
                             // Set this value here
-                            *reinterpret_cast<std::byte **>(old_data + 0xA0) = data + 0xA4;
+                            *reinterpret_cast<std::byte **>(old_data + 0x98 + 0x4) = data + 0xA4;
+                            
+                            // Fix our shit
+                            // fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class, tag_array + i);
                             
                             break;
                         }
@@ -395,6 +400,34 @@ namespace Chimera {
                             break;
                         }
                         case TagClassInt::TAG_CLASS_SOUND: {
+                            auto *td = get_real_address(tag.data);
+                            
+                            auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(td + 0x98);
+                            auto *pitch_ranges = *reinterpret_cast<std::byte **>(td + 0x98 + 0x4);
+                            
+                            for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
+                                auto *pitch_range = pitch_ranges + pr * 0x48;
+                                
+                                auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                                auto *permutation_ptr = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+                                
+                                for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
+                                    auto *permutation = permutation_ptr + pe * 0x7C;
+                                    
+                                    std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(permutation + 0x44);
+                                    
+                                    // Ignore internal tags
+                                    if(!(external & 1)) {
+                                        continue;
+                                    }
+                                    
+                                    std::uint32_t sound_offset = *reinterpret_cast<std::uint32_t *>(permutation + 0x48);
+                                    std::uint32_t sound_size = *reinterpret_cast<std::uint32_t *>(permutation + 0x40);
+                                    
+                                    preload_asset_maybe(sound_offset, sound_size, bitmaps, can_load_indexed_tags ? ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS : ResourceOrigin::RESOURCE_ORIGIN_SOUNDS);
+                                }
+                            }
+                            
                             break;
                         }
                         
