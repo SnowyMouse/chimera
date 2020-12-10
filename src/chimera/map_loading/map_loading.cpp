@@ -40,8 +40,15 @@ namespace Chimera {
     static std::size_t max_temp_files = 3;
     static bool do_benchmark = false;
     static bool download_retail_maps = false;
-    static bool custom_edition_maps_supported_on_retail;
+    static bool custom_edition_maps_supported = false;
     static GenericFont download_font = GenericFont::FONT_CONSOLE;
+    
+    // Resource maps' tag data
+    static std::vector<std::vector<std::byte>> custom_edition_bitmaps_tag_data;
+    static std::vector<std::vector<std::byte>> custom_edition_sounds_tag_data;
+    static std::vector<std::string> custom_edition_sounds_tag_data_paths;
+    static std::vector<std::vector<std::byte>> custom_edition_loc_tag_data;
+    static std::vector<bool> custom_edition_loc_tag_data_fixed; // we don't know what tag is what, so we depend on the map to determine that for us
     
     extern "C" {
         void map_loading_asm() noexcept;
@@ -554,7 +561,7 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Download canceled!");
                 break;
             default: {
-                if(retail_fallback || !custom_edition_maps_supported_on_retail) {
+                if(retail_fallback || !custom_edition_maps_supported) {
                     std::snprintf(output, sizeof(output), "Download failed!");
                     console_output("Download failed!");
                     retail_fallback = false;
@@ -605,7 +612,7 @@ namespace Chimera {
                 game_engine_str = "halom";
                 break;
             case GameEngine::GAME_ENGINE_RETAIL:
-                game_engine_str = (custom_edition_maps_supported_on_retail && !retail_fallback) ? "halom" : "halor";
+                game_engine_str = (custom_edition_maps_supported && !retail_fallback) ? "halom" : "halor";
                 break;
             case GameEngine::GAME_ENGINE_DEMO:
                 game_engine_str = "halod";
@@ -684,8 +691,267 @@ namespace Chimera {
         return 0;
     }
     
-    static void set_up_custom_edition_map_support() {
+    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag = nullptr) {
+        std::byte *base = tag_data.data();
+        auto base_offset = reinterpret_cast<std::uint32_t>(tag_data.data());
         
+        #define INCREMENT_IF_NECESSARY(what) if(tag == nullptr) { \
+            auto &ptr = *reinterpret_cast<std::byte **>(what); \
+            if(ptr != 0) { \
+                ptr += base_offset; \
+            } \
+        }
+        
+        switch(primary_class) {
+            case TagClassInt::TAG_CLASS_BITMAP: {
+                INCREMENT_IF_NECESSARY(base + 0x54 + 0x4);
+                INCREMENT_IF_NECESSARY(base + 0x60 + 0x4);
+                auto sequence_count = *reinterpret_cast<std::uint32_t *>(base + 0x54);
+                auto *sequences = *reinterpret_cast<std::byte **>(base + 0x54 + 0x4);
+                for(std::uint32_t s = 0; s < sequence_count; s++) {
+                    INCREMENT_IF_NECESSARY(sequences + s * 64 + 0x34 + 0x4);
+                }
+                break;
+            }
+            case TagClassInt::TAG_CLASS_SOUND: {
+                // Let's begin.
+                auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(base + 0x98);
+
+                // Fix the currently loaded tag
+                if(tag) {
+                    // Copy over channel count and format
+                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint16_t *>(base + 0x6C);
+                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6E) = *reinterpret_cast<std::uint16_t *>(base + 0x6E);
+
+                    // Copy over sample rate
+                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(base + 0x6);
+
+                    // Copy over longest permutation length
+                    *reinterpret_cast<std::uint32_t *>(tag->data + 0x84) = *reinterpret_cast<std::uint32_t *>(base + 0x84);
+                }
+                
+                // Add this to account for the header
+                base_offset += 0xA4;
+                base += 0xA4;
+                
+                // Set this pointer
+                if(tag) {
+                    *reinterpret_cast<std::uint32_t *>(tag->data + 0xA0) = base_offset;
+                }
+
+                for(std::uint32_t p = 0; p < pitch_range_count; p++) {
+                    auto *pitch_range = base + p * 72;
+                    INCREMENT_IF_NECESSARY(pitch_range + 0x3C + 0x4);
+                    auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                    auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+
+                    *reinterpret_cast<std::uint32_t *>(pitch_range + 0x34) = 0xFFFFFFFF;
+                    *reinterpret_cast<std::uint32_t *>(pitch_range + 0x38) = 0xFFFFFFFF;
+
+                    for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
+                        auto *permutation = permutations + pe * 124;
+
+                        *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                        *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
+
+                        INCREMENT_IF_NECESSARY(permutation + 0x54 + 0xC);
+                        INCREMENT_IF_NECESSARY(permutation + 0x68 + 0xC);
+                        
+                        if(tag) {
+                            *reinterpret_cast<TagID *>(permutation + 0x34) = tag->id;
+                            *reinterpret_cast<TagID *>(permutation + 0x3C) = tag->id;
+                        }
+                        
+                        *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
+                    }
+                }
+                break;
+            }
+            case TagClassInt::TAG_CLASS_FONT: {
+                INCREMENT_IF_NECESSARY(base + 0x7C + 0x4);
+                INCREMENT_IF_NECESSARY(base + 0x30 + 0x4);
+                INCREMENT_IF_NECESSARY(base + 0x88 + 0xC);
+                std::uint32_t table_count = *reinterpret_cast<std::uint32_t *>(base + 0x30);
+                auto *tables = *reinterpret_cast<std::byte **>(base + 0x30 + 0x4);
+                for(std::uint32_t t = 0; t < table_count; t++) {
+                    INCREMENT_IF_NECESSARY(tables + t * 12 + 0x0 + 0x4);
+                }
+                break;
+            }
+            case TagClassInt::TAG_CLASS_UNICODE_STRING_LIST: {
+                INCREMENT_IF_NECESSARY(base + 0x0 + 0x4);
+                std::uint32_t string_count = *reinterpret_cast<std::uint32_t *>(base + 0x0);
+                std::byte *strings = *reinterpret_cast<std::byte **>(base + 0x0 + 0x4);
+                for(std::uint32_t s = 0; s < string_count; s++) {
+                    INCREMENT_IF_NECESSARY(strings + s * 20 + 0x0 + 0xC);
+                }
+                break;
+            }
+            case TagClassInt::TAG_CLASS_HUD_MESSAGE_TEXT: {
+                INCREMENT_IF_NECESSARY(base + 0x0 + 0xC);
+                INCREMENT_IF_NECESSARY(base + 0x14 + 0x4);
+                INCREMENT_IF_NECESSARY(base + 0x20 + 0x4);
+                break;
+            }
+            default:
+                break;
+        }
+        
+        return true;
+    }
+    
+    static bool set_up_custom_edition_map_support() {
+        std::FILE *bitmaps = nullptr;
+        std::FILE *sounds = nullptr;
+        std::FILE *loc = nullptr;
+        auto is_custom_edition = game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
+        
+        auto maps_folder = std::filesystem::path("maps");
+        
+        bitmaps = std::fopen((maps_folder / "custom_bitmaps.map").string().c_str(), "rb");
+        sounds = std::fopen((maps_folder / "custom_sounds.map").string().c_str(), "rb");
+        loc = std::fopen((maps_folder / "custom_loc.map").string().c_str(), "rb");
+        
+        auto try_close = [](auto *&what) {
+            if(what) {
+                std::fclose(what);
+            }
+            what = nullptr;
+        };
+        
+        if(is_custom_edition) {
+            if(bitmaps && sounds && loc) {
+                // TODO: make Halo Custom Edition load these files
+            }
+            else {
+                // Fail on Custom Edition - try opening the normal ones
+                try_close(bitmaps);
+                try_close(sounds);
+                try_close(loc);
+                
+                bitmaps = std::fopen((maps_folder / "bitmaps.map").string().c_str(), "rb");
+                sounds = std::fopen((maps_folder / "sounds.map").string().c_str(), "rb");
+                loc = std::fopen((maps_folder / "loc.map").string().c_str(), "rb");
+            }
+        }
+        
+        // Fail
+        if(!bitmaps || !sounds || !loc) {
+            try_close(bitmaps);
+            try_close(sounds);
+            try_close(loc);
+            
+            if(is_custom_edition) {
+                MessageBox(nullptr, "Missing bitmaps.map/sounds.map/loc.map or custom_bitmaps.map/custom_sounds.map/custom_loc.map from your maps folder.", "Files missing or unreadable", MB_OK | MB_ICONERROR);
+                std::exit(EXIT_FAILURE);
+            }
+            return false;
+        }
+        
+        auto read_all_tags = [](std::FILE *from, auto &to_what, std::vector<std::string> *to_what_paths) -> bool {
+            struct {
+                std::uint32_t type;
+                std::uint32_t paths;
+                std::uint32_t resources;
+                std::uint32_t resource_count;
+            } header;
+            
+            #define read_at(offset, what) \
+                std::fseek(from, offset, SEEK_SET); \
+                if(std::fread(&what, sizeof(what), 1, from) != 1) { \
+                    return false; \
+                }
+            
+            // Read to this address
+            read_at(0, header);
+            
+            // Read every other?
+            bool read_every_other = &to_what != &custom_edition_loc_tag_data;
+            
+            // Reserve
+            to_what.reserve((header.resource_count + 1) / (read_every_other ? 2 : 1));
+            
+            // Read
+            for(std::uint32_t i = 0; i < header.resource_count; i++) {
+                struct {
+                    std::uint32_t path_offset = 0;
+                    std::uint32_t size = 0;
+                    std::uint32_t data_offset = 0;
+                } resource;
+                
+                // Skip?
+                bool skip_this = read_every_other && ((i % 2) == 0);
+                
+                // Read the resource
+                if(!skip_this) {
+                    read_at(header.resources + i * sizeof(resource), resource);
+                }
+                
+                // Read the data
+                auto &data = to_what.emplace_back(resource.size);
+                if(!skip_this) {
+                    std::fseek(from, resource.data_offset, SEEK_SET);
+                    if(std::fread(data.data(), resource.size, 1, from) != 1) {
+                        return false;
+                    }
+                }
+                
+                // Read the path?
+                if(to_what_paths) {
+                    auto &str = to_what_paths->emplace_back();
+                    
+                    if(!skip_this) {
+                        std::uint32_t read_offset = resource.path_offset;
+                        charmander c;
+                        while(true) {
+                            read_at(read_offset++, c);
+                            if(c) {
+                                str += c;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return true;
+        };
+        
+        bool read_success = read_all_tags(bitmaps, custom_edition_bitmaps_tag_data, nullptr) &&
+                            read_all_tags(sounds, custom_edition_sounds_tag_data, &custom_edition_sounds_tag_data_paths) &&
+                            read_all_tags(loc, custom_edition_loc_tag_data, nullptr);
+        
+        try_close(bitmaps);
+        try_close(sounds);
+        try_close(loc);
+        
+        if(!read_success) {
+            MessageBox(nullptr, "Failed to read resource maps.", "Files possibly corrupt or unreadable", MB_OK | MB_ICONERROR);
+            std::exit(EXIT_FAILURE);
+        }
+        
+        auto fix_tags = [](TagClassInt primary_class, auto &tags) -> bool {
+            for(auto &i : tags) {
+                if(i.size()) {
+                    if(!fix_tag(i, primary_class)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        };
+        
+        bool fix_success = fix_tags(TagClassInt::TAG_CLASS_BITMAP, custom_edition_bitmaps_tag_data) &&
+                           fix_tags(TagClassInt::TAG_CLASS_SOUND, custom_edition_sounds_tag_data);
+                           
+        if(!fix_success) {
+            MessageBox(nullptr, "Failed to read resource maps' data.", "Files possibly corrupt", MB_OK | MB_ICONERROR);
+            std::exit(EXIT_FAILURE);
+        }
+        
+        return true;
     }
     
     void set_up_map_loading() {
@@ -758,7 +1024,8 @@ namespace Chimera {
         on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
 
         // Make the meme go away
-        if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+        auto engine = game_engine();
+        if(engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
             static Hook land_of_fun_hook;
             auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();
             static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
@@ -766,8 +1033,8 @@ namespace Chimera {
         }
 
         // Support Cutdown Edition maps
-        if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
-            set_up_custom_edition_map_support();
+        if(engine == GameEngine::GAME_ENGINE_RETAIL || engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            custom_edition_maps_supported = set_up_custom_edition_map_support();
         }
 
         // Should we allow retail maps?
