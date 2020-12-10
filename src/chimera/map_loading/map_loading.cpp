@@ -34,6 +34,8 @@ using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
 
 namespace Chimera {
+    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag = nullptr) noexcept;
+    
     static std::deque<LoadedMap> loaded_maps;
     static std::byte *buffer;
     static std::size_t total_buffer_size = 0;
@@ -42,6 +44,23 @@ namespace Chimera {
     static bool download_retail_maps = false;
     static bool custom_edition_maps_supported = false;
     static GenericFont download_font = GenericFont::FONT_CONSOLE;
+    
+    enum ResourceOrigin {
+        RESOURCE_ORIGIN_BITMAPS,
+        RESOURCE_ORIGIN_SOUNDS,
+        RESOURCE_ORIGIN_LOC,
+        RESOURCE_ORIGIN_CUSTOM_BITMAPS,
+        RESOURCE_ORIGIN_CUSTOM_SOUNDS,
+        RESOURCE_ORIGIN_CUSTOM_LOC
+    };
+    
+    struct ResourceMetadata {
+        ResourceOrigin origin;
+        std::byte *data;
+        std::size_t size;
+    };
+    
+    static std::vector<ResourceMetadata> metadata;
     
     // Resource maps' tag data
     static std::vector<std::vector<std::byte>> custom_edition_bitmaps_tag_data;
@@ -215,6 +234,8 @@ namespace Chimera {
             map_engine = header.engine_type;
         }
         
+        auto &tag_data_header = *reinterpret_cast<TagDataHeader *>(tag_data);
+        
         bool can_load_indexed_tags = map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
         std::filesystem::path bitmaps_path, sounds_path;
         
@@ -225,6 +246,65 @@ namespace Chimera {
         else {
             bitmaps_path = std::filesystem::path("maps") / "bitmaps.map";
             sounds_path = std::filesystem::path("maps") / "sounds.map";
+        }
+        
+        // If it's a custom edition map, we ought to first figure out what tags go to what
+        const std::uint32_t tag_count = tag_data_header.tag_count;
+        auto translate_ptr = [&tag_data, &tag_data_address](auto ptr) -> std::byte * {
+            return tag_data + (reinterpret_cast<uintptr_t>(ptr) - tag_data_address);
+        };
+        
+        Tag *tag_array = reinterpret_cast<Tag *>(translate_ptr(tag_data_header.tag_array));
+        
+        auto translate_index = [](auto index, auto &of_what) -> std::byte * {
+            auto index_val = reinterpret_cast<std::uint32_t>(index);
+            if(index_val >= of_what.size()) {
+                MessageBox(nullptr, "Map could not be loaded due to an invalid index", "Failed to load map", MB_OK | MB_ICONERROR);
+                std::exit(EXIT_FAILURE);
+            }
+            return of_what[index_val].data();
+        };
+        
+        if(can_load_indexed_tags) {
+            for(std::uint32_t i = 0; i < tag_count; i++) {
+                if(tag_array[i].indexed) {
+                    switch(tag_array[i].primary_class) {
+                        case TagClassInt::TAG_CLASS_BITMAP:
+                            tag_array[i].indexed = 0;
+                            tag_array[i].data = translate_index(tag_array[i].data, custom_edition_bitmaps_tag_data);
+                            break;
+                            
+                        case TagClassInt::TAG_CLASS_SOUND: {
+                            // Do this fucking meme
+                            const char *path = reinterpret_cast<char *>(translate_ptr(tag_array[i].path));
+                            std::optional<std::size_t> path_index;
+                            
+                            // Set this stuff
+                            for(auto &s : custom_edition_sounds_tag_data_paths) {
+                                if(s == path) {
+                                    path_index = &s - custom_edition_sounds_tag_data_paths.data();
+                                    break;
+                                }
+                            }
+                            
+                            // Get these pointers ready
+                            auto *data = translate_index(path_index.value_or(custom_edition_sounds_tag_data.size()), custom_edition_sounds_tag_data);
+                            auto *old_data = translate_ptr(tag_array[i].data);
+                            
+                            // Set this value here
+                            *reinterpret_cast<std::byte **>(old_data + 0xA0) = data + 0xA4;
+                            
+                            break;
+                        }
+                            
+                        default:
+                            tag_array[i].indexed = 0;
+                            fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class, nullptr);
+                            tag_array[i].data = translate_index(tag_array[i].data, custom_edition_loc_tag_data);
+                            break;
+                    }
+                }
+            }
         }
         
         std::FILE *bitmaps = std::fopen(bitmaps_path.string().c_str(), "rb");
@@ -388,6 +468,17 @@ namespace Chimera {
                 // We're done with this
                 std::fclose(f);
                 f = nullptr;
+                
+                // Find all metadata after the thing we're loading to
+                std::size_t metadata_size = 0;
+                for(std::size_t m = 0; m < metadata_size; m++) {
+                    auto &md = metadata[m];
+                    if(md.data >= buffer_location) {
+                        metadata.erase(metadata.begin() + m);
+                        m--;
+                        continue;
+                    }
+                }
                 
                 new_map.loaded_size = size;
                 new_map.memory_location = buffer_location;
@@ -669,12 +760,24 @@ namespace Chimera {
         auto file_path = std::filesystem::path(file_path_chars);
         auto map_name = file_path.stem().string();
 
-        if(map_name == "bitmaps" || map_name == "sounds" || map_name == "loc") {
+        if(map_name == "bitmaps" || map_name == "sounds" || map_name == "loc" || map_name == "custom_bitmaps" || map_name == "custom_sounds" || map_name == "custom_loc") {
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
             if(using_custom_map_on_retail()) {
+                if(map_name == "bitmaps") {
+                    map_name = "custom_bitmaps";
+                }
+                if(map_name == "sounds") {
+                    map_name = "custom_sounds";
+                }
+                
+                
+                
                 // load_custom_edition_resource_data_in_retail(output, file_offset, size, map_name);
                 // return 1;
             }
+            
+            
+            
             return 0;
         }
 
@@ -691,7 +794,7 @@ namespace Chimera {
         return 0;
     }
     
-    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag = nullptr) {
+    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag) noexcept {
         std::byte *base = tag_data.data();
         auto base_offset = reinterpret_cast<std::uint32_t>(tag_data.data());
         
@@ -821,9 +924,13 @@ namespace Chimera {
         
         if(is_custom_edition) {
             if(bitmaps && sounds && loc) {
-                // TODO: make Halo Custom Edition load these files
+                // TODODILE: make Halo Custom Edition load these files instead
+                std::printf("fixme:set_up_custom_edition_map_support:custom_* maps are not yet supported\n");
+                goto spaghetti_monster;
             }
             else {
+                spaghetti_monster:
+                
                 // Fail on Custom Edition - try opening the normal ones
                 try_close(bitmaps);
                 try_close(sounds);
@@ -901,7 +1008,7 @@ namespace Chimera {
                     auto &str = to_what_paths->emplace_back();
                     
                     if(!skip_this) {
-                        std::uint32_t read_offset = resource.path_offset;
+                        std::uint32_t read_offset = resource.path_offset + header.paths;
                         charmander c;
                         while(true) {
                             read_at(read_offset++, c);
