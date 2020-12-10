@@ -24,14 +24,14 @@ namespace Chimera {
             loaded_dynamically = true;
             
             if(vulkan == NULL) {
-                console_output("Vulkan: not installed (vulkan-1.dll not found)");
+                console_output("Vulkan is not installed (vulkan-1.dll not found)");
                 return true;
             }
             
-            console_output("Vulkan: installed (loaded by Chimera)");
+            console_output("Vulkan is installed (loaded by Chimera)");
         }
         else {
-            console_output("Vulkan: installed (loaded by something else)");
+            console_output("Vulkan is installed (loaded by something else)");
         }
         
         // Doing all this because we can't link against Vulkan yet, or else people on old/potato PCs will complain that Chimera won't work.
@@ -71,7 +71,7 @@ namespace Chimera {
             if(vkCreateInstancePtr(&create_info, nullptr, &instance) == VK_SUCCESS) {
                 // Get device count
                 if(vkEnumeratePhysicalDevicesPtr(instance, &device_count, nullptr) == VK_SUCCESS) {
-                    console_output("%u device%s found", device_count, device_count == 1 ? "" : "s");
+                    console_output("%u compatible device%s found", device_count, device_count == 1 ? "" : "s");
                     if(device_count) {
                         std::vector<VkPhysicalDevice> devices(device_count);
                         vkEnumeratePhysicalDevicesPtr(instance, &device_count, devices.data());
@@ -79,6 +79,10 @@ namespace Chimera {
                         for(VkPhysicalDevice &device : devices) {
                             VkPhysicalDeviceProperties properties;
                             vkGetPhysicalDevicePropertiesPtr(device, &properties);
+                            
+                            std::uint32_t version_major = VK_VERSION_MAJOR(properties.apiVersion);
+                            std::uint32_t version_minor = VK_VERSION_MINOR(properties.apiVersion);
+                            std::uint32_t version_patch = VK_VERSION_PATCH(properties.apiVersion);
                             
                             // Get device type
                             const char *type;
@@ -94,7 +98,7 @@ namespace Chimera {
                                     break;
                             }
                             
-                            console_output(" - %s (%s)", properties.deviceName, type);
+                            console_output(" - %s (%s); Vulkan\xAE %u.%u.%u", properties.deviceName, type, version_major, version_minor, version_patch);
                         }
                     }
                 }
