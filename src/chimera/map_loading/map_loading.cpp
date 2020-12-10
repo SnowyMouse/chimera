@@ -46,16 +46,18 @@ namespace Chimera {
     static GenericFont download_font = GenericFont::FONT_CONSOLE;
     
     enum ResourceOrigin {
-        RESOURCE_ORIGIN_BITMAPS,
-        RESOURCE_ORIGIN_SOUNDS,
-        RESOURCE_ORIGIN_LOC,
-        RESOURCE_ORIGIN_CUSTOM_BITMAPS,
-        RESOURCE_ORIGIN_CUSTOM_SOUNDS,
-        RESOURCE_ORIGIN_CUSTOM_LOC
+        RESOURCE_ORIGIN_BITMAPS = 0b0001,
+        RESOURCE_ORIGIN_SOUNDS = 0b0010,
+        RESOURCE_ORIGIN_LOC = 0b0100,
+        RESOURCE_ORIGIN_CUSTOM_BIT = 0b1000,
+        RESOURCE_ORIGIN_CUSTOM_BITMAPS = 0b1001,
+        RESOURCE_ORIGIN_CUSTOM_SOUNDS = 0b1010,
+        RESOURCE_ORIGIN_CUSTOM_LOC = 0b1100
     };
     
     struct ResourceMetadata {
         ResourceOrigin origin;
+        std::uint32_t offset;
         std::byte *data;
         std::size_t size;
     };
@@ -216,21 +218,29 @@ namespace Chimera {
     static void preload_assets(LoadedMap &map) {
         // Set this byte stuff
         std::byte *cursor = *map.memory_location + map.loaded_size;
+        auto *end = *map.memory_location + map.buffer_size;
+        
+        std::printf("Preloading %s...\n\n", map.name.c_str());
+        std::printf("Destination: 0x%08zX\n", reinterpret_cast<std::uintptr_t>(*map.memory_location));
+        std::printf("     Cursor: 0x%08zX\n", reinterpret_cast<std::uintptr_t>(cursor));
+        std::printf("        End: 0x%08zX\n\n", reinterpret_cast<std::uintptr_t>(end));
+        
         std::byte *tag_data;
-        auto *end = cursor + map.buffer_size;
+        std::FILE *bitmaps = nullptr;
+        std::FILE *sounds = nullptr;
         
         std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         CacheFileEngine map_engine;
         auto current_engine = game_engine();
         
         if(current_engine == GameEngine::GAME_ENGINE_DEMO) {
-            auto &header = *reinterpret_cast<MapHeaderDemo *>(buffer);
-            tag_data = buffer + header.tag_data_offset;
+            auto &header = *reinterpret_cast<MapHeaderDemo *>(*map.memory_location);
+            tag_data = *map.memory_location + header.tag_data_offset;
             map_engine = header.engine_type;
         }
         else {
-            auto &header = *reinterpret_cast<MapHeader *>(buffer);
-            tag_data = buffer + header.tag_data_offset;
+            auto &header = *reinterpret_cast<MapHeader *>(*map.memory_location);
+            tag_data = *map.memory_location + header.tag_data_offset;
             map_engine = header.engine_type;
         }
         
@@ -250,11 +260,14 @@ namespace Chimera {
         
         // If it's a custom edition map, we ought to first figure out what tags go to what
         const std::uint32_t tag_count = tag_data_header.tag_count;
+        std::printf("  Tag count: %zu\n", tag_count);
+        
         auto translate_ptr = [&tag_data, &tag_data_address](auto ptr) -> std::byte * {
             return tag_data + (reinterpret_cast<uintptr_t>(ptr) - tag_data_address);
         };
         
         Tag *tag_array = reinterpret_cast<Tag *>(translate_ptr(tag_data_header.tag_array));
+        std::printf("  Tag array: 0x%08zX (0x%08zX in buffer)\n\n", reinterpret_cast<std::uintptr_t>(tag_data_header.tag_array), reinterpret_cast<std::uintptr_t>(tag_array));
         
         auto translate_index = [](auto index, auto &of_what) -> std::byte * {
             auto index_val = reinterpret_cast<std::uint32_t>(index);
@@ -265,9 +278,13 @@ namespace Chimera {
             return of_what[index_val].data();
         };
         
+        std::vector<bool> was_indexed(tag_count);
+        
         if(can_load_indexed_tags) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 if(tag_array[i].indexed) {
+                    was_indexed[i] = true;
+                    
                     switch(tag_array[i].primary_class) {
                         case TagClassInt::TAG_CLASS_BITMAP:
                             tag_array[i].indexed = 0;
@@ -307,11 +324,102 @@ namespace Chimera {
             }
         }
         
-        std::FILE *bitmaps = std::fopen(bitmaps_path.string().c_str(), "rb");
-        std::FILE *sounds = std::fopen(sounds_path.string().c_str(), "rb");
+        auto preload_asset_maybe = [&cursor, &end](std::uint32_t offset, std::uint32_t size, std::FILE *from, ResourceOrigin origin) -> bool {
+            // Too big? Nope
+            if(cursor + size > end || cursor + size < cursor) {
+                return false;
+            }
+            
+            // Already present? No need then.
+            for(auto &i : metadata) {
+                if(i.offset == offset && i.size == size && i.origin == origin) {
+                    return true;
+                }
+            }
+            
+            // Navigate to this
+            std::fseek(from, offset, SEEK_SET);
+            std::fread(cursor, size, 1, from);
+            
+            // Set asset data
+            auto &new_asset = metadata.emplace_back();
+            new_asset.data = cursor;
+            new_asset.origin = origin;
+            new_asset.offset = offset;
+            new_asset.size = size;
+            
+            // Increment the cursor
+            cursor += size;
+        
+            return true;
+        };
+        
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &can_load_indexed_tags, &bitmaps](TagClassInt class_int) {
+            for(std::uint32_t i = 0; i < tag_count; i++) {
+                auto &tag = tag_array[i];
+                
+                auto get_real_address = [&i, &was_indexed, &tag_data_address, &tag_data](auto address) -> std::byte * {
+                    if(was_indexed[i]) {
+                        return reinterpret_cast<std::byte *>(address);
+                    }
+                    else {
+                        auto result = tag_data + (reinterpret_cast<std::uintptr_t>(address) - tag_data_address);
+                        return result;
+                    }
+                };
+                
+                if(tag.primary_class == class_int) {
+                    switch(class_int) {
+                        case TagClassInt::TAG_CLASS_BITMAP: {
+                            auto *td = get_real_address(tag.data);
+                            
+                            auto *bitmap_data = get_real_address(*reinterpret_cast<std::uint32_t *>(td + 0x60 + 0x4));
+                            std::uint32_t bitmap_count = *reinterpret_cast<std::uint32_t *>(td + 0x60);
+                            
+                            for(std::uint32_t bd = 0; bd < bitmap_count; bd++) {
+                                auto *bitmap = bitmap_data + bd * 0x64;
+                                
+                                std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF);
+                                
+                                // Ignore internal tags
+                                if(!(external & 1)) {
+                                    continue;
+                                }
+                                
+                                std::uint32_t bitmap_size = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
+                                std::uint32_t bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x18);
+                                
+                                preload_asset_maybe(bitmap_offset, bitmap_size, bitmaps, can_load_indexed_tags ? ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS : ResourceOrigin::RESOURCE_ORIGIN_BITMAPS);
+                            }
+                            
+                            break;
+                        }
+                        case TagClassInt::TAG_CLASS_SOUND: {
+                            break;
+                        }
+                        
+                        default: break;
+                    }
+                }
+            }
+        };
+        
+        bitmaps = std::fopen(bitmaps_path.string().c_str(), "rb");
+        sounds = std::fopen(sounds_path.string().c_str(), "rb");
+        
+        // If stuff's missing... um... how? Anyway give up.
+        if(!bitmaps || !sounds) {
+            goto done_preloading_assets;
+        }
+        
+        // Prioritize loading sounds over bitmaps
+        // preload_all_tags_of_class(TagClassInt::TAG_CLASS_SOUND);
+        preload_all_tags_of_class(TagClassInt::TAG_CLASS_BITMAP);
         
         // Cleanup
         done_preloading_assets:
+        std::printf("Preloading done!\n");
+        
         map.loaded_size = (cursor - *map.memory_location);
         map.buffer_size = end - cursor;
         if(bitmaps) {
@@ -470,12 +578,13 @@ namespace Chimera {
                 f = nullptr;
                 
                 // Find all metadata after the thing we're loading to
-                std::size_t metadata_size = 0;
+                std::size_t metadata_size = metadata.size();
                 for(std::size_t m = 0; m < metadata_size; m++) {
                     auto &md = metadata[m];
                     if(md.data >= buffer_location) {
                         metadata.erase(metadata.begin() + m);
                         m--;
+                        metadata_size--;
                         continue;
                     }
                 }
@@ -758,31 +867,72 @@ namespace Chimera {
         charmander file_path_chars[MAX_PATH + 1] = {};
         GetFinalPathNameByHandle(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
         auto file_path = std::filesystem::path(file_path_chars);
+        
+        // If it's not a .map file, forget about it
+        charmander file_path_extension[5] = {};
+        std::snprintf(file_path_extension, sizeof(file_path_extension), "%s", file_path.extension().string().c_str());
+        for(auto &fpe : file_path_extension) {
+            fpe = std::tolower(fpe);
+        }
+        
         auto map_name = file_path.stem().string();
+        std::optional<ResourceOrigin> origin;
+        
+        if(map_name == "bitmaps") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_BITMAPS;
+        }
+        else if(map_name == "sounds") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_SOUNDS;
+        }
+        else if(map_name == "loc") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_LOC;
+        }
+        else if(map_name == "custom_bitmaps") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS;
+        }
+        else if(map_name == "custom_sounds") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS;
+        }
+        else if(map_name == "custom_loc") {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_LOC;
+        }
 
-        if(map_name == "bitmaps" || map_name == "sounds" || map_name == "loc" || map_name == "custom_bitmaps" || map_name == "custom_sounds" || map_name == "custom_loc") {
+        if(origin.has_value()) {
+            // load it!
+            load_map(get_map_name());
+            
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
             if(using_custom_map_on_retail()) {
                 if(map_name == "bitmaps") {
                     map_name = "custom_bitmaps";
+                    origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS;
                 }
                 if(map_name == "sounds") {
                     map_name = "custom_sounds";
+                    origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS;
                 }
-                
-                
-                
-                // load_custom_edition_resource_data_in_retail(output, file_offset, size, map_name);
-                // return 1;
             }
             
+            // We always load from this
+            if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+                origin = static_cast<ResourceOrigin>(*origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
+            }
             
+            // Copy it in?
+            for(auto &md : metadata) {
+                if(md.origin == origin && file_offset == md.offset && size >= md.size) {
+                    std::memcpy(output, md.data, size);
+                    return 1;
+                }
+            }
             
             return 0;
         }
 
         else {
             auto absolute_path = std::filesystem::absolute(file_path);
+            load_map(map_name.c_str());
+            
             for(auto &i : loaded_maps) {
                 if(i.absolute_path == absolute_path && i.memory_location.has_value()) {
                     std::memcpy(output, *i.memory_location + file_offset, size);
@@ -797,6 +947,19 @@ namespace Chimera {
     static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag) noexcept {
         std::byte *base = tag_data.data();
         auto base_offset = reinterpret_cast<std::uint32_t>(tag_data.data());
+        
+        // If we're loc, mark as such
+        for(auto &i : custom_edition_loc_tag_data) {
+            if(&i == &tag_data) {
+                std::size_t index = &i - custom_edition_loc_tag_data.data();
+                if(custom_edition_loc_tag_data_fixed[index]) {
+                    return true;
+                }
+                else {
+                    custom_edition_loc_tag_data_fixed[index] = true;
+                }
+            }
+        }
         
         #define INCREMENT_IF_NECESSARY(what) if(tag == nullptr) { \
             auto &ptr = *reinterpret_cast<std::byte **>(what); \
@@ -1057,6 +1220,9 @@ namespace Chimera {
             MessageBox(nullptr, "Failed to read resource maps' data.", "Files possibly corrupt", MB_OK | MB_ICONERROR);
             std::exit(EXIT_FAILURE);
         }
+        
+        // Hold this
+        custom_edition_loc_tag_data_fixed.resize(custom_edition_loc_tag_data.size());
         
         return true;
     }
