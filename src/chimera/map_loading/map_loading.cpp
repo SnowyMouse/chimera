@@ -45,14 +45,24 @@ namespace Chimera {
     static bool custom_edition_maps_supported = false;
     static GenericFont download_font = GenericFont::FONT_CONSOLE;
     
+    static const char *bitmaps_file = "bitmaps.map";
+    static const char *sounds_file = "sounds.map";
+    static const char *loc_file = "loc.map";
+    
+    static const char *custom_bitmaps_file = "custom_bitmaps.map";
+    static const char *custom_sounds_file = "custom_sounds.map";
+    static const char *custom_loc_file = "custom_loc.map";
+    
     enum ResourceOrigin {
-        RESOURCE_ORIGIN_BITMAPS = 0b0001,
-        RESOURCE_ORIGIN_SOUNDS = 0b0010,
-        RESOURCE_ORIGIN_LOC = 0b0100,
-        RESOURCE_ORIGIN_CUSTOM_BIT = 0b1000,
-        RESOURCE_ORIGIN_CUSTOM_BITMAPS = 0b1001,
-        RESOURCE_ORIGIN_CUSTOM_SOUNDS = 0b1010,
-        RESOURCE_ORIGIN_CUSTOM_LOC = 0b1100
+        RESOURCE_ORIGIN_CUSTOM_BIT     = 0b0100,
+        
+        RESOURCE_ORIGIN_BITMAPS        = 0b0000,
+        RESOURCE_ORIGIN_SOUNDS         = 0b0001,
+        RESOURCE_ORIGIN_LOC            = 0b0010,
+        
+        RESOURCE_ORIGIN_CUSTOM_BITMAPS = RESOURCE_ORIGIN_BITMAPS | RESOURCE_ORIGIN_CUSTOM_BIT,
+        RESOURCE_ORIGIN_CUSTOM_SOUNDS  = RESOURCE_ORIGIN_SOUNDS  | RESOURCE_ORIGIN_CUSTOM_BIT,
+        RESOURCE_ORIGIN_CUSTOM_LOC     = RESOURCE_ORIGIN_LOC     | RESOURCE_ORIGIN_CUSTOM_BIT
     };
     
     struct ResourceMetadata {
@@ -250,12 +260,12 @@ namespace Chimera {
         std::filesystem::path bitmaps_path, sounds_path;
         
         if(map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && current_engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
-            bitmaps_path = std::filesystem::path("maps") / BITMAPS_CUSTOM_MAP_NAME "custom_bitmaps.map";
-            sounds_path = std::filesystem::path("maps") / SOUNDS_CUSTOM_MAP_NAME "custom_sounds.map";
+            bitmaps_path = std::filesystem::path("maps") / custom_bitmaps_file;
+            sounds_path = std::filesystem::path("maps") / custom_sounds_file;
         }
         else {
-            bitmaps_path = std::filesystem::path("maps") / "bitmaps.map";
-            sounds_path = std::filesystem::path("maps") / "sounds.map";
+            bitmaps_path = std::filesystem::path("maps") / bitmaps_file;
+            sounds_path = std::filesystem::path("maps") / sounds_file;
         }
         
         // If it's a custom edition map, we ought to first figure out what tags go to what
@@ -837,7 +847,7 @@ namespace Chimera {
         }
 
         // Does it exist?
-        if(get_map_entry(map) || std::strcmp(map, SOUNDS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, BITMAPS_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, LOC_CUSTOM_MAP_NAME) == 0 || std::strcmp(map, "sounds") == 0 || std::strcmp(map, "bitmaps") == 0 || std::strcmp(map, "loc") == 0) {
+        if(get_map_entry(map)) {
             return 0;
         }
 
@@ -911,26 +921,27 @@ namespace Chimera {
             fpe = std::tolower(fpe);
         }
         
-        auto map_name = file_path.stem().string();
+        // Get the resource file if possible
+        auto file_name = file_path.filename();
         std::optional<ResourceOrigin> origin;
         
-        if(map_name == "bitmaps") {
-            origin = ResourceOrigin::RESOURCE_ORIGIN_BITMAPS;
-        }
-        else if(map_name == "sounds") {
-            origin = ResourceOrigin::RESOURCE_ORIGIN_SOUNDS;
-        }
-        else if(map_name == "loc") {
-            origin = ResourceOrigin::RESOURCE_ORIGIN_LOC;
-        }
-        else if(map_name == "custom_bitmaps") {
+        if(file_name == custom_bitmaps_file) {
             origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS;
         }
-        else if(map_name == "custom_sounds") {
+        else if(file_name == custom_sounds_file) {
             origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS;
         }
-        else if(map_name == "custom_loc") {
+        else if(file_name == custom_loc_file) {
             origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_LOC;
+        }
+        else if(file_name == bitmaps_file) {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_BITMAPS;
+        }
+        else if(file_name == sounds_file) {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_SOUNDS;
+        }
+        else if(file_name == loc_file) {
+            origin = ResourceOrigin::RESOURCE_ORIGIN_LOC;
         }
 
         if(origin.has_value()) {
@@ -938,19 +949,7 @@ namespace Chimera {
             load_map(get_map_name());
             
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
-            if(using_custom_map_on_retail()) {
-                if(map_name == "bitmaps") {
-                    map_name = "custom_bitmaps";
-                    origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS;
-                }
-                if(map_name == "sounds") {
-                    map_name = "custom_sounds";
-                    origin = ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS;
-                }
-            }
-            
-            // We always load from this
-            if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            if(using_custom_map_on_retail() || game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
                 origin = static_cast<ResourceOrigin>(*origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
             }
             
@@ -970,7 +969,7 @@ namespace Chimera {
             auto absolute_path = std::filesystem::absolute(file_path);
             
             // Load the map if it's not loaded
-            load_map(map_name.c_str());
+            load_map(file_path.stem().string().c_str());
             
             // Do it
             for(auto &i : loaded_maps) {
@@ -1114,9 +1113,9 @@ namespace Chimera {
         
         auto maps_folder = std::filesystem::path("maps");
         
-        bitmaps = std::fopen((maps_folder / "custom_bitmaps.map").string().c_str(), "rb");
-        sounds = std::fopen((maps_folder / "custom_sounds.map").string().c_str(), "rb");
-        loc = std::fopen((maps_folder / "custom_loc.map").string().c_str(), "rb");
+        bitmaps = std::fopen((maps_folder / custom_bitmaps_file).string().c_str(), "rb");
+        sounds = std::fopen((maps_folder / custom_sounds_file).string().c_str(), "rb");
+        loc = std::fopen((maps_folder / custom_loc_file).string().c_str(), "rb");
         
         auto try_close = [](auto *&what) {
             if(what) {
@@ -1139,9 +1138,9 @@ namespace Chimera {
                 try_close(sounds);
                 try_close(loc);
                 
-                bitmaps = std::fopen((maps_folder / "bitmaps.map").string().c_str(), "rb");
-                sounds = std::fopen((maps_folder / "sounds.map").string().c_str(), "rb");
-                loc = std::fopen((maps_folder / "loc.map").string().c_str(), "rb");
+                bitmaps = std::fopen((maps_folder / bitmaps_file).string().c_str(), "rb");
+                sounds = std::fopen((maps_folder / sounds_file).string().c_str(), "rb");
+                loc = std::fopen((maps_folder / loc_file).string().c_str(), "rb");
             }
         }
         

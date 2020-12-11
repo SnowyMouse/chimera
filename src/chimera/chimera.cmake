@@ -17,7 +17,6 @@ add_custom_target(chimera-version
 
 # Define the source files
 add_library(chimera STATIC
-    src/chimera/map_loading/laa.cpp
     src/chimera/annoyance/auto_get_list.cpp
     src/chimera/annoyance/auto_get_list.S
     src/chimera/annoyance/drm.cpp
@@ -58,6 +57,7 @@ add_library(chimera STATIC
     src/chimera/map_loading/crc32.c
     src/chimera/map_loading/fast_load.cpp
     src/chimera/map_loading/fast_load.S
+    src/chimera/map_loading/laa.cpp
     src/chimera/fix/abolish_safe_mode.cpp
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
@@ -69,10 +69,6 @@ add_library(chimera STATIC
     src/chimera/fix/camera_shake_fix.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
-    src/chimera/fix/custom_edition_bridge/map_support.cpp
-    src/chimera/fix/custom_edition_bridge/map_support.S
-    src/chimera/fix/custom_edition_bridge/netcode.cpp
-    src/chimera/fix/custom_edition_bridge/netcode.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/descope_fix.cpp

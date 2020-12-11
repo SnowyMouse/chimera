@@ -307,9 +307,9 @@ namespace Chimera {
                 "bitmaps",
                 "sounds",
                 "loc",
-                BITMAPS_CUSTOM_MAP_NAME,
-                SOUNDS_CUSTOM_MAP_NAME,
-                LOC_CUSTOM_MAP_NAME
+                "custom_bitmaps",
+                "custom_sounds",
+                "custom_loc"
             };
             
             for(auto &map : std::filesystem::directory_iterator(directory)) {
