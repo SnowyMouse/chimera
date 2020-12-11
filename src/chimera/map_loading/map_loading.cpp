@@ -14,6 +14,7 @@
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/tag.hpp"
+#include "../event/map_load.hpp"
 #include "../signature/hook.hpp"
 #include "../halo_data/multiplayer.hpp"
 #include "../halo_data/server.hpp"
@@ -225,6 +226,15 @@ namespace Chimera {
         return crc;
     }
     
+    template <typename T> static std::byte *translate_index(T index, std::vector<std::vector<std::byte>> &of_what) {
+        auto index_val = reinterpret_cast<std::uint32_t>(index);
+        if(index_val >= of_what.size()) {
+            MessageBox(nullptr, "Map could not be loaded due to an invalid index", "Failed to load map", MB_OK | MB_ICONERROR);
+            std::exit(EXIT_FAILURE);
+        }
+        return of_what[index_val].data();
+    }
+    
     static void preload_assets(LoadedMap &map) {
         // Set this byte stuff
         std::byte *cursor = *map.memory_location + map.loaded_size;
@@ -278,15 +288,6 @@ namespace Chimera {
         
         Tag *tag_array = reinterpret_cast<Tag *>(translate_ptr(tag_data_header.tag_array));
         std::printf("  Tag array: 0x%08zX (0x%08zX in buffer)\n\n", reinterpret_cast<std::uintptr_t>(tag_data_header.tag_array), reinterpret_cast<std::uintptr_t>(tag_array));
-        
-        auto translate_index = [](auto index, auto &of_what) -> std::byte * {
-            auto index_val = reinterpret_cast<std::uint32_t>(index);
-            if(index_val >= of_what.size()) {
-                MessageBox(nullptr, "Map could not be loaded due to an invalid index", "Failed to load map", MB_OK | MB_ICONERROR);
-                std::exit(EXIT_FAILURE);
-            }
-            return of_what[index_val].data();
-        };
         
         std::vector<bool> was_indexed(tag_count);
         
@@ -1105,6 +1106,106 @@ namespace Chimera {
         return true;
     }
     
+    static void jason_jones_custom_edition_on_retail() {
+        auto &header = get_map_header();
+        
+        // Do nothing if not custom edition map
+        if(header.engine_type != CacheFileEngine::CACHE_FILE_CUSTOM_EDITION) {
+            return;
+        }
+        
+        // First, update tags
+        auto &tag_data_header = get_tag_data_header();
+        auto *tags = tag_data_header.tag_array;
+        auto tag_count = tag_data_header.tag_count;
+        for(std::uint32_t i = 0; i < tag_count; i++) {
+            auto &tag = tags[i];
+            if(tag.indexed) {
+                // Mark as non-indexed
+                tag.indexed = 0;
+                
+                switch(tag.primary_class) {
+                    case TagClassInt::TAG_CLASS_BITMAP:
+                        tag.data = translate_index(tag.data, custom_edition_bitmaps_tag_data);
+                        break;
+                    case TagClassInt::TAG_CLASS_SOUND: {
+                        std::optional<std::size_t> path_index;
+                        
+                        // Set this stuff
+                        for(auto &s : custom_edition_sounds_tag_data_paths) {
+                            if(s == tag.path) {
+                                path_index = &s - custom_edition_sounds_tag_data_paths.data();
+                                break;
+                            }
+                        }
+                        
+                        std::uint32_t index = path_index.value_or(0xFFFFFFFF);
+                        auto *sound_data = translate_index(index, custom_edition_sounds_tag_data);
+                        *reinterpret_cast<std::byte **>(tag.data + 0x98 + 0x4) = sound_data + 0xA4;
+                        fix_tag(custom_edition_sounds_tag_data[index], TagClassInt::TAG_CLASS_SOUND, &tag);
+                        
+                        break;
+                    }
+                    default:
+                        tag.data = translate_index(tag.data, custom_edition_loc_tag_data);
+                        break;
+                }
+            }
+        }
+        
+        // Next, fix stock tags
+        if(
+            std::strcmp("beavercreek",header.name) == 0 ||
+            std::strcmp("bloodgulch",header.name) == 0 ||
+            std::strcmp("boardingaction",header.name) == 0 ||
+            std::strcmp("carousel",header.name) == 0 ||
+            std::strcmp("chillout",header.name) == 0 ||
+            std::strcmp("damnation",header.name) == 0 ||
+            std::strcmp("dangercanyon",header.name) == 0 ||
+            std::strcmp("deathisland",header.name) == 0 ||
+            std::strcmp("gephyrophobia",header.name) == 0 ||
+            std::strcmp("hangemhigh",header.name) == 0 ||
+            std::strcmp("icefields",header.name) == 0 ||
+            std::strcmp("infinity",header.name) == 0 ||
+            std::strcmp("longest",header.name) == 0 ||
+            std::strcmp("prisoner",header.name) == 0 ||
+            std::strcmp("putput",header.name) == 0 ||
+            std::strcmp("ratrace",header.name) == 0 ||
+            std::strcmp("sidewinder",header.name) == 0 ||
+            std::strcmp("timberland",header.name) == 0 ||
+            std::strcmp("wizard",header.name) == 0
+        ) {
+            bool in_custom_edition_server = false;
+
+            // Fix the stun values
+            auto jj_stun = [&in_custom_edition_server](const char *path) {
+                auto *tag = get_tag(path, TagClassInt::TAG_CLASS_DAMAGE_EFFECT);
+                if(tag) {
+                    float new_damage_stun = in_custom_edition_server ? 0.0F : 1.0F;
+                    float damage_maximum_stun = in_custom_edition_server ? 0.0F : 1.0F;
+                    float damage_stun_time = in_custom_edition_server ? 0.0F : 0.15F;
+                    *reinterpret_cast<float *>(tag->data + 0x1E4) = new_damage_stun;
+                    *reinterpret_cast<float *>(tag->data + 0x1E8) = damage_maximum_stun;
+                    *reinterpret_cast<float *>(tag->data + 0x1EC) = damage_stun_time;
+                }
+            };
+            jj_stun("vehicles\\banshee\\banshee bolt");
+            jj_stun("vehicles\\ghost\\ghost bolt");
+
+            // Fix the rwarthog's angles
+            auto jj_rwarthog = [&in_custom_edition_server](const char *path) {
+                auto *tag = get_tag(path, TagClassInt::TAG_CLASS_WEAPON);
+                if(tag) {
+                    float new_autoaim_angle = in_custom_edition_server ? DEGREES_TO_RADIANS(6.0F) : DEGREES_TO_RADIANS(1.0F);
+                    float new_deviation_angle = in_custom_edition_server ? DEGREES_TO_RADIANS(12.0F) : DEGREES_TO_RADIANS(1.0F);
+                    *reinterpret_cast<float *>(tag->data + 0x3E4) = new_autoaim_angle;
+                    *reinterpret_cast<float *>(tag->data + 0x3F4) = new_deviation_angle;
+                }
+            };
+            jj_rwarthog("vehicles\\rwarthog\\rwarthog_gun");
+        }
+    }
+    
     static bool set_up_custom_edition_map_support() {
         std::FILE *bitmaps = nullptr;
         std::FILE *sounds = nullptr;
@@ -1263,6 +1364,14 @@ namespace Chimera {
         // Hold this
         custom_edition_loc_tag_data_fixed.resize(custom_edition_loc_tag_data.size());
         
+        // Now do this
+        if(!is_custom_edition) {
+            auto &chimario = get_chimera();
+            overwrite(chimario.get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
+            overwrite(chimario.get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
+            add_map_load_event(jason_jones_custom_edition_on_retail);
+        }
+        
         return true;
     }
     
@@ -1305,7 +1414,7 @@ namespace Chimera {
 
         if(do_maps_in_ram) {
             if(!current_exe_is_laa_patched()) {
-                MessageBox(nullptr, "Map memory buffers requires an large address aware-patched executable.", "Error", MB_ICONERROR | MB_OK);
+                MessageBox(nullptr, "Map memory buffers requires a large address aware-patched executable.", "Error", MB_ICONERROR | MB_OK);
                 std::exit(1);
             }
             
