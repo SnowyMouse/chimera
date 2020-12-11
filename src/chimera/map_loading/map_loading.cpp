@@ -340,7 +340,11 @@ namespace Chimera {
             }
         }
         
-        auto preload_asset_maybe = [&cursor, &end](std::uint32_t offset, std::uint32_t size, std::FILE *from, ResourceOrigin origin) -> bool {
+        auto preload_asset_maybe = [&cursor, &end, &can_load_indexed_tags](std::uint32_t offset, std::uint32_t size, std::FILE *from, ResourceOrigin origin) -> bool {
+            if(can_load_indexed_tags) {
+                origin = static_cast<ResourceOrigin>(origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
+            }
+            
             // Too big? Nope
             if(cursor + size > end || cursor + size < cursor) {
                 return false;
@@ -348,7 +352,7 @@ namespace Chimera {
             
             // Already present? No need then.
             for(auto &i : metadata) {
-                if(i.offset == offset && i.size == size && i.origin == origin) {
+                if(i.origin == origin && i.offset == offset && i.size >= size) {
                     return true;
                 }
             }
@@ -370,7 +374,7 @@ namespace Chimera {
             return true;
         };
         
-        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &can_load_indexed_tags, &bitmaps](TagClassInt class_int) {
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &bitmaps](TagClassInt class_int) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 auto &tag = tag_array[i];
                 
@@ -405,7 +409,7 @@ namespace Chimera {
                                 std::uint32_t bitmap_size = *reinterpret_cast<std::uint32_t *>(bitmap + 0x1C);
                                 std::uint32_t bitmap_offset = *reinterpret_cast<std::uint32_t *>(bitmap + 0x18);
                                 
-                                preload_asset_maybe(bitmap_offset, bitmap_size, bitmaps, can_load_indexed_tags ? ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS : ResourceOrigin::RESOURCE_ORIGIN_BITMAPS);
+                                preload_asset_maybe(bitmap_offset, bitmap_size, bitmaps, ResourceOrigin::RESOURCE_ORIGIN_BITMAPS);
                             }
                             
                             break;
@@ -435,7 +439,7 @@ namespace Chimera {
                                     std::uint32_t sound_offset = *reinterpret_cast<std::uint32_t *>(permutation + 0x48);
                                     std::uint32_t sound_size = *reinterpret_cast<std::uint32_t *>(permutation + 0x40);
                                     
-                                    preload_asset_maybe(sound_offset, sound_size, bitmaps, can_load_indexed_tags ? ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS : ResourceOrigin::RESOURCE_ORIGIN_SOUNDS);
+                                    preload_asset_maybe(sound_offset, sound_size, bitmaps, ResourceOrigin::RESOURCE_ORIGIN_SOUNDS);
                                 }
                             }
                             
@@ -949,16 +953,48 @@ namespace Chimera {
             // load this map now!
             load_map(get_map_name());
             
+            bool custom_edition_memes = get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
+            
             // If we're on retail and we are loading from a custom edition map's resource map, handle that
-            if(using_custom_map_on_retail() || game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            if(custom_edition_memes) {
                 origin = static_cast<ResourceOrigin>(*origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
             }
             
             // Copy it in?
             for(auto &md : metadata) {
-                if(md.origin == origin && file_offset == md.offset && size >= md.size) {
+                if(md.origin == origin && file_offset == md.offset && size <= md.size) {
                     std::memcpy(output, md.data, size);
                     return 1;
+                }
+            }
+            
+            // If we don't have it precached, read from disk
+            if(game_engine() == GameEngine::GAME_ENGINE_RETAIL && (*origin & ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT)) {
+                auto maps = std::filesystem::path("maps");
+                std::FILE *f = nullptr;
+                
+                switch(*origin) {
+                    case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS:
+                        f = std::fopen((maps / custom_bitmaps_file).string().c_str(), "rb");
+                        break;
+                    case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS:
+                        f = std::fopen((maps / custom_sounds_file).string().c_str(), "rb");
+                        break;
+                    case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_LOC:
+                        f = std::fopen((maps / custom_loc_file).string().c_str(), "rb");
+                        break;
+                    default:
+                        return 0;
+                }
+                
+                if(f) {
+                    std::fseek(f, file_offset, SEEK_SET);
+                    std::fread(output, size, 1, f);
+                    std::fclose(f);
+                    return 0;
+                }
+                else {
+                    std::terminate();
                 }
             }
             
