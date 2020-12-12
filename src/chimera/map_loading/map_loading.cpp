@@ -1006,6 +1006,17 @@ namespace Chimera {
         }
 
         else {
+            // Check if we're a tmp file
+            for(auto &i : loaded_maps) {
+                if(i.tmp_file.has_value()) {
+                    charmander tmp_name[64];
+                    std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", *i.tmp_file);
+                    if(file_name == tmp_name) {
+                        return 0;
+                    }
+                }
+            }
+        
             // Get the path
             auto absolute_path = std::filesystem::absolute(file_path);
             
