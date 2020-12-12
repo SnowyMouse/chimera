@@ -345,6 +345,8 @@ namespace Chimera {
                 origin = static_cast<ResourceOrigin>(origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
             }
             
+            return false;
+            
             // Too big? Nope
             if(cursor + size > end || cursor + size < cursor) {
                 return false;
@@ -374,7 +376,7 @@ namespace Chimera {
             return true;
         };
         
-        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &bitmaps](TagClassInt class_int) {
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 auto &tag = tag_array[i];
                 
@@ -399,10 +401,10 @@ namespace Chimera {
                             for(std::uint32_t bd = 0; bd < bitmap_count; bd++) {
                                 auto *bitmap = bitmap_data + bd * 0x64;
                                 
-                                std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF);
+                                bool external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF) & 1;
                                 
                                 // Ignore internal tags
-                                if(!(external & 1)) {
+                                if(!external) {
                                     continue;
                                 }
                                 
@@ -429,17 +431,17 @@ namespace Chimera {
                                 for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
                                     auto *permutation = permutation_ptr + pe * 0x7C;
                                     
-                                    std::uint8_t &external = *reinterpret_cast<std::uint8_t *>(permutation + 0x44);
+                                    bool external = *reinterpret_cast<std::uint8_t *>(permutation + 0x44) & 1;
                                     
                                     // Ignore internal tags
-                                    if(!(external & 1)) {
+                                    if(!external) {
                                         continue;
                                     }
                                     
                                     std::uint32_t sound_offset = *reinterpret_cast<std::uint32_t *>(permutation + 0x48);
                                     std::uint32_t sound_size = *reinterpret_cast<std::uint32_t *>(permutation + 0x40);
                                     
-                                    preload_asset_maybe(sound_offset, sound_size, bitmaps, ResourceOrigin::RESOURCE_ORIGIN_SOUNDS);
+                                    preload_asset_maybe(sound_offset, sound_size, sounds, ResourceOrigin::RESOURCE_ORIGIN_SOUNDS);
                                 }
                             }
                             
@@ -972,29 +974,33 @@ namespace Chimera {
             if(game_engine() == GameEngine::GAME_ENGINE_RETAIL && (*origin & ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT)) {
                 auto maps = std::filesystem::path("maps");
                 std::FILE *f = nullptr;
+                std::filesystem::path map_path;
                 
                 switch(*origin) {
                     case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BITMAPS:
-                        f = std::fopen((maps / custom_bitmaps_file).string().c_str(), "rb");
+                        map_path = maps / custom_bitmaps_file;
                         break;
                     case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_SOUNDS:
-                        f = std::fopen((maps / custom_sounds_file).string().c_str(), "rb");
+                        map_path = maps / custom_sounds_file;
                         break;
                     case ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_LOC:
-                        f = std::fopen((maps / custom_loc_file).string().c_str(), "rb");
+                        map_path = maps / custom_loc_file;
                         break;
                     default:
                         return 0;
                 }
                 
-                if(f) {
+                if((f = std::fopen(map_path.string().c_str(), "rb"))) {
                     std::fseek(f, file_offset, SEEK_SET);
                     std::fread(output, size, 1, f);
                     std::fclose(f);
-                    return 0;
+                    return 1;
                 }
                 else {
-                    std::terminate();
+                    char error[2048];
+                    std::snprintf(error, sizeof(error), "%s could not be opened", map_path.string().c_str());
+                    MessageBox(nullptr, error, "Failed to load resource data", MB_OK | MB_ICONERROR);
+                    std::exit(EXIT_FAILURE);
                 }
             }
             
