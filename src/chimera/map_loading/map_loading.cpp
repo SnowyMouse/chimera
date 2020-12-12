@@ -345,8 +345,6 @@ namespace Chimera {
                 origin = static_cast<ResourceOrigin>(origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
             }
             
-            return false;
-            
             // Too big? Nope
             if(cursor + size > end || cursor + size < cursor) {
                 return false;
