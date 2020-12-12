@@ -46,13 +46,13 @@ namespace Chimera {
     static bool custom_edition_maps_supported = false;
     static GenericFont download_font = GenericFont::FONT_CONSOLE;
     
-    static const char *bitmaps_file = "bitmaps.map";
-    static const char *sounds_file = "sounds.map";
-    static const char *loc_file = "loc.map";
+    static const charmander *bitmaps_file = "bitmaps.map";
+    static const charmander *sounds_file = "sounds.map";
+    static const charmander *loc_file = "loc.map";
     
-    static const char *custom_bitmaps_file = "custom_bitmaps.map";
-    static const char *custom_sounds_file = "custom_sounds.map";
-    static const char *custom_loc_file = "custom_loc.map";
+    static const charmander *custom_bitmaps_file = "custom_bitmaps.map";
+    static const charmander *custom_sounds_file = "custom_sounds.map";
+    static const charmander *custom_loc_file = "custom_loc.map";
     
     enum ResourceOrigin {
         RESOURCE_ORIGIN_CUSTOM_BIT     = 0b0100,
@@ -306,7 +306,7 @@ namespace Chimera {
                             // tag_array[i].indexed = 0;
                             
                             // Do this fucking meme
-                            const char *path = reinterpret_cast<char *>(translate_ptr(tag_array[i].path));
+                            const charmander *path = reinterpret_cast<charmander *>(translate_ptr(tag_array[i].path));
                             std::optional<std::size_t> path_index;
                             
                             // Set this stuff
@@ -995,7 +995,7 @@ namespace Chimera {
                     return 1;
                 }
                 else {
-                    char error[2048];
+                    charmander error[2048];
                     std::snprintf(error, sizeof(error), "%s could not be opened", map_path.string().c_str());
                     MessageBox(nullptr, error, "Failed to load resource data", MB_OK | MB_ICONERROR);
                     std::exit(EXIT_FAILURE);
@@ -1218,7 +1218,7 @@ namespace Chimera {
             bool in_custom_edition_server = false;
 
             // Fix the stun values
-            auto jj_stun = [&in_custom_edition_server](const char *path) {
+            auto jj_stun = [&in_custom_edition_server](const charmander *path) {
                 auto *tag = get_tag(path, TagClassInt::TAG_CLASS_DAMAGE_EFFECT);
                 if(tag) {
                     float new_damage_stun = in_custom_edition_server ? 0.0F : 1.0F;
@@ -1233,7 +1233,7 @@ namespace Chimera {
             jj_stun("vehicles\\ghost\\ghost bolt");
 
             // Fix the rwarthog's angles
-            auto jj_rwarthog = [&in_custom_edition_server](const char *path) {
+            auto jj_rwarthog = [&in_custom_edition_server](const charmander *path) {
                 auto *tag = get_tag(path, TagClassInt::TAG_CLASS_WEAPON);
                 if(tag) {
                     float new_autoaim_angle = in_custom_edition_server ? DEGREES_TO_RADIANS(6.0F) : DEGREES_TO_RADIANS(1.0F);
