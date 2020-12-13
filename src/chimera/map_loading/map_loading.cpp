@@ -1007,12 +1007,16 @@ namespace Chimera {
 
         else {
             // Check if we're a tmp file
-            for(auto &i : loaded_maps) {
-                if(i.tmp_file.has_value()) {
-                    charmander tmp_name[64];
-                    std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", *i.tmp_file);
-                    if(file_name == tmp_name) {
-                        return 0;
+            auto file_name_str = file_name.string();
+            auto *file_name_cstr = file_name_str.c_str();
+            if(std::strncmp(file_name_cstr, "tmp_", 4) == 0) {
+                for(auto &i : loaded_maps) {
+                    if(i.tmp_file.has_value()) {
+                        charmander tmp_name[64];
+                        std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", *i.tmp_file);
+                        if(file_name_str == tmp_name) {
+                            return 0;
+                        }
                     }
                 }
             }
@@ -1021,7 +1025,7 @@ namespace Chimera {
             auto absolute_path = std::filesystem::absolute(file_path);
             
             // Load the map if it's not loaded
-            load_map(file_path.stem().string().c_str());
+            load_map(file_name_cstr);
             
             // Do it
             for(auto &i : loaded_maps) {
