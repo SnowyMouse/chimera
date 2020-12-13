@@ -978,8 +978,18 @@ namespace Chimera {
             if(std::strncmp(file_name_cstr, tmp_format, 4) == 0) {
                 for(auto &i : loaded_maps) {
                     if(i.tmp_file.has_value()) {
+                        // Format it
                         charmander tmp_name[64];
                         std::snprintf(tmp_name, sizeof(tmp_name), tmp_format, *i.tmp_file);
+                        
+                        // Truncate the extension
+                        for(auto &c : tmp_name) {
+                            if(c == '.') {
+                                c = 0;
+                                break;
+                            }
+                        }
+                        
                         if(file_name_str == tmp_name) {
                             return 0;
                         }
