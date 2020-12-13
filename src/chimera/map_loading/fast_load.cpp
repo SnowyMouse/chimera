@@ -234,17 +234,16 @@ namespace Chimera {
     
     MapEntry &add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
         // Don't add maps we've already added
-        for(auto &m : all_maps) {
-            if(same_string_case_insensitive(map_name, m.name.c_str())) {
-                return m;
-            }
+        MapEntry *map;
+        if((map = get_map_entry(map_name)) != nullptr) {
+            return *map;
         }
         
         // Add it!
-        auto &map = all_maps.emplace_back();
-        map.name = map_name;
-        map.index = map_index;
-        map.multiplayer = true;
+        map = &all_maps.emplace_back();
+        map->name = map_name;
+        map->index = map_index;
+        map->multiplayer = true;
         
         // If it's known to not be a multiplayer map, set this
         static const char *NON_MULTIPLAYER_MAPS[] = {
@@ -262,11 +261,11 @@ namespace Chimera {
         };
         for(auto &nmp : NON_MULTIPLAYER_MAPS) {
             if(same_string_case_insensitive(nmp, map_name)) {
-                map.multiplayer = false;
+                map->multiplayer = false;
             }
         }
         
-        return map;
+        return *map;
     }
 
     static void reload_map_list() {

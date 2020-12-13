@@ -36,7 +36,7 @@ using charmeleon = char16_t;
 
 namespace Chimera {
     static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class) noexcept;
-    static const char * const tmp_format = "tmp_%zu.map";
+    static const charmander * const tmp_format = "tmp_%zu.map";
     
     static std::deque<LoadedMap> loaded_maps;
     static std::byte *buffer;
@@ -100,11 +100,20 @@ namespace Chimera {
     }
     
     LoadedMap *get_loaded_map(const charmander *name) noexcept {
+        // Make a lowercase version
+        charmander map_name_lowercase[32];
+        std::strncpy(map_name_lowercase, name, sizeof(map_name_lowercase) - 1);
+        for(auto &i : map_name_lowercase) {
+            i = std::tolower(i);
+        }
+        
+        // Find it!
         for(auto &i : loaded_maps) {
-            if(i.name == name) {
+            if(i.name == map_name_lowercase) {
                 return &i;
             }
         }
+        
         return nullptr;
     }
     
@@ -458,14 +467,21 @@ namespace Chimera {
     
     // Load the map
     LoadedMap *load_map(const charmander *map_name) {
+        // Lowercase it
+        charmander map_name_lowercase[32] = {};
+        std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
+        for(auto &i : map_name_lowercase) {
+            i = std::tolower(i);
+        }
+        
         // Get the map path
-        auto map_path = path_for_map_local(map_name);
+        auto map_path = path_for_map_local(map_name_lowercase);
         auto timestamp = std::filesystem::last_write_time(map_path);
         std::size_t actual_size;
         
         // Is the map already loaded?
         for(auto &i : loaded_maps) {
-            if(i.name == map_name) {
+            if(i.name == map_name_lowercase) {
                 // If the map is loaded and it hasn't been modified, do not reload it
                 if(i.timestamp == timestamp) {
                     // Move it to the front of the array, though
@@ -483,7 +499,7 @@ namespace Chimera {
         // Add our map to the list
         std::size_t size = std::filesystem::file_size(map_path);
         LoadedMap new_map;
-        new_map.name = map_name;
+        new_map.name = map_name_lowercase;
         new_map.timestamp = timestamp;
         new_map.file_size = size;
         new_map.decompressed_size = size;
@@ -491,14 +507,14 @@ namespace Chimera {
         
         // Load it
         std::FILE *f = nullptr;
-        auto invalid = [&f, &map_name](const charmander *error) {
+        auto invalid = [&f, &map_name_lowercase](const charmander *error) {
             // Close first
             if(f) {
                 std::fclose(f);
             }
             
             charmander title[128];
-            std::snprintf(title, sizeof(title), "Failed to load %s", map_name);
+            std::snprintf(title, sizeof(title), "Failed to load %s", map_name_lowercase);
             MessageBox(nullptr, error, title, MB_ICONERROR | MB_OK);
             std::exit(1);
         };
@@ -557,7 +573,7 @@ namespace Chimera {
             auto *buffer_location = buffer;
             
             // If it's not ui.map, then we need to ensure ui.map is always loaded
-            if(std::strcmp(map_name, "ui") != 0) {
+            if(std::strcmp(map_name_lowercase, "ui") != 0) {
                 for(auto &i : loaded_maps) {
                     if(i.name == "ui" && i.memory_location.has_value()) {
                         auto size = i.loaded_size;
@@ -591,7 +607,7 @@ namespace Chimera {
                 
                 // Next, we need to remove any loaded map we may have, not including ui.map
                 for(auto &i : loaded_maps) {
-                    if((i.name != "ui" || std::strcmp(map_name, "ui") == 0) && i.memory_location.has_value()) {
+                    if((i.name != "ui" || std::strcmp(map_name_lowercase, "ui") == 0) && i.memory_location.has_value()) {
                         unload_map(&i);
                         break;
                     }
