@@ -236,16 +236,21 @@ namespace Chimera {
         return crc;
     }
     
-    template <typename T> static std::byte *translate_index(T index, std::vector<std::vector<std::byte>> &of_what) {
+    template <typename T> static std::vector<std::byte> &translate_index(T index, std::vector<std::vector<std::byte>> &of_what) {
         auto index_val = reinterpret_cast<std::uint32_t>(index);
         if(index_val >= of_what.size()) {
             MessageBox(nullptr, "Map could not be loaded due to an invalid index", "Failed to load map", MB_OK | MB_ICONERROR);
             std::exit(EXIT_FAILURE);
         }
-        return of_what[index_val].data();
+        return of_what[index_val];
     }
     
     static void preload_assets(LoadedMap &map) {
+        // If we can't, don't
+        if(!map.memory_location.has_value()) {
+            return;
+        }
+        
         // Set this byte stuff
         std::byte *cursor = *map.memory_location + map.loaded_size;
         auto *end = *map.memory_location + map.buffer_size;
@@ -299,32 +304,6 @@ namespace Chimera {
         Tag *tag_array = reinterpret_cast<Tag *>(translate_ptr(tag_data_header.tag_array));
         std::printf("  Tag array: 0x%08zX (0x%08zX in buffer)\n\n", reinterpret_cast<std::uintptr_t>(tag_data_header.tag_array), reinterpret_cast<std::uintptr_t>(tag_array));
         
-        std::vector<bool> was_indexed(tag_count);
-        
-        if(can_load_indexed_tags) {
-            for(std::uint32_t i = 0; i < tag_count; i++) {
-                if(tag_array[i].indexed) {
-                    was_indexed[i] = true;
-                    
-                    switch(tag_array[i].primary_class) {
-                        case TagClassInt::TAG_CLASS_BITMAP:
-                            tag_array[i].indexed = 0;
-                            tag_array[i].data = translate_index(tag_array[i].data, custom_edition_bitmaps_tag_data);
-                            break;
-                            
-                        case TagClassInt::TAG_CLASS_SOUND:
-                            break;
-                            
-                        default:
-                            tag_array[i].indexed = 0;
-                            fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class);
-                            tag_array[i].data = translate_index(tag_array[i].data, custom_edition_loc_tag_data);
-                            break;
-                    }
-                }
-            }
-        }
-        
         auto preload_asset_maybe = [&cursor, &end, &can_load_indexed_tags](std::uint32_t offset, std::uint32_t size, std::FILE *from, ResourceOrigin origin) -> bool {
             if(can_load_indexed_tags) {
                 origin = static_cast<ResourceOrigin>(origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
@@ -359,12 +338,12 @@ namespace Chimera {
             return true;
         };
         
-        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &translate_ptr, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &tag_data_address, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 auto &tag = tag_array[i];
                 
-                auto get_real_address = [&i, &was_indexed, &tag_data_address, &tag_data](auto address) -> std::byte * {
-                    if(was_indexed[i]) {
+                auto get_real_address = [&tag, &tag_data_address, &tag_data](auto address) -> std::byte * {
+                    if(tag.indexed) {
                         return reinterpret_cast<std::byte *>(address);
                     }
                     else {
@@ -402,33 +381,8 @@ namespace Chimera {
                         case TagClassInt::TAG_CLASS_SOUND: {
                             auto *td = get_real_address(tag.data);
                             
-                            std::byte *pitch_ranges;
-                            
-                            if(tag.indexed) {
-                                std::optional<std::size_t> path_index;
-                                auto *tag_path = reinterpret_cast<const char *>(translate_ptr(tag.path));
-                                
-                                // Set this stuff
-                                for(auto &s : custom_edition_sounds_tag_data_paths) {
-                                    if(s == tag_path) {
-                                        path_index = &s - custom_edition_sounds_tag_data_paths.data();
-                                        break;
-                                    }
-                                }
-                                
-                                std::uint32_t index = path_index.value_or(0xFFFFFFFF);
-                                auto *sound_data = translate_index(index, custom_edition_sounds_tag_data);
-                                
-                                // Fix pitch range count
-                                *reinterpret_cast<std::uint32_t *>(td + 0x98) = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
-                                
-                                pitch_ranges = sound_data + 0xA4;
-                            }
-                            else {
-                                pitch_ranges = get_real_address(*reinterpret_cast<std::byte **>(td + 0x98 + 0x4));
-                            }
-                            
                             auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(td + 0x98);
+                            auto *pitch_ranges = get_real_address(*reinterpret_cast<std::byte **>(td + 0x98 + 0x4));
                             
                             for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
                                 auto *pitch_range = pitch_ranges + pr * 0x48;
@@ -725,11 +679,6 @@ namespace Chimera {
         // Calculate CRC32
         get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
         new_map.absolute_path = std::filesystem::absolute(new_map.path);
-        
-        // Preload if need be
-        if(!tmp_file) {
-            preload_assets(new_map);
-        }
         
         return &loaded_maps.emplace_back(new_map);
     }
@@ -1156,10 +1105,10 @@ namespace Chimera {
         return true;
     }
     
-    static void jason_jones_custom_edition_on_retail() {
+    static void resolve_indexed_tags() {
         auto &header = get_map_header();
         
-        // Do nothing if not custom edition map
+        // Do nothing if not custom edition
         if(header.engine_type != CacheFileEngine::CACHE_FILE_CUSTOM_EDITION) {
             return;
         }
@@ -1177,7 +1126,7 @@ namespace Chimera {
                 
                 switch(tag.primary_class) {
                     case TagClassInt::TAG_CLASS_BITMAP:
-                        tag.data = translate_index(tag_data, custom_edition_bitmaps_tag_data);
+                        tag.data = translate_index(tag_data, custom_edition_bitmaps_tag_data).data();
                         break;
                     case TagClassInt::TAG_CLASS_SOUND: {
                         std::optional<std::size_t> path_index;
@@ -1191,7 +1140,7 @@ namespace Chimera {
                         }
                         
                         std::uint32_t index = path_index.value_or(0xFFFFFFFF);
-                        auto *sound_data = translate_index(index, custom_edition_sounds_tag_data);
+                        auto *sound_data = translate_index(index, custom_edition_sounds_tag_data).data();
                         
                         *reinterpret_cast<std::byte **>(tag_data + 0x98 + 0x4) = sound_data + 0xA4;
                         
@@ -1209,9 +1158,13 @@ namespace Chimera {
                         auto tag_id = tag.id;
                         
                         // Fix those tag IDs
-                        std::uint32_t pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag_data + 0x98);
+                        std::uint32_t pitch_range_count = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
                         auto *pitch_ranges = *reinterpret_cast<std::byte **>(tag_data + 0x98 + 4);
                         
+                        // Copy over the pitch range count while we're at it
+                        *reinterpret_cast<std::uint32_t *>(tag_data + 0x98) = pitch_range_count;
+                        
+                        // Okay, now actually fix the tag IDs.
                         for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
                             auto *pitch_range = pitch_ranges + pr * 0x48;
                             
@@ -1227,34 +1180,39 @@ namespace Chimera {
                         
                         break;
                     }
-                    default:
-                        tag.data = translate_index(tag_data, custom_edition_loc_tag_data);
+                    default: {
+                        auto &tag_data_vector = translate_index(tag_data, custom_edition_loc_tag_data);
+                        tag.data = tag_data_vector.data();
+                        fix_tag(tag_data_vector, tag.primary_class);
                         break;
+                    }
                 }
             }
         }
         
         // Next, fix stock tags
         if(
-            std::strcmp("beavercreek",header.name) == 0 ||
-            std::strcmp("bloodgulch",header.name) == 0 ||
-            std::strcmp("boardingaction",header.name) == 0 ||
-            std::strcmp("carousel",header.name) == 0 ||
-            std::strcmp("chillout",header.name) == 0 ||
-            std::strcmp("damnation",header.name) == 0 ||
-            std::strcmp("dangercanyon",header.name) == 0 ||
-            std::strcmp("deathisland",header.name) == 0 ||
-            std::strcmp("gephyrophobia",header.name) == 0 ||
-            std::strcmp("hangemhigh",header.name) == 0 ||
-            std::strcmp("icefields",header.name) == 0 ||
-            std::strcmp("infinity",header.name) == 0 ||
-            std::strcmp("longest",header.name) == 0 ||
-            std::strcmp("prisoner",header.name) == 0 ||
-            std::strcmp("putput",header.name) == 0 ||
-            std::strcmp("ratrace",header.name) == 0 ||
-            std::strcmp("sidewinder",header.name) == 0 ||
-            std::strcmp("timberland",header.name) == 0 ||
-            std::strcmp("wizard",header.name) == 0
+            game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION &&
+            (
+                std::strcmp("beavercreek",header.name) == 0 ||
+                std::strcmp("bloodgulch",header.name) == 0 ||
+                std::strcmp("boardingaction",header.name) == 0 ||
+                std::strcmp("carousel",header.name) == 0 ||
+                std::strcmp("chillout",header.name) == 0 ||
+                std::strcmp("damnation",header.name) == 0 ||
+                std::strcmp("dangercanyon",header.name) == 0 ||
+                std::strcmp("deathisland",header.name) == 0 ||
+                std::strcmp("gephyrophobia",header.name) == 0 ||
+                std::strcmp("hangemhigh",header.name) == 0 ||
+                std::strcmp("icefields",header.name) == 0 ||
+                std::strcmp("infinity",header.name) == 0 ||
+                std::strcmp("longest",header.name) == 0 ||
+                std::strcmp("prisoner",header.name) == 0 ||
+                std::strcmp("putput",header.name) == 0 ||
+                std::strcmp("ratrace",header.name) == 0 ||
+                std::strcmp("sidewinder",header.name) == 0 ||
+                std::strcmp("timberland",header.name) 
+            )
         ) {
             bool in_custom_edition_server = false;
 
@@ -1285,6 +1243,16 @@ namespace Chimera {
             };
             jj_rwarthog("vehicles\\rwarthog\\rwarthog_gun");
         }
+    }
+    
+    static void preload_and_resolve() {
+        // Resolve indexed tags
+        if(custom_edition_maps_supported) {
+            resolve_indexed_tags();
+        }
+        
+        // Preload it all
+        preload_assets(*get_loaded_map(get_map_name()));
     }
     
     static bool set_up_custom_edition_map_support() {
@@ -1445,12 +1413,16 @@ namespace Chimera {
         // Hold this
         custom_edition_loc_tag_data_fixed.resize(custom_edition_loc_tag_data.size());
         
-        // Now do this
+        // Set up resolving indices on load
+        auto &chimario = get_chimera(); // wahoo!
         if(!is_custom_edition) {
-            auto &chimario = get_chimera();
             overwrite(chimario.get_signature("retail_check_version_1_sig").data() + 7, static_cast<std::uint16_t>(0x9090));
             overwrite(chimario.get_signature("retail_check_version_2_sig").data() + 4, static_cast<std::uint8_t>(0xEB));
-            add_map_load_event(jason_jones_custom_edition_on_retail);
+            add_map_load_event(preload_and_resolve, EventPriority::EVENT_PRIORITY_BEFORE);
+        }
+        else {
+            static Hook hook;
+            write_jmp_call(chimario.get_signature("map_load_resolve_indexed_tags_sig").data(), hook, reinterpret_cast<const void *>(preload_and_resolve));
         }
         
         return true;

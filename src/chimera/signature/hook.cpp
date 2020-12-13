@@ -269,7 +269,7 @@ namespace Chimera {
                         break;
                     }
 
-                    if(a == 0x15) {
+                    if(a == 0x15 || a == 0x3D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
