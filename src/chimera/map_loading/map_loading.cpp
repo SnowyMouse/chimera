@@ -359,7 +359,7 @@ namespace Chimera {
             return true;
         };
         
-        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &was_indexed, &tag_data_address, &translate_ptr, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 auto &tag = tag_array[i];
                 
@@ -402,14 +402,39 @@ namespace Chimera {
                         case TagClassInt::TAG_CLASS_SOUND: {
                             auto *td = get_real_address(tag.data);
                             
+                            std::byte *pitch_ranges;
+                            
+                            if(tag.indexed) {
+                                std::optional<std::size_t> path_index;
+                                auto *tag_path = reinterpret_cast<const char *>(translate_ptr(tag.path));
+                                
+                                // Set this stuff
+                                for(auto &s : custom_edition_sounds_tag_data_paths) {
+                                    if(s == tag_path) {
+                                        path_index = &s - custom_edition_sounds_tag_data_paths.data();
+                                        break;
+                                    }
+                                }
+                                
+                                std::uint32_t index = path_index.value_or(0xFFFFFFFF);
+                                auto *sound_data = translate_index(index, custom_edition_sounds_tag_data);
+                                
+                                // Fix pitch range count
+                                *reinterpret_cast<std::uint32_t *>(td + 0x98) = *reinterpret_cast<std::uint32_t *>(sound_data + 0x98);
+                                
+                                pitch_ranges = sound_data + 0xA4;
+                            }
+                            else {
+                                pitch_ranges = get_real_address(*reinterpret_cast<std::byte **>(td + 0x98 + 0x4));
+                            }
+                            
                             auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(td + 0x98);
-                            auto *pitch_ranges = *reinterpret_cast<std::byte **>(td + 0x98 + 0x4);
                             
                             for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
                                 auto *pitch_range = pitch_ranges + pr * 0x48;
                                 
                                 auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
-                                auto *permutation_ptr = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+                                auto *permutation_ptr = get_real_address(*reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4));
                                 
                                 for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
                                     auto *permutation = permutation_ptr + pe * 0x7C;
@@ -446,7 +471,7 @@ namespace Chimera {
         }
         
         // Prioritize loading sounds over bitmaps
-        // preload_all_tags_of_class(TagClassInt::TAG_CLASS_SOUND);
+        preload_all_tags_of_class(TagClassInt::TAG_CLASS_SOUND);
         preload_all_tags_of_class(TagClassInt::TAG_CLASS_BITMAP);
         
         // Cleanup
@@ -1077,6 +1102,7 @@ namespace Chimera {
                 for(std::uint32_t p = 0; p < pitch_range_count; p++) {
                     auto *pitch_range = base + p * 72;
                     increment_if_necessary(pitch_range + 0x3C + 0x4);
+                    
                     auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
                     auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
 
