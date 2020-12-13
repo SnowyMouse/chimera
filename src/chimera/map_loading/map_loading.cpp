@@ -35,7 +35,7 @@ using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
 
 namespace Chimera {
-    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag = nullptr) noexcept;
+    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class) noexcept;
     static const char * const tmp_format = "tmp_%zu.map";
     
     static std::deque<LoadedMap> loaded_maps;
@@ -303,37 +303,12 @@ namespace Chimera {
                             tag_array[i].data = translate_index(tag_array[i].data, custom_edition_bitmaps_tag_data);
                             break;
                             
-                        case TagClassInt::TAG_CLASS_SOUND: {
-                            // tag_array[i].indexed = 0;
-                            
-                            // Do this fucking meme
-                            const charmander *path = reinterpret_cast<charmander *>(translate_ptr(tag_array[i].path));
-                            std::optional<std::size_t> path_index;
-                            
-                            // Set this stuff
-                            for(auto &s : custom_edition_sounds_tag_data_paths) {
-                                if(s == path) {
-                                    path_index = &s - custom_edition_sounds_tag_data_paths.data();
-                                    break;
-                                }
-                            }
-                            
-                            // Get these pointers ready
-                            auto *data = translate_index(path_index.value_or(custom_edition_sounds_tag_data.size()), custom_edition_sounds_tag_data);
-                            auto *old_data = translate_ptr(tag_array[i].data);
-                            
-                            // Set this value here
-                            *reinterpret_cast<std::byte **>(old_data + 0x98 + 0x4) = data + 0xA4;
-                            
-                            // Fix our shit
-                            // fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class, tag_array + i);
-                            
+                        case TagClassInt::TAG_CLASS_SOUND:
                             break;
-                        }
                             
                         default:
                             tag_array[i].indexed = 0;
-                            fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class, nullptr);
+                            fix_tag(custom_edition_loc_tag_data[reinterpret_cast<std::uint32_t>(tag_array[i].data)], tag_array[i].primary_class);
                             tag_array[i].data = translate_index(tag_array[i].data, custom_edition_loc_tag_data);
                             break;
                     }
@@ -1008,7 +983,7 @@ namespace Chimera {
 
         else {
             // Check if we're a tmp file
-            auto file_name_str = file_name.string();
+            auto file_name_str = file_name.stem().string();
             auto *file_name_cstr = file_name_str.c_str();
             if(std::strncmp(file_name_cstr, tmp_format, 4) == 0) {
                 for(auto &i : loaded_maps) {
@@ -1040,7 +1015,7 @@ namespace Chimera {
         return 0;
     }
     
-    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag) noexcept {
+    static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class) noexcept {
         std::byte *base = tag_data.data();
         auto base_offset = reinterpret_cast<std::uint32_t>(tag_data.data());
         
@@ -1057,53 +1032,35 @@ namespace Chimera {
             }
         }
         
-        #define INCREMENT_IF_NECESSARY(what) if(tag == nullptr) { \
-            auto &ptr = *reinterpret_cast<std::byte **>(what); \
-            if(ptr != 0) { \
-                ptr += base_offset; \
-            } \
-        }
+        auto increment_if_necessary = [&base_offset](auto *what) {
+            auto &ptr = *reinterpret_cast<std::byte **>(what);
+            if(ptr != 0) {
+                ptr += base_offset;
+            }
+        };
         
         switch(primary_class) {
             case TagClassInt::TAG_CLASS_BITMAP: {
-                INCREMENT_IF_NECESSARY(base + 0x54 + 0x4);
-                INCREMENT_IF_NECESSARY(base + 0x60 + 0x4);
+                increment_if_necessary(base + 0x54 + 0x4);
+                increment_if_necessary(base + 0x60 + 0x4);
                 auto sequence_count = *reinterpret_cast<std::uint32_t *>(base + 0x54);
                 auto *sequences = *reinterpret_cast<std::byte **>(base + 0x54 + 0x4);
                 for(std::uint32_t s = 0; s < sequence_count; s++) {
-                    INCREMENT_IF_NECESSARY(sequences + s * 64 + 0x34 + 0x4);
+                    increment_if_necessary(sequences + s * 64 + 0x34 + 0x4);
                 }
                 break;
             }
             case TagClassInt::TAG_CLASS_SOUND: {
                 // Let's begin.
                 auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(base + 0x98);
-
-                // Fix the currently loaded tag
-                if(tag) {
-                    // Copy over channel count and format
-                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6C) = *reinterpret_cast<std::uint16_t *>(base + 0x6C);
-                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6E) = *reinterpret_cast<std::uint16_t *>(base + 0x6E);
-
-                    // Copy over sample rate
-                    *reinterpret_cast<std::uint16_t *>(tag->data + 0x6) = *reinterpret_cast<std::uint16_t *>(base + 0x6);
-
-                    // Copy over longest permutation length
-                    *reinterpret_cast<std::uint32_t *>(tag->data + 0x84) = *reinterpret_cast<std::uint32_t *>(base + 0x84);
-                }
                 
                 // Add this to account for the header
                 base_offset += 0xA4;
                 base += 0xA4;
-                
-                // Set this pointer
-                if(tag) {
-                    *reinterpret_cast<std::uint32_t *>(tag->data + 0xA0) = base_offset;
-                }
 
                 for(std::uint32_t p = 0; p < pitch_range_count; p++) {
                     auto *pitch_range = base + p * 72;
-                    INCREMENT_IF_NECESSARY(pitch_range + 0x3C + 0x4);
+                    increment_if_necessary(pitch_range + 0x3C + 0x4);
                     auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
                     auto permutations = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
 
@@ -1116,13 +1073,8 @@ namespace Chimera {
                         *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
                         *reinterpret_cast<std::uint32_t *>(permutation + 0x30) = 0;
 
-                        INCREMENT_IF_NECESSARY(permutation + 0x54 + 0xC);
-                        INCREMENT_IF_NECESSARY(permutation + 0x68 + 0xC);
-                        
-                        if(tag) {
-                            *reinterpret_cast<TagID *>(permutation + 0x34) = tag->id;
-                            *reinterpret_cast<TagID *>(permutation + 0x3C) = tag->id;
-                        }
+                        increment_if_necessary(permutation + 0x54 + 0xC);
+                        increment_if_necessary(permutation + 0x68 + 0xC);
                         
                         *reinterpret_cast<std::uint32_t *>(permutation + 0x2C) = 0xFFFFFFFF;
                     }
@@ -1130,29 +1082,29 @@ namespace Chimera {
                 break;
             }
             case TagClassInt::TAG_CLASS_FONT: {
-                INCREMENT_IF_NECESSARY(base + 0x7C + 0x4);
-                INCREMENT_IF_NECESSARY(base + 0x30 + 0x4);
-                INCREMENT_IF_NECESSARY(base + 0x88 + 0xC);
+                increment_if_necessary(base + 0x7C + 0x4);
+                increment_if_necessary(base + 0x30 + 0x4);
+                increment_if_necessary(base + 0x88 + 0xC);
                 std::uint32_t table_count = *reinterpret_cast<std::uint32_t *>(base + 0x30);
                 auto *tables = *reinterpret_cast<std::byte **>(base + 0x30 + 0x4);
                 for(std::uint32_t t = 0; t < table_count; t++) {
-                    INCREMENT_IF_NECESSARY(tables + t * 12 + 0x0 + 0x4);
+                    increment_if_necessary(tables + t * 12 + 0x0 + 0x4);
                 }
                 break;
             }
             case TagClassInt::TAG_CLASS_UNICODE_STRING_LIST: {
-                INCREMENT_IF_NECESSARY(base + 0x0 + 0x4);
+                increment_if_necessary(base + 0x0 + 0x4);
                 std::uint32_t string_count = *reinterpret_cast<std::uint32_t *>(base + 0x0);
                 std::byte *strings = *reinterpret_cast<std::byte **>(base + 0x0 + 0x4);
                 for(std::uint32_t s = 0; s < string_count; s++) {
-                    INCREMENT_IF_NECESSARY(strings + s * 20 + 0x0 + 0xC);
+                    increment_if_necessary(strings + s * 20 + 0x0 + 0xC);
                 }
                 break;
             }
             case TagClassInt::TAG_CLASS_HUD_MESSAGE_TEXT: {
-                INCREMENT_IF_NECESSARY(base + 0x0 + 0xC);
-                INCREMENT_IF_NECESSARY(base + 0x14 + 0x4);
-                INCREMENT_IF_NECESSARY(base + 0x20 + 0x4);
+                increment_if_necessary(base + 0x0 + 0xC);
+                increment_if_necessary(base + 0x14 + 0x4);
+                increment_if_necessary(base + 0x20 + 0x4);
                 break;
             }
             default:
@@ -1179,10 +1131,11 @@ namespace Chimera {
             if(tag.indexed) {
                 // Mark as non-indexed
                 tag.indexed = 0;
+                auto tag_data = tag.data;
                 
                 switch(tag.primary_class) {
                     case TagClassInt::TAG_CLASS_BITMAP:
-                        tag.data = translate_index(tag.data, custom_edition_bitmaps_tag_data);
+                        tag.data = translate_index(tag_data, custom_edition_bitmaps_tag_data);
                         break;
                     case TagClassInt::TAG_CLASS_SOUND: {
                         std::optional<std::size_t> path_index;
@@ -1197,13 +1150,43 @@ namespace Chimera {
                         
                         std::uint32_t index = path_index.value_or(0xFFFFFFFF);
                         auto *sound_data = translate_index(index, custom_edition_sounds_tag_data);
-                        *reinterpret_cast<std::byte **>(tag.data + 0x98 + 0x4) = sound_data + 0xA4;
-                        fix_tag(custom_edition_sounds_tag_data[index], TagClassInt::TAG_CLASS_SOUND, &tag);
+                        
+                        *reinterpret_cast<std::byte **>(tag_data + 0x98 + 0x4) = sound_data + 0xA4;
+                        
+                        // Copy over channel count and format
+                        *reinterpret_cast<std::uint16_t *>(tag_data + 0x6C) = *reinterpret_cast<std::uint16_t *>(sound_data + 0x6C);
+                        *reinterpret_cast<std::uint16_t *>(tag_data + 0x6E) = *reinterpret_cast<std::uint16_t *>(sound_data + 0x6E);
+
+                        // Copy over sample rate
+                        *reinterpret_cast<std::uint16_t *>(tag_data + 0x6) = *reinterpret_cast<std::uint16_t *>(sound_data + 0x6);
+
+                        // Copy over longest permutation length
+                        *reinterpret_cast<std::uint32_t *>(tag_data + 0x84) = *reinterpret_cast<std::uint32_t *>(sound_data + 0x84);
+                        
+                        // Get the tag ID
+                        auto tag_id = tag.id;
+                        
+                        // Fix those tag IDs
+                        std::uint32_t pitch_range_count = *reinterpret_cast<std::uint32_t *>(tag_data + 0x98);
+                        auto *pitch_ranges = *reinterpret_cast<std::byte **>(tag_data + 0x98 + 4);
+                        
+                        for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
+                            auto *pitch_range = pitch_ranges + pr * 0x48;
+                            
+                            auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
+                            auto *permutation_ptr = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
+                            
+                            for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
+                                auto *permutation = permutation_ptr + pe * 0x7C;
+                                *reinterpret_cast<TagID *>(permutation + 0x34) = tag_id;
+                                *reinterpret_cast<TagID *>(permutation + 0x3C) = tag_id;
+                            }
+                        }
                         
                         break;
                     }
                     default:
-                        tag.data = translate_index(tag.data, custom_edition_loc_tag_data);
+                        tag.data = translate_index(tag_data, custom_edition_loc_tag_data);
                         break;
                 }
             }
