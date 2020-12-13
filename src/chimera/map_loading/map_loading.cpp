@@ -36,6 +36,7 @@ using charmeleon = char16_t;
 
 namespace Chimera {
     static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class, Tag *tag = nullptr) noexcept;
+    static const char * const tmp_format = "tmp_%zu.map";
     
     static std::deque<LoadedMap> loaded_maps;
     static std::byte *buffer;
@@ -122,7 +123,7 @@ namespace Chimera {
     
     static std::filesystem::path path_for_tmp(std::size_t tmp) {
         charmander tmp_name[64];
-        std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", tmp);
+        std::snprintf(tmp_name, sizeof(tmp_name), tmp_format, tmp);
         return std::filesystem::path(get_chimera().get_path()) / "tmp" / tmp_name;
     }
     
@@ -1009,11 +1010,11 @@ namespace Chimera {
             // Check if we're a tmp file
             auto file_name_str = file_name.string();
             auto *file_name_cstr = file_name_str.c_str();
-            if(std::strncmp(file_name_cstr, "tmp_", 4) == 0) {
+            if(std::strncmp(file_name_cstr, tmp_format, 4) == 0) {
                 for(auto &i : loaded_maps) {
                     if(i.tmp_file.has_value()) {
                         charmander tmp_name[64];
-                        std::snprintf(tmp_name, sizeof(tmp_name), "tmp_%zu.map", *i.tmp_file);
+                        std::snprintf(tmp_name, sizeof(tmp_name), tmp_format, *i.tmp_file);
                         if(file_name_str == tmp_name) {
                             return 0;
                         }
