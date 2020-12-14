@@ -239,9 +239,13 @@ namespace Chimera {
             return *map;
         }
         
+        // First, let's lowercase it
+        char map_name_lowercase[32];
+        std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
+        
         // Add it!
         map = &all_maps.emplace_back();
-        map->name = map_name;
+        map->name = map_name_lowercase;
         map->index = map_index;
         map->multiplayer = true;
         
