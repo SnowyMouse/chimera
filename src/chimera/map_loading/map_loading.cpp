@@ -255,31 +255,23 @@ namespace Chimera {
         std::byte *cursor = *map.memory_location + map.loaded_size;
         auto *end = *map.memory_location + map.buffer_size;
         
-        std::printf("Preloading %s...\n\n", map.name.c_str());
-        std::printf("Destination: 0x%08zX\n", reinterpret_cast<std::uintptr_t>(*map.memory_location));
-        std::printf("     Cursor: 0x%08zX\n", reinterpret_cast<std::uintptr_t>(cursor));
-        std::printf("        End: 0x%08zX\n\n", reinterpret_cast<std::uintptr_t>(end));
+        std::byte *tag_data = get_tag_data_address();
+        auto &tag_data_header = *reinterpret_cast<TagDataHeader *>(tag_data);
         
-        std::byte *tag_data;
         std::FILE *bitmaps = nullptr;
         std::FILE *sounds = nullptr;
         
-        std::uint32_t tag_data_address = reinterpret_cast<std::uint32_t>(get_tag_data_address());
         CacheFileEngine map_engine;
         auto current_engine = game_engine();
         
         if(current_engine == GameEngine::GAME_ENGINE_DEMO) {
             auto &header = *reinterpret_cast<MapHeaderDemo *>(*map.memory_location);
-            tag_data = *map.memory_location + header.tag_data_offset;
             map_engine = header.engine_type;
         }
         else {
             auto &header = *reinterpret_cast<MapHeader *>(*map.memory_location);
-            tag_data = *map.memory_location + header.tag_data_offset;
             map_engine = header.engine_type;
         }
-        
-        auto &tag_data_header = *reinterpret_cast<TagDataHeader *>(tag_data);
         
         bool can_load_indexed_tags = map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
         std::filesystem::path bitmaps_path, sounds_path;
@@ -295,14 +287,8 @@ namespace Chimera {
         
         // If it's a custom edition map, we ought to first figure out what tags go to what
         const std::uint32_t tag_count = tag_data_header.tag_count;
-        std::printf("  Tag count: %zu\n", tag_count);
         
-        auto translate_ptr = [&tag_data, &tag_data_address](auto ptr) -> std::byte * {
-            return tag_data + (reinterpret_cast<uintptr_t>(ptr) - tag_data_address);
-        };
-        
-        Tag *tag_array = reinterpret_cast<Tag *>(translate_ptr(tag_data_header.tag_array));
-        std::printf("  Tag array: 0x%08zX (0x%08zX in buffer)\n\n", reinterpret_cast<std::uintptr_t>(tag_data_header.tag_array), reinterpret_cast<std::uintptr_t>(tag_array));
+        Tag *tag_array = reinterpret_cast<Tag *>(tag_data_header.tag_array);
         
         auto preload_asset_maybe = [&cursor, &end, &can_load_indexed_tags](std::uint32_t offset, std::uint32_t size, std::FILE *from, ResourceOrigin origin) -> bool {
             if(can_load_indexed_tags) {
@@ -338,26 +324,16 @@ namespace Chimera {
             return true;
         };
         
-        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &tag_data_address, &tag_data, &bitmaps, &sounds](TagClassInt class_int) {
+        auto preload_all_tags_of_class = [&preload_asset_maybe, &tag_count, &tag_array, &bitmaps, &sounds](TagClassInt class_int) {
             for(std::uint32_t i = 0; i < tag_count; i++) {
                 auto &tag = tag_array[i];
-                
-                auto get_real_address = [&tag, &tag_data_address, &tag_data](auto address) -> std::byte * {
-                    if(tag.indexed) {
-                        return reinterpret_cast<std::byte *>(address);
-                    }
-                    else {
-                        auto result = tag_data + (reinterpret_cast<std::uintptr_t>(address) - tag_data_address);
-                        return result;
-                    }
-                };
                 
                 if(tag.primary_class == class_int) {
                     switch(class_int) {
                         case TagClassInt::TAG_CLASS_BITMAP: {
-                            auto *td = get_real_address(tag.data);
+                            auto *td = tag.data;
                             
-                            auto *bitmap_data = get_real_address(*reinterpret_cast<std::uint32_t *>(td + 0x60 + 0x4));
+                            auto *bitmap_data = *reinterpret_cast<std::byte **>(td + 0x60 + 0x4);
                             std::uint32_t bitmap_count = *reinterpret_cast<std::uint32_t *>(td + 0x60);
                             
                             for(std::uint32_t bd = 0; bd < bitmap_count; bd++) {
@@ -379,16 +355,16 @@ namespace Chimera {
                             break;
                         }
                         case TagClassInt::TAG_CLASS_SOUND: {
-                            auto *td = get_real_address(tag.data);
+                            auto *td = tag.data;
                             
                             auto pitch_range_count = *reinterpret_cast<std::uint32_t *>(td + 0x98);
-                            auto *pitch_ranges = get_real_address(*reinterpret_cast<std::byte **>(td + 0x98 + 0x4));
+                            auto *pitch_ranges = *reinterpret_cast<std::byte **>(td + 0x98 + 0x4);
                             
                             for(std::uint32_t pr = 0; pr < pitch_range_count; pr++) {
                                 auto *pitch_range = pitch_ranges + pr * 0x48;
                                 
                                 auto permutation_count = *reinterpret_cast<std::uint32_t *>(pitch_range + 0x3C);
-                                auto *permutation_ptr = get_real_address(*reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4));
+                                auto *permutation_ptr = *reinterpret_cast<std::byte **>(pitch_range + 0x3C + 0x4);
                                 
                                 for(std::uint32_t pe = 0; pe < permutation_count; pe++) {
                                     auto *permutation = permutation_ptr + pe * 0x7C;
@@ -430,7 +406,6 @@ namespace Chimera {
         
         // Cleanup
         done_preloading_assets:
-        std::printf("Preloading done!\n");
         
         map.loaded_size = (cursor - *map.memory_location);
         map.buffer_size = end - cursor;
