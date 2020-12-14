@@ -653,7 +653,13 @@ namespace Chimera {
         
         // Calculate CRC32
         get_map_entry(new_map.name.c_str())->crc32 = ~calculate_crc32_of_map_file(&new_map);
-        new_map.absolute_path = std::filesystem::absolute(new_map.path);
+        
+        // Save absolute path (but lowercase - REALLY bad design but works around a Halo issue)
+        auto absolute_path_str = std::filesystem::absolute(new_map.path).string();
+        for(auto &i : absolute_path_str) {
+            i = std::tolower(i);
+        }
+        new_map.absolute_path = absolute_path_str;
         
         return &loaded_maps.emplace_back(new_map);
     }
@@ -972,8 +978,12 @@ namespace Chimera {
                 }
             }
         
-            // Get the path
-            auto absolute_path = std::filesystem::absolute(file_path);
+            // Get the path; lowercase it because Halo is a complete meme with uppercase characters (although maps probably shouldn't be using them anyway lol)
+            auto absolute_path_str = std::filesystem::absolute(file_path).string();
+            for(auto &i : absolute_path_str) {
+                i = std::tolower(i);
+            }
+            auto absolute_path = std::filesystem::path(absolute_path_str);
             
             // Load the map if it's not loaded
             load_map(file_name_cstr);
