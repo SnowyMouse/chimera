@@ -320,11 +320,7 @@ namespace Chimera {
             new_asset.size = size;
             
             // Increment the cursor
-            cursor  = new_cursor;
-            
-            if(cursor == reinterpret_cast<std::byte *>(0x66FCA4DB)) {
-                std::exit(1);
-            }
+            cursor = new_cursor;
         
             return true;
         };
@@ -342,7 +338,7 @@ namespace Chimera {
                             std::uint32_t bitmap_count = *reinterpret_cast<std::uint32_t *>(td + 0x60);
                             
                             for(std::uint32_t bd = 0; bd < bitmap_count; bd++) {
-                                auto *bitmap = bitmap_data + bd * 0x64;
+                                auto *bitmap = bitmap_data + bd * 0x40;
                                 
                                 bool external = *reinterpret_cast<std::uint8_t *>(bitmap + 0xF) & 1;
                                 
