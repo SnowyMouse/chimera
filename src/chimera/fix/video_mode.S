@@ -13,5 +13,13 @@ _on_set_video_mode_initially:
 
 .globl _on_windowed_check_force_windowed
 _on_windowed_check_force_windowed:
-    mov eax, 1
+    or eax, dword ptr [_force_windowed_mode]
+    test al, al
+    jz done_forcing_windowed
+    pushfd
+    pushad
+    call _now_set_borderless_windowed_mode
+    popad
+    popfd
+    done_forcing_windowed:
     ret

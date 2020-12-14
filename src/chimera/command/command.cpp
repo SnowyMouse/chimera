@@ -173,6 +173,7 @@ namespace Chimera {
 
         // Debug
         ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
+        ADD_COMMAND("chimera_vk", "chimera_category_debug", "client", vk_command, false, 0, 0);
 
         if(this->feature_present("core_devmode_retail")) {
             ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode_retail", devmode_retail_command, true, 0, 1);
@@ -237,7 +238,7 @@ namespace Chimera {
         // ADD_COMMAND("chimera_meme_zone", "chimera_category_visual", "client_widescreen", meme_zone_command, true, 0, 1);
 
         // Lua
-        ADD_COMMAND("chimera_lua_reload_scripts", "chimera_category_lua", "core_custom_edition", reload_scripts_command, false, 0, 0);
+        ADD_COMMAND("chimera_lua_reload_scripts", "chimera_category_lua", "core", reload_scripts_command, false, 0, 0);
 
         // Mouse
         ADD_COMMAND("chimera_block_mouse_acceleration", "chimera_category_mouse", "client_mouse_acceleration", block_mouse_acceleration_command, true, 0, 1);
