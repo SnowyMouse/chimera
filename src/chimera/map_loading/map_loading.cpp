@@ -295,16 +295,17 @@ namespace Chimera {
                 origin = static_cast<ResourceOrigin>(origin | ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT);
             }
             
-            // Too big? Nope
-            if(cursor + size > end || cursor + size < cursor) {
-                return false;
-            }
-            
             // Already present? No need then.
             for(auto &i : metadata) {
                 if(i.origin == origin && i.offset == offset && i.size >= size) {
                     return true;
                 }
+            }
+            
+            // Let's think about this. Make sure it isn't too big
+            std::byte *new_cursor = cursor + size;
+            if(new_cursor < cursor || new_cursor > end) {
+                return false;
             }
             
             // Navigate to this
@@ -319,7 +320,11 @@ namespace Chimera {
             new_asset.size = size;
             
             // Increment the cursor
-            cursor += size;
+            cursor  = new_cursor;
+            
+            if(cursor == reinterpret_cast<std::byte *>(0x66FCA4DB)) {
+                std::exit(1);
+            }
         
             return true;
         };
