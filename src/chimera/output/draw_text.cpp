@@ -806,6 +806,16 @@ namespace Chimera {
         }
         dev = nullptr;
     }
+    
+    extern "C" {
+        HRESULT (FAR WINAPI * D3DXCreateFontFN)(LPDIRECT3DDEVICE9, INT, UINT, UINT, UINT, BOOL, DWORD, DWORD, DWORD, DWORD, LPCTSTR, LPD3DXFONT) = 0;
+        
+        __stdcall HRESULT D3DXCreateFontA(LPDIRECT3DDEVICE9 a, INT b, UINT c, UINT d, UINT e, BOOL f, DWORD g, DWORD h, DWORD i, DWORD j, LPCTSTR k, LPD3DXFONT l) {
+            return D3DXCreateFontFN(a,b,c,d,e,f,g,h,i,j,k,l);
+        }
+    }
+    
+    
 
     void setup_text_hook() noexcept {
         static Hook hook;
@@ -818,39 +828,50 @@ namespace Chimera {
 
         auto *chimera_ini = get_chimera().get_ini();
         if(chimera_ini->get_value_bool("font_override.enabled").value_or(false)) {
-            auto fonts_dir = std::filesystem::path("fonts");
-            if(std::filesystem::is_directory(fonts_dir)) {
-                try {
-                    for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
-                        if(!f.is_regular_file() || (f.path().extension().string() != ".otf" && f.path().extension().string() != ".ttf" && f.path().extension().string() != ".ttc")) {
-                            continue;
-                        }
+            // First load d3dx9_43.dll
+            auto *d3dx9_43 = GetModuleHandle("d3dx9_43.dll");
+            if(!d3dx9_43) {
+                d3dx9_43 = LoadLibrary("d3dx9_43.dll");
+            }
+            
+            // Okay, did we do that? Let's set this value and initialize things.
+            if(d3dx9_43) {
+                D3DXCreateFontFN = reinterpret_cast<decltype(D3DXCreateFontFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontA")));
+                
+                auto fonts_dir = std::filesystem::path("fonts");
+                if(std::filesystem::is_directory(fonts_dir)) {
+                    try {
+                        for(auto &f : std::filesystem::directory_iterator(fonts_dir)) {
+                            if(!f.is_regular_file() || (f.path().extension().string() != ".otf" && f.path().extension().string() != ".ttf" && f.path().extension().string() != ".ttc")) {
+                                continue;
+                            }
 
-                        std::printf("Loading font %s...", f.path().string().c_str());
-                        std::fflush(stdout);
-                        if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
-                            std::printf("done\n");
-                        }
-                        else {
-                            std::printf("FAILED\n");
-                            char error_message[256 + MAX_PATH];
-                            std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
-                            MessageBox(nullptr, error_message, "Failed to load font", MB_ICONERROR | MB_OK);
-                            std::exit(EXIT_FAILURE);
+                            std::printf("Loading font %s...", f.path().string().c_str());
+                            std::fflush(stdout);
+                            if(AddFontResourceEx(f.path().string().c_str(), FR_PRIVATE, 0)) {
+                                std::printf("done\n");
+                            }
+                            else {
+                                std::printf("FAILED\n");
+                                char error_message[256 + MAX_PATH];
+                                std::snprintf(error_message, sizeof(error_message), "Failed to load %s.\nMake sure this is a valid font.", f.path().string().c_str());
+                                MessageBox(nullptr, error_message, "Failed to load font", MB_ICONERROR | MB_OK);
+                                std::exit(EXIT_FAILURE);
+                            }
                         }
                     }
+                    catch(std::exception &e) {
+                        MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
+                        std::exit(EXIT_FAILURE);
+                    }
                 }
-                catch(std::exception &e) {
-                    MessageBox(nullptr, e.what(), "Failed to iterate through font directory", MB_ICONERROR | MB_OK);
-                    std::exit(EXIT_FAILURE);
-                }
+
+                add_d3d9_end_scene_event(on_add_scene);
+                add_d3d9_reset_event(on_reset);
+
+                // Hell yes
+                initialize_hud_text();
             }
-
-            add_d3d9_end_scene_event(on_add_scene);
-            add_d3d9_reset_event(on_reset);
-
-            // Hell yes
-            initialize_hud_text();
         }
     }
 
