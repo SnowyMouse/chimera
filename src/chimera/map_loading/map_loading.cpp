@@ -43,7 +43,7 @@ namespace Chimera {
     static void set_override_ting(bool should_override) {
         auto &chimera = get_chimera();
         auto &ting_sound_call_sig = chimera.get_signature("ting_sound_call_sig");
-        auto &game_event_volume_sig = chimera.get_signature("ting_sogame_event_volume_sigund_call_sig");
+        auto &game_event_volume_sig = chimera.get_signature("game_event_volume_sig");
         
         if(should_override) {
             static Hook set_flag, set_float;
@@ -1251,7 +1251,7 @@ namespace Chimera {
             resolve_indexed_tags();
             
             // Toggle if the ting is overrided
-            if(game_engine() != GameEngine::GAME_ENGINE_RETAIL) {
+            if(game_engine() == GameEngine::GAME_ENGINE_RETAIL) {
                 set_override_ting(get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION);
             }
         }
