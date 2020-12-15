@@ -272,7 +272,7 @@ namespace Chimera {
                             break;
                         case 't':
                             align = FontAlignment::ALIGN_LEFT;
-                            if(tabs < sizeof(font_data.tabs) / sizeof(*font_data.tabs)) {
+                            if(tabs + 1 < sizeof(font_data.tabs) / sizeof(*font_data.tabs)) {
                                 tabs++;
                             }
                             break;
