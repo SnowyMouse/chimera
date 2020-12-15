@@ -817,7 +817,7 @@ worth answering in a readme.
 
 - [Will Chimera run on my system?]
 - [Can I use Chimera under a license besides GNU GPL version 3?]
-- [Why am I seeing an error saying that strings.dll is missing?]
+- [Why are my custom fonts not working?]
 - [Why does Halo's gamma setting not work when Chimera is installed?]
 - [Why is there no auto updater built into Chimera?]
 - [Why do I get an error when joining Custom Edition servers with modded maps?]
@@ -859,9 +859,9 @@ sentence.
 Probably not. You would first need to ask *all* of the developers of Chimera for
 permission.
 
-### Why am I seeing an error saying that strings.dll is missing?
-This error can occur when a required DirectX 9 library isn't installed. The fix
-is to download and run the official DirectX installer from
+### Why are my custom fonts not working?
+This can occur when a required DirectX 9 library isn't installed. The fix is to
+download and run the official DirectX installer from
 https://www.microsoft.com/en-us/download/details.aspx?id=35 .
 
 ### Why does Halo's gamma setting not work when Chimera is installed?
@@ -996,7 +996,7 @@ Halo Custom Edition server, then you should forge the CRC32.
 
 [Will Chimera run on my system?]: #will-chimera-run-on-my-system
 [Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
-[Why am I seeing an error saying that strings.dll is missing?]: #why-am-i-seeing-an-error-saying-that-stringsdll-is-missing
+[Why are my custom fonts not working?]: #why-are-my-custom-fonts-not-working
 [Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
 [Why is there no auto updater built into Chimera?]: #why-is-there-no-auto-updater-built-into-chimera
 [Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
