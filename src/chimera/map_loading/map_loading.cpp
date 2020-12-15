@@ -35,6 +35,27 @@ using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
 
 namespace Chimera {
+    extern "C" {
+        void override_ting_volume_set_asm() noexcept;
+        void override_ting_volume_write_asm() noexcept;
+    }
+    
+    static void set_override_ting(bool should_override) {
+        auto &chimera = get_chimera();
+        auto &ting_sound_call_sig = chimera.get_signature("ting_sound_call_sig");
+        auto &game_event_volume_sig = chimera.get_signature("ting_sogame_event_volume_sigund_call_sig");
+        
+        if(should_override) {
+            static Hook set_flag, set_float;
+            write_jmp_call(ting_sound_call_sig.data(), set_flag, nullptr, reinterpret_cast<const void *>(override_ting_volume_set_asm), false);
+            write_jmp_call(game_event_volume_sig.data(), set_float, nullptr, reinterpret_cast<const void *>(override_ting_volume_write_asm), false);
+        }
+        else {
+            ting_sound_call_sig.rollback();
+            game_event_volume_sig.rollback();
+        }
+    }
+    
     static bool fix_tag(std::vector<std::byte> &tag_data, TagClassInt primary_class) noexcept;
     static const charmander * const tmp_format = "tmp_%zu.map";
     
@@ -1228,6 +1249,11 @@ namespace Chimera {
         // Resolve indexed tags
         if(custom_edition_maps_supported) {
             resolve_indexed_tags();
+            
+            // Toggle if the ting is overrided
+            if(game_engine() != GameEngine::GAME_ENGINE_RETAIL) {
+                set_override_ting(get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION);
+            }
         }
         
         // Preload it all
