@@ -450,7 +450,16 @@ namespace Chimera {
             i = std::tolower(i);
         }
         
-        // Get the map path
+        // Check if it's already loaded. If so, do nothing
+        if(std::strcmp(get_map_name(), map_name_lowercase) == 0) {
+            for(auto &i : loaded_maps) {
+                if(i.name == map_name_lowercase) {
+                    return &i;
+                }
+            }
+        }
+        
+        // Get the map path and modified time
         auto map_path = path_for_map_local(map_name_lowercase);
         auto timestamp = std::filesystem::last_write_time(map_path);
         std::size_t actual_size;
