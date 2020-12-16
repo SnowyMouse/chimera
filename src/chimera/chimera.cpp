@@ -74,6 +74,7 @@
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
 #include "config/ini.hpp"
+#include "fix/remove_exception_dialog.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -133,6 +134,9 @@ namespace Chimera {
 
             // Lol
             set_up_invalid_command_crash_fix();
+            
+            // The end of an era
+            set_up_remove_exception_dialog();
 
             if(this->feature_present("client")) {
                 // Fix the camo by default

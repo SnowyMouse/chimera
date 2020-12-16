@@ -103,6 +103,7 @@ add_library(chimera STATIC
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
     src/chimera/fix/nav_numbers.cpp
+    src/chimera/fix/remove_exception_dialog.cpp
     src/chimera/fix/sane_defaults.cpp
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp
