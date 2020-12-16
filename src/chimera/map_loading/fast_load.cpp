@@ -192,7 +192,7 @@ namespace Chimera {
             
             auto *map = &indices_vector.emplace_back();
             map->file_name = i.name.c_str();
-            map->map_name_index = i.index.value_or(13);
+            map->map_name_index = i.index.value_or(19);
             
             if(sizeof(*map) >= sizeof(MapIndexRetail)) {
                 reinterpret_cast<MapIndexRetail *>(map)->loaded = 1;
@@ -280,32 +280,31 @@ namespace Chimera {
         auto old_maps = all_maps;
         all_maps.clear();
         
-        std::uint32_t stock_index = 0;
-        #define ADD_STOCK_MAP(map_name) add_map_to_map_list(map_name, stock_index++)
+        #define ADD_STOCK_MAP(map_name, index) add_map_to_map_list(map_name, index)
         
         if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-            ADD_STOCK_MAP("bloodgulch");
+            ADD_STOCK_MAP("bloodgulch", 9);
         }
         else {
-            ADD_STOCK_MAP("beavercreek");
-            ADD_STOCK_MAP("sidewinder");
-            ADD_STOCK_MAP("damnation");
-            ADD_STOCK_MAP("ratrace");
-            ADD_STOCK_MAP("prisoner");
-            ADD_STOCK_MAP("hangemhigh");
-            ADD_STOCK_MAP("chillout");
-            ADD_STOCK_MAP("carousel");
-            ADD_STOCK_MAP("boardingaction");
-            ADD_STOCK_MAP("bloodgulch");
-            ADD_STOCK_MAP("wizard");
-            ADD_STOCK_MAP("putput");
-            ADD_STOCK_MAP("longest");
-            ADD_STOCK_MAP("icefields");
-            ADD_STOCK_MAP("deathisland");
-            ADD_STOCK_MAP("dangercanyon");
-            ADD_STOCK_MAP("infinity");
-            ADD_STOCK_MAP("timberland");
-            ADD_STOCK_MAP("gephyrophobia");
+            ADD_STOCK_MAP("beavercreek", 0);
+            ADD_STOCK_MAP("sidewinder", 1);
+            ADD_STOCK_MAP("damnation", 2);
+            ADD_STOCK_MAP("ratrace", 3);
+            ADD_STOCK_MAP("prisoner", 4);
+            ADD_STOCK_MAP("hangemhigh", 5);
+            ADD_STOCK_MAP("chillout", 6);
+            ADD_STOCK_MAP("carousel", 7);
+            ADD_STOCK_MAP("boardingaction", 8);
+            ADD_STOCK_MAP("bloodgulch", 9);
+            ADD_STOCK_MAP("wizard", 10);
+            ADD_STOCK_MAP("putput", 11);
+            ADD_STOCK_MAP("longest", 12);
+            ADD_STOCK_MAP("icefields", 13);
+            ADD_STOCK_MAP("deathisland", 14);
+            ADD_STOCK_MAP("dangercanyon", 15);
+            ADD_STOCK_MAP("infinity", 16);
+            ADD_STOCK_MAP("timberland", 17);
+            ADD_STOCK_MAP("gephyrophobia", 18);
         }
         
         auto add_map_folder = [](std::filesystem::path directory) {
