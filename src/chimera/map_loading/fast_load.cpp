@@ -286,7 +286,7 @@ namespace Chimera {
         auto *ptr = maybe_add_map_to_map_list(map_name, std::nullopt);
         if(ptr == nullptr) {
             char error_message[256];
-            std::snprintf(error_message, sizeof(error_message), "Failed to load %s into the maps list.\n\nMake sure the map exists and try again.", map_name);
+            std::snprintf(error_message, sizeof(error_message), "Failed to load %s.map into the maps list.\n\nMake sure the map exists and try again.", map_name);
             show_error_box("Map error", error_message);
             std::exit(EXIT_FAILURE);
         }
