@@ -242,6 +242,9 @@ namespace Chimera {
         // First, let's lowercase it
         char map_name_lowercase[32];
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
+        for(auto &i : map_name_lowercase) {
+            i = std::tolower(i);
+        }
         
         // Add it!
         map = &all_maps.emplace_back();
