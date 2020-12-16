@@ -74,7 +74,7 @@
 #include "halo_data/port.hpp"
 #include "command/hotkey.hpp"
 #include "config/ini.hpp"
-#include "fix/remove_exception_dialog.hpp"
+#include "annoyance/exception_dialog.hpp"
 #include "output/error_box.hpp"
 
 namespace Chimera {

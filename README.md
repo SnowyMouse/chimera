@@ -65,7 +65,7 @@ game.
 
 
 ### Passive features
-These are features that are always (or are on).
+These are features that are always on.
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)

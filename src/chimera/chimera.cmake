@@ -21,6 +21,7 @@ add_library(chimera STATIC
     src/chimera/annoyance/auto_get_list.S
     src/chimera/annoyance/drm.cpp
     src/chimera/annoyance/drm.S
+    src/chimera/annoyance/exception_dialog.cpp
     src/chimera/annoyance/keystone.cpp
     src/chimera/annoyance/multi_instance.cpp
     src/chimera/annoyance/novideo.cpp
@@ -103,7 +104,6 @@ add_library(chimera STATIC
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
     src/chimera/fix/nav_numbers.cpp
-    src/chimera/fix/remove_exception_dialog.cpp
     src/chimera/fix/sane_defaults.cpp
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp

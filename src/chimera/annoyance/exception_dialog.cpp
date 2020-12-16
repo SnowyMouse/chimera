@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include "remove_exception_dialog.hpp"
+#include "exception_dialog.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "../output/error_box.hpp"
