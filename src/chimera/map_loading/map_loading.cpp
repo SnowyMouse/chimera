@@ -450,7 +450,7 @@ namespace Chimera {
             i = std::tolower(i);
         }
         
-        // Check if it's already loaded. If so, do nothing
+        // Check if it's the current map. If so, do not attempt to reload it.
         if(std::strcmp(get_map_name(), map_name_lowercase) == 0) {
             for(auto &i : loaded_maps) {
                 if(i.name == map_name_lowercase) {
@@ -461,8 +461,16 @@ namespace Chimera {
         
         // Get the map path and modified time
         auto map_path = path_for_map_local(map_name_lowercase);
-        auto timestamp = std::filesystem::last_write_time(map_path);
+        std::error_code ec;
+        auto timestamp = std::filesystem::last_write_time(map_path, ec);
         std::size_t actual_size;
+        
+        if(ec) {
+            charmander error_message[128];
+            std::snprintf(error_message, sizeof(error_message), "Unable to determine the modified time of %s. Make sure the map exists.");
+            MessageBox(nullptr, error_message, "Failed to query modified time for map", MB_OK | MB_ICONERROR);
+            std::exit(EXIT_FAILURE);
+        }
         
         // Is the map already loaded?
         for(auto &i : loaded_maps) {
