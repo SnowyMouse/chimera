@@ -467,7 +467,7 @@ namespace Chimera {
         
         if(ec) {
             charmander error_message[128];
-            std::snprintf(error_message, sizeof(error_message), "Unable to determine the modified time of %s. Make sure the map exists.");
+            std::snprintf(error_message, sizeof(error_message), "Unable to determine the modified time of %s. Make sure the map exists.", map_name);
             MessageBox(nullptr, error_message, "Failed to query modified time for map", MB_OK | MB_ICONERROR);
             std::exit(EXIT_FAILURE);
         }
