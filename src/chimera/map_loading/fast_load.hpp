@@ -31,11 +31,9 @@ namespace Chimera {
     /**
      * Add a map to the map list if it does not exist
      * @param map_name   map to add
-     * @param name_index name index if valid
-     * @param game_type  game type to use
      * @return           reference to map in maps list
      */
-    MapEntry &add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> name_index = std::nullopt);
+    MapEntry &add_map_to_map_list(const char *map_name);
     
     /**
      * Resync the map list in the game with our own map list

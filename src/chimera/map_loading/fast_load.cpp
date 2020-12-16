@@ -232,11 +232,11 @@ namespace Chimera {
         return nullptr;
     }
     
-    MapEntry &add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index) {
+    static MapEntry *maybe_add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index = std::nullopt) {
         // Don't add maps we've already added
-        MapEntry *map;
-        if((map = get_map_entry(map_name)) != nullptr) {
-            return *map;
+        MapEntry *map_possibly;
+        if((map_possibly = get_map_entry(map_name)) != nullptr) {
+            return map_possibly;
         }
         
         // First, let's lowercase it
@@ -247,10 +247,15 @@ namespace Chimera {
         }
         
         // Add it!
-        map = &all_maps.emplace_back();
-        map->name = map_name_lowercase;
-        map->index = map_index;
-        map->multiplayer = true;
+        MapEntry map;
+        map.name = map_name_lowercase;
+        map.index = map_index;
+        map.multiplayer = true;
+        
+        // Make sure it exists first.
+        if(!std::filesystem::exists(map.get_file_path())) {
+            return nullptr;
+        }
         
         // If it's known to not be a multiplayer map, set this
         static const char *NON_MULTIPLAYER_MAPS[] = {
@@ -268,11 +273,23 @@ namespace Chimera {
         };
         for(auto &nmp : NON_MULTIPLAYER_MAPS) {
             if(same_string_case_insensitive(nmp, map_name)) {
-                map->multiplayer = false;
+                map.multiplayer = false;
             }
         }
         
-        return *map;
+        return &all_maps.emplace_back(std::move(map));
+    }
+    
+    MapEntry &add_map_to_map_list(const char *map_name) {
+        // Attempt to add it. If it fails, exit gracefully
+        auto *ptr = maybe_add_map_to_map_list(map_name, std::nullopt);
+        if(ptr == nullptr) {
+            char error_message[256];
+            std::snprintf(error_message, sizeof(error_message), "Failed to load %s into the maps list.\n\nMake sure the map exists and try again.\n\nHalo must close now.", map_name);
+            MessageBox(nullptr, error_message, "Failed to load map", MB_OK | MB_ICONERROR);
+            std::exit(EXIT_FAILURE);
+        }
+        return *ptr;
     }
 
     static void reload_map_list() {
@@ -280,32 +297,27 @@ namespace Chimera {
         auto old_maps = all_maps;
         all_maps.clear();
         
-        #define ADD_STOCK_MAP(map_name, index) add_map_to_map_list(map_name, index)
+        #define ADD_STOCK_MAP(map_name, index) maybe_add_map_to_map_list(map_name, index)
         
-        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-            ADD_STOCK_MAP("bloodgulch", 9);
-        }
-        else {
-            ADD_STOCK_MAP("beavercreek", 0);
-            ADD_STOCK_MAP("sidewinder", 1);
-            ADD_STOCK_MAP("damnation", 2);
-            ADD_STOCK_MAP("ratrace", 3);
-            ADD_STOCK_MAP("prisoner", 4);
-            ADD_STOCK_MAP("hangemhigh", 5);
-            ADD_STOCK_MAP("chillout", 6);
-            ADD_STOCK_MAP("carousel", 7);
-            ADD_STOCK_MAP("boardingaction", 8);
-            ADD_STOCK_MAP("bloodgulch", 9);
-            ADD_STOCK_MAP("wizard", 10);
-            ADD_STOCK_MAP("putput", 11);
-            ADD_STOCK_MAP("longest", 12);
-            ADD_STOCK_MAP("icefields", 13);
-            ADD_STOCK_MAP("deathisland", 14);
-            ADD_STOCK_MAP("dangercanyon", 15);
-            ADD_STOCK_MAP("infinity", 16);
-            ADD_STOCK_MAP("timberland", 17);
-            ADD_STOCK_MAP("gephyrophobia", 18);
-        }
+        ADD_STOCK_MAP("beavercreek", 0);
+        ADD_STOCK_MAP("sidewinder", 1);
+        ADD_STOCK_MAP("damnation", 2);
+        ADD_STOCK_MAP("ratrace", 3);
+        ADD_STOCK_MAP("prisoner", 4);
+        ADD_STOCK_MAP("hangemhigh", 5);
+        ADD_STOCK_MAP("chillout", 6);
+        ADD_STOCK_MAP("carousel", 7);
+        ADD_STOCK_MAP("boardingaction", 8);
+        ADD_STOCK_MAP("bloodgulch", 9);
+        ADD_STOCK_MAP("wizard", 10);
+        ADD_STOCK_MAP("putput", 11);
+        ADD_STOCK_MAP("longest", 12);
+        ADD_STOCK_MAP("icefields", 13);
+        ADD_STOCK_MAP("deathisland", 14);
+        ADD_STOCK_MAP("dangercanyon", 15);
+        ADD_STOCK_MAP("infinity", 16);
+        ADD_STOCK_MAP("timberland", 17);
+        ADD_STOCK_MAP("gephyrophobia", 18);
         
         auto add_map_folder = [](std::filesystem::path directory) {
             static const char *BLACKLISTED_MAPS[] = {
@@ -334,7 +346,7 @@ namespace Chimera {
                             }
                         }
                         
-                        add_map_to_map_list(name.c_str());
+                        maybe_add_map_to_map_list(name.c_str());
                     }
                     
                     nope: continue;
