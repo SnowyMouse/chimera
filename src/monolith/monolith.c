@@ -114,8 +114,11 @@ static BOOL load_dlls() {
 }
 
 // DLL entry point
-BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
+BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
     static WSADATA fun = {};
+    
+    (void)reserved;
+    (void)instance;
 
     switch(reason) {
         case DLL_PROCESS_ATTACH:
