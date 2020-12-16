@@ -5,6 +5,7 @@
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "../output/output.hpp"
+#include "../output/error_box.hpp"
 #include <time.h>
 
 namespace Chimera {
@@ -40,7 +41,7 @@ namespace Chimera {
         auto *hash = get_chimera().get_ini()->get_value("halo.hash");
         if(hash && std::strlen(hash) > 0) {
             if(!get_chimera().feature_present("client_edit_cd_hash")) {
-                MessageBox(nullptr, "Using custom CD hashes is not supported on this client. (client is probably modified)", "Error", MB_ICONERROR | MB_OK);
+                show_error_box("Error", "Using custom CD hashes is not supported on this client. (client is probably modified)");
                 std::exit(1);
             }
 

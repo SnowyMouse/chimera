@@ -3,11 +3,12 @@
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+#include "../output/error_box.hpp"
 
 namespace Chimera {
     void enable_multiple_instance() noexcept {
         if(!get_chimera().feature_present("client_multiple_instances")) {
-            MessageBox(nullptr, "Multiple instances is not supported on this client. (client is probably modified)", "Error", MB_ICONERROR | MB_OK);
+            show_error_box("Error", "Multiple instances is not supported on this client. (client is probably modified)");
             std::exit(1);
         }
 

@@ -176,6 +176,7 @@ add_library(chimera STATIC
     src/chimera/miscellaneous/controller.S
     src/chimera/output/draw_text.cpp
     src/chimera/output/draw_text.S
+    src/chimera/output/error_box.cpp
     src/chimera/output/output.cpp
     src/chimera/output/output.S
     src/chimera/signature/hook.cpp

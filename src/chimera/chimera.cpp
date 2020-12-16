@@ -75,6 +75,7 @@
 #include "command/hotkey.hpp"
 #include "config/ini.hpp"
 #include "fix/remove_exception_dialog.hpp"
+#include "output/error_box.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -92,7 +93,7 @@ namespace Chimera {
             if(game_engine() != GAME_ENGINE_DEMO && std::strcmp(build_string, expected_version) != 0) {
                 char error[256] = {};
                 std::snprintf(error, sizeof(error), "Chimera does not support %s. Please use %s.", build_string, expected_version);
-                MessageBox(nullptr, error, "Error", MB_ICONERROR | MB_OK);
+                show_error_box("Error", error);
                 this->p_signatures.clear();
                 return;
             }
@@ -114,7 +115,7 @@ namespace Chimera {
             if(path) {
                 static std::string new_path = path;
                 if(new_path.size() >= MAX_PATH) {
-                    MessageBox(nullptr, "Path is too long", "Error", MB_ICONERROR | MB_OK);
+                    show_error_box("Error", "Path is too long");
                     std::exit(1);
                 }
                 overwrite(chimera->get_signature("write_path_sig").data() + 2, new_path.data());
@@ -359,14 +360,9 @@ namespace Chimera {
 
         // We can't feasibly continue from this without causing undefined behavior. Abort the process after showing an error message.
         char error[256];
-        std::snprintf(error, sizeof(error), "CHIMERA ERROR: Signature %s is invalid. Halo must close now.\n\nNote: This is a bug.\n", signature);
-        if(DEDICATED_SERVER) {
-            std::cerr << error;
-        }
-        else {
-            MessageBox(NULL, error, "Chimera Error", MB_OK);
-        }
-        ExitProcess(135);
+        std::snprintf(error, sizeof(error), "CHIMERA ERROR: Signature %s is invalid.\n\nNote: This is a bug.\n", signature);
+        show_error_box("Chimera error", error);
+        std::exit(135);
     }
 
     std::vector<const char *> Chimera::missing_signatures_for_feature(const char *feature) {
@@ -509,15 +505,8 @@ namespace Chimera {
                     break;
             }
         }
-
-        // If we're on the server, print to standard error
-        if(is_server) {
-            std::fputs(error_buffer, stderr);
-        }
-        // Otherwise, show an error message for the user
-        else {
-            MessageBox(nullptr, error_buffer, "Error", MB_ICONERROR | MB_OK);
-        }
+        
+        show_error_box("Error", error_buffer);
     }
 
     int halo_type() {

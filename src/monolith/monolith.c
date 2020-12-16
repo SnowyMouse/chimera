@@ -155,9 +155,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
 
                 // Make sure it's the same
                 if(!in_cd) {
-                    char error_message[MAX_PATH * 2 + 256];
-                    snprintf(error_message, sizeof(error_message), "Make sure your current directory is the same as the executable's current directory.\n\nEXE: %s\n\nCD: %s", exe_path, cd_path);
-                    MessageBox(NULL, error_message, "Unable to load Chimera", MB_ICONERROR | MB_OK);
                     ExitProcess(135);
                 }
 

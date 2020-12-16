@@ -69,7 +69,7 @@ std::vector<std::uintptr_t> CodeFinder::find() {
 		if(signature[i] == -1) {
 			fastFind = false;
 		} else if(signature[i] < 0 || signature[i] > 0xFF) {
-			MessageBox(NULL, "Invalid signature", 0, 0);
+			std::exit(12345);
 		}
 	}
 

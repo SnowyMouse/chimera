@@ -29,6 +29,7 @@
 #include "../bookmark/bookmark.hpp"
 #include "../halo_data/script.hpp"
 #include "../event/frame.hpp"
+#include "../output/error_box.hpp"
 #include "laa.hpp"
 
 using charmander = char; // charmander charrrr!
@@ -260,7 +261,7 @@ namespace Chimera {
     template <typename T> static std::vector<std::byte> &translate_index(T index, std::vector<std::vector<std::byte>> &of_what) {
         auto index_val = reinterpret_cast<std::uint32_t>(index);
         if(index_val >= of_what.size()) {
-            MessageBox(nullptr, "Map could not be loaded due to an invalid index", "Failed to load map", MB_OK | MB_ICONERROR);
+            show_error_box("Map error", "Map could not be loaded due to an invalid index.");
             std::exit(EXIT_FAILURE);
         }
         return of_what[index_val];
@@ -467,8 +468,8 @@ namespace Chimera {
         
         if(ec) {
             charmander error_message[256];
-            std::snprintf(error_message, sizeof(error_message), "Unable to determine the modified time of %s.map.\n\nMake sure the map exists in your maps folder and try again.\n\nHalo must close now.", map_name);
-            MessageBox(nullptr, error_message, "Failed to query map file", MB_OK | MB_ICONERROR);
+            std::snprintf(error_message, sizeof(error_message), "Unable to determine the modified time of %s.map.\n\nMake sure the map exists in your maps folder and try again.", map_name);
+            show_error_box("Map error", error_message);
             std::exit(EXIT_FAILURE);
         }
         
@@ -506,9 +507,9 @@ namespace Chimera {
                 std::fclose(f);
             }
             
-            charmander title[128];
-            std::snprintf(title, sizeof(title), "Failed to load %s", map_name_lowercase);
-            MessageBox(nullptr, error, title, MB_ICONERROR | MB_OK);
+            charmander error_dialog[256];
+            std::snprintf(error_dialog, sizeof(error_dialog), "Failed to load %s due to an error\n\n%s", map_name_lowercase, error);
+            show_error_box("Map error", error_dialog);
             std::exit(1);
         };
         
@@ -977,7 +978,7 @@ namespace Chimera {
                 else {
                     charmander error[2048];
                     std::snprintf(error, sizeof(error), "%s could not be opened", map_path.string().c_str());
-                    MessageBox(nullptr, error, "Failed to load resource data", MB_OK | MB_ICONERROR);
+                    show_error_box("Map error", error);
                     std::exit(EXIT_FAILURE);
                 }
             }
@@ -1323,7 +1324,7 @@ namespace Chimera {
             try_close(loc);
             
             if(is_custom_edition) {
-                MessageBox(nullptr, "Missing bitmaps.map/sounds.map/loc.map or custom_bitmaps.map/custom_sounds.map/custom_loc.map from your maps folder.", "Files missing or unreadable", MB_OK | MB_ICONERROR);
+                show_error_box("Map error", "Missing bitmaps.map/sounds.map/loc.map or custom_bitmaps.map/custom_sounds.map/custom_loc.map from your maps folder.");
                 std::exit(EXIT_FAILURE);
             }
             return false;
@@ -1409,7 +1410,7 @@ namespace Chimera {
         try_close(loc);
         
         if(!read_success) {
-            MessageBox(nullptr, "Failed to read resource maps.", "Files possibly corrupt or unreadable", MB_OK | MB_ICONERROR);
+            show_error_box("Map error", "Failed to read resource maps. Files possibly corrupt or unreadable.");
             std::exit(EXIT_FAILURE);
         }
         
@@ -1428,7 +1429,7 @@ namespace Chimera {
                            fix_tags(TagClassInt::TAG_CLASS_SOUND, custom_edition_sounds_tag_data);
                            
         if(!fix_success) {
-            MessageBox(nullptr, "Failed to read resource maps' data.", "Files possibly corrupt", MB_OK | MB_ICONERROR);
+            show_error_box("Map error", "Failed to read resource maps. Files possibly corrupt or unreadable.");
             std::exit(EXIT_FAILURE);
         }
         
@@ -1489,7 +1490,7 @@ namespace Chimera {
 
         if(do_maps_in_ram) {
             if(!current_exe_is_laa_patched()) {
-                MessageBox(nullptr, "Map memory buffers requires a large address aware-patched executable.", "Error", MB_ICONERROR | MB_OK);
+                show_error_box("Map error", "Map memory buffers requires a large address aware-patched executable.");
                 std::exit(1);
             }
             
@@ -1503,7 +1504,7 @@ namespace Chimera {
             if(!buffer) {
                 charmander error_text[256] = {};
                 std::snprintf(error_text, sizeof(error_text), "Failed to allocate %.02f GiB for map memory buffers.", total_buffer_size / 1024.0F / 1024.0F / 1024.0F);
-                MessageBox(nullptr, error_text, "Error", MB_ICONERROR | MB_OK);
+                show_error_box("Map error", error_text);
                 std::exit(1);
             }
         }

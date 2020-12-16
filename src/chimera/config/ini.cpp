@@ -7,6 +7,7 @@
 #include "ini.hpp"
 #include "../command/command.hpp"
 #include "../chimera.hpp"
+#include "../output/error_box.hpp"
 #include <cstring>
 
 namespace Chimera {
@@ -38,8 +39,8 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid real number", key, v);
-            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
-            std::terminate();
+            show_error_box("INI error", error);
+            std::exit(136);
         }
     }
 
@@ -54,8 +55,8 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (%li - %li)", key, v, LONG_MIN, LONG_MAX);
-            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
-            std::terminate();
+            show_error_box("INI error", error);
+            std::exit(136);
         }
     }
 
@@ -70,8 +71,8 @@ namespace Chimera {
         catch(std::exception &) {
             char error[512];
             std::snprintf(error, sizeof(error), "%s (=> %s) is not a valid integer or is out of range (0 - %llu)", key, v, ULONG_LONG_MAX);
-            MessageBox(nullptr, error, "Can't read INI value", MB_ICONERROR | MB_OK);
-            std::terminate();
+            show_error_box("INI error", error);
+            std::exit(136);
         }
     }
 
@@ -145,14 +146,9 @@ namespace Chimera {
         auto show_error = [&line_number, &data]() {
             // We can't feasibly continue from this without causing undefined behavior. Abort the process after showing an error message.
             char error[1024];
-            std::snprintf(error, sizeof(error), "chimera.ini error (line #%zu):\n\n%s\n\nThis line could not be parsed. The game must close now.\n", line_number, data);
-            if(get_chimera().feature_present("server")) {
-                std::cerr << error;
-            }
-            else {
-                MessageBox(NULL, error, "Chimera configuration error", MB_ICONERROR | MB_OK);
-            }
-            ExitProcess(136);
+            std::snprintf(error, sizeof(error), "chimera.INI error (line #%zu):\n\n%s\n\nThis line could not be parsed.\n", line_number, data);
+            show_error_box("INI error", error);
+            std::exit(136);
         };
 
         // Check if we're in a group
@@ -198,14 +194,8 @@ namespace Chimera {
         std::size_t no = 0;
 
         if(!stream.good()) {
-            static const char *failed_to_open_error = "chimera.ini could not be opened.\n\nMake sure it exists and you have permission to it.\n\nThe game must close now.\n";
-            if(get_chimera().feature_present("server")) {
-                std::cerr << failed_to_open_error;
-            }
-            else {
-                MessageBox(NULL, failed_to_open_error, "Chimera configuration error", MB_ICONERROR | MB_OK);
-            }
-            ExitProcess(136);
+            show_error_box("INI error", "chimera.ini could not be opened.\n\nMake sure it exists and you have permission to it.");
+            std::exit(1);
         }
 
         while(std::getline(stream, line)) {
@@ -215,7 +205,6 @@ namespace Chimera {
             }
             else if(std::get<1>(result) == false) {
                 this->p_values.clear();
-                ExitProcess(136);
                 return;
             }
         }
