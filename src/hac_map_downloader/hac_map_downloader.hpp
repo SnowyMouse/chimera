@@ -9,6 +9,7 @@
 #include <chrono>
 #include <thread>
 #include <optional>
+#include <filesystem>
 
 /**
  * Map downloading class
@@ -88,7 +89,7 @@ private:
     std::string map;
 
     /** Temp file to save to */
-    std::string output_file;
+    std::filesystem::path output_file;
 
     /** Preferred server to use */
     std::optional<unsigned int> preferred_server_node;
@@ -100,7 +101,7 @@ private:
     std::string game_engine;
 
     /** File to write to as we download */
-    std::FILE *output_file_handle;
+    std::FILE *output_file_handle = nullptr;
 
     /** How much was downloaded so far */
     std::size_t downloaded_size = 0;

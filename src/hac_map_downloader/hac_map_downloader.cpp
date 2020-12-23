@@ -35,6 +35,22 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     do {
         char url[255];
         std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, map_formatted.data(), downloader->game_engine.data());
+        
+        // Close if needed
+        if(downloader->output_file_handle) {
+            std::fclose(downloader->output_file_handle);
+        }
+        
+        // Let's begin
+        downloader->output_file_handle = std::fopen(downloader->output_file.string().c_str(), "wb");
+
+        // If we failed to open, give up and close
+        if(downloader->output_file_handle == nullptr) {
+            downloader->status = HACMapDownloader::DOWNLOAD_STAGE_FAILED;
+            return;
+        }
+        
+        // Otherwise, let's begin
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
         downloader->download_started = Clock::now();
 
@@ -84,7 +100,9 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
         downloader->buffer.clear();
 
         // Close the file handle
-        std::fclose(downloader->output_file_handle);
+        if(downloader->output_file_handle) {
+            std::fclose(downloader->output_file_handle);
+        }
         downloader->output_file_handle = nullptr;
 
         downloader->status = DOWNLOAD_STAGE_COMPLETE;
@@ -203,15 +221,6 @@ void HACMapDownloader::dispatch() {
     if(this->curl) {
         this->mutex.unlock();
         throw std::exception();
-        return;
-    }
-
-    this->output_file_handle = std::fopen(this->output_file.data(), "wb");
-
-    // If we failed to open, give up and close, unlocking the mutex
-    if(!this->output_file_handle) {
-        this->status = HACMapDownloader::DOWNLOAD_STAGE_FAILED;
-        this->mutex.unlock();
         return;
     }
 
