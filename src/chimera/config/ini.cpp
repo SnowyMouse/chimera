@@ -4,6 +4,8 @@
 #include <windows.h>
 #include <iostream>
 #include <istream>
+#include <locale>
+#include <codecvt>
 #include "ini.hpp"
 #include "../command/command.hpp"
 #include "../chimera.hpp"
@@ -105,6 +107,26 @@ namespace Chimera {
         }
     }
 
+    /**
+     * Convert a string encoded in UTF-8 to one encoded using the system's 8-bit encoding (ANSI)
+     * @param str  UTF-8-encoded string
+     * @param dflt default character to use if the conversion to ANSI fails
+     * @return     false if the input string could not be decoded as UTF-8, true otherwise.
+     */
+    static bool utf8_to_ansi(std::string& str, char dflt){
+        std::wstring wstr;
+        try {
+            wstr = std::wstring_convert<std::codecvt_utf8<wchar_t>>{}.from_bytes(str.data());
+        }
+        catch (std::range_error&){
+            return false;
+        }
+        std::string tmp(wstr.size(), '0');
+        std::use_facet<std::ctype<wchar_t>>(std::locale("")).narrow(wstr.data(), wstr.data() + wstr.size(), dflt, &tmp[0]);
+        str.swap(tmp);
+        return true;
+    }
+
     // Returns false on error, a key/value pair, or true to do nothing
     static std::variant<std::pair<std::string, std::string>, bool> digest_line(const char *data, const char **new_offset, std::string &current_group, std::size_t line_number) {
         // Determine how big the line is
@@ -166,13 +188,26 @@ namespace Chimera {
         // Check if we have a key value
         if(equals_offset) {
             std::string key;
+            std::string value;
             if(current_group.size() == 0) {
                 key = std::string(data, equals_offset);
             }
             else {
                 key = current_group + "." + std::string(data, equals_offset);
             }
-            return std::pair(key, std::string(data + equals_offset + 1, line_length - equals_offset - 1));
+
+            // Get the value and decode it
+            value = std::string(data + equals_offset + 1, line_length - equals_offset - 1);
+            // Use ACK (0x06) for replacing invalid chars since it will be rendered as a box character in the error message
+            if (!utf8_to_ansi(value, '\x06')){
+                show_error_box("INI error", (std::string() + "Failed to decode value of '" + key + "' in chimera.ini.\n\nMake sure the file is encoded using UTF-8.").data());
+                std::exit(136);
+            }
+            else if (value.find('\x06') != std::string::npos){
+                show_error_box("INI error", (std::string() + "Invalid character in the value of '" + key + "' in chimera.ini:\n\n" + value + "\n\nOnly characters your system can encode in ANSI are valid.").data());
+                std::exit(136);
+            }
+            return std::pair(key, value);
         }
 
         show_error();
