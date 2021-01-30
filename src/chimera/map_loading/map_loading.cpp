@@ -772,7 +772,7 @@ namespace Chimera {
                 console_output("Download complete. Reconnecting...");
 
                 charmander to_path[MAX_PATH];
-                std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().c_str());
+                std::snprintf(to_path, sizeof(to_path), "%s\\%s.map", get_chimera().get_download_map_path(), map_downloader->get_map().c_str());
 
                 std::filesystem::rename(download_temp_file, to_path);
 

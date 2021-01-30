@@ -35,7 +35,7 @@ namespace Chimera {
             return p1;
         }
         else {
-            return std::filesystem::path(get_chimera().get_path()) / "maps" / (this->name + ".map");
+            return std::filesystem::path(get_chimera().get_download_map_path()) / (this->name + ".map");
         }
     }
     
@@ -356,7 +356,7 @@ namespace Chimera {
         };
         
         add_map_folder("maps");
-        add_map_folder(std::filesystem::path(get_chimera().get_path()) / "maps");
+        add_map_folder(get_chimera().get_download_map_path());
         
         // Reset CRC32
         for(auto &i : old_maps) {

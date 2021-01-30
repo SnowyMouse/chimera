@@ -532,13 +532,23 @@ namespace Chimera {
 
             // Make directories
             CreateDirectory(this->p_path.data(), nullptr);
-            char maps_directory[MAX_PATH];
-            std::snprintf(maps_directory, sizeof(maps_directory), "%s\\maps", this->p_path.data());
-            CreateDirectory(maps_directory, nullptr);
-            std::snprintf(maps_directory, sizeof(maps_directory), "%s\\tmp", this->p_path.data());
-            CreateDirectory(maps_directory, nullptr);
+            CreateDirectory((this->p_path + "tmp").data(), nullptr);
         }
         return this->p_path.data();
+    }
+
+    const char *Chimera::get_download_map_path() noexcept {
+        if (this->p_download_map_path.size() == 0){
+            const char *path = this->get_ini()->get_value("halo.download_map_path");
+            if (path){
+                this->p_download_map_path = path;
+            }
+            else {
+                this->p_download_map_path = std::string(this->get_path()) + "maps";
+            }
+            CreateDirectory(this->p_download_map_path.data(), nullptr);
+        }
+        return this->p_download_map_path.data();
     }
 
     void Chimera::reload_config() {
