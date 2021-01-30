@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include "../localization/localization.hpp"
 #include "../version.hpp"
@@ -143,4 +144,5 @@ namespace Chimera {
     }
 
     Config::Config(const char *path) : p_path(path) {}
+    Config::Config(const std::filesystem::path path) : p_path(path.string()) {}
 }

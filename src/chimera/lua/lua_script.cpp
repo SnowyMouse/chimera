@@ -40,7 +40,7 @@ namespace Chimera {
         luaL_openlibs(state);
 
         // Update Lua path
-        auto new_lua_path = fs::path(get_chimera().get_path()) / "lua" / "modules";
+        auto new_lua_path = get_chimera().get_path() / "lua" / "modules";
         lua_getglobal(state, "package");
         lua_pushstring(state, (new_lua_path.string() + "\\?.lua").c_str());
         lua_setfield(state, -2, "path");
@@ -148,7 +148,7 @@ namespace Chimera {
 
     void load_map_script() noexcept {
         auto &map_header = get_map_header();
-        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+        auto lua_directory = get_chimera().get_path() / "lua";
         auto script_path = lua_directory / "scripts" / "map" / (std::string(map_header.name) + ".lua");
         if(fs::exists(script_path)) {
             auto script = read_script_file(script_path);
@@ -170,7 +170,7 @@ namespace Chimera {
     }
 
     void load_global_scripts() noexcept {
-        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+        auto lua_directory = get_chimera().get_path() / "lua";
         for(auto &entry : fs::directory_iterator(lua_directory / "scripts" / "global")) {
             auto file_path = entry.path();
             if(file_path.extension() == ".lua") {

@@ -521,40 +521,31 @@ namespace Chimera {
         }
     }
 
-    const char *Chimera::get_path() noexcept {
-        if(this->p_path.size() == 0) {
-            this->p_path = halo_path();
-            char last_char = this->p_path[this->p_path.size() - 1];
-            if(last_char != '\\' || last_char != '/') {
-                this->p_path += '\\';
-            }
-            this->p_path += "chimera\\";
-
-            // Make directories
-            CreateDirectory(this->p_path.data(), nullptr);
-            CreateDirectory((this->p_path + "tmp").data(), nullptr);
+    const std::filesystem::path Chimera::get_path() noexcept {
+        if(this->p_path.empty()) {
+            this->p_path = std::filesystem::path(halo_path()) / "chimera";
+            std::filesystem::create_directory(this->p_path);
+            std::filesystem::create_directory(this->p_path / "tmp");
         }
-        return this->p_path.data();
+        return this->p_path;
     }
 
-    const char *Chimera::get_download_map_path() noexcept {
-        if (this->p_download_map_path.size() == 0){
+    const std::filesystem::path Chimera::get_download_map_path() noexcept {
+        if (this->p_download_map_path.empty()){
             const char *path = this->get_ini()->get_value("halo.download_map_path");
             if (path){
-                this->p_download_map_path = path;
+                this->p_download_map_path = std::filesystem::path(path);
             }
             else {
-                this->p_download_map_path = std::string(this->get_path()) + "maps";
+                this->p_download_map_path = this->get_path() / "maps";
             }
-            CreateDirectory(this->p_download_map_path.data(), nullptr);
+            std::filesystem::create_directory(this->p_download_map_path);
         }
-        return this->p_download_map_path.data();
+        return this->p_download_map_path;
     }
 
     void Chimera::reload_config() {
-        char config_path[MAX_PATH];
-        std::snprintf(config_path, sizeof(config_path), "%s%s", this->get_path(), "preferences.txt");
-        this->p_config = std::make_unique<Config>(config_path);
+        this->p_config = std::make_unique<Config>(this->get_path() / "preferences.txt");
         this->p_config->load();
     }
 

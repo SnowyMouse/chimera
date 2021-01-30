@@ -35,7 +35,7 @@ namespace Chimera {
             return p1;
         }
         else {
-            return std::filesystem::path(get_chimera().get_download_map_path()) / (this->name + ".map");
+            return get_chimera().get_download_map_path() / (this->name + ".map");
         }
     }
     

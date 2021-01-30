@@ -119,9 +119,7 @@ namespace Chimera {
     }
 
     std::vector<Bookmark> load_bookmarks_file(const char *file) noexcept {
-        char path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%s\\%s", get_chimera().get_path(), file);
-        std::ifstream f(path);
+        std::ifstream f(get_chimera().get_path() / file);
         std::string line;
         std::vector<Bookmark> bookmarks;
         while(std::getline(f, line)) {
@@ -134,9 +132,7 @@ namespace Chimera {
     }
 
     void save_bookmarks_file(const char *file, const std::vector<Bookmark> &bookmarks) noexcept {
-        char path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%s\\%s", get_chimera().get_path(), file);
-        std::ofstream f(path, std::ios_base::out | std::ios_base::trunc);
+        std::ofstream f(get_chimera().get_path() / file, std::ios_base::out | std::ios_base::trunc);
 
         for(auto &b : bookmarks) {
             char line[256];

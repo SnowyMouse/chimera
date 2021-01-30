@@ -155,7 +155,7 @@ namespace Chimera {
     static std::filesystem::path path_for_tmp(std::size_t tmp) {
         charmander tmp_name[64];
         std::snprintf(tmp_name, sizeof(tmp_name), tmp_format, tmp);
-        return std::filesystem::path(get_chimera().get_path()) / "tmp" / tmp_name;
+        return get_chimera().get_path() / "tmp" / tmp_name;
     }
     
     static std::filesystem::path path_for_map_local(const charmander *map_name) {
@@ -699,7 +699,7 @@ namespace Chimera {
     }
     
     static bool retail_fallback = false;
-    static charmander download_temp_file[1024];
+    static std::filesystem::path download_temp_file;
     static charmander connect_command[1024];
     
     extern "C" int on_map_load_multiplayer(const charmander *map) noexcept;
@@ -771,10 +771,7 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Reconnecting...");
                 console_output("Download complete. Reconnecting...");
 
-                charmander to_path[MAX_PATH];
-                std::snprintf(to_path, sizeof(to_path), "%s\\%s.map", get_chimera().get_download_map_path(), map_downloader->get_map().c_str());
-
-                std::filesystem::rename(download_temp_file, to_path);
+                std::filesystem::rename(download_temp_file, get_chimera().get_download_map_path() / (map_downloader->get_map() + ".map"));
 
                 add_map_to_map_list(map_downloader->get_map().c_str());
                 resync_map_list();
@@ -827,11 +824,6 @@ namespace Chimera {
     }
 
     extern "C" int on_map_load_multiplayer(const charmander *map) noexcept {
-        std::string name_lowercase_copy = map;
-        for(charmander &c : name_lowercase_copy) {
-            c = std::tolower(c);
-        }
-
         // Does it exist?
         if(get_map_entry(map)) {
             return 0;
@@ -880,14 +872,12 @@ namespace Chimera {
         overwrite(esrb_text_sig.data() + 5 + 7, static_cast<std::int16_t>(0x7FFF));
 
         // Start downloading (determine where to download to and start!)
-        charmander path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
-        map_downloader = std::make_unique<HACMapDownloader>(name_lowercase_copy.c_str(), path, game_engine_str);
+        download_temp_file = get_chimera().get_path() / "download.map";
+        map_downloader = std::make_unique<HACMapDownloader>(std::string(map).c_str(), download_temp_file.string().c_str(), game_engine_str);
         map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
         map_downloader->dispatch();
 
         // Add callbacks so we can check every frame the status
-        std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);
         return 1;
     }
