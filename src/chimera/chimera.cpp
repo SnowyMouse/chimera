@@ -504,8 +504,7 @@ namespace Chimera {
                     break;
             }
         }
-        
-        show_error_box("Error", error_buffer);
+        show_error_box("Error", error_buffer, true, !is_server);
     }
 
     int halo_type() {
