@@ -8,17 +8,29 @@
 
 namespace Chimera {
     bool widescreen_fix_command(int argc, const char **argv) {
-        static bool enabled = false;
+        static auto setting = WidescreenFixSetting::WIDESCREEN_OFF;
         if(argc) {
-            enabled = STR_TO_BOOL(*argv);
-            if(!enabled && hud_text_mod_initialized()) {
+            int new_setting = std::atoi(argv[0]);
+            if(new_setting < 0) {
+                new_setting = 0;
+            }
+            else if(new_setting > 2) {
+                new_setting = 2;
+            }
+            if(new_setting == 0 && BOOL_TO_STR(argv[0])) {
+                new_setting = 1;
+            }
+            
+            setting = static_cast<WidescreenFixSetting>(new_setting);
+            
+            if(!setting && hud_text_mod_initialized()) {
                 console_warning(localize("chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled"));
             }
             else {
-                set_widescreen_fix(enabled);
+                set_widescreen_fix(setting);
             }
         }
-        console_output(BOOL_TO_STR(enabled));
+        console_output("%i", setting);
         return true;
     }
 }

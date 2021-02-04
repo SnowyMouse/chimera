@@ -802,9 +802,10 @@ Uncap the cinematic frame rate from 30 FPS.
 #### Widescreen fix
 Fix the scaling of HUD, menu, and text elements for wider aspect ratios. This
 may break some maps, and this will not be fixed as fixing one thing will break
-another thing due to the nature of these fixes.
+another thing due to the nature of these fixes. Setting 1 has the HUD fill the
+screen, while setting 2 restricts the HUD to the center 4:3 area of the screen.
 
-**Usage:** `chimera_widescreen_fix [true/false]`
+**Usage:** `chimera_widescreen_fix [0/1/2]`
 
 
 

@@ -16,6 +16,7 @@
 #include "../halo_data/tag.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../event/map_load.hpp"
+#include "widescreen_fix.hpp"
 
 extern "C" {
     void widescreen_element_reposition_hud() noexcept;
@@ -82,7 +83,7 @@ extern "C" {
 }
 
 namespace Chimera {
-    std::uint16_t setting = 0;
+    WidescreenFixSetting setting = WidescreenFixSetting::WIDESCREEN_OFF;
 
     static void on_tick() noexcept;
     static void on_map_load() noexcept;
@@ -92,6 +93,8 @@ namespace Chimera {
     static float *hud_element_scaling;
     static float *text_scaling;
     static float *motion_sensor_scaling;
+    static const constexpr float motion_sensor_x_offset_default = -1.001562476F;
+    static float *motion_sensor_x_offset;
     static std::int32_t *console_width;
     static std::int32_t *text_max_x;
     static std::int16_t *f2_motd_x;
@@ -154,7 +157,7 @@ namespace Chimera {
         //bool centered_y = inner_center || std::fabs(240.0f - center_y) < 100.0;
 
         // Center centered elements
-        if(centered_x) {
+        if(centered_x || setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
             increase_x /= 2.0f;
         }
         else if(center_x < 320.0f) {
@@ -305,8 +308,8 @@ namespace Chimera {
         return setting;
     }
 
-    void set_widescreen_fix(bool new_setting) noexcept {
-        if(new_setting != setting) {
+    void set_widescreen_fix(WidescreenFixSetting new_setting) noexcept {
+        if(static_cast<bool>(new_setting) != static_cast<bool>(setting)) {
             bool demo = get_chimera().feature_present("client_demo");
             ce = get_chimera().feature_present("client_widescreen_custom_edition");
             tabs_ptr = *reinterpret_cast<std::uint16_t **>(get_chimera().get_signature("widescreen_text_tab_sig").data() + 0x3);
@@ -319,7 +322,7 @@ namespace Chimera {
 
             auto &widescreen_element_scaling_sig = get_chimera().get_signature("widescreen_element_scaling_sig");
             hud_element_scaling = reinterpret_cast<float *>(widescreen_element_scaling_sig.data() + 7);
-
+            
             static Hook position_hud;
             auto &widescreen_element_position_hud_sig = get_chimera().get_signature("widescreen_element_position_hud_sig");
             write_function_override(reinterpret_cast<void *>(widescreen_element_position_hud_sig.data()), position_hud, reinterpret_cast<const void *>(widescreen_element_reposition_hud), &widescreen_element_position_hud_fn);
@@ -376,7 +379,8 @@ namespace Chimera {
             }
 
             auto &widescreen_element_motion_sensor_scaling_sig = get_chimera().get_signature("widescreen_element_motion_sensor_scaling_sig");
-            motion_sensor_scaling = reinterpret_cast<float *>(widescreen_element_motion_sensor_scaling_sig.data() + 4);
+            motion_sensor_scaling = reinterpret_cast<float *>(widescreen_element_motion_sensor_scaling_sig.data() + 0x4);
+            motion_sensor_x_offset = reinterpret_cast<float *>(widescreen_element_motion_sensor_scaling_sig.data() + 0x22);
 
             static Hook text_stare_name;
             auto &widescreen_text_stare_name_sig = get_chimera().get_signature("widescreen_text_stare_name_sig");
@@ -542,7 +546,15 @@ namespace Chimera {
                 widescreen_mouse_left_bounds = 0;
                 widescreen_mouse_right_bounds = 640;
             }
-            setting = new_setting;
+        }
+        
+        bool update_on_tick = setting != new_setting && setting;
+        
+        setting = new_setting;
+        if(update_on_tick) {
+            overwrite(console_width, 640);
+            widescreen_width_480p = 640.0F;
+            on_tick();
         }
     }
 
@@ -603,6 +615,14 @@ namespace Chimera {
             overwrite(hud_element_scaling, half_width_inverted);
             overwrite(text_scaling, half_width_inverted);
             overwrite(motion_sensor_scaling, half_width_inverted);
+            
+            float motion_sensor_memes = motion_sensor_x_offset_default / (widescreen_width_480p / 640.0F);
+            if(setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
+                overwrite(motion_sensor_x_offset, motion_sensor_memes);
+            }
+            else {
+                overwrite(motion_sensor_x_offset, motion_sensor_x_offset_default);
+            }
 
             overwrite(console_width, static_cast<std::int32_t>(widescreen_width_480p));
             overwrite(text_max_x, static_cast<std::uint32_t>(widescreen_width_480p));

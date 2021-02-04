@@ -240,7 +240,7 @@ namespace Chimera {
 
     void initialize_hud_text() noexcept {
         enabled = true;
-        set_widescreen_fix(true);
+        set_widescreen_fix(WidescreenFixSetting::WIDESCREEN_ON);
 
         auto &chimera = get_chimera();
 
