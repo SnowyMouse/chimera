@@ -122,7 +122,15 @@ namespace Chimera {
             return false;
         }
         std::string tmp(wstr.size(), '0');
-        std::use_facet<std::ctype<wchar_t>>(std::locale("")).narrow(wstr.data(), wstr.data() + wstr.size(), dflt, &tmp[0]);
+        std::locale locale;
+        try {
+            locale = std::locale("");
+        }
+        catch(std::exception &e) {
+            std::fprintf(stderr, "Failed to use default locale - %s\n", e.what());
+        }
+        
+        std::use_facet<std::ctype<wchar_t>>(locale).narrow(wstr.data(), wstr.data() + wstr.size(), dflt, &tmp[0]);
         str.swap(tmp);
         return true;
     }
