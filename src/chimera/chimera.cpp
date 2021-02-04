@@ -86,6 +86,9 @@ namespace Chimera {
     Chimera::Chimera() : p_signatures(find_all_signatures()) {
         chimera = this;
 
+        // Set the locale to match the system
+        std::setlocale(LC_ALL, "");
+
         // If we *can* load Chimera, then do it
         if(find_signatures()) {
             const char *build_string = *reinterpret_cast<const char **>(this->get_signature("build_string_sig").data() + 1);
