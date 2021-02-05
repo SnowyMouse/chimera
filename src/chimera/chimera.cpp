@@ -57,6 +57,13 @@
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
+#include "fix/blue_32bit_color_fix.hpp"
+#include "fix/contrail_fix.hpp"
+#include "fix/interpolate/interpolate.hpp"
+#include "fix/sun_fix.hpp"
+#include "fix/flashlight_fix.hpp"
+#include "fix/motion_sensor_fix.hpp"
+#include "fix/inverted_flag.hpp"
 #include "halo_data/object.hpp"
 #include "event/tick.hpp"
 #include "event/map_load.hpp"
@@ -154,6 +161,14 @@ namespace Chimera {
 
                 // Fix camera shake
                 set_up_camera_shake_fix();
+                
+                // Fix more bullshit that Gearbox could've fixed but didn't
+                set_up_blue_32bit_color_fix();
+                set_up_contrail_fix();
+                set_up_sun_fix();
+                set_up_motion_sensor_fix();
+                set_up_flashlight_fix();
+                set_up_inverted_flag_fix();
 
                 // No more updates
                 enable_block_update_check();
@@ -196,6 +211,9 @@ namespace Chimera {
 
                 // Fix this broken stuff
                 set_up_auto_center_fix();
+                
+                // No interpolation in a 2003 PC game? Seriously, Gearbox?
+                set_up_interpolation();
 
                 // Set video mode
                 set_up_video_mode();

@@ -232,6 +232,8 @@ namespace Chimera {
         ADD_COMMAND("chimera_simple_score_screen", "chimera_category_visual", "client_score_screen", simple_score_screen_command, true, 0, 1);
         ADD_COMMAND("chimera_split_screen_hud", "chimera_category_visual", "client_split_screen_hud", split_screen_hud_command, true, 0, 1);
         ADD_COMMAND("chimera_uncap_cinematic", "chimera_category_visual", "client_interpolate", uncap_cinematic_command, true, 0, 1);
+        ADD_COMMAND("chimera_invert_shader_flags", "chimera_category_visual", "client_custom", invert_shader_flags_command, true, 0, 1);
+        ADD_COMMAND("chimera_widescreen_fix", "chimera_category_visual", "client_widescreen", widescreen_fix_command, true, 0, 1);
         // ADD_COMMAND("chimera_meme_zone", "chimera_category_visual", "client_widescreen", meme_zone_command, true, 0, 1);
 
         // Lua
@@ -255,15 +257,5 @@ namespace Chimera {
         ADD_COMMAND("chimera_bookmark_delete", "chimera_category_bookmark", "client", bookmark_delete_command, false, 0, 1);
         ADD_COMMAND("chimera_history_list", "chimera_category_bookmark", "client", history_list_command, false, 0, 0);
         ADD_COMMAND("chimera_history_connect", "chimera_category_bookmark", "client", history_connect_command, false, 1, 1);
-        
-        // Fixes
-        ADD_COMMAND("chimera_fix_motion_sensor", "chimera_category_fix", "client", fix_motion_sensor, true, 0, 1);
-        ADD_COMMAND("chimera_fix_lens_flare_scaling", "chimera_category_fix", "client_sun", fix_lens_flare_scaling, true, 0, 1);
-        ADD_COMMAND("chimera_fix_contrails", "chimera_category_fix", "client", fix_contrails, true, 0, 1);
-        ADD_COMMAND("chimera_fix_blue_particles", "chimera_category_fix", "client", fix_blue_particles, true, 0, 1);
-        ADD_COMMAND("chimera_fix_flashlight", "chimera_category_fix", "client", fix_flashlight, true, 0, 1);
-        ADD_COMMAND("chimera_fix_inverted_flags", "chimera_category_fix", "client", fix_inverted_flags, true, 0, 1);
-        ADD_COMMAND("chimera_interpolate", "chimera_category_fix", "client", interpolate_command, true, 0, 1);
-        ADD_COMMAND("chimera_widescreen_fix", "chimera_category_fix", "client_widescreen", widescreen_fix_command, true, 0, 1);
     }
 }

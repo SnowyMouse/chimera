@@ -8,6 +8,11 @@ namespace Chimera {
      * Fix inverted flags
      */
     void set_up_inverted_flag_fix() noexcept;
+    
+    /**
+     * Die.
+     */
+    void unset_up_inverted_flag_fix() noexcept;
 }
 
 #endif

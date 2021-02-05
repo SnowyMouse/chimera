@@ -10,6 +10,14 @@
 #include "config.hpp"
 
 namespace Chimera {
+    static int egg_count = 0;
+    void disable_easter_eggs() {
+        egg_count--;
+    }
+    void enable_easter_eggs() {
+        egg_count++;
+    }
+    
     const std::vector<std::string> *Config::get_settings_for_command(const char *command) const {
         for(auto &c : this->p_settings) {
             if(std::strcmp(c.first.data(), command) == 0) {
@@ -59,18 +67,26 @@ namespace Chimera {
         // Randomly select a line
         const char *random_text;
         auto meme = pc.LowPart % 20;
-        if(meme == 9 || meme == 2) {
-            random_text = "Chu! Chu! Chu!!!!";
-        }
-        else if(meme == 10 || meme == 3) {
-            random_text = "Vap! Vap! Vap!~";
-        }
-        else if(meme == 11) {
-            random_text = "HELP I'M TRAPPED IN A FILE";
+        
+        if(egg_count != 0) {
+            random_text = "it's broken now";
         }
         else {
-            random_text = "by Snowy ^.^";
+            if(meme == 9 || meme == 2) {
+                random_text = "Chu! Chu! Chu!!!!";
+            }
+            else if(meme == 10 || meme == 3) {
+                random_text = "Vap! Vap! Vap!~";
+            }
+            else if(meme == 11) {
+                random_text = "HELP I'M TRAPPED IN A FILE";
+            }
+            else {
+                random_text = "by Snowy ^.^";
+            }
         }
+        
+        
         std::snprintf(saved_with_line + LEN/2, sizeof(saved_with_line) - LEN/2, "%36s   #", random_text);
 
         config << saved_with_line << "\n";
