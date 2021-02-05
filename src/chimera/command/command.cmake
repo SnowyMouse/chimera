@@ -45,6 +45,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/enhancement/set_color.S
     ${COMMAND_DIR}/client/enhancement/set_name.cpp
     ${COMMAND_DIR}/client/enhancement/throttle_fps.cpp
+    ${COMMAND_DIR}/client/fix/all_fixes.cpp
     ${COMMAND_DIR}/client/lua/reload_scripts.cpp
     ${COMMAND_DIR}/client/mouse/block_mouse_acceleration.cpp
     ${COMMAND_DIR}/client/mouse/mouse_sensitivity.cpp
@@ -54,6 +55,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/server/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp
     ${COMMAND_DIR}/client/visual/block_auto_center.cpp
+    ${COMMAND_DIR}/client/visual/block_camera_shake.cpp
     ${COMMAND_DIR}/client/visual/block_gametype_indicator.cpp
     ${COMMAND_DIR}/client/visual/block_gametype_rules.cpp
     ${COMMAND_DIR}/client/visual/block_hold_f1.cpp

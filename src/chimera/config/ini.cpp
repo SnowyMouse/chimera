@@ -13,6 +13,8 @@
 #include <cstring>
 
 namespace Chimera {
+    static std::locale locale;
+    
     const char *Ini::get_value(const char *key) const noexcept {
         for(auto &i : this->p_values) {
             if(i.first == key) {
@@ -122,13 +124,6 @@ namespace Chimera {
             return false;
         }
         std::string tmp(wstr.size(), '0');
-        std::locale locale;
-        try {
-            locale = std::locale("");
-        }
-        catch(std::exception &e) {
-            std::fprintf(stderr, "Failed to use default locale - %s\n", e.what());
-        }
         
         std::use_facet<std::ctype<wchar_t>>(locale).narrow(wstr.data(), wstr.data() + wstr.size(), dflt, &tmp[0]);
         str.swap(tmp);
@@ -232,6 +227,13 @@ namespace Chimera {
     }
 
     void Ini::load_from_stream(std::istream &stream) {
+        try {
+            locale = std::locale("");
+        }
+        catch(std::exception &e) {
+            std::fprintf(stderr, "Failed to use default locale - %s\n", e.what());
+        }
+        
         std::string group;
         std::string line;
         std::size_t no = 0;

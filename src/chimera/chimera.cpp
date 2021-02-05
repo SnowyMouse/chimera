@@ -34,7 +34,6 @@
 #include "map_loading/fast_load.hpp"
 #include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
-#include "fix/blue_32bit_color_fix.hpp"
 #include "fix/aim_assist.hpp"
 #include "fix/bullshit_server_data.hpp"
 #include "fix/invalid_command_crash.hpp"
@@ -47,17 +46,13 @@
 #include "fix/camera_shake_fix.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/floor_decal_memery.hpp"
-#include "fix/inverted_flag.hpp"
 #include "fix/fov_fix.hpp"
 #include "fix/fp_reverb.hpp"
 #include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
-#include "fix/motion_sensor_fix.hpp"
 #include "fix/nav_numbers.hpp"
 #include "fix/timer_offset.hpp"
 #include "fix/sane_defaults.hpp"
-#include "fix/sun_fix.hpp"
-#include "fix/contrail_fix.hpp"
 #include "fix/vehicle_team_desync.hpp"
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
@@ -228,21 +223,7 @@ namespace Chimera {
                 if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
                     set_up_demo_master_server();
                 }
-
-                // More broken stuff. More broken fixes. Don't fix it on Custom Edition, though, since people will bitch.
-                #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
-                if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
-                #endif
-                    set_up_flashlight_fix();
-                    set_up_inverted_flag_fix();
-                #ifdef CHIMERA_DISABLE_CUSTOM_EDITION_FIXES
-                }
-                #endif
-
-                // Last I checked, not even MCC has this fixed lol.
-                set_up_sun_fix();
-
-                // Or this?
+                
                 set_up_model_detail_fix();
 
                 // This could be useful
@@ -254,13 +235,10 @@ namespace Chimera {
 
                 // lol
                 set_up_nav_numbers_fix();
-                set_up_contrail_fix();
-                set_up_motion_sensor_fix();
                 set_up_name_fade_fix();
                 set_up_scoreboard_fade_fix();
 
                 // More lol
-                set_up_blue_32bit_color_fix();
                 set_up_extended_description_fix();
 
                 // wtf
@@ -584,6 +562,14 @@ namespace Chimera {
                     chimera->execute_command("chimera_af true");
                 }
             }
+            
+            // Also set these fixes
+            chimera->execute_command("chimera_fix_motion_sensor true");
+            chimera->execute_command("chimera_fix_lens_flare_scaling true");
+            chimera->execute_command("chimera_fix_contrails true");
+            chimera->execute_command("chimera_fix_blue_particles true");
+            chimera->execute_command("chimera_fix_flashlight true");
+            chimera->execute_command("chimera_fix_inverted_flags true");
 
             // Set console enabled
             if(chimera->get_ini()->get_value_bool("halo.console").value_or(false)) {

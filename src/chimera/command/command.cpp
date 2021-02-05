@@ -217,6 +217,7 @@ namespace Chimera {
         // Visuals
         ADD_COMMAND("chimera_af", "chimera_category_visual", "client_af", af_command, true, 0, 1);
         ADD_COMMAND("chimera_block_auto_center", "chimera_category_visual", "client", block_auto_center_command, true, 0, 1);
+        ADD_COMMAND("chimera_block_camera_shake", "chimera_category_visual", "client_camera_shake", block_camera_shake_command, true, 0, 1);
         ADD_COMMAND("chimera_block_gametype_indicator", "chimera_category_visual", "client_gametype_indicator", block_gametype_indicator_command, true, 0, 1);
         ADD_COMMAND("chimera_block_gametype_rules", "chimera_category_visual", "client_gametype_rules", block_gametype_rules_command, true, 0, 1);
         ADD_COMMAND("chimera_block_hold_f1", "chimera_category_visual", "client_hold_f1", block_hold_f1_command, true, 0, 1);
@@ -258,5 +259,13 @@ namespace Chimera {
         ADD_COMMAND("chimera_bookmark_delete", "chimera_category_bookmark", "client", bookmark_delete_command, false, 0, 1);
         ADD_COMMAND("chimera_history_list", "chimera_category_bookmark", "client", history_list_command, false, 0, 0);
         ADD_COMMAND("chimera_history_connect", "chimera_category_bookmark", "client", history_connect_command, false, 1, 1);
+        
+        // Fixes
+        ADD_COMMAND("chimera_fix_motion_sensor", "chimera_category_fix", "client", fix_motion_sensor, true, 0, 1);
+        ADD_COMMAND("chimera_fix_lens_flare_scaling", "chimera_category_fix", "client_sun", fix_lens_flare_scaling, true, 0, 1);
+        ADD_COMMAND("chimera_fix_contrails", "chimera_category_fix", "client", fix_contrails, true, 0, 1);
+        ADD_COMMAND("chimera_fix_blue_particles", "chimera_category_fix", "client", fix_blue_particles, true, 0, 1);
+        ADD_COMMAND("chimera_fix_flashlight", "chimera_category_fix", "client", fix_flashlight, true, 0, 1);
+        ADD_COMMAND("chimera_fix_inverted_flags", "chimera_category_fix", "client", fix_inverted_flags, true, 0, 1);
     }
 }

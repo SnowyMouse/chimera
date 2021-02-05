@@ -134,6 +134,14 @@ chimera_deadzones_command_help                                                  
 chimera_diagonals_command_help                                                  Set diagonals for controller movement in multiplayer.
 chimera_enable_console_command_help                                             Enable the console.
 chimera_enable_console_command_warning                                          Console was enabled before startup (-console) and cannot be disabled.
+
+chimera_fix_blue_particles_command_help                                         Fix blue particles appearing in 32-bit maps.
+chimera_fix_contrails_command_help                                              Fix contrail behavior on high frame rates.
+chimera_fix_flashlight_command_help                                             Fix flashlight being too dim.
+chimera_fix_inverted_flags_command_help                                         Fix various shader behavior being inverted.
+chimera_fix_lens_flare_scaling_command_help                                     Fix lens flares not scaling at higher resolutions.
+chimera_fix_motion_sensor_command_help                                          Fix motion sensor behavior on high frame rates.
+
 chimera_fov_command_help                                                        Set field of view. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
 chimera_fov_vehicle_command_help                                                Set field of view for vehicles. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
 chimera_fov_cinematic_command_help                                              Set field of view for cinematics. Use \"auto\" for automatic FOV or suffix FOV with \"v\" to lock to a vertical FOV.
