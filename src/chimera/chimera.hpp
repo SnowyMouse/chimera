@@ -110,6 +110,12 @@ namespace Chimera {
          */
         const std::vector<Command> &get_commands() const noexcept;
 
+        /**
+         * Get a vector of all of the commands
+         * @return all of the commands
+         */
+        std::vector<Command> &get_commands() noexcept;
+
         /** Construct a Chimera */
         Chimera();
 

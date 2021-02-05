@@ -562,14 +562,27 @@ namespace Chimera {
             }
             
             // Also set these fixes
-            chimera->execute_command("chimera_fix_motion_sensor true");
-            chimera->execute_command("chimera_fix_lens_flare_scaling true");
-            chimera->execute_command("chimera_fix_contrails true");
-            chimera->execute_command("chimera_fix_blue_particles true");
-            chimera->execute_command("chimera_fix_flashlight true");
-            chimera->execute_command("chimera_fix_inverted_flags true");
-            chimera->execute_command("chimera_interpolate true");
-            chimera->execute_command("chimera_widescreen_fix true");
+            char buffer[256];
+            auto &commands = chimera->get_commands();
+            if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+                for(std::size_t i = 0; i < commands.size(); i++) {
+                    auto &command = commands[i];
+                    if(std::strcmp(command.category(), "chimera_category_fix") == 0) {
+                        std::snprintf(buffer, sizeof(buffer), "%s true", command.name());
+                        chimera->execute_command(buffer);
+                        commands.erase(commands.begin() + i);
+                        i--;
+                    }
+                }
+            }
+            else {
+                for(auto &i : commands) {
+                    if(std::strcmp(i.category(), "chimera_category_fix") == 0) {
+                        std::snprintf(buffer, sizeof(buffer), "%s true", i.name());
+                        chimera->execute_command(buffer);
+                    }
+                }
+            }
 
             // Set console enabled
             if(chimera->get_ini()->get_value_bool("halo.console").value_or(false)) {
@@ -602,6 +615,10 @@ namespace Chimera {
     }
 
     const std::vector<Command> &Chimera::get_commands() const noexcept {
+        return this->p_commands;
+    }
+
+    std::vector<Command> &Chimera::get_commands() noexcept {
         return this->p_commands;
     }
 

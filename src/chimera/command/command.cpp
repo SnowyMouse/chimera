@@ -155,12 +155,10 @@ namespace Chimera {
     Command::Command(const char *name, const char *category, const char *feature, const char *help, CommandFunction function, bool autosave, std::size_t args) : Command(name, category, feature, help, function, autosave, args, args) {}
 
     void Chimera::get_all_commands() noexcept {
-        this->p_commands.clear();
-
         #define ADD_COMMAND(name, category, feature, command_fn, autosave, ...) \
             extern bool command_fn(int, const char **); \
             static_assert(autosave == false || autosave == true, "autosave value is not a boolean"); \
-            this->p_commands.emplace_back(name, localize(category), feature, localize(name "_command_help"), command_fn, autosave, __VA_ARGS__);
+            this->p_commands.emplace_back(name, category, feature, name "_command_help", command_fn, autosave, __VA_ARGS__);
 
         // Chimera-specific commands
         this->p_commands.emplace_back("chimera", localize("chimera_category_core"), "core", localize("chimera_command_help"), Chimera::chimera_command, false, 0, 1);
