@@ -58,6 +58,7 @@ chimera_category_core                                                           
 chimera_category_custom_chat                                                    custom_chat
 chimera_category_debug                                                          debug
 chimera_category_enhancement                                                    enhancement
+chimera_category_fix                                                            fix
 chimera_category_lua                                                          	lua
 chimera_category_mouse                                                          mouse
 chimera_category_server                                                         server
