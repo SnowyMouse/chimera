@@ -28,5 +28,13 @@ namespace Chimera {
             auto *addr5 = chimera.get_signature("max_map_size_demo_2_sig").data();
             overwrite(addr5 + 1, fix);
         }
+        
+        if(chimera.feature_present("core_file_size_full")) {
+            auto *addr7 = chimera.get_signature("max_map_size_full_1_sig").data();
+            overwrite(addr7 + 1, fix);
+            
+            auto *addr8 = chimera.get_signature("max_map_size_full_2_sig").data();
+            overwrite(addr8 + 1, fix);
+        }
     }
 }
