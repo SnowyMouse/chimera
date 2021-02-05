@@ -229,12 +229,10 @@ namespace Chimera {
         ADD_COMMAND("chimera_fov", "chimera_category_visual", "client", fov_command, true, 0, 1);
         ADD_COMMAND("chimera_fov_vehicle", "chimera_category_visual", "client", fov_vehicle_command, true, 0, 1);
         ADD_COMMAND("chimera_fov_cinematic", "chimera_category_visual", "client", fov_cinematic_command, true, 0, 1);
-        ADD_COMMAND("chimera_interpolate", "chimera_category_visual", "client", interpolate_command, true, 0, 1);
         ADD_COMMAND("chimera_model_detail", "chimera_category_visual", "client_lod", model_detail_command, true, 0, 1);
         ADD_COMMAND("chimera_shrink_empty_weapons", "chimera_category_visual", "client", shrink_empty_weapons_command, true, 0, 1);
         ADD_COMMAND("chimera_simple_score_screen", "chimera_category_visual", "client_score_screen", simple_score_screen_command, true, 0, 1);
         ADD_COMMAND("chimera_split_screen_hud", "chimera_category_visual", "client_split_screen_hud", split_screen_hud_command, true, 0, 1);
-        ADD_COMMAND("chimera_widescreen_fix", "chimera_category_visual", "client_widescreen", widescreen_fix_command, true, 0, 1);
         ADD_COMMAND("chimera_uncap_cinematic", "chimera_category_visual", "client_interpolate", uncap_cinematic_command, true, 0, 1);
         // ADD_COMMAND("chimera_meme_zone", "chimera_category_visual", "client_widescreen", meme_zone_command, true, 0, 1);
 
@@ -267,5 +265,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_fix_blue_particles", "chimera_category_fix", "client", fix_blue_particles, true, 0, 1);
         ADD_COMMAND("chimera_fix_flashlight", "chimera_category_fix", "client", fix_flashlight, true, 0, 1);
         ADD_COMMAND("chimera_fix_inverted_flags", "chimera_category_fix", "client", fix_inverted_flags, true, 0, 1);
+        ADD_COMMAND("chimera_interpolate", "chimera_category_fix", "client", interpolate_command, true, 0, 1);
+        ADD_COMMAND("chimera_widescreen_fix", "chimera_category_fix", "client_widescreen", widescreen_fix_command, true, 0, 1);
     }
 }
