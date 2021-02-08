@@ -8,11 +8,12 @@
 namespace Chimera {
     /**
      * Show an error box
-     * @param header header to show
-     * @param text   text to show
-     * @param force  force showing a message box regardless of if it is there
+     * @param header    header to show
+     * @param text      text to show
+     * @param force     force showing a message box regardless of the suppress_fatal_errors option
+     * @param is_client specify if Chimera is running as a client (default is to check for client signatures)
      */
-    void show_error_box(const char *header, const char *text, const std::optional<bool> &force = std::nullopt) noexcept;
+    void show_error_box(const char *header, const char *text, const std::optional<bool> &force = std::nullopt, const std::optional<bool> &is_client = std::nullopt) noexcept;
 }
 
 #endif
