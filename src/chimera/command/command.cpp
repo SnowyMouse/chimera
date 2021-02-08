@@ -160,6 +160,8 @@ namespace Chimera {
             static_assert(autosave == false || autosave == true, "autosave value is not a boolean"); \
             this->p_commands.emplace_back(name, category, feature, name "_command_help", command_fn, autosave, __VA_ARGS__);
 
+        this->p_commands.clear();
+
         // Chimera-specific commands
         this->p_commands.emplace_back("chimera", localize("chimera_category_core"), "core", localize("chimera_command_help"), Chimera::chimera_command, false, 0, 1);
         this->p_commands.emplace_back("chimera_signature_info", localize("chimera_category_core"), "core", localize("chimera_signature_info_command_help"), Chimera::signature_info_command, false, 1, 1);
