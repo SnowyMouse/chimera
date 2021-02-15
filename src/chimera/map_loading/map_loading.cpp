@@ -1528,6 +1528,39 @@ namespace Chimera {
             static constexpr SigByte mov_eax_1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00 };
             write_code_s(preload_map_sig, mov_eax_1);
         }
+        
+        else {
+            add_map_load_event([]() {
+                bool enable;
+                
+                switch(get_map_entry("ui")->crc32.value_or(~calculate_crc32_of_map_file(load_map("ui")))) {
+                    case 0x1EBD0AA4:
+                    case 0x73EE7229:
+                    case 0x28BA7172:
+                    case 0x241F13FD:
+                    case 0xEA85B182:
+                    case 0x4DB0817B:
+                    case 0x05D8C6A3:
+                    case 0x1F222A6C:
+                        enable = true;
+                        break;
+                    default:
+                        enable = false;
+                        break;
+                }
+                
+                auto &sig = get_chimera().get_signature("hide_campaign_button_sig");
+                
+                // If our UI crc32 is correct and we have all the maps, we can enable the campaign button!
+                if(enable && get_map_entry("a10") && get_map_entry("a30") && get_map_entry("a50") && get_map_entry("b30") && get_map_entry("b40") && get_map_entry("c10") && get_map_entry("c20") && get_map_entry("c40") && get_map_entry("d20") && get_map_entry("d40")) {
+                    static const constexpr SigByte return1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3, 0x90 };
+                    write_code_s(sig.data(), return1);
+                }
+                else {
+                    sig.rollback();
+                }
+            });
+        }
 
         // Support Cutdown Edition maps
         if(engine == GameEngine::GAME_ENGINE_RETAIL || engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {

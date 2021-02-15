@@ -140,7 +140,7 @@ namespace Chimera {
                 overwrite(get_chimera().get_signature("load_multiplayer_maps_sig").data(), static_cast<std::uint8_t>(0xC3));
 
                 // Load the maps list on the next tick
-                add_frame_event(reload_map_list_frame);
+                add_map_load_event(reload_map_list_frame, EventPriority::EVENT_PRIORITY_BEFORE);
 
                 // Stop Halo from freeing the map list on close since it will just segfault if it does that
                 overwrite(get_chimera().get_signature("free_map_index_sig").data(), static_cast<std::uint8_t>(0xC3));
