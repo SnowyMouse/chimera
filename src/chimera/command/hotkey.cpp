@@ -14,8 +14,11 @@ namespace Chimera {
         bool alt_held = false;
         bool ctrl_held = false;
         bool shift_held = false;
+        bool use_alternate_command = false;
+        bool last_command_is_alternate = true;
         std::string key;
         std::string command;
+        std::string alternate_command;
     };
 
     static std::vector<Hotkey> hotkeys;
@@ -81,9 +84,11 @@ namespace Chimera {
             bool shift = keys.left_shift || keys.right_shift;
             for(auto &h : hotkeys) {
                 if(h.key == key && h.ctrl_held == ctrl && h.alt_held == alt && h.shift_held == shift) {
-                    if(std::strncmp(h.command.data(), "chimera", strlen("chimera")) == 0) {
+                    auto &command_to_use = ((h.last_command_is_alternate = !h.last_command_is_alternate) && h.use_alternate_command) ? h.alternate_command : h.command;
+                    
+                    if(std::strncmp(command_to_use.c_str(), "chimera", strlen("chimera")) == 0) {
                         const Command *found_command;
-                        switch(get_chimera().execute_command(h.command.data(), &found_command)) {
+                        switch(get_chimera().execute_command(command_to_use.c_str(), &found_command)) {
                             case COMMAND_RESULT_SUCCESS:
                             case COMMAND_RESULT_FAILED_ERROR:
                                 break;
@@ -102,7 +107,7 @@ namespace Chimera {
                         }
                     }
                     else {
-                        execute_script(h.command.data());
+                        execute_script(command_to_use.c_str());
                     }
                     break;
                 }
@@ -128,7 +133,20 @@ namespace Chimera {
                 key_adding.shift_held = shift; \
                 key_adding.alt_held = alt; \
                 key_adding.key = key_str; \
-                key_adding.command = key_ini; \
+                auto command = std::string(key_ini); \
+                auto next_command = command.find("||"); \
+                if(next_command == std::string::npos) { \
+                    key_adding.command = command; \
+                    key_adding.use_alternate_command = false; \
+                } \
+                else { \
+                    key_adding.command = std::string(command.begin(), command.begin() + next_command); \
+                    while(next_command < command.size() && command[next_command] == ' ') { /* skip all spaces until we either reach the end or a non-space */ \
+                        next_command++; \
+                    } \
+                    key_adding.alternate_command = std::string(command.begin() + next_command + 2, command.end()); \
+                    key_adding.use_alternate_command = true; \
+                } \
             } \
         }
 
