@@ -89,7 +89,7 @@ namespace Chimera {
         chimera = this;
 
         // Set the locale to match the system
-        std::setlocale(LC_ALL, "");
+        std::setlocale(LC_CTYPE, "");
 
         // If we *can* load Chimera, then do it
         if(find_signatures()) {
