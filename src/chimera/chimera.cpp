@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <cstring>
 #include <cmath>
 #include "annoyance/novideo.hpp"
@@ -119,8 +120,8 @@ namespace Chimera {
             const char *path = chimera->get_ini()->get_value("halo.path");
             if(path) {
                 static std::string new_path = path;
-                if(new_path.size() >= MAX_PATH) {
-                    show_error_box("Error", "Path is too long");
+                if(new_path.size() >= MAX_PATH || !std::filesystem::exists(new_path)) {
+                    show_error_box("Error", "Invalid path!");
                     std::exit(1);
                 }
                 overwrite(chimera->get_signature("write_path_sig").data() + 2, new_path.data());
