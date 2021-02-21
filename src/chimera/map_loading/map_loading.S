@@ -14,6 +14,14 @@ _free_map_handle_bugfix_asm:
     add esp, 4
     ret
 
+.globl _data_map_loading_asm
+_data_map_loading_asm:
+    push dword ptr [esp+0x30]
+    push dword ptr [esp+0x2C]
+    call _get_data_map_path
+    add esp, 8
+    ret
+
 .globl _map_loading_asm
 _map_loading_asm:
     push dword ptr [esp+0x38]

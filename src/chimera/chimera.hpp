@@ -85,6 +85,12 @@ namespace Chimera {
         const std::filesystem::path get_download_map_path() noexcept;
 
         /**
+         * Get the path to the maps folder
+         * @return path to the maps folder
+         */
+        const std::filesystem::path get_map_path() noexcept;
+
+        /**
          * Reload the configuration
          */
         void reload_config();
@@ -135,6 +141,9 @@ namespace Chimera {
 
         /** Chimera maps folder path */
         std::filesystem::path p_download_map_path;
+
+        /** Stock maps folder path */
+        std::filesystem::path p_map_path;
 
         /** Signatures loaded into Chimera */
         std::vector<Signature> p_signatures;

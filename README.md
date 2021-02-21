@@ -296,6 +296,7 @@ Below are the features you can take advantage of.
 #### Halo settings
 These features exist to modify how Halo is initialized.
 - `path` (changes the profile path location)
+- `map_path` (changes the path maps will be loaded from)
 - `download_map_path` (changes the path custom maps are downloaded to)
 - `exec` (changes the init text file loaded)
 - `server_port` (set the default server port)

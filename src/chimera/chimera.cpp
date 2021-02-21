@@ -544,6 +544,20 @@ namespace Chimera {
         return this->p_download_map_path;
     }
 
+    const std::filesystem::path Chimera::get_map_path() noexcept {
+        if (this->p_map_path.empty()){
+            const char *path = this->get_ini()->get_value("halo.map_path");
+            if (path){
+                this->p_map_path = std::filesystem::path(path);
+            }
+            else {
+                this->p_map_path = std::filesystem::path("maps");
+            }
+            std::filesystem::create_directory(this->p_map_path);
+        }
+        return this->p_map_path;
+    }
+
     void Chimera::reload_config() {
         this->p_config = std::make_unique<Config>(this->get_path() / "preferences.txt");
         this->p_config->load();
