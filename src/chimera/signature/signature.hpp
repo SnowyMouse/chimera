@@ -54,8 +54,9 @@ namespace Chimera {
          * @param feature   feature of the signature
          * @param signature byte signature
          * @param length    length of the byte signature
+         * @param match_num the match to use (signatures can match multiple places)
          */
-        Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length);
+        Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length, unsigned int match_num);
     private:
         /** Name of the signature */
         std::string p_name;

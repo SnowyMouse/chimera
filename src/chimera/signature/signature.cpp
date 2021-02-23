@@ -27,17 +27,19 @@ namespace Chimera {
         overwrite(this->data(), this->original_data(), this->original_data_size());
     }
 
-    Signature::Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length) : p_name(name), p_feature(feature) {
-        this->p_data = reinterpret_cast<std::byte *>(FindCode(GetModuleHandle(nullptr), signature, length));
+    Signature::Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length, unsigned int match_num) : p_name(name), p_feature(feature) {
+        this->p_data = reinterpret_cast<std::byte *>(FindCode(GetModuleHandle(nullptr), signature, length, match_num));
         if(this->p_data) {
             this->p_original_data.insert(this->p_original_data.begin(), this->p_data, this->p_data + length);
         }
     }
 
-    #define FIND(name, feature, ...) {\
+    #define FIND_NUM(name, feature, match_num, ...) {\
         const SigByte sig_data[] = __VA_ARGS__;\
-        signatures.emplace_back(name, feature, sig_data, sizeof(sig_data) / sizeof(*sig_data));\
+        signatures.emplace_back(name, feature, sig_data, sizeof(sig_data) / sizeof(*sig_data), match_num);\
     }
+
+    #define FIND(name, feature, ...) FIND_NUM(name, feature, 0, __VA_ARGS__)
 
     std::vector<Signature> find_all_signatures() {
         std::vector<Signature> signatures;
