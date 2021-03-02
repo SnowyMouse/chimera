@@ -25,6 +25,6 @@ public:
 };
 
 //Old interface so I don't have to change all of the hooks, for now
-std::uintptr_t FindCode(HANDLE module, const short* signature, size_t signatureLen);
+std::uintptr_t FindCode(HANDLE module, const short* signature, size_t signatureLen, unsigned int match_num);
 
 #endif

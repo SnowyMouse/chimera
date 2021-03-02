@@ -106,6 +106,7 @@ namespace Chimera {
     static std::vector<bool> custom_edition_loc_tag_data_fixed; // we don't know what tag is what, so we depend on the map to determine that for us
     
     extern "C" {
+        void data_map_loading_asm() noexcept;
         void map_loading_asm() noexcept;
         void map_loading_server_asm() noexcept;
         void free_map_handle_bugfix_asm() noexcept;
@@ -155,7 +156,7 @@ namespace Chimera {
     static std::filesystem::path path_for_tmp(std::size_t tmp) {
         charmander tmp_name[64];
         std::snprintf(tmp_name, sizeof(tmp_name), tmp_format, tmp);
-        return std::filesystem::path(get_chimera().get_path()) / "tmp" / tmp_name;
+        return get_chimera().get_path() / "tmp" / tmp_name;
     }
     
     static std::filesystem::path path_for_map_local(const charmander *map_name) {
@@ -297,14 +298,15 @@ namespace Chimera {
         
         bool can_load_indexed_tags = map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION;
         std::filesystem::path bitmaps_path, sounds_path;
-        
+
+        auto map_path = get_chimera().get_map_path();
         if(map_engine == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && current_engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
-            bitmaps_path = std::filesystem::path("maps") / custom_bitmaps_file;
-            sounds_path = std::filesystem::path("maps") / custom_sounds_file;
+            bitmaps_path = map_path / custom_bitmaps_file;
+            sounds_path = map_path / custom_sounds_file;
         }
         else {
-            bitmaps_path = std::filesystem::path("maps") / bitmaps_file;
-            sounds_path = std::filesystem::path("maps") / sounds_file;
+            bitmaps_path = map_path / bitmaps_file;
+            sounds_path = map_path / sounds_file;
         }
         
         // If it's a custom edition map, we ought to first figure out what tags go to what
@@ -699,7 +701,7 @@ namespace Chimera {
     }
     
     static bool retail_fallback = false;
-    static charmander download_temp_file[1024];
+    static std::filesystem::path download_temp_file;
     static charmander connect_command[1024];
     
     extern "C" int on_map_load_multiplayer(const charmander *map) noexcept;
@@ -713,6 +715,11 @@ namespace Chimera {
     
     extern "C" void do_map_loading_handling(charmander *map_path, const charmander *map_name) {
         std::strcpy(map_path, load_map(map_name)->path.string().c_str());
+    }
+
+    extern "C" void get_data_map_path(charmander *map_path, const charmander *map_name) {
+        // Handles loading {bitmaps,sounds,loc}.map - only supports loading from the map dir
+        std::strcpy(map_path,(get_chimera().get_map_path() / (std::string(map_name) + ".map")).string().c_str());
     }
     
     static void initiate_connection() {
@@ -771,10 +778,7 @@ namespace Chimera {
                 std::snprintf(output, sizeof(output), "Reconnecting...");
                 console_output("Download complete. Reconnecting...");
 
-                charmander to_path[MAX_PATH];
-                std::snprintf(to_path, sizeof(to_path), "%s\\maps\\%s.map", get_chimera().get_path(), map_downloader->get_map().c_str());
-
-                std::filesystem::rename(download_temp_file, to_path);
+                std::filesystem::rename(download_temp_file, get_chimera().get_download_map_path() / (map_downloader->get_map() + ".map"));
 
                 add_map_to_map_list(map_downloader->get_map().c_str());
                 resync_map_list();
@@ -827,11 +831,6 @@ namespace Chimera {
     }
 
     extern "C" int on_map_load_multiplayer(const charmander *map) noexcept {
-        std::string name_lowercase_copy = map;
-        for(charmander &c : name_lowercase_copy) {
-            c = std::tolower(c);
-        }
-
         // Does it exist?
         if(get_map_entry(map)) {
             return 0;
@@ -880,14 +879,12 @@ namespace Chimera {
         overwrite(esrb_text_sig.data() + 5 + 7, static_cast<std::int16_t>(0x7FFF));
 
         // Start downloading (determine where to download to and start!)
-        charmander path[MAX_PATH];
-        std::snprintf(path, sizeof(path), "%s\\download.map", get_chimera().get_path());
-        map_downloader = std::make_unique<HACMapDownloader>(name_lowercase_copy.c_str(), path, game_engine_str);
+        download_temp_file = get_chimera().get_path() / "download.map";
+        map_downloader = std::make_unique<HACMapDownloader>(std::string(map).c_str(), download_temp_file.string().c_str(), game_engine_str);
         map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
         map_downloader->dispatch();
 
         // Add callbacks so we can check every frame the status
-        std::snprintf(download_temp_file, sizeof(download_temp_file), "%s\\download.map", get_chimera().get_path());
         add_preframe_event(download_frame);
         return 1;
     }
@@ -951,7 +948,7 @@ namespace Chimera {
             
             // If we don't have it precached, read from disk
             if(game_engine() == GameEngine::GAME_ENGINE_RETAIL && (*origin & ResourceOrigin::RESOURCE_ORIGIN_CUSTOM_BIT)) {
-                auto maps = std::filesystem::path("maps");
+                auto maps = get_chimera().get_map_path();
                 std::FILE *f = nullptr;
                 std::filesystem::path map_path;
                 
@@ -1284,7 +1281,7 @@ namespace Chimera {
         std::FILE *loc = nullptr;
         auto is_custom_edition = game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
         
-        auto maps_folder = std::filesystem::path("maps");
+        auto maps_folder = get_chimera().get_map_path();
         
         bitmaps = std::fopen((maps_folder / custom_bitmaps_file).string().c_str(), "rb");
         sounds = std::fopen((maps_folder / custom_sounds_file).string().c_str(), "rb");
@@ -1464,6 +1461,24 @@ namespace Chimera {
         auto new_amount = old_amount - (23 * 1024 * 1024) + (64 * 1024 * 1024);
         overwrite(allocate_memory_amount, new_amount);
 
+        // Hook loading {bitmaps,sounds,loc}.map
+        auto engine = game_engine();
+        static Hook bitmaps_hook;
+        static Hook sounds_hook;
+        static Hook loc_hook;
+        if (get_chimera().feature_present("client")){
+            write_jmp_call(get_chimera().get_signature("map_load_bitmaps_client_path_sig").data(), bitmaps_hook, nullptr, reinterpret_cast<const void *>(data_map_loading_asm));
+            write_jmp_call(get_chimera().get_signature("map_load_sounds_client_path_sig").data(), sounds_hook, nullptr, reinterpret_cast<const void *>(data_map_loading_asm));
+        }
+        else if (engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION){
+            write_jmp_call(get_chimera().get_signature("map_load_bitmaps_server_path_sig").data(), bitmaps_hook, nullptr, reinterpret_cast<const void *>(data_map_loading_asm));
+            write_jmp_call(get_chimera().get_signature("map_load_sounds_server_path_sig").data(), sounds_hook, nullptr, reinterpret_cast<const void *>(data_map_loading_asm));
+        }
+        if (engine == GameEngine::GAME_ENGINE_CUSTOM_EDITION){
+            write_jmp_call(get_chimera().get_signature("map_load_loc_path_sig").data(), loc_hook, nullptr, reinterpret_cast<const void *>(data_map_loading_asm));
+        }
+
+        // Hook loading normal maps
         static Hook hook;
         auto &map_load_path_sig = get_chimera().get_signature("map_load_path_sig");
         write_jmp_call(map_load_path_sig.data(), hook, nullptr, reinterpret_cast<const void *>(get_chimera().feature_present("client") ? map_loading_asm : map_loading_server_asm));
@@ -1521,7 +1536,6 @@ namespace Chimera {
         on_map_load_multiplayer_fail = map_load_multiplayer_sig.data() + 0x5;
 
         // Make the meme go away
-        auto engine = game_engine();
         if(engine != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
             static Hook land_of_fun_hook;
             auto *preload_map_sig = get_chimera().get_signature("preload_map_sig").data();

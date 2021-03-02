@@ -72,14 +72,12 @@ namespace Chimera {
     static std::vector<std::unique_ptr<CommandEntry>> new_entries_added;
 
     void script_command_dump_command(int, const char **) noexcept {
-        char path[MAX_PATH];
-
+        std::filesystem::path path;
         if(entries) {
             std::size_t command_entry_count = *entry_count;
             auto *command_entries = *entries;
 
-            std::snprintf(path, sizeof(path), "%sscript_command_dump.json", get_chimera().get_path());
-
+            path = get_chimera().get_path() / "script_command_dump.json";
             std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
             o << "[\n";
 
@@ -108,7 +106,7 @@ namespace Chimera {
         }
 
         if(entries_global) {
-            std::snprintf(path, sizeof(path), "%sscript_global_dump.json", get_chimera().get_path());
+            path = get_chimera().get_path() / "script_global_dump.json";
             std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);
             o << "[\n";
 

@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 namespace Chimera {
     static void setup_lua_folder() {
-        auto lua_directory = fs::path(get_chimera().get_path()) / "lua";
+        auto lua_directory = get_chimera().get_path() / "lua";
 
         fs::create_directories(lua_directory / "scripts" / "global");
         fs::create_directories(lua_directory / "scripts" / "map");

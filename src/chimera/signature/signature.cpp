@@ -27,17 +27,19 @@ namespace Chimera {
         overwrite(this->data(), this->original_data(), this->original_data_size());
     }
 
-    Signature::Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length) : p_name(name), p_feature(feature) {
-        this->p_data = reinterpret_cast<std::byte *>(FindCode(GetModuleHandle(nullptr), signature, length));
+    Signature::Signature(const char *name, const char *feature, const SigByte *signature, std::size_t length, unsigned int match_num) : p_name(name), p_feature(feature) {
+        this->p_data = reinterpret_cast<std::byte *>(FindCode(GetModuleHandle(nullptr), signature, length, match_num));
         if(this->p_data) {
             this->p_original_data.insert(this->p_original_data.begin(), this->p_data, this->p_data + length);
         }
     }
 
-    #define FIND(name, feature, ...) {\
+    #define FIND_NUM(name, feature, match_num, ...) {\
         const SigByte sig_data[] = __VA_ARGS__;\
-        signatures.emplace_back(name, feature, sig_data, sizeof(sig_data) / sizeof(*sig_data));\
+        signatures.emplace_back(name, feature, sig_data, sizeof(sig_data) / sizeof(*sig_data), match_num);\
     }
+
+    #define FIND(name, feature, ...) FIND_NUM(name, feature, 0, __VA_ARGS__)
 
     std::vector<Signature> find_all_signatures() {
         std::vector<Signature> signatures;
@@ -155,6 +157,11 @@ namespace Chimera {
 
         FIND("global_list_custom_edition_sig", "core_custom_edition", { 0xBB, -1, -1, -1, -1, 0xBD, -1, -1, -1, -1, 0x8B, 0xFF, 0x8B, 0x33, 0x8A, -1, 0x0C, 0xE8 });
 
+        FIND_NUM("map_load_bitmaps_client_path_sig", "client", 0, {0xE8, -1, -1, -1, 0x00, 0xA1, -1, -1, -1, 0x00, 0x83, 0xC4, 0x0C, 0x3B, 0xC3, 0xBE, 0x80, 0x00, 0x00, 0x48});
+        FIND_NUM("map_load_sounds_client_path_sig", "client", 1, {0xE8, -1, -1, -1, 0x00, 0xA1, -1, -1, -1, 0x00, 0x83, 0xC4, 0x0C, 0x3B, 0xC3, 0xBE, 0x80, 0x00, 0x00, 0x48});
+        FIND_NUM("map_load_bitmaps_server_path_sig", "server_custom_edition", 0, {0xE8, -1, -1, -1, 0x00, 0xA1, -1, -1, -1, 0x00, 0x83, 0xC4, 0x0C, 0x3B, 0xC3, 0xBE, 0x80, 0x00, 0x00, 0x48});
+        FIND_NUM("map_load_sounds_server_path_sig", "server_custom_edition", 1, {0xE8, -1, -1, -1, 0x00, 0xA1, -1, -1, -1, 0x00, 0x83, 0xC4, 0x0C, 0x3B, 0xC3, 0xBE, 0x80, 0x00, 0x00, 0x48});
+        FIND_NUM("map_load_loc_path_sig", "core_custom_edition", 2, {0xE8, -1, -1, -1, 0x00, 0xA1, -1, -1, -1, 0x00, 0x83, 0xC4, 0x0C, 0x3B, 0xC3, 0xBE, 0x80, 0x00, 0x00, 0x48});
         FIND("map_load_path_sig", "core", { 0xE8, -1, -1, -1, -1, 0xA1, -1, -1, -1, -1, 0x83, 0xC4, -1, 0x85, 0xC0, 0xBF, 0x80, 0x00, 0x00, 0x48 });
         FIND("create_file_mov_sig", "core", { 0x89, 0x06, 0x8B, 0xC3, 0xE8, -1, -1, -1, -1 });
         FIND("preload_map_sig", "client", { 0xE8, -1, -1, -1, -1, 0x83, 0xC4, 0x04, 0x84, 0xC0, 0x75, -1, 0x38 });

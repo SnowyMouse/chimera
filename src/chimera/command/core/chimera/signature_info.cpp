@@ -27,8 +27,7 @@ namespace Chimera {
             auto &chimera = get_chimera();
 
             // Make a path
-            char path[MAX_PATH];
-            std::snprintf(path, sizeof(path), "%schimera_signature_dump.csv", chimera.get_path());
+            auto path = chimera.get_path() / "chimera_signature_dump.csv";
 
             // Open the file
             std::ofstream o(path, std::ios_base::out | std::ios_base::trunc);

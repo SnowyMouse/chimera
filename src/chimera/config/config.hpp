@@ -3,6 +3,7 @@
 #ifndef CHIMERA_CONFIG_HPP
 #define CHIMERA_CONFIG_HPP
 
+#include <filesystem>
 #include <vector>
 #include <string>
 
@@ -42,6 +43,7 @@ namespace Chimera {
          * @param path path to config file
          */
         Config(const char *path);
+        Config(const std::filesystem::path path);
 
     private:
         /** Path of the config file */

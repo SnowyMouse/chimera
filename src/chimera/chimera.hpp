@@ -4,6 +4,7 @@
 #define CHIMERA_HPP
 
 #include <cstddef>
+#include <filesystem>
 #include <memory>
 #include <vector>
 #include "command/command.hpp"
@@ -75,7 +76,19 @@ namespace Chimera {
          * Get the path to the Chimera profile folder
          * @return path to the Chimera profile folder
          */
-        const char *get_path() noexcept;
+        const std::filesystem::path get_path() noexcept;
+
+        /**
+         * Get the path to the Chimera maps folder
+         * @return path to the Chimera maps folder
+         */
+        const std::filesystem::path get_download_map_path() noexcept;
+
+        /**
+         * Get the path to the maps folder
+         * @return path to the maps folder
+         */
+        const std::filesystem::path get_map_path() noexcept;
 
         /**
          * Reload the configuration
@@ -124,7 +137,13 @@ namespace Chimera {
 
     private:
         /** Chimera folder path */
-        std::string p_path;
+        std::filesystem::path p_path;
+
+        /** Chimera maps folder path */
+        std::filesystem::path p_download_map_path;
+
+        /** Stock maps folder path */
+        std::filesystem::path p_map_path;
 
         /** Signatures loaded into Chimera */
         std::vector<Signature> p_signatures;
