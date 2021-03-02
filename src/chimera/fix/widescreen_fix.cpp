@@ -548,7 +548,7 @@ namespace Chimera {
             }
         }
         
-        bool update_on_tick = setting != new_setting && setting;
+        bool update_on_tick = new_setting && setting != new_setting;
         
         setting = new_setting;
         if(update_on_tick) {

@@ -22,9 +22,10 @@ namespace Chimera {
 
         // Get script info
         lua_getglobal(state, "script_name");
-        std::string script_filename = lua_tostring(state, -1);
         lua_getglobal(state, "script_type");
+        std::string script_filename = lua_tostring(state, -2);
         std::string script_type = lua_tostring(state, -1);
+        lua_pop(state, 2);
 
         // Remove script file extension
         auto script_name = script_filename.substr(0, script_filename.size() - 4);

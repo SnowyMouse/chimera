@@ -17,7 +17,7 @@ namespace Chimera {
             else if(new_setting > 2) {
                 new_setting = 2;
             }
-            if(new_setting == 0 && BOOL_TO_STR(argv[0])) {
+            if(new_setting == 0 && STR_TO_BOOL(argv[0])) {
                 new_setting = 1;
             }
             

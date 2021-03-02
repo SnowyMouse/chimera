@@ -83,9 +83,11 @@ namespace Chimera {
         if(!address.has_value()) {
             switch(game_engine()) {
                 case GameEngine::GAME_ENGINE_DEMO:
-                    return reinterpret_cast<std::byte *>(0x4BF10000);
+                    address = reinterpret_cast<std::byte *>(0x4BF10000);
+                    break;
                 default:
-                    return reinterpret_cast<std::byte *>(0x40440000);
+                    address = reinterpret_cast<std::byte *>(0x40440000);
+                    break;
             }
         }
         return address.value();
