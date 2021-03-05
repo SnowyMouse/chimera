@@ -67,6 +67,7 @@ namespace Chimera {
                                     if(
                                         std::strcmp(variable, "sv_tk_ban") == 0 ||
                                         std::strcmp(variable, "multiplayer_draw_teammates_names") == 0 ||
+                                        std::strcmp(variable, "multiplayer_hit_sound_volume") == 0 ||
                                         std::strcmp(variable, "sv_client_action_queue_limit") == 0 ||
                                         std::strcmp(variable, "sv_client_action_queue_tick_limit") == 0 ||
                                         std::strcmp(variable, "cl_remote_player_action_queue_limit") == 0 ||
