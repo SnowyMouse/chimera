@@ -38,11 +38,11 @@ namespace Chimera {
     }
     
     bool MapHeader::is_valid() const noexcept {
-        return check_valid_header(*this);
+        return this->head == MapHeader::HEAD_LITERAL && this->foot == MapHeader::FOOT_LITERAL;
     }
     
     bool MapHeaderDemo::is_valid() const noexcept {
-        return check_valid_header(*this);
+        return (this->engine_type == CacheFileEngine::CACHE_FILE_DEMO ? (this->head == MapHeaderDemo::HEAD_LITERAL && this->foot == MapHeaderDemo::FOOT_LITERAL) : (this->head == MapHeader::HEAD_LITERAL && this->foot == MapHeader::FOOT_LITERAL));
     }
 
     // hack from Invader

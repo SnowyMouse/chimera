@@ -537,6 +537,10 @@ namespace Chimera {
             switch(header.demo_header.engine_type) {
                 case CacheFileEngine::CACHE_FILE_DEMO:
                     break;
+                case CacheFileEngine::CACHE_FILE_DEMO_COMPRESSED:
+                    size = header.demo_header.file_size;
+                    needs_decompressed = true;
+                    break;
                 default:
                     invalid("Invalid map type");
             }
