@@ -7,35 +7,55 @@
 #define CURL_STATICLIB
 #include <curl/curl.h>
 #include <filesystem>
+#include <regex>
 
 #include "hac_map_downloader.hpp"
 
-void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
-    // Set the URL
-    CURLcode result;
+/**
+ * Split a string on a delimiter
+ * @param str   the string to split
+ * @param delim the delimiter to split on
+ * @return A vector of strings
+ */
+std::vector<std::string> split(std::string str, std::string delim) {
+    size_t start = 0, end = 0, d_len = delim.length();
+    std::vector<std::string> ret;
 
-    // Determine the first repo to use
-    downloader->mutex.lock();
-    auto preferred_server_hold = downloader->preferred_server_node;
-    downloader->mutex.unlock();
-    bool preferred_failed = !preferred_server_hold.has_value();
-    unsigned int repo = preferred_server_hold.value_or(1);
-
-    std::string map_formatted;
-    for(char &c : downloader->map) {
-        if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
-            map_formatted += c;
-        }
-        else {
-            char code[4];
-            std::snprintf(code, sizeof(code), "%%%02X", c);
-            map_formatted += code;
-        }
+    while ((end = str.find(delim, start)) != std::string::npos) {
+        ret.push_back(str.substr(start, end - start));
+        start = end + d_len;
     }
-    do {
-        char url[255];
-        std::snprintf(url, sizeof(url), "http://maps%u.halonet.net/halonet/locator.php?format=inv&map=%s&type=%s", repo, map_formatted.data(), downloader->game_engine.data());
-        
+
+    ret.push_back(str.substr(start));
+    return ret;
+}
+
+
+void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
+    CURLcode result = CURLcode::CURLE_FAILED_INIT;
+
+    // Format everything except the mirror into the url template
+    std::string partial_url;
+    char* map_urlencoded = curl_easy_escape(downloader->curl, downloader->map.c_str(), 0);
+    partial_url = std::regex_replace(downloader->url_template, std::regex("\\{map\\}"), map_urlencoded);
+    partial_url = std::regex_replace(partial_url, std::regex("\\{game\\}"), downloader->game_engine);
+
+    curl_free(map_urlencoded);
+
+    // Grab the list of comma-separated mirrors from the template
+    static const std::regex mirror_regex("\\{mirror<([^>]+)>\\}");
+    std::smatch match;
+    std::string mirror_str = "";
+    if (std::regex_search(downloader->url_template, match, mirror_regex)){
+        mirror_str = match[1];
+    }
+    std::vector<std::string> mirrors = split(mirror_str, ",");
+
+    // Try each mirror
+    for (auto mirror : mirrors){
+        // Finish formatting the download URL
+        std::string url = std::regex_replace(partial_url, mirror_regex, mirror);
+
         // Close if needed
         if(downloader->output_file_handle) {
             std::fclose(downloader->output_file_handle);
@@ -44,48 +64,31 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
         // Let's begin
         downloader->output_file_handle = std::fopen(downloader->output_file.string().c_str(), "wb");
 
-        // If we failed to open, give up and close
+        // If we failed to open, give up
         if(downloader->output_file_handle == nullptr) {
-            downloader->status = HACMapDownloader::DOWNLOAD_STAGE_FAILED;
-            return;
+            downloader->mutex.lock();
+            downloader->status = DOWNLOAD_STAGE_FAILED;
+            downloader->mutex.unlock();
+            break;
         }
         
         // Otherwise, let's begin
-        curl_easy_setopt(downloader->curl, CURLOPT_URL, url);
+        curl_easy_setopt(downloader->curl, CURLOPT_URL, url.data());
         downloader->download_started = Clock::now();
-
-        // Did we fail?
-        if((result = curl_easy_perform(downloader->curl)) != CURLE_OK) {
-            // Did our preferred one fail? If so, give up
-            if(preferred_failed && result != CURLcode::CURLE_COULDNT_RESOLVE_HOST) {
-                break;
-            }
-
-            if(preferred_server_hold.has_value()) {
-                if(preferred_failed) {
-                    repo++;
-                }
-                else {
-                    repo = 1;
-                    preferred_failed = true;
-                }
-            }
-            else {
-                repo++;
-            }
-        }
+        result = curl_easy_perform(downloader->curl);
 
         // Cancel?
         downloader->mutex.lock();
         if(downloader->status == DownloadStage::DOWNLOAD_STAGE_CANCELING) {
-            curl_easy_cleanup(downloader->curl);
-            downloader->curl = nullptr;
             downloader->mutex.unlock();
-            return;
+            break;
         }
         downloader->mutex.unlock();
+
+        if (result == CURLcode::CURLE_OK){
+            break;
+        }
     }
-    while(result != CURLcode::CURLE_OK);
 
     // Note that we're extracting; clean up CURL
     downloader->mutex.lock();
@@ -105,18 +108,27 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
         }
         downloader->output_file_handle = nullptr;
 
-        downloader->status = DOWNLOAD_STAGE_COMPLETE;
+        downloader->status = DownloadStage::DOWNLOAD_STAGE_COMPLETE;
     }
     else {
-        downloader->status = DOWNLOAD_STAGE_FAILED;
+        // Failed/canceled - clean up the output file
+        if(downloader->output_file_handle) {
+            std::fclose(downloader->output_file_handle);
+        }
+        downloader->output_file_handle = nullptr;
+        if(std::filesystem::exists(downloader->output_file)) {
+            std::filesystem::remove(downloader->output_file);
+        }
+
+        downloader->status = DownloadStage::DOWNLOAD_STAGE_FAILED;
     }
 
     downloader->mutex.unlock();
 }
 
-void HACMapDownloader::set_preferred_server_node(const std::optional<unsigned int> &server) noexcept {
+void HACMapDownloader::set_url_template(const std::string &url_template) noexcept {
     this->mutex.lock();
-    this->preferred_server_node = server;
+    this->url_template = url_template;
     this->mutex.unlock();
 }
 
@@ -182,36 +194,23 @@ const std::string &HACMapDownloader::get_map() const noexcept {
 
 void HACMapDownloader::cancel() noexcept {
     this->mutex.lock();
-    if(this->status == DOWNLOAD_STAGE_CANCELED || this->status == DOWNLOAD_STAGE_FAILED) {
-        if(std::filesystem::exists(this->output_file)) {
-            if(this->output_file_handle) {
-                std::fclose(this->output_file_handle);
-            }
-            std::filesystem::remove(this->output_file);
-        }
-    }
     if(this->status == DOWNLOAD_STAGE_CANCELED) {
+        // Already cancelled
         this->mutex.unlock();
         return;
     }
-    bool not_finished = false;
+
+    // Set the status to canceling and wait for the thread to join
     if(!this->is_finished_no_mutex()) {
-        this->status = HACMapDownloader::DOWNLOAD_STAGE_CANCELING;
-        not_finished = true;
+        this->status = DownloadStage::DOWNLOAD_STAGE_CANCELING;
     }
     this->mutex.unlock();
 
-    // If we aren't finished, then set the status to canceled and delete things
     this->dispatch_thread.join();
-    if(not_finished) {
-        this->mutex.lock();
-        this->status = DOWNLOAD_STAGE_CANCELED;
-        if(this->output_file_handle) {
-            std::fclose(this->output_file_handle);
-            this->output_file_handle = nullptr;
-        }
-        this->mutex.unlock();
-    }
+
+    this->mutex.lock();
+    this->status = DownloadStage::DOWNLOAD_STAGE_CANCELED;
+    this->mutex.unlock();
 }
 
 // Set up stuff
@@ -306,6 +305,7 @@ HACMapDownloader::HACMapDownloader(const char *map, const char *output_file, con
     for(char &c : this->map) {
         c = std::tolower(c);
     }
+    this->url_template = "http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}";
 }
 HACMapDownloader::~HACMapDownloader() {
     this->cancel();

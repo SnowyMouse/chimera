@@ -264,8 +264,9 @@ with this fix.
 #### Map downloading
 Chimera will automatically attempt to download maps off of the
 [HAC2 Map repo](http://maps.halonet.net/maplist.php) upon joining a server that
-is playing a map you don't have. These maps are stored under `chimera/maps` in
-your Halo profiles folder.
+is playing a map you don't have. A different map source can be configured using
+the `download_template` setting. These maps are stored under `chimera/maps` in
+your Halo profiles folder by default (see the `download_map_path` setting).
 
 #### Lua scripting
 Lua scripting ported from Chimera -572. Scripts in the global folder are loaded

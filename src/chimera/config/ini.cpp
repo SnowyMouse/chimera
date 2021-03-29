@@ -24,6 +24,14 @@ namespace Chimera {
         return nullptr;
     }
 
+    std::optional<std::string> Ini::get_value_string(const char *key) const noexcept {
+        const char *val = this->get_value(key);
+        if (!val){
+            return std::nullopt;
+        }
+        return std::string(val);
+    }
+
     std::optional<bool> Ini::get_value_bool(const char *key) const noexcept {
         auto *v = this->get_value(key);
         if(!v) {

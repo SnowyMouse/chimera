@@ -748,7 +748,7 @@ namespace Chimera {
         switch(map_downloader->get_status()) {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
-                std::snprintf(output, sizeof(output), "Connecting to repo...");
+                std::snprintf(output, sizeof(output), "Connecting to map server...");
                 break;
             case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
                 auto dlnow = map_downloader->get_downloaded_size();
@@ -889,7 +889,12 @@ namespace Chimera {
         // Start downloading (determine where to download to and start!)
         download_temp_file = get_chimera().get_path() / "download.map";
         map_downloader = std::make_unique<HACMapDownloader>(std::string(map).c_str(), download_temp_file.string().c_str(), game_engine_str);
-        map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
+
+        auto url_template = get_chimera().get_ini()->get_value_string("memory.download_template");
+        if (url_template) {
+            map_downloader->set_url_template(url_template.value());
+        }
+
         map_downloader->dispatch();
 
         // Add callbacks so we can check every frame the status

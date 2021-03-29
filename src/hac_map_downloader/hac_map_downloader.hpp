@@ -73,10 +73,10 @@ public:
     const std::string &get_map() const noexcept;
 
     /**
-     * Set the preferred server to use
-     * @param server server to use
+     * Set the url template to use
+     * @param template template to use
      */
-    void set_preferred_server_node(const std::optional<unsigned int> &server) noexcept;
+    void set_url_template(const std::string &url_template) noexcept;
 
     HACMapDownloader(const char *map, const char *output_file, const char *game_engine);
     ~HACMapDownloader();
@@ -85,14 +85,14 @@ private:
     /** Mutex for the rest of the data */
     std::mutex mutex;
 
+    /** The format of the URL to download maps from **/
+    std::string url_template;
+
     /** Map name being downloaded */
     std::string map;
 
     /** Temp file to save to */
     std::filesystem::path output_file;
-
-    /** Preferred server to use */
-    std::optional<unsigned int> preferred_server_node;
 
     /** Post! */
     std::string post_fields;

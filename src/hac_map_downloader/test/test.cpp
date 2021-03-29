@@ -5,7 +5,7 @@
 
 int main(int argc, const char **argv) {
     if(argc != 4 && argc != 5) {
-        std::printf("Usage: %s <map name> <tmp file> <engine> [first-server]\n", argv[0]);
+        std::printf("HAC2/HaloNet map repo downloader\nUsage: %s <map name> <tmp file> <engine (halor/halom/halod)> [mirrors (ex: '1,2')]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -13,7 +13,7 @@ int main(int argc, const char **argv) {
 
     // Set a preferred server
     if(argc > 4) {
-        downloader.set_preferred_server_node(std::stoi(argv[4]));
+        downloader.set_url_template(std::string("http://maps{mirror<") + argv[4] + ">}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}");
     }
     downloader.dispatch();
 
