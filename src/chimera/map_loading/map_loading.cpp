@@ -800,8 +800,8 @@ namespace Chimera {
             case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
                 std::snprintf(output, sizeof(output), "Download canceled!");
                 break;
-            default: {
-                if(retail_fallback || !custom_edition_maps_supported) {
+            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_FAILED: {
+                if(game_engine() != GameEngine::GAME_ENGINE_RETAIL || retail_fallback || !custom_edition_maps_supported) {
                     std::snprintf(output, sizeof(output), "Download failed!");
                     console_output("Download failed!");
                     retail_fallback = false;
@@ -816,6 +816,10 @@ namespace Chimera {
                     on_map_load_multiplayer(map_name_temp.c_str());
                 }
                 break;
+            }
+            default: {
+                // Another state was added to HACMapDownloader::DownloadStage ?
+                std::exit(EXIT_FAILURE);
             }
         }
 
