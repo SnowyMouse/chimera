@@ -241,8 +241,13 @@ void HACMapDownloader::dispatch() {
     // Fail on error
     curl_easy_setopt(this->curl, CURLOPT_FAILONERROR, 1);
 
+    // Follow redirects
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
     // 10 second timeout
     curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, 10L);
+
+    curl_easy_setopt(this->curl, CURLOPT_USERAGENT, "Chimera HACMapDownloader/1.0");
 
     // Set the download stage to starting
     this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
