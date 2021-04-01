@@ -819,8 +819,21 @@ namespace Chimera {
         remove_preframe_event(cartridge_tilt);
         SYSTEMTIME time = {};
         GetSystemTime(&time);
-        if(time.wMonth == 4 && time.wDay == 1 && server_type() != ServerType::SERVER_DEDICATED) {
-            add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
+        if(time.wMonth == 4 && time.wDay == 1) {
+            const char *map_name;
+            if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+                auto &demo_map_header = get_demo_map_header();
+                map_name = demo_map_header.name;
+            }
+            else {
+                auto &map_header = get_map_header();
+                map_name = map_header.name;
+            }
+            
+            // Only cartridge tilt on ui.map
+            if(std::strcmp(map_name, "ui") == 0) {
+                add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);
+            }
         }
     }
 }
