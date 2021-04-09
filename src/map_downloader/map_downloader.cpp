@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <regex>
 
-#include "hac_map_downloader.hpp"
+#include "map_downloader.hpp"
 
 /**
  * Split a string on a delimiter
@@ -31,7 +31,7 @@ std::vector<std::string> split(std::string str, std::string delim) {
 }
 
 
-void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
+void MapDownloader::dispatch_thread_function(MapDownloader *downloader) {
     CURLcode result = CURLcode::CURLE_FAILED_INIT;
 
     // Format everything except the mirror into the url template
@@ -131,20 +131,14 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     downloader->mutex.unlock();
 }
 
-void HACMapDownloader::set_url_template(const std::string &url_template) noexcept {
-    this->mutex.lock();
-    this->url_template = url_template;
-    this->mutex.unlock();
-}
-
-void HACMapDownloader::set_server_info(const std::string &server, const std::string &password) noexcept {
+void MapDownloader::set_server_info(const std::string &server, const std::string &password) noexcept {
     this->mutex.lock();
     this->server = server;
     this->password = password;
     this->mutex.unlock();
 }
 
-std::size_t HACMapDownloader::get_download_speed() noexcept {
+std::size_t MapDownloader::get_download_speed() noexcept {
     // If we haven't started, return 0
     if(this->downloaded_size == 0) {
         return 0.0;
@@ -163,19 +157,19 @@ std::size_t HACMapDownloader::get_download_speed() noexcept {
 }
 
 // Callback class
-class HACMapDownloader::HACMapDownloaderCallback {
+class MapDownloader::MapDownloaderCallback {
 public:
     // When we've received data, put it in here
-    static size_t write_callback(const std::byte *ptr, std::size_t, std::size_t nmemb, HACMapDownloader *userdata) {
+    static size_t write_callback(const std::byte *ptr, std::size_t, std::size_t nmemb, MapDownloader *userdata) {
         userdata->mutex.lock();
 
         // If we're canceling, stop
-        if(userdata->status == HACMapDownloader::DOWNLOAD_STAGE_CANCELING) {
+        if(userdata->status == MapDownloader::DOWNLOAD_STAGE_CANCELING) {
             userdata->mutex.unlock();
             return 0;
         }
 
-        userdata->status = HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
+        userdata->status = MapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
         if(userdata->buffer_used + nmemb > userdata->buffer.size()) {
             std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->output_file_handle);
             std::fwrite(ptr, nmemb, 1, userdata->output_file_handle);
@@ -191,7 +185,7 @@ public:
     }
 
     // When progress has been made, record it here
-    static int progress_callback(HACMapDownloader *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t, curl_off_t) {
+    static int progress_callback(MapDownloader *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t, curl_off_t) {
         clientp->mutex.lock();
         clientp->downloaded_size = dlnow;
         clientp->total_size = dltotal;
@@ -200,11 +194,11 @@ public:
     }
 };
 
-const std::string &HACMapDownloader::get_map() const noexcept {
+const std::string &MapDownloader::get_map() const noexcept {
     return this->map;
 }
 
-void HACMapDownloader::cancel() noexcept {
+void MapDownloader::cancel() noexcept {
     this->mutex.lock();
     if(this->status == DOWNLOAD_STAGE_CANCELED) {
         // Already cancelled
@@ -226,7 +220,7 @@ void HACMapDownloader::cancel() noexcept {
 }
 
 // Set up stuff
-void HACMapDownloader::dispatch() {
+void MapDownloader::download(const char *map, const char *output_file, const char *game_engine) {
     // Lock the mutex
     this->mutex.lock();
     if(this->curl) {
@@ -235,12 +229,20 @@ void HACMapDownloader::dispatch() {
         return;
     }
 
+    // Set download variables
+    this->map = map;
+    this->output_file = output_file;
+    this->game_engine = game_engine;
+    for(char &c : this->map) {
+        c = std::tolower(c);
+    }
+
     // Initialize cURL as well as the downloader variables
     this->curl = curl_easy_init();
 
     // Set our callbacks
-    curl_easy_setopt(this->curl, CURLOPT_XFERINFOFUNCTION, HACMapDownloaderCallback::progress_callback);
-    curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, HACMapDownloaderCallback::write_callback);
+    curl_easy_setopt(this->curl, CURLOPT_XFERINFOFUNCTION, MapDownloaderCallback::progress_callback);
+    curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, MapDownloaderCallback::write_callback);
 
     // Set the data passed to the callbacks so our class can be updated
     curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this);
@@ -258,10 +260,10 @@ void HACMapDownloader::dispatch() {
     // 10 second timeout
     curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, 10L);
 
-    curl_easy_setopt(this->curl, CURLOPT_USERAGENT, "Chimera HACMapDownloader/1.0");
+    curl_easy_setopt(this->curl, CURLOPT_USERAGENT, "Chimera MapDownloader/1.0");
 
     // Set the download stage to starting
-    this->status = HACMapDownloader::DOWNLOAD_STAGE_STARTING;
+    this->status = MapDownloader::DOWNLOAD_STAGE_STARTING;
 
     // Hold 1 MiB of data in memory
     this->buffer.insert(this->buffer.end(), 1024 * 1024, std::byte());
@@ -272,38 +274,38 @@ void HACMapDownloader::dispatch() {
     this->total_size = 0;
 
     // Make the thread happen
-    this->dispatch_thread = std::thread(HACMapDownloader::dispatch_thread_function, this);
+    this->dispatch_thread = std::thread(MapDownloader::dispatch_thread_function, this);
 
     // Unlock
     this->mutex.unlock();
 }
 
-HACMapDownloader::DownloadStage HACMapDownloader::get_status() noexcept {
+MapDownloader::DownloadStage MapDownloader::get_status() noexcept {
     this->mutex.lock();
     auto return_value = this->status;
     this->mutex.unlock();
     return return_value;
 }
 
-std::size_t HACMapDownloader::get_downloaded_size() noexcept {
+std::size_t MapDownloader::get_downloaded_size() noexcept {
     this->mutex.lock();
     std::size_t return_value = this->downloaded_size;
     this->mutex.unlock();
     return return_value;
 }
 
-std::size_t HACMapDownloader::get_total_size() noexcept {
+std::size_t MapDownloader::get_total_size() noexcept {
     this->mutex.lock();
     std::size_t return_value = this->total_size;
     this->mutex.unlock();
     return return_value;
 }
 
-bool HACMapDownloader::is_finished_no_mutex() const noexcept {
+bool MapDownloader::is_finished_no_mutex() const noexcept {
     return this->status == DOWNLOAD_STAGE_COMPLETE || this->status == DOWNLOAD_STAGE_FAILED || this->status == DOWNLOAD_STAGE_NOT_STARTED || this->status == DOWNLOAD_STAGE_CANCELED;
 }
 
-bool HACMapDownloader::is_finished() noexcept {
+bool MapDownloader::is_finished() noexcept {
     auto m = this->mutex.try_lock();
     if(!m) {
         return false;
@@ -313,14 +315,11 @@ bool HACMapDownloader::is_finished() noexcept {
     return finished;
 }
 
-HACMapDownloader::HACMapDownloader(const char *map, const char *output_file, const char *game_engine) : map(map), output_file(output_file), game_engine(game_engine) {
-    for(char &c : this->map) {
-        c = std::tolower(c);
-    }
+MapDownloader::MapDownloader(const std::string &url_template) : url_template(url_template) {
     this->server = "";
     this->password = "";
-    this->url_template = "http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}";
+    this->map = "";
 }
-HACMapDownloader::~HACMapDownloader() {
+MapDownloader::~MapDownloader() {
     this->cancel();
 }

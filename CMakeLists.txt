@@ -60,10 +60,10 @@ include("src/chimera/chimera.cmake")
 # This loads chimera.dll and anything in mods/
 include("src/monolith/monolith.cmake")
 
-# HAC Map Downloader
+# Map Downloader
 #
-# We need this to download maps from the HAC2 / HaloNet repo
-include("src/hac_map_downloader/hac_map_downloader.cmake")
+# We need this to download maps from the HAC2 / HaloNet repo and other map servers
+include("src/map_downloader/map_downloader.cmake")
 
 # Lua library
 #

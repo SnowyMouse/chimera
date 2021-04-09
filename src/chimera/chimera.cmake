@@ -212,7 +212,7 @@ target_include_directories(chimera
 )
 
 # Set the name
-target_link_libraries(chimera shlwapi hac_map_downloader lua ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32)
+target_link_libraries(chimera shlwapi map_downloader lua ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32)
 
 # Target this
 target_include_directories(chimera PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include)
