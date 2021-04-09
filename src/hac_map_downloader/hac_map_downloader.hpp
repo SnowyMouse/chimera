@@ -78,6 +78,13 @@ public:
      */
     void set_url_template(const std::string &url_template) noexcept;
 
+    /**
+     * Set the current server data
+     * @param server   The IP/domain of the server
+     * @param password The password for the server
+     */
+    void set_server_info(const std::string &server, const std::string &password) noexcept;
+
     HACMapDownloader(const char *map, const char *output_file, const char *game_engine);
     ~HACMapDownloader();
 
@@ -90,6 +97,10 @@ private:
 
     /** Map name being downloaded */
     std::string map;
+
+    /** Server information */
+    std::string server;
+    std::string password;
 
     /** Temp file to save to */
     std::filesystem::path output_file;

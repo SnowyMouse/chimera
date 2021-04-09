@@ -895,6 +895,8 @@ namespace Chimera {
             map_downloader->set_url_template(url_template.value());
         }
 
+        auto &latest_connection = get_latest_connection();
+        map_downloader->set_server_info(latest_connection.address, latest_connection.password);
         map_downloader->dispatch();
 
         // Add callbacks so we can check every frame the status

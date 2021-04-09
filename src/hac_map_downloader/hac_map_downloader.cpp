@@ -35,12 +35,17 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
     CURLcode result = CURLcode::CURLE_FAILED_INIT;
 
     // Format everything except the mirror into the url template
-    std::string partial_url;
     char* map_urlencoded = curl_easy_escape(downloader->curl, downloader->map.c_str(), 0);
+    char* password_urlencoded = curl_easy_escape(downloader->curl, downloader->password.c_str(), 0);
+
+    std::string partial_url;
     partial_url = std::regex_replace(downloader->url_template, std::regex("\\{map\\}"), map_urlencoded);
     partial_url = std::regex_replace(partial_url, std::regex("\\{game\\}"), downloader->game_engine);
+    partial_url = std::regex_replace(partial_url, std::regex("\\{server\\}"), downloader->server);
+    partial_url = std::regex_replace(partial_url, std::regex("\\{password\\}"), password_urlencoded);
 
     curl_free(map_urlencoded);
+    curl_free(password_urlencoded);
 
     // Grab the list of comma-separated mirrors from the template
     static const std::regex mirror_regex("\\{mirror<([^>]+)>\\}");
@@ -129,6 +134,13 @@ void HACMapDownloader::dispatch_thread_function(HACMapDownloader *downloader) {
 void HACMapDownloader::set_url_template(const std::string &url_template) noexcept {
     this->mutex.lock();
     this->url_template = url_template;
+    this->mutex.unlock();
+}
+
+void HACMapDownloader::set_server_info(const std::string &server, const std::string &password) noexcept {
+    this->mutex.lock();
+    this->server = server;
+    this->password = password;
     this->mutex.unlock();
 }
 
@@ -305,6 +317,8 @@ HACMapDownloader::HACMapDownloader(const char *map, const char *output_file, con
     for(char &c : this->map) {
         c = std::tolower(c);
     }
+    this->server = "";
+    this->password = "";
     this->url_template = "http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}";
 }
 HACMapDownloader::~HACMapDownloader() {
