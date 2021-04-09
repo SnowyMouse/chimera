@@ -9,10 +9,25 @@ The official repository is hosted at https://github.com/SnowyMouse/chimera
 
 ## Table of contents
 
+- [Game version support](#game-version-support)
 - [Installation](#installation)
 - [Mod support](#mod-support)
 - [Features](#features)
 - [FAQ](#faq)
+
+## Game version support
+
+Currently Chimera supports the following Halo PC releases (Xbox releases aren't supported):
+
+| Name                              | Code Name | Support (Version)  |
+| --------------------------------- | --------- | :----------------: |
+| Halo: Combat Evolved              | halor     | ✅ (01.00.10.0621) |
+| Halo Custom Edition               | halom     | ✅ (01.00.10.0621) |
+| Halo Trial                        | halod     | ✅ (01.00.00.0578) |
+| Halo Beta                         | halo      |         ❌         |
+| Halo Mac                          | halomac   |         ❌         |
+| Halo Trial (Mac)                  | halomacd  |         ❌         |
+| Halo: The Master Chief Collection | mcc       |         ❌         |
 
 ## Installation
 
