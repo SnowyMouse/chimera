@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#ifndef HAC_MAP_DOWNLOADER_HPP
-#define HAC_MAP_DOWNLOADER_HPP
+#ifndef MAP_DOWNLOADER_HPP
+#define MAP_DOWNLOADER_HPP
 
 #include <mutex>
 #include <vector>
@@ -14,7 +14,7 @@
 /**
  * Map downloading class
  */
-class HACMapDownloader {
+class MapDownloader {
 public:
     enum DownloadStage {
         DOWNLOAD_STAGE_NOT_STARTED,
@@ -29,7 +29,7 @@ public:
     /**
      * Begin the download
      */
-    void dispatch();
+    void download(const char *map, const char *output_file, const char *game_engine);
 
     /**
      * Abort the download
@@ -73,26 +73,31 @@ public:
     const std::string &get_map() const noexcept;
 
     /**
-     * Set the preferred server to use
-     * @param server server to use
+     * Set the current server data
+     * @param server   The IP/domain of the server
+     * @param password The password for the server
      */
-    void set_preferred_server_node(const std::optional<unsigned int> &server) noexcept;
+    void set_server_info(const std::string &server, const std::string &password) noexcept;
 
-    HACMapDownloader(const char *map, const char *output_file, const char *game_engine);
-    ~HACMapDownloader();
+    MapDownloader(const std::string &url_template);
+    ~MapDownloader();
 
 private:
     /** Mutex for the rest of the data */
     std::mutex mutex;
 
+    /** The format of the URL to download maps from **/
+    std::string url_template;
+
     /** Map name being downloaded */
     std::string map;
 
+    /** Server information */
+    std::string server;
+    std::string password;
+
     /** Temp file to save to */
     std::filesystem::path output_file;
-
-    /** Preferred server to use */
-    std::optional<unsigned int> preferred_server_node;
 
     /** Post! */
     std::string post_fields;
@@ -128,7 +133,7 @@ private:
     void *curl = nullptr;
 
     /** Callback class */
-    class HACMapDownloaderCallback;
+    class MapDownloaderCallback;
 
     /** Dispatch thread that does map downloading */
     std::thread dispatch_thread;
@@ -137,7 +142,7 @@ private:
      * Dispatch thread function that does the map downloading
      * @param downloader downloader reference
      */
-    static void dispatch_thread_function(HACMapDownloader *downloader);
+    static void dispatch_thread_function(MapDownloader *downloader);
 
     /**
      * Check if finished without locking

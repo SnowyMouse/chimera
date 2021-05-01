@@ -1,28 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <cstdio>
-#include "../hac_map_downloader.hpp"
+#include "../map_downloader.hpp"
 
 int main(int argc, const char **argv) {
     if(argc != 4 && argc != 5) {
-        std::printf("Usage: %s <map name> <tmp file> <engine> [first-server]\n", argv[0]);
+        std::printf("HAC2/HaloNet map repo downloader\nUsage: %s <map name> <tmp file> <engine (halor/halom/halod)> [mirrors (ex: '1,2')]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    HACMapDownloader downloader(argv[1], argv[2], argv[3]);
-
-    // Set a preferred server
+    // Configure mirror(s) to use
+    std::string tmpl = "http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}";
     if(argc > 4) {
-        downloader.set_preferred_server_node(std::stoi(argv[4]));
+        tmpl = std::string("http://maps{mirror<") + argv[4] + ">}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}";
     }
-    downloader.dispatch();
+
+    MapDownloader downloader(tmpl);
+    downloader.download(argv[1], argv[2], argv[3]);
 
     for(;;) {
         switch(downloader.get_status()) {
-            case HACMapDownloader::DOWNLOAD_STAGE_COMPLETE: {
+            case MapDownloader::DOWNLOAD_STAGE_COMPLETE: {
                 break;
             }
-            case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
+            case MapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
                 auto dlnow = downloader.get_downloaded_size();
                 auto dltotal = downloader.get_total_size();
 
@@ -41,7 +42,7 @@ int main(int argc, const char **argv) {
                 std::printf("%-80s\r", full_buffer);
                 break;
             }
-            case HACMapDownloader::DOWNLOAD_STAGE_STARTING: {
+            case MapDownloader::DOWNLOAD_STAGE_STARTING: {
                 std::printf("%-80s\r", "Connecting...");
                 break;
             }
@@ -55,7 +56,7 @@ int main(int argc, const char **argv) {
         }
     }
 
-    if(downloader.get_status() == HACMapDownloader::DOWNLOAD_STAGE_FAILED) {
+    if(downloader.get_status() == MapDownloader::DOWNLOAD_STAGE_FAILED) {
         std::printf("%-80s\n", "Failed to download the map!");
     }
     else {
