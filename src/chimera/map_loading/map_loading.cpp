@@ -1516,12 +1516,7 @@ namespace Chimera {
         };
         max_temp_files = read_mib("memory.max_tmp_files", 3);
 
-        if(do_maps_in_ram) {
-            if(!current_exe_is_laa_patched()) {
-                show_error_box("Map error", "Map memory buffers requires a large address aware-patched executable.");
-                std::exit(1);
-            }
-            
+        if(do_maps_in_ram && current_exe_is_laa_patched()) {
             total_buffer_size = read_mib("memory.map_size", 1024);
 
             // Allocate memory, making sure to not do so after the 0x40000000 - 0x50000000 region used for tag data
