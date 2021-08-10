@@ -830,8 +830,8 @@ worth answering in a readme.
 
 ### Will Chimera run on my system?
 Short answer: If your PC is semi-recent and uses Windows 10, it'll work. Note
-Note that Chimera isn't too taxing, especially on modern systems, but it can
-make Halo harder to run if you're on extremely ancient hardware. We do not test
+that, while Chimera isn't too taxing, especially on modern systems, it can make
+Halo harder to run if you're on extremely ancient hardware. We do not test
 Chimera on Windows XP, Windows Vista, Windows 7, or Windows 8(.1), but it will
 *probably* run on them, too.
 
