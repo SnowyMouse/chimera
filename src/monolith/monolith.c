@@ -1,8 +1,6 @@
 #define MODS_PATH "mods\\"
 
 #include <w32api.h>
-#define _WIN32_WINNT Windows7
-
 #include <windows.h>
 #include <winbase.h>
 #include <shlwapi.h>
@@ -164,8 +162,12 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
                 // Do this
                 WSAStartup(MAKEWORD(2,2), &fun);
 
-                // Enable DEP
-                SetProcessDEPPolicy(PROCESS_DEP_ENABLE);
+                // Enable DEP (if doable)
+                HANDLE kernel32 = GetModuleHandle("kernel32.dll");
+                BOOL WINAPI (*SetProcessDEPPolicy_fn)(DWORD) = GetProcAddress(kernel32, "SetProcessDEPPolicy");
+                if(SetProcessDEPPolicy_fn) {
+                    SetProcessDEPPolicy_fn(1);
+                }
 
                 // Terminate if we have to
                 if(!load_dlls()) {

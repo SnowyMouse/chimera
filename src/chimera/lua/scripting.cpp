@@ -11,26 +11,31 @@ namespace Chimera {
     static void setup_lua_folder() {
         auto lua_directory = get_chimera().get_path() / "lua";
 
+        bool update_dir = false;
+        if(!fs::exists(lua_directory / "scripts")) {
+            update_dir = true;
+        }
+
+        // Create directories
         fs::create_directories(lua_directory / "scripts" / "global");
         fs::create_directories(lua_directory / "scripts" / "map");
         fs::create_directories(lua_directory / "data" / "global");
         fs::create_directories(lua_directory / "data" / "map");
         fs::create_directories(lua_directory / "modules");
 
-        //std::ofstream(lua_directory / "loaded-scripts.txt", std::ios::app).close();
-        //std::ofstream(lua_directory / "trusted-scripts.txt", std::ios::app).close();
-
-        // Move scripts from old directories
-        auto move_scripts = [](fs::path origin, fs::path destination) {
-            if(fs::exists(origin)) {
-                for(auto &entry : fs::directory_iterator(origin)) {
-                    fs::rename(entry.path(), destination / entry.path().filename());
+        if(update_dir) {
+            // Move scripts from old directories
+            auto move_scripts = [](fs::path origin, fs::path destination) {
+                if(fs::exists(origin)) {
+                    for(auto &entry : fs::directory_iterator(origin)) {
+                        fs::rename(entry.path(), destination / entry.path().filename());
+                    }
+                    fs::remove(origin);
                 }
-                fs::remove(origin);
-            }
-        };
-        move_scripts(lua_directory / "global", lua_directory / "scripts" / "global");
-        move_scripts(lua_directory / "map", lua_directory / "scripts" / "map");
+            };
+            move_scripts(lua_directory / "global", lua_directory / "scripts" / "global");
+            move_scripts(lua_directory / "map", lua_directory / "scripts" / "map");
+        }
     }
 
     void setup_lua_scripting() {

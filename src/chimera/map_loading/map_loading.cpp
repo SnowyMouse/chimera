@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
 #include <windows.h>
 #include <filesystem>
 #include <vector>
@@ -23,17 +22,21 @@
 #include "fast_load.hpp"
 #include "../chimera.hpp"
 #include "../localization/localization.hpp"
-#include "../../hac_map_downloader/hac_map_downloader.hpp"
+#include "../../map_downloader/map_downloader.hpp"
 #include "../output/output.hpp"
 #include "../output/draw_text.hpp"
 #include "../bookmark/bookmark.hpp"
 #include "../halo_data/script.hpp"
 #include "../event/frame.hpp"
 #include "../output/error_box.hpp"
+#include "get_file_name_from_handle.h"
 #include "laa.hpp"
 
 using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
+
+// Find the file path handle
+DWORD WINAPI (*GetFinalPathNameByHandleA_fn)(HANDLE, LPSTR, DWORD, DWORD) = nullptr;
 
 namespace Chimera {
     extern "C" {
@@ -442,7 +445,7 @@ namespace Chimera {
         }
     }
     
-    std::unique_ptr<HACMapDownloader> map_downloader;
+    std::unique_ptr<MapDownloader> map_downloader;
     
     // Load the map
     LoadedMap *load_map(const charmander *map_name) {
@@ -746,11 +749,11 @@ namespace Chimera {
         }
 
         switch(map_downloader->get_status()) {
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
-                std::snprintf(output, sizeof(output), "Connecting to repo...");
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
+                std::snprintf(output, sizeof(output), "Connecting to map server...");
                 break;
-            case HACMapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
+            case MapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
                 auto dlnow = map_downloader->get_downloaded_size();
                 auto dltotal = map_downloader->get_total_size();
 
@@ -778,7 +781,7 @@ namespace Chimera {
 
                 break;
             }
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
                 std::snprintf(output, sizeof(output), "Reconnecting...");
                 console_output("Download complete. Reconnecting...");
 
@@ -794,14 +797,14 @@ namespace Chimera {
                 add_preframe_event(initiate_connection);
                 break;
             }
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELING:
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELING:
                 std::snprintf(output, sizeof(output), "Canceling download...");
                 break;
-            case HACMapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
                 std::snprintf(output, sizeof(output), "Download canceled!");
                 break;
-            default: {
-                if(retail_fallback || !custom_edition_maps_supported) {
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_FAILED: {
+                if(game_engine() != GameEngine::GAME_ENGINE_RETAIL || retail_fallback || !custom_edition_maps_supported) {
                     std::snprintf(output, sizeof(output), "Download failed!");
                     console_output("Download failed!");
                     retail_fallback = false;
@@ -816,6 +819,10 @@ namespace Chimera {
                     on_map_load_multiplayer(map_name_temp.c_str());
                 }
                 break;
+            }
+            default: {
+                // Another state was added to MapDownloader::DownloadStage ?
+                std::exit(EXIT_FAILURE);
             }
         }
 
@@ -882,11 +889,16 @@ namespace Chimera {
         overwrite(esrb_text_sig.data() + 5, static_cast<std::int16_t>(0x7FFF));
         overwrite(esrb_text_sig.data() + 5 + 7, static_cast<std::int16_t>(0x7FFF));
 
-        // Start downloading (determine where to download to and start!)
+        // Set up downloader and start downloading
+        map_downloader = std::make_unique<MapDownloader>(
+            get_chimera().get_ini()->get_value_string("memory.download_template")
+            .value_or("http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}")
+        );
+        auto &latest_connection = get_latest_connection();
+        map_downloader->set_server_info(latest_connection.address, latest_connection.password);
+
         download_temp_file = get_chimera().get_path() / "download.map";
-        map_downloader = std::make_unique<HACMapDownloader>(std::string(map).c_str(), download_temp_file.string().c_str(), game_engine_str);
-        map_downloader->set_preferred_server_node(get_chimera().get_ini()->get_value_long("memory.download_preferred_node"));
-        map_downloader->dispatch();
+        map_downloader->download(std::string(map).c_str(), download_temp_file.string().c_str(), game_engine_str);
 
         // Add callbacks so we can check every frame the status
         add_preframe_event(download_frame);
@@ -898,7 +910,7 @@ namespace Chimera {
         
         // Get the name
         charmander file_path_chars[MAX_PATH + 1] = {};
-        GetFinalPathNameByHandle(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
+        GetFinalPathNameByHandleA_fn(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
         auto file_path = std::filesystem::path(file_path_chars);
         
         // If it's not a .map file, forget about it
@@ -1453,6 +1465,13 @@ namespace Chimera {
     }
     
     void set_up_map_loading() {
+        // Windows XP compatibility
+        auto *kernel32 = GetModuleHandle("kernel32.dll");
+        GetFinalPathNameByHandleA_fn = reinterpret_cast<decltype(GetFinalPathNameByHandleA_fn)>(reinterpret_cast<std::uintptr_t>(GetProcAddress(kernel32, "GetFinalPathNameByHandleA")));
+        if(!GetFinalPathNameByHandleA_fn) {
+            GetFinalPathNameByHandleA_fn = GetFileNameFromHandle;
+        }
+        
         // Get settings
         auto is_enabled = [](const charmander *what) -> bool {
             return get_chimera().get_ini()->get_value_bool(what).value_or(false);
@@ -1507,12 +1526,7 @@ namespace Chimera {
         };
         max_temp_files = read_mib("memory.max_tmp_files", 3);
 
-        if(do_maps_in_ram) {
-            if(!current_exe_is_laa_patched()) {
-                show_error_box("Map error", "Map memory buffers requires a large address aware-patched executable.");
-                std::exit(1);
-            }
-            
+        if(do_maps_in_ram && current_exe_is_laa_patched()) {
             total_buffer_size = read_mib("memory.map_size", 1024);
 
             // Allocate memory, making sure to not do so after the 0x40000000 - 0x50000000 region used for tag data

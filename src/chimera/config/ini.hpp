@@ -23,6 +23,13 @@ namespace Chimera {
         /**
          * Get the value by name
          * @param  key name of the value
+         * @return     string value of the key or nullopt if not set
+         */
+        std::optional<std::string> get_value_string(const char *key) const noexcept;
+
+        /**
+         * Get the value by name
+         * @param  key name of the value
          * @return     boolean value of the key or nullopt if not set
          */
         std::optional<bool> get_value_bool(const char *key) const noexcept;

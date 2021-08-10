@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <optional>
 #include <filesystem>
 
 namespace Chimera {

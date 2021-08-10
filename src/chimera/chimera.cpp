@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cstring>
 #include <cmath>
+#include <optional>
 #include "annoyance/novideo.hpp"
 #include "annoyance/tab_out_video.hpp"
 #include "bookmark/bookmark.hpp"
