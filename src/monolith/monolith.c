@@ -1,8 +1,6 @@
 #define MODS_PATH "mods\\"
 
 #include <w32api.h>
-#define _WIN32_WINNT Windows7
-
 #include <windows.h>
 #include <winbase.h>
 #include <shlwapi.h>

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
 #include <windows.h>
 #include <filesystem>
 #include <vector>
@@ -30,10 +29,14 @@
 #include "../halo_data/script.hpp"
 #include "../event/frame.hpp"
 #include "../output/error_box.hpp"
+#include "get_file_name_from_handle.h"
 #include "laa.hpp"
 
 using charmander = char; // charmander charrrr!
 using charmeleon = char16_t;
+
+// Find the file path handle
+DWORD WINAPI (*GetFinalPathNameByHandleA_fn)(HANDLE, LPSTR, DWORD, DWORD) = nullptr;
 
 namespace Chimera {
     extern "C" {
@@ -907,7 +910,7 @@ namespace Chimera {
         
         // Get the name
         charmander file_path_chars[MAX_PATH + 1] = {};
-        GetFinalPathNameByHandle(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
+        GetFinalPathNameByHandleA_fn(file_descriptor, file_path_chars, sizeof(file_path_chars) - 1, VOLUME_NAME_NONE);
         auto file_path = std::filesystem::path(file_path_chars);
         
         // If it's not a .map file, forget about it
@@ -1462,6 +1465,13 @@ namespace Chimera {
     }
     
     void set_up_map_loading() {
+        // Windows XP compatibility
+        auto *kernel32 = GetModuleHandle("kernel32.dll");
+        GetFinalPathNameByHandleA_fn = reinterpret_cast<decltype(GetFinalPathNameByHandleA_fn)>(reinterpret_cast<std::uintptr_t>(GetProcAddress(kernel32, "GetFinalPathNameByHandleA")));
+        if(!GetFinalPathNameByHandleA_fn) {
+            GetFinalPathNameByHandleA_fn = GetFileNameFromHandle;
+        }
+        
         // Get settings
         auto is_enabled = [](const charmander *what) -> bool {
             return get_chimera().get_ini()->get_value_bool(what).value_or(false);
