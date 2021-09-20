@@ -470,8 +470,8 @@ namespace Chimera {
         // apply IP removal if the message is long enough to have an IP in it
         std::wstring message_filtered;
         if(block_ips && length > 6) {
-            std::regex r("\\b(\\d{1,3}\\.){3}\\d{1,3}\\b");
-            message_filtered = u8_to_u16(std::regex_replace(u16_to_u8(message), r, "#.#.#.#").c_str());
+            const static std::wregex r(L"\\b(\\d{1,3}\\.){3}\\d{1,3}\\b");
+            message_filtered = std::regex_replace(message, r, L"#.#.#.#");
             message = message_filtered.c_str();
             length = lstrlenW(message);
         }
