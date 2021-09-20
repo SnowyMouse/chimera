@@ -460,7 +460,7 @@ namespace Chimera {
     extern "C" void draw_chat_message(const wchar_t *message, std::uint32_t p_int, std::uint32_t c_int) {
 
         // Ignore invalid channels
-        std::uint8_t channel_index = static_cast<std::uint8_t>(c_int);
+        const std::uint8_t channel_index = static_cast<std::uint8_t>(c_int);
         if(channel_index > 3) {
             return;
         }
@@ -470,6 +470,7 @@ namespace Chimera {
         // apply IP removal if the message is long enough to have an IP in it
         std::wstring message_filtered;
         if(block_ips && length > 6) {
+			// initialize once
             const static std::wregex r(L"\\b(\\d{1,3}\\.){3}\\d{1,3}\\b");
             message_filtered = std::regex_replace(message, r, L"#.#.#.#");
             message = message_filtered.c_str();
@@ -477,7 +478,7 @@ namespace Chimera {
         }
 
         ChatMessage chat_message;
-        std::uint8_t player_index = static_cast<std::uint8_t>(p_int);
+        const std::uint8_t player_index = static_cast<std::uint8_t>(p_int);
 
         // This is a server message. No need to format.
         if(channel_index == 3 || player_index > 15) {
