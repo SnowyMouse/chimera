@@ -54,7 +54,7 @@ namespace Chimera {
     }
 
     static bool server_messages_are_blocked = false;
-    static bool server_message_allow_unsolicted_rcon_messages = true;
+    static bool server_message_allow_unsolicted_rcon_messages = false;
 
     extern "C" void before_rcon_message() noexcept;
     extern "C" bool on_rcon_message(const char *message) noexcept {
@@ -85,7 +85,7 @@ namespace Chimera {
         if(get_chimera().feature_present("client_rcon")) {
             write_jmp_call(chimera.get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));
         }
-        server_message_allow_unsolicted_rcon_messages = chimera.get_ini()->get_value_bool("custom_chat.server_message_allow_unsolicted_rcon_messages").value_or(true);
+        server_message_allow_unsolicted_rcon_messages = chimera.get_ini()->get_value_bool("custom_chat.server_message_allow_unsolicted_rcon_messages").value_or(false);
     }
 
     void set_server_messages_blocked(bool blocked) noexcept {
