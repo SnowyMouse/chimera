@@ -226,8 +226,3 @@ set_source_files_properties(src/chimera/localization/localization.cpp PROPERTIES
 
 # Ignore this warning
 set_source_files_properties(src/chimera/custom_chat/custom_chat.cpp PROPERTIES COMPILE_FLAGS "-Wno-format")
-
-option(CHIMERA_DISABLE_CUSTOM_EDITION_FIXES "Limit detail over reflection and fog fixes to retail/demo" OFF)
-if(${CHIMERA_DISABLE_CUSTOM_EDITION_FIXES})
-    add_definitions(-DCHIMERA_DISABLE_CUSTOM_EDITION_FIXES)
-endif()
