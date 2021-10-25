@@ -678,7 +678,7 @@ namespace Chimera {
 
     static void on_chat_input() noexcept {
         struct key_input {
-            std::uint8_t modifier;
+            std::uint8_t modifier; // 0001=shift 0010=ctrl 0100=alt
             std::uint8_t character;
             std::uint8_t key_code;
             std::uint8_t unknown; // definitely set to different values but meaning is unclear
@@ -699,6 +699,7 @@ namespace Chimera {
 
             // Special key pressed
             if(character == 0xFF) {
+                bool ctrl  = modifier & 0b0000010;
                 auto char_starts = get_char_start_idxs(num_bytes);
 
                 if(key_code == 0) {
@@ -729,11 +730,35 @@ namespace Chimera {
                 }
                 // Left arrow
                 else if(key_code == 0x4F) {
-                    chat_input_cursor = next_cursor_pos(char_starts, -1);
+                    if (ctrl){
+                        // Ctrl + Left: move to start of previous word
+                        while (chat_input_cursor > 0 && chat_input_buffer[chat_input_cursor-1] == ' '){
+                            chat_input_cursor = next_cursor_pos(char_starts, -1);
+                        }
+                        if (chat_input_cursor > 0){
+                            auto new_pos = chat_input_buffer.rfind(' ', chat_input_cursor-1);
+                            chat_input_cursor = new_pos != std::string::npos ? new_pos + 1 : 0;
+                        }
+                    }
+                    else{
+                        chat_input_cursor = next_cursor_pos(char_starts, -1);
+                    }
                 }
                 // Right arrow
                 else if(key_code == 0x50) {
-                    chat_input_cursor = next_cursor_pos(char_starts, 1);
+                    if (ctrl){
+                        // Ctrl + Right: move to start of next word
+                        if (chat_input_cursor < num_bytes){
+                            auto new_pos = chat_input_buffer.find(' ', chat_input_cursor);
+                            chat_input_cursor = new_pos != std::string::npos ? new_pos + 1 : num_bytes;
+                        }
+                        while (chat_input_cursor < num_bytes && chat_input_buffer[chat_input_cursor] == ' '){
+                            chat_input_cursor = next_cursor_pos(char_starts, 1);
+                        }
+                    }
+                    else{
+                        chat_input_cursor = next_cursor_pos(char_starts, 1);
+                    }
                 }
                 // Backspace
                 else if(key_code == 0x1D) {
