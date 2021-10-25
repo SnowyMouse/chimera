@@ -668,7 +668,6 @@ namespace Chimera {
                         text[i] = text[i + 1];
                     }
 
-                    text_data++;
                     last_char_was_caret = false;
                     continue;
                 }
