@@ -173,7 +173,6 @@ namespace Chimera {
 
         // Debug
         ADD_COMMAND("chimera_budget", "chimera_category_debug", "client", budget_command, true, 0, 1);
-        ADD_COMMAND("chimera_vk", "chimera_category_debug", "client", vk_command, false, 0, 0);
 
         if(this->feature_present("core_devmode_retail")) {
             ADD_COMMAND("chimera_devmode", "chimera_category_debug", "core_devmode_retail", devmode_retail_command, true, 0, 1);
