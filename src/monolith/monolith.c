@@ -1,5 +1,9 @@
 #define MODS_PATH "mods\\"
 
+#ifndef CHIMERA_WINXP
+#define _WIN32_WINNT _WIN32_WINNT_WIN7
+#endif
+
 #include <w32api.h>
 #include <windows.h>
 #include <winbase.h>
@@ -163,11 +167,15 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
                 WSAStartup(MAKEWORD(2,2), &fun);
 
                 // Enable DEP (if doable)
+                #ifndef CHIMERA_WINXP
+                SetProcessDEPPolicy(PROCESS_DEP_ENABLE);
+                #else
                 HANDLE kernel32 = GetModuleHandle("kernel32.dll");
                 BOOL WINAPI (*SetProcessDEPPolicy_fn)(DWORD) = GetProcAddress(kernel32, "SetProcessDEPPolicy");
                 if(SetProcessDEPPolicy_fn) {
                     SetProcessDEPPolicy_fn(1);
                 }
+                #endif
 
                 // Terminate if we have to
                 if(!load_dlls()) {

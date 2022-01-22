@@ -462,7 +462,7 @@ namespace Chimera {
         LPD3DXFONT override_font = get_override_font(font);
 
         // Do the buffer thing
-        T buffer[1024];
+        T buffer[1025];
         std::size_t buffer_length = 0;
         for(const T *i = text; *i && buffer_length + 1 < sizeof(buffer) / sizeof(T); i++, buffer_length++) {
             if(*i == '|' && (i[1] == 'n')) {
@@ -478,23 +478,17 @@ namespace Chimera {
         if(override_font) {
             RECT rect;
 
-            // Find spaces on right
-            int trailing = 0;
-            for(const T *q = text; *q; q++) {
-                if(*q == ' ') {
-                    trailing++;
-                }
-                else {
-                    trailing = 0;
-                }
-            }
+            // DrawText automatically strips any trailing spaces before rendering. Since we are
+            // calculating the width, we need these. Work around the issue by adding a character at
+            // the end of the buffer, then subtracting the width of it from the final result.
+            int added_width = 0;
+            if (buffer_length > 1 && buffer_length < 1024 && buffer[buffer_length-1] == ' '){
+                buffer[buffer_length] = '_';
+                buffer[++buffer_length] = 0;
 
-            // Find how long a space is (yes it's this much of a pain; please don't ask)
-            override_font->DrawText(NULL, " .", -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
-            int space_dot = rect.right - rect.left;
-            override_font->DrawText(NULL, ".", -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
-            int dot = rect.right - rect.left;
-            int trailing_space = (space_dot - dot) * trailing;
+                override_font->DrawText(NULL, "_", -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
+                added_width = rect.right - rect.left;
+            }
 
             if(sizeof(T) == sizeof(char)) {
                 override_font->DrawText(NULL, reinterpret_cast<const char *>(buffer), -1, &rect, DT_CALCRECT, 0xFFFFFFFF);
@@ -504,7 +498,7 @@ namespace Chimera {
             }
 
             auto res = get_resolution();
-            return static_cast<int>((rect.right - rect.left + trailing_space) * 480 + 240) / res.height;
+            return static_cast<int>((rect.right - rect.left - added_width) * 480 + 240) / res.height;
         }
 
         struct Character {
@@ -668,7 +662,6 @@ namespace Chimera {
                         text[i] = text[i + 1];
                     }
 
-                    text_data++;
                     last_char_was_caret = false;
                     continue;
                 }

@@ -23,6 +23,7 @@
 #include "../localization/localization.hpp"
 #include "../console/console.hpp"
 #include "../halo_data/chat.hpp"
+#include "emoji_map.hpp"
 
 extern "C" void on_multiplayer_message(const wchar_t *message);
 extern "C" void on_chat_message(const wchar_t *message);
@@ -212,7 +213,7 @@ namespace Chimera {
     static bool block_ips = false;
 
     #define INPUT_BUFFER_SIZE 64
-    static wchar_t chat_input_buffer[INPUT_BUFFER_SIZE];
+    static std::string chat_input_buffer;
     static std::size_t chat_input_cursor = 0;
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
@@ -320,7 +321,7 @@ namespace Chimera {
 
         // Handle chat input
         if(chat_input_open) {
-            char buffer_to_show[INPUT_BUFFER_SIZE * 2] = {};
+            char prompt_prefix[INPUT_BUFFER_SIZE * 2] = {};
             const char *channel_name;
             if(chat_input_channel == 0) {
                 channel_name = "chimera_custom_chat_to_all";
@@ -339,41 +340,49 @@ namespace Chimera {
                 line_height = 1;
             }
 
-            // Copy this over, first
-            std::snprintf(buffer_to_show, sizeof(buffer_to_show), "%s - ", localize(channel_name));
-            auto x_offset_text_buffer = text_pixel_length(buffer_to_show, chat_input_font);
-            apply_text_quake_colors(buffer_to_show, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
+            // Draw the prompt
+            std::snprintf(prompt_prefix, sizeof(prompt_prefix), "%s - ", localize(channel_name));
+            auto x_offset_text_buffer = text_pixel_length(prompt_prefix, chat_input_font);
+            apply_text_quake_colors(prompt_prefix, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
-            // Show the remainder text
-            apply_text_quake_colors(chat_input_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
+            // Draw the entered text
+            auto u16_chat_buffer = u8_to_u16(chat_input_buffer.c_str());
+            apply_text_quake_colors(u16_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
-            // Calculate color stuff
-            auto substring = std::wstring(chat_input_buffer, chat_input_cursor);
-            long cursor_x = text_pixel_length(substring.c_str(), chat_input_font);
+            // Figure out where and what color to draw the cursor
+            const static std::regex color_code_re = std::regex("\\^(?:\\^|(.))");
+            auto pre_cursor_text = chat_input_buffer.substr(0, chat_input_cursor);
 
-            // Subtract color codes
-            char cursor_code[4];
-            cursor_code[0] = '^';
-            cursor_code[1] = ';';
-            cursor_code[2] = 0;
-            for(std::size_t i = 0; i < chat_input_cursor; i++) {
-                if(substring[i] == '^' && substring[i + 1] != 0) {
-                    if(buffer_to_show[i + 1] == '^') {
-                        cursor_x -= text_pixel_length("^", chat_input_font);
-                        i++;
-                        continue;
-                    }
-
-                    cursor_code[0] = substring[i];
-                    cursor_code[1] = substring[i + 1];
-                    cursor_x -= text_pixel_length(cursor_code, chat_input_font);
-                    i ++;
+            // Strip all color codes from text (saving the last-encountered one to use to render the
+            // cursor with) in order to get an accurate length of the text before the cursor.
+            std::string cursor_color = "^;";
+            unsigned int pos = 0;
+            auto colorless_pre_cursor_text = std::string();
+            colorless_pre_cursor_text.reserve(pre_cursor_text.length());
+            for(std::sregex_iterator i = std::sregex_iterator(pre_cursor_text.begin(), pre_cursor_text.end(), color_code_re); i != std::sregex_iterator(); i++){
+                auto prev_len = i->position() - pos;
+                colorless_pre_cursor_text.append(pre_cursor_text, pos, prev_len);
+                if (i->length(1) > 0){
+                    // color code - remember it but don't add it to the string
+                    cursor_color = i->str();
                 }
+                else{
+                    // matched a "^^" - add a literal "^"
+                    colorless_pre_cursor_text.append("^");
+                }
+                pos += prev_len + i->length();
             }
-            cursor_code[2] = '_';
-            cursor_code[3] = 0;
+            colorless_pre_cursor_text.append(pre_cursor_text, pos);
 
-            apply_text_quake_colors(cursor_code, cursor_x + chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
+            // if the cursor is the middle of a color code definition then pop off the trailing "^" before computing the length
+            if (chat_input_cursor < chat_input_buffer.length() && pos != pre_cursor_text.length() && colorless_pre_cursor_text.back() == '^' && chat_input_buffer[chat_input_cursor+1] != '^'){
+                colorless_pre_cursor_text.pop_back();
+            }
+
+            // get the width of the color-code-less version of the buffer and draw the cursor there
+            long cursor_x = text_pixel_length(u8_to_u16(colorless_pre_cursor_text.c_str()).c_str(), chat_input_font);
+            cursor_color.append("_");
+            apply_text_quake_colors(u8_to_u16(cursor_color.c_str()), cursor_x + chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 
             if(show_chat_color_help) {
                 const char *color_codes = "1234567890\nqwertyuiop QWERTYUIOP\nasdfghjkl ASDFGHJKL\nzxcvbnm ZXCVBNM";
@@ -458,27 +467,30 @@ namespace Chimera {
     }
 
     extern "C" void draw_chat_message(const wchar_t *message, std::uint32_t p_int, std::uint32_t c_int) {
-        ChatMessage chat_message;
-
-        std::wstring message_filtered;
-        if(block_ips) {
-            std::regex r("(\\d(\\^\\d)*){1,3}(\\.((\\^\\d)*\\d(\\&\\d)*){1,3}){3}");
-            message_filtered = u8_to_u16(std::regex_replace(u16_to_u8(message), r, "#.#.#.#").c_str());
-            message = message_filtered.c_str();
-        }
-
-        std::uint8_t player_index = static_cast<std::uint8_t>(p_int);
-        std::uint8_t channel_index = static_cast<std::uint8_t>(c_int);
 
         // Ignore invalid channels
+        const std::uint8_t channel_index = static_cast<std::uint8_t>(c_int);
         if(channel_index > 3) {
             return;
         }
 
+        std::size_t length = lstrlenW(message);
+
+        // apply IP removal if the message is long enough to have an IP in it
+        std::wstring message_filtered;
+        if(block_ips && length > 6) {
+			// initialize once
+            const static std::wregex r(L"\\b(\\d{1,3}\\.){3}\\d{1,3}\\b");
+            message_filtered = std::regex_replace(message, r, L"#.#.#.#");
+            message = message_filtered.c_str();
+            length = lstrlenW(message);
+        }
+
+        ChatMessage chat_message;
+        const std::uint8_t player_index = static_cast<std::uint8_t>(p_int);
+
         // This is a server message. No need to format.
         if(channel_index == 3 || player_index > 15) {
-            // First, get the length
-            std::size_t length = lstrlenW(message);
 
             char s[256] = {};
             if(length >= sizeof(s)) {
@@ -592,16 +604,81 @@ namespace Chimera {
             return;
         }
         chat_input_open = true;
-        chat_input_buffer[0] = 0;
+        chat_input_buffer = std::string();
         chat_input_cursor = 0;
         chat_input_channel = channel;
         chat_open_state_changed = clock::now();
         enable_input(false);
     }
 
+    static std::vector<unsigned int> get_char_start_idxs(unsigned int num_bytes){
+        // Calculate an array of character start indexes. These can sometimes be
+        // multiple characters visually. Zero width joining characters are
+        // supported.
+        std::vector<unsigned int> ret;
+        static const unsigned int MASK = 0b11000000;
+        static const unsigned int START = 0b11000000;
+        static const unsigned int CONT = 0b10000000;
+        static const unsigned int ZWJ[] = {0b11100010, 0b10000000, 0b10001101};
+
+        unsigned int idx = 0;
+        unsigned int zwjidx = 0;
+        bool zwjing = false;
+        for (unsigned int i = 0; i < num_bytes; i++){
+
+            // Look for the ZWJ character
+            if ((chat_input_buffer[i] & 0b11111111) == ZWJ[zwjidx]){
+                zwjidx++;
+                if (zwjidx == sizeof(ZWJ)/sizeof(ZWJ[0])){
+                    zwjidx = 0;
+                    idx--; // remove the starting index of the ZWJ character
+                    zwjing = true;
+                }
+            }
+            else {
+                zwjidx = 0;
+            }
+
+            auto masked = chat_input_buffer[i] & MASK;
+            if (masked == START || masked != CONT){
+                // start of a multibyte char or just a normal char
+                if (!zwjing){
+                    // previous character was not a ZWJ - add the current char's index
+                    ret.push_back(i);
+                }
+                zwjing = false;
+            }
+        }
+        ret.push_back(num_bytes);
+        return ret;
+    }
+
+    static unsigned int next_cursor_pos(std::vector<unsigned int> char_starts, int step){
+        unsigned int num_chars = char_starts.size();
+        unsigned int char_idx = 0;
+
+        // find current character index
+        for (unsigned int i = 0; i < num_chars; i++){
+            if (char_starts[i] >= chat_input_cursor){
+                char_idx = i;
+                if (char_starts[i] > chat_input_cursor && step > 0){
+                    // The cursor is (somehow) in the middle of a multi-byte character and we missed
+                    // the correct index. This shouldn't happen but handle it anyway by reducing the
+                    // number of characters to move right.
+                    step -= 1;
+                }
+                break;
+            }
+        }
+        // apply step and limits
+        char_idx = std::min(std::max(0, int(char_idx) + step), int(num_chars)-1);
+
+        return char_starts[char_idx];
+    }
+
     static void on_chat_input() noexcept {
         struct key_input {
-            std::uint8_t modifier;
+            std::uint8_t modifier; // 0001=shift 0010=ctrl 0100=alt
             std::uint8_t character;
             std::uint8_t key_code;
             std::uint8_t unknown; // definitely set to different values but meaning is unclear
@@ -618,64 +695,86 @@ namespace Chimera {
         // Handle keyboard input if we have the chat input open
         if(chat_input_open) {
             const auto& [modifier, character, key_code, input_unknown] = input_buffer[*input_count];
+            auto num_bytes = chat_input_buffer.length();
+
             // Special key pressed
             if(character == 0xFF) {
+                bool ctrl  = modifier & 0b0000010;
+                auto char_starts = get_char_start_idxs(num_bytes);
+
                 if(key_code == 0) {
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
                     chat_message_scroll = 0;
                     enable_input(true);
                 }
-                // Left arrow
-                else if(key_code == 0x4F) {
-                    if(chat_input_cursor > 0) {
-                        chat_input_cursor--;
-                    }
-                }
-                // Right arrow
-                else if(key_code == 0x50) {
-                    if(chat_input_buffer[chat_input_cursor] != 0) {
-                        chat_input_cursor++;
-                    }
-                }
-                // Up arrow
-                else if(key_code == 0x4D) {
+                // Up arrow / Page up
+                else if(key_code == 0x4D || key_code == 0x53) {
                     if(chat_message_scroll + 1 != MESSAGE_BUFFER_SIZE && chat_messages[chat_message_scroll + 1].valid()) {
                         chat_message_scroll++;
                     }
                 }
-                // Page down
-                else if(key_code == 0x4E) {
-                    if(chat_message_scroll != 0) {
+                // Down arrow / Page down
+                else if(key_code == 0x4E || key_code == 0x56) {
+                    if(chat_message_scroll > 0) {
                         chat_message_scroll--;
                     }
                 }
-                // Backspace/Delete
-                else if(key_code == 0x1D) {
-                    // static bool ignore_next_key = false; // no longer necessary since deduplication
-                    if(chat_input_cursor > 0) {
-                        std::size_t length = lstrlenW(chat_input_buffer);
-                        // Move everything after the cursor down a character
-                        for(std::size_t i = chat_input_cursor - 1; i < length; i++) {
-                            chat_input_buffer[i] = chat_input_buffer[i + 1];
+                // Home
+                else if(key_code == 0x52){
+                    chat_input_cursor = 0;
+                }
+                // End
+                else if(key_code == 0x55){
+                    chat_input_cursor = num_bytes;
+                }
+                // Left arrow
+                else if(key_code == 0x4F) {
+                    if (ctrl){
+                        // Ctrl + Left: move to start of previous word
+                        while (chat_input_cursor > 0 && chat_input_buffer[chat_input_cursor-1] == ' '){
+                            chat_input_cursor = next_cursor_pos(char_starts, -1);
                         }
-                        chat_input_buffer[length - 1] = 0;
-                        chat_input_cursor--;
+                        if (chat_input_cursor > 0){
+                            auto new_pos = chat_input_buffer.rfind(' ', chat_input_cursor-1);
+                            chat_input_cursor = new_pos != std::string::npos ? new_pos + 1 : 0;
+                        }
+                    }
+                    else{
+                        chat_input_cursor = next_cursor_pos(char_starts, -1);
                     }
                 }
-                // Del
-                else if(key_code == 0x54) {
-                    std::size_t length = lstrlenW(chat_input_buffer);
-
-                    // Move everything after the cursor down a character
-                    for(std::size_t i = chat_input_cursor; i < length; i++) {
-                        chat_input_buffer[i] = chat_input_buffer[i + 1];
+                // Right arrow
+                else if(key_code == 0x50) {
+                    if (ctrl){
+                        // Ctrl + Right: move to start of next word
+                        if (chat_input_cursor < num_bytes){
+                            auto new_pos = chat_input_buffer.find(' ', chat_input_cursor);
+                            chat_input_cursor = new_pos != std::string::npos ? new_pos + 1 : num_bytes;
+                        }
+                        while (chat_input_cursor < num_bytes && chat_input_buffer[chat_input_cursor] == ' '){
+                            chat_input_cursor = next_cursor_pos(char_starts, 1);
+                        }
                     }
+                    else{
+                        chat_input_cursor = next_cursor_pos(char_starts, 1);
+                    }
+                }
+                // Backspace
+                else if(key_code == 0x1D) {
+                    auto new_pos = next_cursor_pos(char_starts, -1);
+                    chat_input_buffer.erase(new_pos, chat_input_cursor - new_pos);
+                    chat_input_cursor = new_pos;
+                }
+                // Delete
+                else if(key_code == 0x54) {
+                    auto next_pos = next_cursor_pos(char_starts, 1);
+                    chat_input_buffer.erase(chat_input_cursor, next_pos - chat_input_cursor);
                 }
                 // Enter
                 else if(key_code == 0x38) {
-                    if(chat_input_buffer[0] != 0 && server_type() != ServerType::SERVER_NONE) {
-                        chat_out(chat_input_channel, chat_input_buffer);
+                    if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
+                        chat_out(chat_input_channel, chat_input_buffer.c_str());
                     }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
@@ -683,17 +782,52 @@ namespace Chimera {
                     enable_input(true);
                 }
             }
-            // Insert a character
-            else if (!std::iscntrl(character)) { // prevents keys like backspace from inserting characters into the buffer
-                std::size_t length = lstrlenW(chat_input_buffer);
-                if(length + 1 < INPUT_BUFFER_SIZE) {
-                    // Null terminate so we don't get blown up
-                    chat_input_buffer[length + 1] = 0;
-                    // Move everything after the cursor up a character
-                    for(std::size_t i = length; i > chat_input_cursor; i--) {
-                        chat_input_buffer[i] = chat_input_buffer[i - 1];
+            // typed a non-control character and there's room left in the buffer
+            else if (!std::iscntrl(character) && num_bytes < INPUT_BUFFER_SIZE - 1) {
+                bool inserted_emoji = false;
+
+                // check for possible emoji replacement when typing ':'
+                if (chat_input_cursor >= 2 && character == ':'){
+                    auto start = chat_input_buffer.rfind(':', chat_input_cursor - 1);
+                    if (start != std::string::npos && chat_input_cursor - start > 1) {
+                        unsigned int name_len = chat_input_cursor - start - 1;
+                        auto emoji_name = chat_input_buffer.substr(start + 1, name_len);
+                        try {
+                            // get the emoji from the name (raises exception if not found)
+                            auto emoji = EMOJI_MAP.at(emoji_name);
+
+                            // found an emoji, insert it if there's enough space in the buffer
+                            unsigned int emoji_len = emoji.length();
+                            int added_bytes = emoji_len - (name_len + 1);
+                            if (num_bytes + added_bytes < INPUT_BUFFER_SIZE){
+                                chat_input_buffer.erase(start, name_len + 1);
+                                chat_input_buffer.insert(start, emoji);
+                                chat_input_cursor += added_bytes;
+                                inserted_emoji = true;
+                            }
+                        }
+                        catch (const std::out_of_range& oor) {
+                            // no match, insert the character normally
+                        }
                     }
-                    chat_input_buffer[chat_input_cursor++] = character;
+                }
+                if (!inserted_emoji) {
+                    // Insert the character normally
+                    if(character >= 0x80) {
+                        // Not enough space
+                        if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
+                            return;
+                        }
+                        
+                        // Needs to be converted to UTF-8
+                        chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
+                        chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
+                    }
+                    else {
+                        // Can be used as-is
+                        chat_input_buffer.insert(chat_input_cursor++, 1, character);
+                    }
+                    
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include "output.hpp"
+#include "../config/ini.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "../custom_chat/custom_chat.hpp"
@@ -53,13 +54,14 @@ namespace Chimera {
     }
 
     static bool server_messages_are_blocked = false;
+    static bool server_message_allow_unsolicted_rcon_messages = false;
 
     extern "C" void before_rcon_message() noexcept;
     extern "C" bool on_rcon_message(const char *message) noexcept {
         if (!call_rcon_message_events(message)) {
             return false;
         }
-        else if(rcon_used_recently()) {
+        else if(server_message_allow_unsolicted_rcon_messages || rcon_used_recently()) {
             return true;
         }
         else if(custom_chat_enabled()) {
@@ -79,9 +81,11 @@ namespace Chimera {
         enabled = true;
         
         static Hook hook;
+        auto &chimera = get_chimera();
         if(get_chimera().feature_present("client_rcon")) {
-            write_jmp_call(get_chimera().get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));
+            write_jmp_call(chimera.get_signature("rcon_message_sig").data(), hook, reinterpret_cast<const void *>(before_rcon_message));
         }
+        server_message_allow_unsolicted_rcon_messages = chimera.get_ini()->get_value_bool("custom_chat.server_message_allow_unsolicted_rcon_messages").value_or(false);
     }
 
     void set_server_messages_blocked(bool blocked) noexcept {

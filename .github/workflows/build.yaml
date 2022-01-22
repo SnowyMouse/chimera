@@ -18,9 +18,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y software-properties-common gnupg build-essential mingw-w64 cmake python3 p7zip-full curl git zstd
 
-          # Download Vulkan mingw headers
-          curl --silent --location "https://repo.msys2.org/mingw/i686/mingw-w64-i686-vulkan-headers-1.2.158-1-any.pkg.tar.zst" | sudo tar -x --zstd --strip-components=1 -C /usr/i686-w64-mingw32/
-
       - name: "Checkout"
         uses: actions/checkout@v2
 
@@ -52,7 +49,7 @@ jobs:
 
           cd build
           make -j $(nproc)
-          
+
       # Strip symbols from the DLL if building a tagged commit
       - name: "Strip symbols"
         if: "startsWith(github.ref, 'refs/tags/')"

@@ -15,8 +15,30 @@ add_custom_target(chimera-version
     SOURCES src/chimera/version.hpp
 )
 
+# Windows XP
+option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
+if(${CHIMERA_WINXP})
+    add_definitions(-DCHIMERA_WINXP)
+
+    set(WINXP_COMPATIBILITY_FILES
+        src/chimera/map_loading/get_file_name_from_handle.c
+    )
+
+    set(WINXP_COMPATIBILITY_LIBRARIES
+        psapi
+    )
+else()
+    set(WINXP_COMPATIBILITY_FILES
+        
+    )
+    set(WINXP_COMPATIBILITY_LIBRARIES
+        
+    )
+endif()
+
 # Define the source files
 add_library(chimera STATIC
+    ${WINXP_COMPATIBILITY_FILES}
     src/chimera/annoyance/auto_get_list.cpp
     src/chimera/annoyance/auto_get_list.S
     src/chimera/annoyance/drm.cpp
@@ -168,7 +190,6 @@ add_library(chimera STATIC
     src/chimera/lua/lua_variables.cpp
     src/chimera/lua/scripting.cpp
     src/chimera/map_loading/compression.cpp
-    src/chimera/map_loading/get_file_name_from_handle.c
     src/chimera/map_loading/map_loading.cpp
     src/chimera/map_loading/map_loading.S
     src/chimera/master_server/master_server.cpp
@@ -226,8 +247,3 @@ set_source_files_properties(src/chimera/localization/localization.cpp PROPERTIES
 
 # Ignore this warning
 set_source_files_properties(src/chimera/custom_chat/custom_chat.cpp PROPERTIES COMPILE_FLAGS "-Wno-format")
-
-option(CHIMERA_DISABLE_CUSTOM_EDITION_FIXES "Limit detail over reflection and fog fixes to retail/demo" OFF)
-if(${CHIMERA_DISABLE_CUSTOM_EDITION_FIXES})
-    add_definitions(-DCHIMERA_DISABLE_CUSTOM_EDITION_FIXES)
-endif()
