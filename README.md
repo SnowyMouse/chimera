@@ -946,7 +946,7 @@ Halo harder to run if you're on extremely ancient hardware. We do not test
 Chimera on Windows XP*, Windows Vista, Windows 7, or Windows 8(.1), but it will
 *probably* run on them, too.
 
-*Windows XP will not work with provided builds because the version of `winpthreads` provided by the compiler does not support it, an alternate build that compiles with windows XP as target could be built for it to work(See: #80).
+*Windows XP will not work with provided builds because the version of `winpthreads` provided by the compiler does not support it, an alternate build that compiles with windows XP as target could be built for it to work (See: [Issue #80](../../issues/80)).
 
 Long answer: There are the requirements:
 
