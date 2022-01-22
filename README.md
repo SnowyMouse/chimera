@@ -952,6 +952,7 @@ Long answer: There are the requirements:
 
 - Windows: Windows 10 or newer
 - Linux (Using Wine): Wine 4.0 or newer\*
+- Linux (aarch64): box86 and Wine (Tested on a modded Nintendo Switch)
 
 \*We test on the latest wine-staging 5.0 version, but 4.0 should work.
 
@@ -962,6 +963,7 @@ There are the recommendations for running Chimera optimally:
 
 - CPU (Intel): Intel Core i3-2100 (3.1 GHz) or better
 - CPU (AMD): AMD FX 6100 (3.3 GHz) or better
+- CPU (ARM): ARMv8-A based or better
 - RAM: 8 GiB or more\*
 - GPU (Nvidia): Nvidia GeForce 8500 GT
 - GPU (AMD): ATI Radeon HD 5670 or better
