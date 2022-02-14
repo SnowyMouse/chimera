@@ -104,6 +104,7 @@ void MapDownloader::dispatch_thread_function(MapDownloader *downloader) {
     if(result == CURLcode::CURLE_OK) {
         // Write the last data
         std::fwrite(downloader->buffer.data(), downloader->buffer_used, 1, downloader->output_file_handle);
+        downloader->written_size += downloader->buffer_used;
         downloader->buffer_used = 0;
         downloader->buffer.clear();
 
@@ -113,7 +114,8 @@ void MapDownloader::dispatch_thread_function(MapDownloader *downloader) {
         }
         downloader->output_file_handle = nullptr;
 
-        downloader->status = DownloadStage::DOWNLOAD_STAGE_COMPLETE;
+        // If we downloaded enough that we definitely checked it, yay!
+        downloader->status = downloader->written_size >= 0x800 ? DownloadStage::DOWNLOAD_STAGE_COMPLETE : DownloadStage::DOWNLOAD_STAGE_FAILED;
     }
     else {
         // Failed/canceled - clean up the output file
@@ -169,10 +171,24 @@ public:
             return 0;
         }
 
+        // Check if this is a bad download
+        std::byte header_data[0x800];
+        if(userdata->written_size == 0 && userdata->buffer_used < sizeof(header_data) && nmemb + userdata->buffer_used >= sizeof(header_data)) {
+            std::memcpy(header_data, userdata->buffer.data(), userdata->buffer_used);
+            std::memcpy(header_data + userdata->buffer_used, ptr, sizeof(header_data) - userdata->buffer_used);
+            if(*reinterpret_cast<std::uint32_t *>(header_data) != 0x68656164 || *reinterpret_cast<std::uint32_t *>(header_data + 0x7FC) != 0x666F6F74) {
+                userdata->status = MapDownloader::DOWNLOAD_STAGE_FAILED;
+                userdata->mutex.unlock();
+                return 0;
+            }
+        }
+
         userdata->status = MapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
+
         if(userdata->buffer_used + nmemb > userdata->buffer.size()) {
             std::fwrite(userdata->buffer.data(), userdata->buffer_used, 1, userdata->output_file_handle);
             std::fwrite(ptr, nmemb, 1, userdata->output_file_handle);
+            userdata->written_size += userdata->buffer_used + nmemb;
             userdata->buffer_used = 0;
         }
         else {
@@ -271,6 +287,7 @@ void MapDownloader::download(const char *map, const char *output_file, const cha
 
     // Set the number of bytes downloaded to 0
     this->downloaded_size = 0;
+    this->written_size = 0;
     this->total_size = 0;
 
     // Make the thread happen

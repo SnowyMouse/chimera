@@ -108,6 +108,9 @@ private:
     /** File to write to as we download */
     std::FILE *output_file_handle = nullptr;
 
+    /** How much was written to disk? */
+    std::size_t written_size = 0;
+
     /** How much was downloaded so far */
     std::size_t downloaded_size = 0;
 
