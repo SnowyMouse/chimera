@@ -169,7 +169,6 @@ add_library(chimera STATIC
     src/chimera/halo_data/multiplayer.cpp
     src/chimera/halo_data/object.cpp
     src/chimera/halo_data/object.S
-    src/chimera/halo_data/spawn_object.cpp
     src/chimera/halo_data/particle.cpp
     src/chimera/halo_data/path.cpp
     src/chimera/halo_data/pause.cpp
