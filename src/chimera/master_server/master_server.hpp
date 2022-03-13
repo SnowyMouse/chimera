@@ -15,7 +15,25 @@ namespace Chimera {
     /**
      * Fix the master server stuff
      */
-    void set_up_demo_master_server() noexcept;
+    void set_up_master_server() noexcept;
+
+    /**
+     * Set master server
+     * @param list    list server (if nullptr, use default)
+     * @param key     key server (if nullptr, use default)
+     * @param natneg1 natneg1 server (if nullptr, use default)
+     * @param natneg2 natneg2 server (if nullptr, use default)
+     */
+    void set_master_server(const char *list, const char *key, const char *natneg1, const char *natneg2);
+
+    /**
+     * Get master server details
+     * @param list    list server
+     * @param key     key server
+     * @param natneg1 natneg1 server
+     * @param natneg2 natneg2 server
+     */
+    void get_master_server(const char **list, const char **key, const char **natneg1, const char **natneg2);
 }
 
 #endif

@@ -238,10 +238,8 @@ namespace Chimera {
                     set_up_custom_map_lobby_fix();
                 }
 
-                // Fix some demo stuff
-                if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
-                    set_up_demo_master_server();
-                }
+                // Fix the master server
+                set_up_master_server();
                 
                 set_up_model_detail_fix();
 
