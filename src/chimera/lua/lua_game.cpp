@@ -69,6 +69,33 @@ namespace Chimera {
         }
     }
 
+    static int lua_create_font_override(lua_State *state) noexcept {
+        int args = lua_gettop(state);
+        if(args == 8) {
+            TagID tag_id;
+            tag_id.whole_id = luaL_checknumber(state, 1);
+            std::string family = luaL_checkstring(state, 2);
+            int size = luaL_checknumber(state, 3);
+            int weight = luaL_checknumber(state, 4);
+            int shadow_x = luaL_checknumber(state, 5);
+            int shadow_y = luaL_checknumber(state, 6);
+            int offset_x = luaL_checknumber(state, 7);
+            int offset_y = luaL_checknumber(state, 8);
+
+            try {
+                create_custom_font_override(tag_id, family, size, weight, std::make_pair(offset_x, offset_y), std::make_pair(shadow_x, shadow_y));
+            }
+            catch(std::runtime_error &e) {
+                return luaL_error(state, e.what());
+            }
+
+            return 0;
+        }
+        else {
+            return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "create_font_override");
+        }
+    }
+
     static int lua_delete_object(lua_State *state) noexcept {
         int args = lua_gettop(state);
         if(args == 1) {
@@ -551,5 +578,10 @@ namespace Chimera {
         lua_register(state, "spawn_object", lua_spawn_object);
         lua_register(state, "tick_rate", lua_tick_rate);
         lua_register(state, "ticks", lua_ticks);
+
+        // Map-only functions
+        if(!script_from_state(state).global) {
+            lua_register(state, "create_font_override", lua_create_font_override);
+        }
     }
 }

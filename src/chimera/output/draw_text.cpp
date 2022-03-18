@@ -14,6 +14,7 @@
 #include "../event/frame.hpp"
 #include "../event/d3d9_end_scene.hpp"
 #include "../event/d3d9_reset.hpp"
+#include "../event/map_load.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../fix/widescreen_fix.hpp"
 #include "../halo_data/hud_fonts.hpp"
@@ -26,6 +27,15 @@ namespace Chimera {
     static std::pair<int, int> system_font_shadow, console_font_shadow, small_font_shadow, large_font_shadow, smaller_font_shadow, ticker_font_shadow;
     static std::pair<int, int> system_font_offset, console_font_offset, small_font_offset, large_font_offset, smaller_font_offset, ticker_font_offset;
     static LPDIRECT3DDEVICE9 dev = nullptr;
+
+    struct CustomFontOverride {
+        TagID tag_id;
+        LPD3DXFONT override;
+        D3DXFONT_DESCA description;
+        std::pair<int, int> shadow;
+        std::pair<int, int> offset;
+    };
+    static std::vector<CustomFontOverride> map_custom_overrides;
 
     static LPD3DXFONT get_override_font(GenericFont font) {
         // Do NOT use these if widescreen fix is disabled unless we're 4:3
@@ -60,6 +70,12 @@ namespace Chimera {
             return get_override_font(*generic);
         }
         else {
+            TagID tag_id = std::get<TagID>(font);
+            for(auto &font : map_custom_overrides) {
+                if(font.tag_id.whole_id == tag_id.whole_id) {
+                    return font.override;
+                }
+            }
             return nullptr;
         }
     }
@@ -138,6 +154,44 @@ namespace Chimera {
             return GenericFont::FONT_TICKER;
         }
         return GenericFont::FONT_CONSOLE;
+    }
+
+    void create_custom_font_override(TagID font_tag, std::string family, std::size_t size, std::size_t weight, std::pair<int, int> offset, std::pair<int, int> shadow) {
+        auto *tag = get_tag(font_tag);
+        if(!tag) {
+            throw std::runtime_error("invalid font tag");
+        }
+
+        // Remove font override if exists
+        for(std::size_t i = 0; i < map_custom_overrides.size(); i++) {
+            auto &font = map_custom_overrides[i];
+            if(font.tag_id.whole_id == font_tag.whole_id) {
+                font.override->Release();
+                map_custom_overrides.erase(map_custom_overrides.begin() + i);
+                break;
+            }
+        }
+
+        auto scale = get_resolution().height / 480.0;
+        int scaled_size = size * scale;
+        int shadow_x = shadow.first * (scale / 2);
+        int shadow_y = shadow.second * (scale / 2);
+        int offset_x = offset.first * (scale / 2);
+        int offset_y = offset.second * (scale / 2);
+        auto &font = map_custom_overrides.emplace_back(CustomFontOverride{font_tag, nullptr, D3DXFONT_DESCA{}, std::make_pair(shadow_x, shadow_y), std::make_pair(offset_x, offset_y)});
+
+        // Create font
+        D3DXCreateFont(dev, scaled_size, 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family.c_str(), &font.override);
+
+        // Save font description
+        font.override->GetDescA(&font.description);
+    }
+
+    void clear_custom_font_overrides() noexcept {
+        for(auto &font : map_custom_overrides) {
+            font.override->Release();
+        }
+        map_custom_overrides.clear();
     }
 
     struct Text {
@@ -335,6 +389,15 @@ namespace Chimera {
             else if(ticker_font_override == text.override) {
                 shadow_offset = ticker_font_shadow;
                 offset = ticker_font_offset;
+            }
+            else {
+                for(auto &font : map_custom_overrides) {
+                    if(font.override == text.override) {
+                        shadow_offset = font.shadow;
+                        offset = font.offset;
+                        break;
+                    }
+                }
             }
 
             // Get our rects up
@@ -769,6 +832,11 @@ namespace Chimera {
             generate_font(ticker_font_override, "ticker", ticker_font_shadow, ticker_font_offset);
 
             #undef generate_font
+
+            // Reload custom font overrides
+            for(auto &font : map_custom_overrides) {
+                D3DXCreateFontIndirectA(device, &font.description, &font.override);
+            }
         }
     }
 
@@ -798,18 +866,25 @@ namespace Chimera {
             ticker_font_override->Release();
             ticker_font_override = nullptr;
         }
+        for(auto &font : map_custom_overrides) {
+            font.override->Release();
+            font.override = nullptr;
+        }
         dev = nullptr;
     }
-    
+
     extern "C" {
         HRESULT (FAR WINAPI * D3DXCreateFontFN)(LPDIRECT3DDEVICE9, INT, UINT, UINT, UINT, BOOL, DWORD, DWORD, DWORD, DWORD, LPCTSTR, LPD3DXFONT) = 0;
+        HRESULT (FAR WINAPI * D3DXCreateFontIndirectFN)(LPDIRECT3DDEVICE9, LPD3DXFONT_DESCW, LPD3DXFONT) = 0;
         
         __stdcall HRESULT D3DXCreateFontA(LPDIRECT3DDEVICE9 a, INT b, UINT c, UINT d, UINT e, BOOL f, DWORD g, DWORD h, DWORD i, DWORD j, LPCTSTR k, LPD3DXFONT l) {
             return D3DXCreateFontFN(a,b,c,d,e,f,g,h,i,j,k,l);
         }
+
+        __stdcall HRESULT D3DXCreateFontIndirectA(LPDIRECT3DDEVICE9 a, LPD3DXFONT_DESCW b, LPD3DXFONT c) {
+            return D3DXCreateFontIndirectFN(a,b,c);
+        }
     }
-    
-    
 
     void setup_text_hook() noexcept {
         static Hook hook;
@@ -831,6 +906,7 @@ namespace Chimera {
             // Okay, did we do that? Let's set this value and initialize things.
             if(d3dx9_43) {
                 D3DXCreateFontFN = reinterpret_cast<decltype(D3DXCreateFontFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontA")));
+                D3DXCreateFontIndirectFN = reinterpret_cast<decltype(D3DXCreateFontIndirectFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontIndirectA")));
                 
                 auto fonts_dir = std::filesystem::path("fonts");
                 if(std::filesystem::is_directory(fonts_dir)) {
@@ -862,6 +938,7 @@ namespace Chimera {
 
                 add_d3d9_end_scene_event(on_add_scene);
                 add_d3d9_reset_event(on_reset);
+                add_map_load_event(clear_custom_font_overrides, EVENT_PRIORITY_BEFORE);
 
                 // Hell yes
                 initialize_hud_text();
