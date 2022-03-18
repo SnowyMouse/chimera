@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <cmath>
+#include <variant>
 #include "../console/console.hpp"
 #include "../halo_data/globals.hpp"
 #include "../halo_data/map.hpp"
@@ -102,16 +103,18 @@ namespace Chimera {
             std::int16_t offset_bottom = luaL_checknumber(state, 5);
 
             // Font to use (Font tag id or generic font)
-            TagID font_tag_id;
+            std::variant<TagID, GenericFont> font;
             if(lua_isnumber(state, 6)) {
+                TagID font_tag_id;
                 font_tag_id.whole_id = luaL_checknumber(state, 6);
                 if(!get_tag(font_tag_id)) {
                     return luaL_error(state, localize("chimera_lua_error_draw_text_invalid_font_id"));
                 }
+                font = font_tag_id;
             }
             else {
                 auto generic_font = generic_font_from_string(luaL_checkstring(state, 6));
-                font_tag_id = get_generic_font(generic_font);
+                font = generic_font;
             }
 
             // Text alignment
@@ -138,7 +141,7 @@ namespace Chimera {
             color.blue = luaL_checknumber(state, 11);
 
             // Draw!
-            apply_text(text, offset_left, offset_top, offset_right, offset_bottom, color, font_tag_id, font_alignment, TextAnchor::ANCHOR_TOP_LEFT);
+            apply_text(text, offset_left, offset_top, offset_right, offset_bottom, color, font, font_alignment, TextAnchor::ANCHOR_TOP_LEFT);
 
             return 0;
         }
