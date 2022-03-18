@@ -199,7 +199,12 @@ namespace Chimera {
     }
 
     void print_error(lua_State *state) noexcept {
-        console_error(lua_tostring(state, -1));
+        std::string error = lua_tostring(state, -1);
+        std::stringstream ss(error);
+        std::string line;
+        while(std::getline(ss, line, '\n')) {
+            console_error(line.c_str());
+        }
         lua_pop(state, 1);
     }
 
