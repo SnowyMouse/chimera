@@ -162,13 +162,10 @@ namespace Chimera {
             throw std::runtime_error("invalid font tag");
         }
 
-        // Remove font override if exists
+        // Check if font override exists
         for(std::size_t i = 0; i < map_custom_overrides.size(); i++) {
-            auto &font = map_custom_overrides[i];
-            if(font.tag_id.whole_id == font_tag.whole_id) {
-                font.override->Release();
-                map_custom_overrides.erase(map_custom_overrides.begin() + i);
-                break;
+            if(map_custom_overrides[i].tag_id.whole_id == font_tag.whole_id) {
+                throw std::runtime_error("font already overrode");
             }
         }
 
