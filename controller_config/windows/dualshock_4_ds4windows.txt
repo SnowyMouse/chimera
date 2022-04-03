@@ -1,0 +1,31 @@
+; Applies to: DualShock 4 controllers on Windows 10 using DS4Windows
+
+axis_1_n=Right Stick Up
+axis_1_p=Right Stick Down
+axis_2_n=Right Stick Left
+axis_2_p=Right Stick Right
+
+axis_3_n=Left Stick Up
+axis_3_p=Left Stick Down
+axis_4_n=Left Stick Left
+axis_4_p=Left Stick Right
+
+button_1=Cross
+button_2=Circle
+button_3=Square
+button_4=Triangle
+button_5=L1
+button_6=R1
+button_7=L2
+button_8=R2
+button_9=L3
+button_10=R3
+button_11=Share
+button_12=Options
+button_13=PS
+button_14=Touch Pad
+
+pov_1_w=D-Pad Left
+pov_1_e=D-Pad Right
+pov_1_n=D-Pad Up
+pov_1_s=D-Pad Down
