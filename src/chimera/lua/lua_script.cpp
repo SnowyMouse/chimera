@@ -72,7 +72,7 @@ namespace Chimera {
         // Set up functions
         set_fs_functions(state);
         set_io_functions(state);
-        set_game_functions(state);
+        set_game_functions(state, global);
 
         // Refresh variables
         refresh_variables(state);

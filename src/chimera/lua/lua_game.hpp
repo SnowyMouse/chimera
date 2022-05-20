@@ -9,7 +9,7 @@ namespace Chimera {
     /**
      * Set up game functions into Lua state
      */
-    void set_game_functions(lua_State *state) noexcept;
+    void set_game_functions(lua_State *state, bool global) noexcept;
 }
 
 #endif

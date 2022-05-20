@@ -558,7 +558,7 @@ namespace Chimera {
         return 1;
     }
 
-    void set_game_functions(lua_State *state) noexcept {
+    void set_game_functions(lua_State *state, bool global) noexcept {
         lua_register(state, "console_is_open", lua_console_is_open);
         lua_register(state, "console_out", lua_console_out);
         lua_register(state, "delete_object", lua_delete_object);
@@ -580,7 +580,7 @@ namespace Chimera {
         lua_register(state, "ticks", lua_ticks);
 
         // Map-only functions
-        if(!script_from_state(state).global) {
+        if(!global) {
             lua_register(state, "create_font_override", lua_create_font_override);
         }
     }
