@@ -12,6 +12,7 @@
 #include "../version.hpp"
 #include "../chimera.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../output/draw_text.hpp"
 #include "lua_filesystem.hpp"
 #include "lua_game.hpp"
 #include "lua_variables.hpp"
@@ -217,6 +218,10 @@ namespace Chimera {
                 print_error(this->state);
             }
             lua_close(this->state);
+        }
+        
+        if(!this->global) {
+            clear_custom_font_overrides();
         }
     }
 
