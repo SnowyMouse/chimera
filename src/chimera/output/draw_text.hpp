@@ -172,10 +172,16 @@ namespace Chimera {
      * @param shadow    shadow offset; if all 0, don't use shadows
      * @exception       if tag ID is invalid
      */
-    void create_custom_font_override(TagID font_tag, std::string family, std::size_t size, std::size_t weight, std::pair<int, int> offset, std::pair<int, int> shadow);
+    void create_custom_font_override(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow);
 
     /**
-     * Clear custom overrides. Release fonts resources.
+     * Remove a custom font override
+     * @param font_tag  tag ID of the overrode font
+     */
+    void remove_custom_font_override(TagID font_tag) noexcept;
+
+    /**
+     * Clear custom overrides; release fonts resources.
      */
     void clear_custom_font_overrides() noexcept;
 }

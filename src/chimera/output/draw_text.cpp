@@ -29,9 +29,11 @@ namespace Chimera {
     static LPDIRECT3DDEVICE9 dev = nullptr;
 
     struct CustomFontOverride {
+        std::string family;
         TagID tag_id;
         LPD3DXFONT override;
-        D3DXFONT_DESCA description;
+        int weight;
+        int scaled_size;
         std::pair<int, int> shadow;
         std::pair<int, int> offset;
     };
@@ -156,7 +158,7 @@ namespace Chimera {
         return GenericFont::FONT_CONSOLE;
     }
 
-    void create_custom_font_override(TagID font_tag, std::string family, std::size_t size, std::size_t weight, std::pair<int, int> offset, std::pair<int, int> shadow) {
+    void create_custom_font_override(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow) {
         auto *tag = get_tag(font_tag);
         if(!tag) {
             throw std::runtime_error("invalid font tag");
@@ -175,18 +177,28 @@ namespace Chimera {
         int shadow_y = shadow.second * (scale / 2);
         int offset_x = offset.first * (scale / 2);
         int offset_y = offset.second * (scale / 2);
-        auto &font = map_custom_overrides.emplace_back(CustomFontOverride{font_tag, nullptr, D3DXFONT_DESCA{}, std::make_pair(shadow_x, shadow_y), std::make_pair(offset_x, offset_y)});
+        auto &font = map_custom_overrides.emplace_back(CustomFontOverride{family, font_tag, nullptr, weight, scaled_size, std::make_pair(shadow_x, shadow_y), std::make_pair(offset_x, offset_y)});
 
-        // Create font
-        D3DXCreateFont(dev, scaled_size, 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family.c_str(), &font.override);
+        if(dev) {
+            D3DXCreateFontA(dev, font.scaled_size, 0, font.weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, font.family.c_str(), &font.override);
+        }
+    }
 
-        // Save font description
-        font.override->GetDescA(&font.description);
+    void remove_custom_font_override(TagID font_tag) noexcept {
+        auto it = map_custom_overrides.begin();
+        while(it < map_custom_overrides.end()) {
+            if(it->tag_id == font_tag) {
+                map_custom_overrides.erase(it);
+                break;
+            }
+        }
     }
 
     void clear_custom_font_overrides() noexcept {
         for(auto &font : map_custom_overrides) {
-            font.override->Release();
+            if(dev) {
+                font.override->Release();
+            }
         }
         map_custom_overrides.clear();
     }
@@ -818,7 +830,7 @@ namespace Chimera {
                     shadow.second = ini->get_value_long("font_override." override_name "_font_shadow_offset_y").value_or(2) * (scale/2); \
                     offset.first = ini->get_value_long("font_override." override_name "_font_offset_x").value_or(0) * (scale/2); \
                     offset.second = ini->get_value_long("font_override." override_name "_font_offset_y").value_or(0) * (scale/2); \
-                    D3DXCreateFont(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
+                    D3DXCreateFontA(device, static_cast<INT>(size * scale), 0, weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, family, &override_var); \
                 }
 
             generate_font(system_font_override, "system", system_font_shadow, system_font_offset);
@@ -829,10 +841,10 @@ namespace Chimera {
             generate_font(ticker_font_override, "ticker", ticker_font_shadow, ticker_font_offset);
 
             #undef generate_font
-
+            
             // Reload custom font overrides
             for(auto &font : map_custom_overrides) {
-                D3DXCreateFontIndirectA(device, &font.description, &font.override);
+                D3DXCreateFontA(dev, font.scaled_size, 0, font.weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, font.family.c_str(), &font.override);
             }
         }
     }
@@ -872,14 +884,9 @@ namespace Chimera {
 
     extern "C" {
         HRESULT (FAR WINAPI * D3DXCreateFontFN)(LPDIRECT3DDEVICE9, INT, UINT, UINT, UINT, BOOL, DWORD, DWORD, DWORD, DWORD, LPCTSTR, LPD3DXFONT) = 0;
-        HRESULT (FAR WINAPI * D3DXCreateFontIndirectFN)(LPDIRECT3DDEVICE9, LPD3DXFONT_DESCW, LPD3DXFONT) = 0;
         
         __stdcall HRESULT D3DXCreateFontA(LPDIRECT3DDEVICE9 a, INT b, UINT c, UINT d, UINT e, BOOL f, DWORD g, DWORD h, DWORD i, DWORD j, LPCTSTR k, LPD3DXFONT l) {
             return D3DXCreateFontFN(a,b,c,d,e,f,g,h,i,j,k,l);
-        }
-
-        __stdcall HRESULT D3DXCreateFontIndirectA(LPDIRECT3DDEVICE9 a, LPD3DXFONT_DESCW b, LPD3DXFONT c) {
-            return D3DXCreateFontIndirectFN(a,b,c);
         }
     }
 
@@ -903,7 +910,6 @@ namespace Chimera {
             // Okay, did we do that? Let's set this value and initialize things.
             if(d3dx9_43) {
                 D3DXCreateFontFN = reinterpret_cast<decltype(D3DXCreateFontFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontA")));
-                D3DXCreateFontIndirectFN = reinterpret_cast<decltype(D3DXCreateFontIndirectFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontIndirectA")));
                 
                 auto fonts_dir = std::filesystem::path("fonts");
                 if(std::filesystem::is_directory(fonts_dir)) {
