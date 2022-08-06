@@ -83,10 +83,11 @@ namespace Chimera {
             int offset_y = luaL_checknumber(state, 8);
 
             try {
-                create_custom_font_override(tag_id, family, size, weight, std::make_pair(offset_x, offset_y), std::make_pair(shadow_x, shadow_y));
+                override_custom_font(tag_id, family, size, weight, std::make_pair(offset_x, offset_y), std::make_pair(shadow_x, shadow_y));
             }
             catch(std::runtime_error &e) {
-                return luaL_error(state, e.what());
+                Tag *tag = get_tag(tag_id);
+                return luaL_error(state, "%s %s", tag->path, e.what());
             }
 
             return 0;

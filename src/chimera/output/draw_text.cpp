@@ -158,51 +158,6 @@ namespace Chimera {
         return GenericFont::FONT_CONSOLE;
     }
 
-    void create_custom_font_override(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow) {
-        auto *tag = get_tag(font_tag);
-        if(!tag) {
-            throw std::runtime_error("invalid font tag");
-        }
-
-        // Check if font override exists
-        for(std::size_t i = 0; i < map_custom_overrides.size(); i++) {
-            if(map_custom_overrides[i].tag_id.whole_id == font_tag.whole_id) {
-                throw std::runtime_error("font already overrode");
-            }
-        }
-
-        auto scale = get_resolution().height / 480.0;
-        int scaled_size = size * scale;
-        int shadow_x = shadow.first * (scale / 2);
-        int shadow_y = shadow.second * (scale / 2);
-        int offset_x = offset.first * (scale / 2);
-        int offset_y = offset.second * (scale / 2);
-        auto &font = map_custom_overrides.emplace_back(CustomFontOverride{family, font_tag, nullptr, weight, scaled_size, std::make_pair(shadow_x, shadow_y), std::make_pair(offset_x, offset_y)});
-
-        if(dev) {
-            D3DXCreateFontA(dev, font.scaled_size, 0, font.weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, font.family.c_str(), &font.override);
-        }
-    }
-
-    void remove_custom_font_override(TagID font_tag) noexcept {
-        auto it = map_custom_overrides.begin();
-        while(it < map_custom_overrides.end()) {
-            if(it->tag_id == font_tag) {
-                map_custom_overrides.erase(it);
-                break;
-            }
-        }
-    }
-
-    void clear_custom_font_overrides() noexcept {
-        for(auto &font : map_custom_overrides) {
-            if(dev) {
-                font.override->Release();
-            }
-        }
-        map_custom_overrides.clear();
-    }
-
     struct Text {
         // Text to display
         std::variant<std::string, std::wstring> text;
@@ -804,6 +759,52 @@ namespace Chimera {
         for(auto &i : handle_formatting(text, x, y, width, height, FontAlignment::ALIGN_LEFT, font)) {
             apply_text_quake_colors_t(i.text, i.x, i.y, i.width, i.height, color, font, anchor, immediate);
         }
+    }
+
+    void override_custom_font(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow) {
+        auto *tag = get_tag(font_tag);
+        if(!tag) {
+            throw std::runtime_error("invalid font tag");
+        }
+
+        // Check if font override exists
+        for(std::size_t i = 0; i < map_custom_overrides.size(); i++) {
+            if(map_custom_overrides[i].tag_id.whole_id == font_tag.whole_id) {
+                throw std::runtime_error("font already overrode");
+            }
+        }
+
+        auto scale = get_resolution().height / 480.0;
+        int scaled_size = size * scale;
+        int shadow_x = shadow.first * (scale / 2);
+        int shadow_y = shadow.second * (scale / 2);
+        int offset_x = offset.first * (scale / 2);
+        int offset_y = offset.second * (scale / 2);
+        auto &font = map_custom_overrides.emplace_back(CustomFontOverride{family, font_tag, nullptr, weight, scaled_size, std::make_pair(shadow_x, shadow_y), std::make_pair(offset_x, offset_y)});
+
+        if(dev) {
+            D3DXCreateFontA(dev, font.scaled_size, 0, font.weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, font.family.c_str(), &font.override);
+
+            for(auto &text : text_list) {
+                if(font.tag_id == text.font) {
+                    text.override = font.override;
+                }
+            }
+        }
+    }
+
+    void clear_custom_font_overrides() noexcept {
+        for(auto &font : map_custom_overrides) {
+            if(dev) {
+                for(auto &text : text_list) {
+                    if(font.tag_id == text.font) {
+                        text.override = NULL;
+                    }
+                }
+                font.override->Release();
+            }
+        }
+        map_custom_overrides.clear();
     }
 
     extern "C" {

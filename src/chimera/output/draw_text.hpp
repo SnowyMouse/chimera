@@ -163,7 +163,7 @@ namespace Chimera {
     void apply_text_quake_colors(std::wstring text, std::int16_t x, std::int16_t y, std::int16_t width, std::int16_t height, const ColorARGB &default_color, const std::variant<TagID, GenericFont> &font, TextAnchor anchor, bool immediate = false) noexcept;
 
     /**
-     * Create custom font override.
+     * Override a non-generic font.
      * @param font_tag  tag ID of the font to override
      * @param family    font family to use 
      * @param size      font size
@@ -172,13 +172,7 @@ namespace Chimera {
      * @param shadow    shadow offset; if all 0, don't use shadows
      * @exception       if tag ID is invalid
      */
-    void create_custom_font_override(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow);
-
-    /**
-     * Remove a custom font override
-     * @param font_tag  tag ID of the overrode font
-     */
-    void remove_custom_font_override(TagID font_tag) noexcept;
+    void override_custom_font(TagID font_tag, std::string family, int size, int weight, std::pair<int, int> offset, std::pair<int, int> shadow);
 
     /**
      * Clear custom overrides; release fonts resources.
