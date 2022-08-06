@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
+#include <unordered_map>
 
 #ifndef CHIMERA_EMOJI_HPP
 #define CHIMERA_EMOJI_HPP
