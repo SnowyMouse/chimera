@@ -18,7 +18,8 @@ namespace Chimera {
      */
     fs::path get_script_data_path(lua_State *state) noexcept {
         static auto &chimera = get_chimera();
-        static auto scripts_data_directory = chimera.get_path() / "lua" / "data";
+        static auto chimera_absolute_path = fs::absolute(chimera.get_path());
+        static auto scripts_data_directory = chimera_absolute_path / "lua" / "data";
 
         // Get script info
         lua_getglobal(state, "script_name");
