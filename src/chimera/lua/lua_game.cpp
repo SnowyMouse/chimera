@@ -579,10 +579,6 @@ namespace Chimera {
         lua_register(state, "spawn_object", lua_spawn_object);
         lua_register(state, "tick_rate", lua_tick_rate);
         lua_register(state, "ticks", lua_ticks);
-
-        // Map-only functions
-        if(!global) {
-            lua_register(state, "create_font_override", lua_create_font_override);
-        }
+        lua_register(state, "create_font_override", lua_create_font_override);
     }
 }

@@ -794,8 +794,8 @@ namespace Chimera {
     }
 
     void clear_custom_font_overrides() noexcept {
-        for(auto &font : map_custom_overrides) {
-            if(dev) {
+        if(dev) {
+            for(auto &font : map_custom_overrides) {
                 for(auto &text : text_list) {
                     if(font.tag_id == text.font) {
                         text.override = NULL;

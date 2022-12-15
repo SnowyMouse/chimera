@@ -220,9 +220,7 @@ namespace Chimera {
             lua_close(this->state);
         }
         
-        if(!this->global) {
-            clear_custom_font_overrides();
-        }
+        clear_custom_font_overrides();
     }
 
     LuaAmbiguousTypeArgument LuaAmbiguousTypeArgument::check_argument(LuaScript &script, int arg, bool do_lua_error) {
