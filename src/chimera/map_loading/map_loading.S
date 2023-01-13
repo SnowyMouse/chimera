@@ -4,8 +4,10 @@
 
 .data
 should_overwrite_volume_this_time: .long 0
+close_server_connection_address: .long 0
 
 .text
+close_server_connection_sig: .string "close_server_connection_sig"
 
 .globl _free_map_handle_bugfix_asm
 _free_map_handle_bugfix_asm:
@@ -117,4 +119,37 @@ _override_ting_volume_write_asm:
     mov dword ptr [should_overwrite_volume_this_time], 0
 
     finish_override_ting_volume_write_asm:
+    ret
+
+.globl _close_server_connection_asm
+_close_server_connection_asm:
+    cmp dword ptr close_server_connection_address, 0
+    jnz close_server_connection_address_found
+    lea eax, byte ptr close_server_connection_sig
+    push eax
+    call _address_for_signature
+    mov close_server_connection_address, eax
+    add esp, 0x4
+    close_server_connection_address_found:
+
+    mov eax, close_server_connection_address
+
+    ;# set some flags, this is what happens when we press the esc key
+    mov ebx, dword ptr [eax + 0x2]
+    mov byte ptr [ebx], 0x0
+    mov ebx, dword ptr [eax + 0x9]
+    mov byte ptr [ebx], 0x0
+    mov ebx, dword ptr [eax + 0x10]
+    mov byte ptr [ebx], 0x0
+    
+    ;# this is the one that actually makes the thing close the connection
+    mov ebx, dword ptr [eax + 0x17]
+    mov byte ptr [ebx], 0x1
+
+    ;# call cleanup function (or whatever it is, I'm not sure what it does)
+    mov ebx, dword ptr [eax + 0x1D]
+    lea ecx, dword ptr [eax + 0x21]
+    add ebx, ecx
+    call ebx
+
     ret

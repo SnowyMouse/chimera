@@ -125,6 +125,7 @@ namespace Chimera {
         void on_read_map_file_data_asm() noexcept;
         void on_map_load_multiplayer_asm() noexcept;
         void on_server_join_text_asm() noexcept;
+        void close_server_connection_asm() noexcept;
         charmeleon download_text_string[128] = {};
         void *on_map_load_multiplayer_fail = nullptr;
     }
@@ -802,6 +803,7 @@ namespace Chimera {
                 std::snprintf(connect_command, sizeof(connect_command), "connect \"%s:%u\" \"%s\"", latest_connection.address, latest_connection.port, latest_connection.password);
                 execute_script(connect_command);
 
+                close_server_connection_asm();
                 add_preframe_event(initiate_connection);
                 break;
             }
@@ -816,6 +818,7 @@ namespace Chimera {
                     std::snprintf(output, sizeof(output), "Download failed!");
                     console_output("Download failed!");
                     retail_fallback = false;
+                    close_server_connection_asm();
                     std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
                     add_preframe_event(initiate_connection);
                 }
