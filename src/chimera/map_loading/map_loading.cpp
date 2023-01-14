@@ -790,23 +790,9 @@ namespace Chimera {
 
                 break;
             }
-            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
-                std::snprintf(output, sizeof(output), "Reconnecting...");
-                console_output("Download complete. Reconnecting...");
-
-                std::filesystem::rename(download_temp_file, get_chimera().get_download_map_path() / (map_downloader->get_map() + ".map"));
-
-                add_map_to_map_list(map_downloader->get_map().c_str());
-                resync_map_list();
-
-                auto &latest_connection = get_latest_connection();
-                std::snprintf(connect_command, sizeof(connect_command), "connect \"%s:%u\" \"%s\"", latest_connection.address, latest_connection.port, latest_connection.password);
-                execute_script(connect_command);
-
-                close_server_connection_asm();
-                add_preframe_event(initiate_connection);
+            case MapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: 
+                std::snprintf(output, sizeof(output), "Download complete. Reconnecting...");
                 break;
-            }
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELING:
                 std::snprintf(output, sizeof(output), "Canceling download...");
                 break;
@@ -816,25 +802,16 @@ namespace Chimera {
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_FAILED: {
                 if(game_engine() != GameEngine::GAME_ENGINE_RETAIL || retail_fallback || !custom_edition_maps_supported) {
                     std::snprintf(output, sizeof(output), "Download failed!");
-                    console_output("Download failed!");
-                    retail_fallback = false;
-                    close_server_connection_asm();
-                    std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
-                    add_preframe_event(initiate_connection);
                 }
                 else {
                     std::snprintf(output, sizeof(output), "Retrying on retail Halo PC repo...");
-                    std::string map_name_temp = map_downloader->get_map().c_str();
-                    delete map_downloader.release();
-                    retail_fallback = true;
-                    on_map_load_multiplayer(map_name_temp.c_str());
                 }
                 break;
             }
-            default: {
+            default:
                 // Another state was added to MapDownloader::DownloadStage ?
-                std::exit(EXIT_FAILURE);
-            }
+                std::snprintf(output, sizeof(output), "Something went wrong, this may be a bug.");
+                break;
         }
 
         // Draw the progress text
@@ -842,13 +819,60 @@ namespace Chimera {
             apply_text(output, x, y, width, height, color, download_font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         }
 
-        if(!map_downloader || map_downloader->is_finished()) {
-            delete map_downloader.release();
-            remove_preframe_event(download_frame);
-            get_chimera().get_signature("server_join_progress_text_sig").rollback();
-            get_chimera().get_signature("server_join_established_text_sig").rollback();
-            get_chimera().get_signature("esrb_text_sig").rollback();
-            retail_fallback = false;
+        static std::optional<std::chrono::time_point<std::chrono::steady_clock>> download_finished_time;
+
+        if(!download_finished_time && (!map_downloader || map_downloader->is_finished())) {
+            download_finished_time = std::chrono::steady_clock::now();
+        }
+
+        if(download_finished_time) {
+            auto elapsed_time = std::chrono::steady_clock::now() - *download_finished_time;
+            if(elapsed_time > std::chrono::seconds(1)) {
+                // We're done
+                auto &chimera = get_chimera();
+                chimera.get_signature("server_join_progress_text_sig").rollback();
+                chimera.get_signature("server_join_established_text_sig").rollback();
+                chimera.get_signature("esrb_text_sig").rollback();
+                remove_preframe_event(download_frame);
+                
+                std::string map_name_temp = map_downloader->get_map();
+                auto result = map_downloader->get_status();
+                retail_fallback = false;
+                download_finished_time = std::nullopt;
+                delete map_downloader.release();
+
+                switch(result) {
+                    case MapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: {
+                        std::filesystem::rename(download_temp_file, chimera.get_download_map_path() / (map_name_temp + ".map"));
+
+                        add_map_to_map_list(map_name_temp.c_str());
+                        resync_map_list();
+
+                        auto &latest_connection = get_latest_connection();
+                        std::snprintf(connect_command, sizeof(connect_command), "connect \"%s:%u\" \"%s\"", latest_connection.address, latest_connection.port, latest_connection.password);
+                        close_server_connection_asm();
+                        add_preframe_event(initiate_connection);
+                        
+                        break;
+                    }
+
+                    case MapDownloader::DownloadStage::DOWNLOAD_STAGE_FAILED: {
+                        if(game_engine() != GameEngine::GAME_ENGINE_RETAIL || retail_fallback || !custom_edition_maps_supported) {
+                            close_server_connection_asm();
+                        }
+                        else {
+                            retail_fallback = true;
+                            on_map_load_multiplayer(map_name_temp.c_str());
+                        }
+                        break;
+                    }
+
+                    default: {
+                        close_server_connection_asm();
+                        break;
+                    }
+                }
+            }
         }
     }
 
