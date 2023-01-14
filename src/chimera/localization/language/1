@@ -201,6 +201,16 @@ chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     
 chimera_spam_to_join_command_help                                               Establece si reintentar conectar automáticamente o no cuando el servidor esté lleno.
 chimera_spam_to_join_retrying                                                   ¡El servidor está lleno! Reintentando...\n(Presiona ESCAPE para cancelar)
 
+chimera_map_downloading_downloading_map_format                                  Descargando %s.map...
+chimera_map_downloading_connecting_to_map_server                                Conectando con el servidor de mapas...
+chimera_map_downloading_transferred_label                                       Transferido:
+chimera_map_downloading_download_complete                                       Descarga completa. Reconectando...
+chimera_map_downloading_canceling_download                                      Cancelando descarga...
+chimera_map_downloading_download_canceled                                       ¡Descarga cancelada!
+chimera_map_downloading_download_failed                                         ¡Descarga fallida!
+chimera_map_downloading_retrying_on_retail                                      Reintentando en el repo de mapas de Halo PC retail...
+chimera_map_downloading_something_went_wrong                                    Algo salió mal. Esto puede ser un bug.
+
 chimera_lua_reload_scripts_command_help                                         Recarga todos los scripts Lua.
 chimera_lua_scripts_were_reloaded                                               Los scripts Lua han sido recargados.
 chimera_lua_warning_script_too_updated                                          %s fue hecho para una versión más nueva de Chimera.

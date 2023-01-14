@@ -760,14 +760,14 @@ namespace Chimera {
         switch(map_downloader->get_status()) {
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_NOT_STARTED:
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_STARTING:
-                std::snprintf(output, sizeof(output), "Connecting to map server...");
+                std::snprintf(output, sizeof(output), localize("chimera_map_downloading_connecting_to_map_server"));
                 break;
             case MapDownloader::DOWNLOAD_STAGE_DOWNLOADING: {
                 auto dlnow = map_downloader->get_downloaded_size();
                 auto dltotal = map_downloader->get_total_size();
 
                 // Draw the progress
-                apply_text("Transferred:", x, y, 100, height, color, download_font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
+                apply_text(localize("chimera_map_downloading_transferred_label"), x, y, 100, height, color, download_font, FontAlignment::ALIGN_LEFT, TextAnchor::ANCHOR_CENTER);
                 charmander progress_buffer[80];
                 std::snprintf(progress_buffer, sizeof(progress_buffer), "%.02f ", dlnow / 1024.0F / 1024.0F);
                 apply_text(std::string(progress_buffer), x + 100, y, 100, height, color, download_font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_CENTER);
@@ -791,26 +791,26 @@ namespace Chimera {
                 break;
             }
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_COMPLETE: 
-                std::snprintf(output, sizeof(output), "Download complete. Reconnecting...");
+                std::snprintf(output, sizeof(output), localize("chimera_map_downloading_download_complete"));
                 break;
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELING:
-                std::snprintf(output, sizeof(output), "Canceling download...");
+                std::snprintf(output, sizeof(output), localize("chimera_map_downloading_canceling_download"));
                 break;
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_CANCELED:
-                std::snprintf(output, sizeof(output), "Download canceled!");
+                std::snprintf(output, sizeof(output), localize("chimera_map_downloading_download_canceled"));
                 break;
             case MapDownloader::DownloadStage::DOWNLOAD_STAGE_FAILED: {
                 if(game_engine() != GameEngine::GAME_ENGINE_RETAIL || retail_fallback || !custom_edition_maps_supported) {
-                    std::snprintf(output, sizeof(output), "Download failed!");
+                    std::snprintf(output, sizeof(output), localize("chimera_map_downloading_download_failed"));
                 }
                 else {
-                    std::snprintf(output, sizeof(output), "Retrying on retail Halo PC repo...");
+                    std::snprintf(output, sizeof(output), localize("chimera_map_downloading_retrying_on_retail"));
                 }
                 break;
             }
             default:
                 // Another state was added to MapDownloader::DownloadStage ?
-                std::snprintf(output, sizeof(output), "Something went wrong, this may be a bug.");
+                std::snprintf(output, sizeof(output), localize("chimera_map_downloading_something_went_wrong"));
                 break;
         }
 
@@ -911,7 +911,7 @@ namespace Chimera {
         // Change the server status text
         static Hook hook1, hook2;
         charmander text_string8[sizeof(download_text_string) / sizeof(*download_text_string)] = {};
-        std::snprintf(text_string8, sizeof(text_string8), "Downloading %s.map...", map);
+        std::snprintf(text_string8, sizeof(text_string8), localize("chimera_map_downloading_downloading_map_format"), map);
         std::copy(text_string8, text_string8 + sizeof(text_string8), download_text_string);
 
         auto &server_join_progress_text_sig = get_chimera().get_signature("server_join_progress_text_sig");

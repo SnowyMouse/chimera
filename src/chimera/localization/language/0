@@ -205,12 +205,23 @@ chimera_map_info_command_mismatched                                             
 chimera_map_info_command_target_engine                                          Target engine
 chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled     Cannot disable widescreen fix while font_override is enabled
 
+chimera_map_downloading_downloading_map_format                                  Downloading %s.map...
+chimera_map_downloading_connecting_to_map_server                                Connecting to map server...
+chimera_map_downloading_transferred_label                                       Transferred:
+chimera_map_downloading_download_complete                                       Download complete. Reconnecting...
+chimera_map_downloading_canceling_download                                      Canceling download...
+chimera_map_downloading_download_canceled                                       Download canceled!
+chimera_map_downloading_download_failed                                         Download failed!
+chimera_map_downloading_retrying_on_retail                                      Retrying on retail Halo PC repo...
+chimera_map_downloading_something_went_wrong                                    Something went wrong. This may be a bug.
+
 chimera_lua_reload_scripts_command_help                                         Reload all Lua scripts.
 chimera_lua_scripts_were_reloaded                                               Lua scripts were reloaded.
 chimera_lua_warning_script_too_updated                                          %s was made for a newer version of Chimera.
 chimera_lua_warning_script_too_outdated                                         %s was made for a much older version of Chimera.
 chimera_lua_warning_script_possibly_not_work                                    It may possibly not work as intended.
 chimera_lua_warning_script_undefined_api_version                                %s does not have clua_version global defined.
+
 chimera_lua_error_failed_to_load_script                                         Failed to load %s
 chimera_lua_error_wrong_number_of_arguments                                     wrong number of arguments in %s
 chimera_lua_error_invalid_function_argument                                     invalid argument #%d in %s
