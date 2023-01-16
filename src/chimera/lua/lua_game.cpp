@@ -559,7 +559,7 @@ namespace Chimera {
         return 1;
     }
 
-    void set_game_functions(lua_State *state, bool global) noexcept {
+    void set_game_functions(lua_State *state) noexcept {
         lua_register(state, "console_is_open", lua_console_is_open);
         lua_register(state, "console_out", lua_console_out);
         lua_register(state, "delete_object", lua_delete_object);
