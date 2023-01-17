@@ -54,7 +54,7 @@ jobs:
       - name: "Strip symbols"
         if: "startsWith(github.ref, 'refs/tags/')"
         run: |-
-          strip ./build/strings.dll
+          i686-w64-mingw32-strip ./build/strings.dll
 
       - name: "Package"
         id: package
