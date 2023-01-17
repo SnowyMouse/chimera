@@ -62,8 +62,8 @@ jobs:
           7z a -mx=9 chimera.7z LICENSE README.md chimera.ini fonts ./build/strings.dll
 
           # Set some variables to use when uploading the package
-          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-          echo ::set-output name=SHA::${GITHUB_SHA::8}
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "SHA=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
 
       # Upload an artifact if building an untagged commit
       - name: "Upload artifact"
