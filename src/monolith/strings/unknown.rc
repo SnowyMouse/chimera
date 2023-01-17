@@ -1,0 +1,55 @@
+/*
+    Halo PC Strings.dll resource data
+    Version 1.0.6.612
+    Tuesday, August 24, 2004 9:22:27 PM
+*/
+
+// TODO: Figure out what this is used for, if at all.
+LANGUAGE 4, 1
+
+1 255
+BEGIN
+  L"\x0404\000"
+END
+LANGUAGE 7, 1
+
+1 255
+BEGIN
+  L"\x0407\000"
+END
+LANGUAGE 9, 1
+
+1 255
+BEGIN
+  L"\x0409\000"
+END
+LANGUAGE 10, 1
+
+1 255
+BEGIN
+  L"\x040a\000"
+END
+LANGUAGE 12, 1
+
+1 255
+BEGIN
+  L"\x040c\000"
+END
+LANGUAGE 16, 1
+
+1 255
+BEGIN
+  L"\x0410\000"
+END
+LANGUAGE 17, 1
+
+1 255
+BEGIN
+  L"\x0411\000"
+END
+LANGUAGE 18, 1
+
+1 255
+BEGIN
+  L"\x0412\000"
+END

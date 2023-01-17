@@ -1,0 +1,1187 @@
+/*
+    Halo PC Strings.dll resource data
+    Version 1.0.6.612
+    Tuesday, August 24, 2004 9:22:27 PM
+*/
+
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  101, L"\x60a8\x7684\x7cfb\x7d71\x6c92\x6709\x8db3\x5920\x7684\x96a8\x6a5f\x5b58\x53d6\x8a18\x61b6\x9ad4\x6216\x865b\x64ec\x8a18\x61b6\x9ad4\x4f86\x57f7\x884c\x9019\x500b\x904a\x6232\x3002\x8acb\x95dc\x9589\x4e0d\x9700\x8981\x57f7\x884c\x7684\x7a0b\x5f0f\xff0c\x6216\x589e\x52a0\x60a8\x7684\x865b\x64ec\x8a18\x61b6\x9ad4\x8a2d\x5b9a\x503c\x3002\x5982\x679c\x60a8\x60f3\x8981\x589e\x52a0\x60a8\x96a8\x6a5f\x5b58\x53d6\x8a18\x61b6\x9ad4\x7684\x5927\x5c0f\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  102, L"\x5f88\x62b1\x6b49\xff0c\x60a8\x96fb\x8166\x8655\x7406\x5668\x7684\x901f\x5ea6\x592a\x6162\xff0c\x7121\x6cd5\x57f7\x884c\x672c\x904a\x6232\x3002\x5982\x679c\x60a8\x60f3\x8981\x6607\x7d1a\x60a8\x7684\x96fb\x8166\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  103, L"\x5f88\x62b1\x6b49\xff0c\x60a8\x96fb\x8166\x8996\x8a0a\x786c\x9ad4\x7684\x898f\x683c\x9060\x6bd4\x672c\x904a\x6232\x6240\x5efa\x8b70\x7684\x6700\x4f4e\x898f\x683c\x9084\x8981\x4f4e\x3002\x5982\x679c\x60a8\x60f3\x8981\x6607\x7d1a\x60a8\x7684\x96fb\x8166\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  104, L"\x60a8\x96fb\x8166\x7684\x8996\x8a0a\x9a45\x52d5\x7a0b\x5f0f\x8207\x672c\x904a\x6232\x7684\x76f8\x5bb9\x6027\x4e26\x672a\x7d93\x904e\x6e2c\x8a66\x3002\x8f03\x65b0\x7248\x672c\x4e14\x8207\x672c\x904a\x6232\x76f8\x5bb9\x7684\x9a45\x52d5\x7a0b\x5f0f\x53ef\x80fd\x5df2\x7d93\x767c\x884c\x3002\x5982\x679c\x60a8\x60f3\x8981\x66f4\x65b0\x9a45\x52d5\x7a0b\x5f0f\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  105, L"\x60a8\x96fb\x8166\x7684\x8996\x8a0a\x9a45\x52d5\x7a0b\x5f0f\x5728\x57f7\x884c\x672c\x904a\x6232\x6642\x6703\x51fa\x73fe\x554f\x984c\x3002\x8f03\x65b0\x7248\x672c\x4e14\x8207\x672c\x904a\x6232\x76f8\x5bb9\x7684\x9a45\x52d5\x7a0b\x5f0f\x53ef\x80fd\x5df2\x7d93\x767c\x884c\x3002\x5982\x679c\x60a8\x60f3\x8981\x66f4\x65b0\x9a45\x52d5\x7a0b\x5f0f\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  106, L"\x5f88\x62b1\x6b49\xff0c\x60a8\x7684\x904a\x6232\x5728\x524d\x4e00\x6b21\x57f7\x884c\x6642\x4e26\x672a\x6b63\x5e38\x7d50\x675f\x3002\x5efa\x8b70\x60a8\x4f7f\x7528\x5b89\x5168\x6a21\x5f0f\x958b\x59cb\x904a\x6232\x3002\x96d6\x7136\x5b89\x5168\x6a21\x5f0f\x6709\x53ef\x80fd\x505c\x7528\x904a\x6232\x4e2d\x67d0\x4e9b\x9032\x968e\x529f\x80fd\xff0c\x4f46\x60a8\x53ef\x4ee5\x9806\x5229\x958b\x59cb\x904a\x6232\x3002"
+  107, L"\x5f88\x62b1\x6b49\xff0c\x60a8\x5fc5\x9808\x5148\x5b89\x88dd DirectX 9.0b \x624d\x80fd\x57f7\x884c\x672c\x7a0b\x5f0f\x3002\x8acb\x91cd\x65b0\x57f7\x884c\x4e00\x6b21\x6700\x5f8c\x4e00\x6230\x904a\x6232\x7684\x5b89\x88dd\x7a0b\x5f0f\x4f86\x5b89\x88dd DirectX\x3002"
+  108, L"\x5f88\x62b1\x6b49\xff0c\x60a8\x96fb\x8166\x8996\x8a0a\x786c\x9ad4\x7684\x898f\x683c\x9060\x6bd4\x672c\x904a\x6232\x6240\x5efa\x8b70\x7684\x6700\x4f4e\x898f\x683c\x9084\x8981\x4f4e\x3002\x5982\x679c\x60a8\x60f3\x8981\x6607\x7d1a\x60a8\x7684\x96fb\x8166\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  109, L"\x60a8\x96fb\x8166\x786c\x789f\x7684\x7a7a\x9593\x53ea\x5269\x4e0d\x5230 100MB\x3002\x8acb\x6e05\x51fa\x78c1\x789f\x7684\x7a7a\x9593\x4ee5\x4fbf\x958b\x59cb\x73a9\x904a\x6232\x3002"
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  101, L"Ihr System verf\374gt nicht \374ber gen\374gend RAM-Speicher bzw. virtuellen Speicher f\374r dieses Spiel. Bitte schlie\337en Sie alle aktiven Programme oder geben Sie in den Einstellungen zus\344tzlichen virtuellen Speicher frei. Falls Sie den RAM-Speicher erweitern m\366chten, erhalten Sie bei Ihrem Computerhersteller weitere Informationen zur Vorgehensweise."
+  102, L"Leider ist der Prozessor Ihres Computers offenbar zu langsam f\374r dieses Spiel. Falls Sie Ihren Computer aufr\374sten m\366chten, erhalten Sie vom Hersteller weitere Informationen zur Vorgehensweise."
+  103, L"Leider erf\374llt die Video-Hardware Ihres Computers nicht die Mindestanforderungen f\374r dieses Spiel. Falls Sie Ihren Computer aufr\374sten m\366chten, erhalten Sie vom Hersteller weitere Informationen zur Vorgehensweise."
+  104, L"Der Grafiktreiber Ihres Computers wurde nicht zur Ausf\374hrung mit diesem Spiel getestet. M\366glicherweise ist eine neuere kompatible Version erh\344ltlich. Falls Sie die Treiber aktualisieren m\366chten, erhalten Sie vom Hersteller Ihres Computers Informationen zur Vorgehensweise."
+  105, L"Bei der Ausf\374hrung des installierten Grafiktreibers in Verbindung mit diesem Spiel treten bekannterma\337en schwerwiegende Probleme auf. M\366glicherweise ist eine neuere kompatible Treiberversion erh\344ltlich. Falls Sie die Treiber aktualisieren m\366chten, erhalten Sie vom Hersteller Ihres Computers weitere Informationen zur Vorgehensweise."
+  106, L"Das Spiel wurde leider nicht korrekt beendet. Wir empfehlen, das Spiel im abgesicherten Modus zu starten. In diesem Modus stehen m\366glicherweise einige erweiterte Funktionen nicht zur Verf\374gung, das Spiel kann jedoch ausgef\374hrt werden."
+  107, L"Zur Ausf\374hrung dieser Anwendung muss DirectX 9.0b installiert sein. F\374hren Sie das Halo PC-Setup erneut aus, um DirectX zu installieren."
+  108, L"Die Grafikhardware auf Ihrem Computer verf\374gt leider nicht \374ber gen\374gend Grafikspeicher f\374r dieses Spiel. Falls Sie Ihren Computer aufr\374sten m\366chten, erhalten Sie vom Hersteller weitere Informationen zur Vorgehensweise."
+  109, L"Auf der Festplatte Ihres Computers sind weniger als 100 MB Festplattenspeicher frei. Zum Spielen m\374ssen Sie weiteren Festplattenspeicher freigeben. "
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  101, "Your system does not have enough RAM or virtual memory to run the game. Please close any addtional programs that may be running or increase your virtual memory settings. If you wish to add additional RAM, please contact your computer manufacturer for any necessary assistance."
+  102, "We are sorry, but your computer's processor appears to be running too slow to run the game. If you wish to upgrade your computer, please contact your computer manufacturer for any necessary assistance."
+  103, "We are sorry, but your computer's video hardware is below the recommended minimum spec for this game. If you wish to upgrade your computer, please contact your computer manufacturer for any necessary assistance."
+  104, "Your computer's video driver was not tested with this game. A newer version that is compatible may be available. If you wish to update your drivers, please contact your computer manufacturer for any necessary assistance."
+  105, "Your computer's video driver is known to have serious issues with the game. A newer version that is compatible may be available. If you wish to update your drivers, please contact your computer manufacturer for any necessary assistance."
+  106, "We are sorry, but we have detected that the game did not exit correctly. We recommend starting the game in safe mode. Safe mode may disable some advanced features of the game, but may allow you to play the game."
+  107, "We are sorry, but you need to have DirectX 9.0b installed to run this program. Please run Halo PC setup again to install DirectX."
+  108, "We are sorry, but your computer's video hardware has less than the recommended minimum video memory required for this game. If you wish to upgrade your computer, please contact your computer manufacturer for any necessary assistance."
+  109, "Your computer's hard drive has less than 100MB of available disk space. You will need to clear space in order to play the game. "
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  101, L"El sistema no tiene suficiente RAM o memoria virtual para ejecutar el juego. Cierra todos los programas que se est\351n ejecutando o incrementa la configuraci\363n de la memoria virtual. Si deseas ampliar la memoria RAM, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  102, "Lo sentimos, pero el procesador del equipo parece ser demasiado lento para ejecutar el juego. Si deseas actualizar el equipo, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  103, L"Lo sentimos, pero el hardware de v\355deo del equipo no alcanza las especificaciones m\355nimas recomendadas para este juego. Si deseas actualizar el equipo, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  104, L"El controlador de v\355deo del equipo no se ha probado con este juego. Es posible que exista una versi\363n m\341s reciente que sea compatible. Si deseas actualizar los controladores, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  105, L"El controlador de v\355deo del equipo tiene problemas graves conocidos con el juego. Es posible que exista una versi\363n m\341s reciente que sea compatible. Si deseas actualizar los controladores, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  106, L"Lo sentimos, pero se ha detectado que el juego no se cerr\363 correctamente. Es recomendable iniciar el juego en modo seguro. Es posible que este modo desactive algunas funciones avanzadas del juego, pero permite jugar."
+  107, L"Lo sentimos, pero es necesario tener DirectX 9.0b instalado para ejecutar este programa. Vuelve a ejecutar el programa de instalaci\363n de Halo PC para instalar DirectX."
+  108, L"Lo sentimos, pero la memoria del hardware de v\355deo del equipo es inferior al m\355nimo recomendado necesario para este juego. Si deseas actualizar el equipo, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  109, "El disco duro del equipo tiene menos de 100 MB de espacio disponible. Es necesario liberar espacio para jugar."
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  101, L"Votre syst\350me ne poss\350de pas assez de m\351moire vive ou de m\351moire virtuelle pour ex\351cuter le jeu. Veuillez fermer tous les autres programmes en cours ou augmenter les param\350tres de votre m\351moire virtuelle. Si vous souhaitez ajouter davantage de m\351moire vive, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  102, L"Le processeur de votre ordinateur semble trop lent pour ex\351cuter le jeu. Si vous souhaitez mettre \340 niveau votre ordinateur, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  103, L"La carte vid\351o de votre ordinateur ne correspond pas aux sp\351cifications minimum recommand\351es pour ce jeu. Si vous souhaitez mettre \340 niveau votre ordinateur, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  104, L"Le pilote vid\351o de votre ordinateur n'a pas \351t\351 test\351 pour ce jeu. Il est possible qu'une nouvelle version compatible soit disponible. Si vous souhaitez mettre \340 niveau vos pilotes, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  105, L"Le pilote vid\351o de votre ordinateur pr\351sente des probl\350mes importants avec le jeu. Il est possible qu'une nouvelle version compatible soit disponible. Si vous souhaitez mettre \340 niveau vos pilotes, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  106, L"Le syst\350me a d\351tect\351 que le jeu n'a pas \351t\351 quitt\351 correctement. Veuillez d\351marrer le jeu en mode sans \351chec. Il est possible que ce mode d\351sactive certaines des fonctionnalit\351s avanc\351es du jeu, cependant vous devriez pouvoir jouer."
+  107, L"Vous devez installer DirectX 9.0b pour pouvoir ex\351cuter ce programme. Veuillez ex\351cuter une nouvelle fois le programme d'installation d'Halo PC afin de pouvoir installer DirectX."
+  108, L"La carte vid\351o de votre ordinateur ne poss\350de pas la quantit\351 de m\351moire vid\351o minimum recommand\351e pour ce jeu. Si vous souhaitez mettre \340 niveau votre ordinateur, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  109, L"Le disque dur de votre ordinateur pr\351sente moins de 100\240Mo d'espace disque disponible. Vous aurez besoin de lib\351rer de l'espace afin de pouvoir jouer \340 ce jeu. "
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  101, "Memoria RAM o memoria virtuale insufficienti per eseguire il gioco. Chiudere ogni altra applicazione o aumentare le impostazioni della memoria virtuale. Per aggiungere memoria RAM, rivolgersi al produttore del computer."
+  102, L"Il processore utilizzato \350 troppo lento per eseguire il gioco. Per aggiornare il sistema, rivolgersi al produttore del computer."
+  103, "L'hardware video utilizzato non soddisfa i requisiti minimi del gioco. Per aggiornare il sistema, rivolgersi al produttore del computer."
+  104, L"Non sono stati eseguiti test di compatibilit\340 tra il driver video installato e questo gioco. Una versione aggiornata e compatibile del driver potrebbe essere disponibile. Per aggiornare i driver, rivolgersi al produttore del computer."
+  105, L"Al driver video installato sono associati problemi di incompatibilit\340 noti con questo gioco. Una versione aggiornata e compatibile del driver potrebbe essere disponibile. Per aggiornare i driver, rivolgersi al produttore del computer."
+  106, L"Il gioco non \350 stato chiuso correttamente. Sui consiglia di avviare il gioco in modalit\340 provvisoria. La modalit\340 provvisoria potrebbe disattivare alcune funzioni avanzate del gioco ma consente di giocare."
+  107, L"\310 necessario installare DirectX 9.0b prima di eseguire il programma. Ripetere l'installazione di Halo PC per installare DirectX."
+  108, L"La memoria video dell'hardware video utilizzato \350 inferiore a quella richiesta per il gioco. Per aggiornare il sistema, rivolgersi al produttore del computer."
+  109, L"Lo spazio disponibile sul disco rigido del computer utilizzato \350 inferiore a 100 MB. \310 necessario liberare spazio per poter giocare."
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  101, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x30b7\x30b9\x30c6\x30e0\x306b\x642d\x8f09\x3055\x308c\x305f RAM \x307e\x305f\x306f\x4eee\x60f3\x30e1\x30e2\x30ea\x304c\x8db3\x308a\x306a\x3044\x305f\x3081\x3001\x30b2\x30fc\x30e0\x3092\x5b9f\x884c\x3067\x304d\x307e\x305b\x3093\x3002\x5b9f\x884c\x4e2d\x306e\x4ed6\x306e\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x7d42\x4e86\x3059\x308b\x304b\x3001\x4eee\x60f3\x30e1\x30e2\x30ea\x306e\x8a2d\x5b9a\x3092\x5909\x66f4\x3057\x3066\x304f\x3060\x3055\x3044\x3002RAM \x3092\x8ffd\x52a0\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  102, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d1\x30d5\x30a9\x30fc\x30de\x30f3\x30b9\x304c\x4f4e\x3059\x304e\x308b\x305f\x3081\x30b2\x30fc\x30e0\x3092\x5b9f\x884c\x3067\x304d\x307e\x305b\x3093\x3002\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3092\x30a2\x30c3\x30d7\x30b0\x30ec\x30fc\x30c9\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  103, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30ab\x30fc\x30c9\x306f\x52d5\x4f5c\x306b\x5fc5\x8981\x306a\x4ed5\x69d8\x3092\x6e80\x305f\x3057\x3066\x3044\x307e\x305b\x3093\x3002\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3092\x30a2\x30c3\x30d7\x30b0\x30ec\x30fc\x30c9\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  104, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30c9\x30e9\x30a4\x30d0\x306f\x30c6\x30b9\x30c8\x3055\x308c\x3066\x3044\x307e\x305b\x3093\x3002\x65b0\x3057\x3044\x30c9\x30e9\x30a4\x30d0\x304c\x30ea\x30ea\x30fc\x30b9\x3055\x308c\x3066\x3044\x308b\x5834\x5408\x306f\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3057\x3066\x304f\x3060\x3055\x3044\x3002\x30c9\x30e9\x30a4\x30d0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  105, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30c9\x30e9\x30a4\x30d0\x3067\x306f\x6b63\x3057\x304f\x52d5\x4f5c\x3057\x307e\x305b\x3093\x3002\x65b0\x3057\x3044\x30c9\x30e9\x30a4\x30d0\x304c\x30ea\x30ea\x30fc\x30b9\x3055\x308c\x3066\x3044\x308b\x5834\x5408\x306f\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3057\x3066\x304f\x3060\x3055\x3044\x3002\x30c9\x30e9\x30a4\x30d0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  106, L"\x524d\x56de\x30b2\x30fc\x30e0\x304c\x6b63\x5e38\x306b\x7d42\x4e86\x3057\x306a\x304b\x3063\x305f\x306e\x3067\x3001\x30bb\x30fc\x30d5\x30e2\x30fc\x30c9\x3067\x30b2\x30fc\x30e0\x3092\x5b9f\x884c\x3059\x308b\x3053\x3068\x3092\x304a\x52e7\x3081\x3057\x307e\x3059\x3002\x30bb\x30fc\x30d5\x30e2\x30fc\x30c9\x3067\x306f\x3044\x304f\x3064\x304b\x306e\x9ad8\x5ea6\x306a\x6a5f\x80fd\x304c\x7121\x52b9\x306b\x306a\x308b\x5834\x5408\x304c\x3042\x308a\x307e\x3059\x304c\x3001\x30d7\x30ec\x30a4\x3059\x308b\x3053\x3068\x306f\x53ef\x80fd\x3067\x3059\x3002"
+  107, L"\x3053\x306e\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x5b9f\x884c\x3059\x308b\x306b\x306f DirectX 9.0b \x3092\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3059\x308b\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002Halo \x306e\x30bb\x30c3\x30c8\x30a2\x30c3\x30d7\x3092\x5b9f\x884c\x3057\x3066 DirectX \x3092\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  108, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30ab\x30fc\x30c9\x306e\x30d3\x30c7\x30aa \x30e1\x30e2\x30ea\x306f\x52d5\x4f5c\x306b\x5fc5\x8981\x306a\x5bb9\x91cf\x306b\x4e0d\x8db3\x3057\x3066\x3044\x307e\x3059\x3002\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3092\x30a2\x30c3\x30d7\x30b0\x30ec\x30fc\x30c9\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  109, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x5229\x7528\x53ef\x80fd\x306a\x30c7\x30a3\x30b9\x30af\x5bb9\x91cf\x304c 100MB \x3092\x4e0b\x56de\x3063\x3066\x3044\x307e\x3059\x3002\x30b2\x30fc\x30e0\x3092\x5b9f\x884c\x3059\x308b\x306b\x306f\x7a7a\x304d\x5bb9\x91cf\x3092\x5897\x3084\x3059\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002"
+  110, "http://go.microsoft.com/fwlink/?LinkId=19669"
+  111, "http://go.microsoft.com/fwlink/?LinkId=19670"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  101, L"\xc2dc\xc2a4\xd15c\xc5d0 \xc0ac\xc6a9 \xac00\xb2a5\xd55c RAM \xb610\xb294 \xac00\xc0c1 \xba54\xbaa8\xb9ac\xac00 \xbd80\xc871\xd558\xc5ec \xac8c\xc784\xc744 \xc2e4\xd589\xd560 \xc218 \xc5c6\xc2b5\xb2c8\xb2e4. \xc0ac\xc6a9 \xc911\xc778 \xd504\xb85c\xadf8\xb7a8\xc744 \xbaa8\xb450 \xb2eb\xac70\xb098 \xac00\xc0c1 \xba54\xbaa8\xb9ac \xc124\xc815\xc744 \xb298\xc774\xc2ed\xc2dc\xc624. \xba54\xbaa8\xb9ac\xb97c \xcd94\xac00\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  102, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. \xcef4\xd4e8\xd130 \xd504\xb85c\xc138\xc11c\xac00 \xb108\xbb34 \xb290\xb824\xc11c \xac8c\xc784\xc744 \xc2e4\xd589\xd560 \xc218 \xc5c6\xc2b5\xb2c8\xb2e4. \xcef4\xd4e8\xd130\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  103, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. \xcef4\xd4e8\xd130\xc758 \xbe44\xb514\xc624 \xd558\xb4dc\xc6e8\xc5b4\xac00 \xad8c\xc7a5 \xcd5c\xc18c \xc0ac\xc591\xc5d0 \xbbf8\xce58\xc9c0 \xbabb\xd569\xb2c8\xb2e4. \xcef4\xd4e8\xd130\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  104, L"\xcef4\xd4e8\xd130\xc758 \xbe44\xb514\xc624 \xb4dc\xb77c\xc774\xbc84\xac00 \xc774 \xac8c\xc784\xc5d0\xc11c \xd14c\xc2a4\xd2b8\xb418\xc9c0 \xc54a\xc558\xc2b5\xb2c8\xb2e4. \xc774 \xac8c\xc784\xacfc \xd638\xd658\xb418\xb294 \xc0c8 \xbc84\xc804\xc758 \xb4dc\xb77c\xc774\xbc84\xac00 \xc788\xc744 \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. \xb4dc\xb77c\xc774\xbc84\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  105, L"\xd604\xc7ac \xc124\xce58\xb41c \xcef4\xd4e8\xd130\xc758 \xbe44\xb514\xc624 \xb4dc\xb77c\xc774\xbc84\xb85c \xc774 \xac8c\xc784\xc744 \xc2e4\xd589\xd558\xba74 \xc2ec\xac01\xd55c \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd558\xb294 \xac83\xc73c\xb85c \xc54c\xb824\xc838 \xc788\xc2b5\xb2c8\xb2e4. \xc774 \xac8c\xc784\xacfc \xd638\xd658\xb418\xb294 \xc0c8 \xbc84\xc804\xc758 \xb4dc\xb77c\xc774\xbc84\xac00 \xc788\xc744 \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. \xb4dc\xb77c\xc774\xbc84\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  106, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. \xac8c\xc784\xc774 \xc62c\xbc14\xb974\xac8c \xc885\xb8cc\xb418\xc9c0 \xc54a\xc558\xc2b5\xb2c8\xb2e4. \xc548\xc804 \xbaa8\xb4dc\xc5d0\xc11c \xac8c\xc784\xc744 \xc2e4\xd589\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4. \xc548\xc804 \xbaa8\xb4dc\xc5d0\xc11c\xb294 \xac8c\xc784\xc758 \xc77c\xbd80 \xace0\xae09 \xae30\xb2a5\xc744 \xc0ac\xc6a9\xd560 \xc218 \xc5c6\xc9c0\xb9cc \xac8c\xc784\xc744 \xc2e4\xd589\xd560 \xc218 \xc788\xc2b5\xb2c8\xb2e4."
+  107, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. \xc774 \xd504\xb85c\xadf8\xb7a8\xc744 \xc2e4\xd589\xd558\xb824\xba74 DirectX 9.0b\xac00 \xc124\xce58\xb418\xc5b4 \xc788\xc5b4\xc57c \xd569\xb2c8\xb2e4. Halo PC \xc124\xce58 \xd504\xb85c\xadf8\xb7a8\xc744 \xb2e4\xc2dc \xc2e4\xd589\xd558\xc5ec DirectX\xb97c \xc124\xce58\xd558\xc2ed\xc2dc\xc624."
+  108, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. \xcef4\xd4e8\xd130\xc758 \xbe44\xb514\xc624 \xd558\xb4dc\xc6e8\xc5b4\xc5d0 \xc788\xb294 \xba54\xbaa8\xb9ac\xac00 \xad8c\xc7a5 \xcd5c\xc18c \xbe44\xb514\xc624 \xba54\xbaa8\xb9ac \xc0ac\xc591\xbcf4\xb2e4 \xc801\xc2b5\xb2c8\xb2e4. \xcef4\xd4e8\xd130\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  109, L"\xcef4\xd4e8\xd130 \xd558\xb4dc \xb514\xc2a4\xd06c\xc5d0 \xc0ac\xc6a9 \xac00\xb2a5\xd55c \xacf5\xac04\xc774 100MB \xbbf8\xb9cc\xc785\xb2c8\xb2e4. \xac8c\xc784\xc744 \xc2e4\xd589\xd558\xb824\xba74 \xacf5\xac04\xc744 \xb298\xc5ec\xc57c \xd569\xb2c8\xb2e4."
+  110, "http://www.microsoft.com/games/halo/support.asp"
+  111, "http://www.microsoft.com/games/halo/support.asp"
+END
+
+/* Name: 8.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, "Exception!"
+  120, L"\x8490\x96c6 Exception \x8cc7\x6599..."
+  121, L"\x5728\x521d\x59cb\x5316 DirectDraw \x6642\x767c\x751f\x554f\x984c\x3002\x786c\x9ad4\x52a0\x901f\x53ef\x80fd\x5df2\x505c\x7528\xff0c\x8acb\x57f7\x884c DXDIAG\x3002"
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, L"\x5728\x521d\x59cb\x5316 DirectSound \x6642\x767c\x751f\x554f\x984c\x3002"
+  124, L"\x5728\x521d\x59cb\x5316 DirectInput \x6642\x767c\x751f\x554f\x984c\x3002"
+  125, L"SHFolder.dll \x5df2\x907a\x5931\x3002\x5efa\x8b70\x60a8\x91cd\x65b0\x5b89\x88dd\x3002"
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, L"\x6700\x5f8c\x4e00\x6230 - \x8b66\x544a"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, "Ausnahmefehler!"
+  120, "Fehlerdaten werden ermittelt ..."
+  121, L"Bei der Initialisierung von DirectDraw ist ein Fehler aufgetreten. M\366glicherweise ist die Hardwarebeschleunigung deaktiviert. Bitte f\374hren Sie DXDIAG aus."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, "Bei der Initialisierung von DirectSound ist ein Fehler aufgetreten."
+  124, "Bei der Initialisierung von DirectInput ist ein Fehler aufgetreten."
+  125, "Die Datei SHFolder.dll fehlt. Bitte installieren Sie das Spiel neu."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, "Halo - Warnung"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, "Exception!"
+  120, "Gathering Exception Data..."
+  121, "A problem occurred initializing DirectDraw. Hardware acceleration maybe disabled, please run DXDIAG."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, "A problem occurred initializing DirectSound"
+  124, "A problem occurred initializing DirectInput"
+  125, "SHFolder.dll is missing, we recommend you reinstall."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, "Halo - Warning"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, L"Excepci\363n"
+  120, L"Reuniendo datos de excepci\363n..."
+  121, L"Ha ocurrido un problema al inicializar DirectDraw. Es posible que la aceleraci\363n de hardware est\351 desactivada; ejecuta DXDIAG."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, "Ha ocurrido un problema al inicializar DirectSound"
+  124, "Ha ocurrido un problema al inicializar DirectInput"
+  125, "Falta el archivo SHFolder.dll; es recomendable reinstalar."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, "Halo: Advertencia"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, "Exception !"
+  120, L"Recherche des donn\351es d'exception en cours..."
+  121, L"Un probl\350me est survenu lors de l'initialisation de DirectDraw. Il est possible que l'acc\351l\351ration mat\351rielle soit d\351sactiv\351e ; veuillez ex\351cuter DXDIAG."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, L"Un probl\350me est survenu lors de l'initialisation de DirectSound"
+  124, L"Un probl\350me est survenu lors de l'initialisation de DirectInput"
+  125, L"Le dossier SHFolder.dll est manquant, veuillez le r\351installer."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, "Halo - Avertissement"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, "Eccezione"
+  120, "Raccolta dei dati delle eccezioni in corso..."
+  121, "Errore durante l'inizializzazione di DirectDraw. L'accelerazione hardware potrebbe risultare disattivata. Eseguire DXDIAG."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, "Errore durante l'inizializzazione di DirectSound"
+  124, "Errore durante l'inizializzazione di DirectInput"
+  125, "SHFolder.dll mancante. Si consiglia di reinstallare."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, "Halo - Avvertenza"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://go.microsoft.com/fwlink/?LinkId=19671"
+  113, "http://go.microsoft.com/fwlink/?LinkId=19672"
+  114, "http://go.microsoft.com/fwlink/?LinkId=19673"
+  115, "http://go.microsoft.com/fwlink/?LinkId=19674"
+  116, "http://go.microsoft.com/fwlink/?LinkId=19675"
+  117, "http://go.microsoft.com/fwlink/?LinkId=19676"
+  118, "http://go.microsoft.com/fwlink/?LinkId=19677"
+  119, L"\x4f8b\x5916\x30a8\x30e9\x30fc"
+  120, L"\x4f8b\x5916\x30a8\x30e9\x30fc\x306e\x30c7\x30fc\x30bf\x3092\x53ce\x96c6\x3057\x3066\x3044\x307e\x3059..."
+  121, L"DirectDraw \x306e\x521d\x671f\x5316\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x3001\x30cf\x30fc\x30c9\x30a6\x30a7\x30a2\x30a2\x30af\x30bb\x30e9\x30ec\x30fc\x30b7\x30e7\x30f3\x304c\x7121\x52b9\x306b\x306a\x3063\x305f\x53ef\x80fd\x6027\x304c\x3042\x308a\x307e\x3059\x3002DirectX \x8a3a\x65ad\x30c4\x30fc\x30eb (DXDIAG) \x3092\x5b9f\x884c\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  122, "http://go.microsoft.com/fwlink/?LinkId=19678"
+  123, L"DirectSound \x306e\x521d\x671f\x5316\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f"
+  124, L"DirectInput \x306e\x521d\x671f\x5316\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f"
+  125, L"SHFolder.dll \x304c\x3042\x308a\x307e\x305b\x3093\x3002\x518d\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3059\x308b\x3053\x3068\x3092\x304a\x52e7\x3081\x3057\x307e\x3059\x3002"
+  126, "http://go.microsoft.com/fwlink/?LinkId=19679"
+  127, L"Halo - \x8b66\x544a"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  112, "http://www.microsoft.com/games/halo/support.asp"
+  113, "http://www.microsoft.com/games/halo/support.asp"
+  114, "http://www.microsoft.com/games/halo/support.asp"
+  115, "http://www.microsoft.com/games/halo/support.asp"
+  116, "http://support.microsoft.com/default.aspx?pr=drx"
+  117, "http://www.microsoft.com/games/halo/support.asp"
+  118, "http://www.microsoft.com/games/halo/support.asp"
+  119, L"\xc608\xc678!"
+  120, L"\xc608\xc678 \xc815\xbcf4 \xc218\xc9d1 \xc911..."
+  121, L"DirectDraw\xb97c \xcd08\xae30\xd654 \xd558\xb294 \xc911 \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. DXDIAG\xb97c \xc2e4\xd589\xd558\xc2ed\xc2dc\xc624."
+  122, "http://support.microsoft.com/default.aspx?pr=drx"
+  123, L"DirectSound\xb97c \xcd08\xae30\xd654 \xd558\xb358 \xc911 \xbb38\xc81c \xbc1c\xc0dd"
+  124, L"DirectInput\xc744 \xcd08\xae30\xd654 \xd558\xb358 \xc911 \xbb38\xc81c \xbc1c\xc0dd"
+  125, L"SHFolder.dll\xc774 \xc5c6\xc2b5\xb2c8\xb2e4. \xb2e4\xc2dc \xc124\xce58\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4."
+  126, "http://www.microsoft.com/games/halo/support.asp"
+  127, L"Halo - \xacbd\xace0"
+END
+
+/* Name: 9.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  128, L"\x6700\x5f8c\x4e00\x6230 - \x56b4\x91cd\x932f\x8aa4"
+  129, L"\x5728\x521d\x59cb\x5316 Direct3D \x6642\x767c\x751f\x554f\x984c\x3002\x786c\x9ad4\x52a0\x901f\x53ef\x80fd\x5df2\x505c\x7528\xff0c\x8acb\x57f7\x884c DXDIAG\x3002"
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"\x60a8\x5fc5\x9808\x5728\x8996\x7a97\x6a21\x5f0f\x4e0b\x4f7f\x7528 32 \x4f4d\x5143\x7684\x8272\x5f69\x54c1\x8cea\x8a2d\x5b9a\x624d\x80fd\x57f7\x884c\x6700\x5f8c\x4e00\x6230\x904a\x6232\x3002\x8acb\x5728 Windows \x684c\x9762\x6309\x53f3\x9375\xff0c\x9078\x53d6 [\x5167\x5bb9] \x4f86\x8abf\x6574\x6b64\x8a2d\x5b9a\x3002"
+  132, "eula.rtf"
+  135, L"\x60a8\x5728\x555f\x52d5\x904a\x6232\x7684\x540c\x6642\x4e5f\x6309\x4f4f\x4e86 Ctrl \x9375\x3002"
+  136, L"-nosound\t\t\x505c\x7528\x6240\x6709\x97f3\x6548\n-novideo\t\t\x505c\x7528\x8996\x8a0a\x64ad\x653e\n-nojoystick\t\x505c\x7528\x6416\x687f / \x904a\x6232\x53f0\n-nogamma\t\x505c\x7528\x8272\x5dee\x88dc\x6b63\x8abf\x6574\n-useff\t\t\x5f37\x8feb\x904a\x6232\x5c07\x5b83\x7576\x6210\x4e00\x822c\x591a\x529f\x80fd\x4ecb\x9762\x5361\n-use11\t\t\x5f37\x8feb\x904a\x6232\x5c07\x5b83\x7576\x6210 shader 1.1 \x986f\x793a\x5361\n-use14\t\t\x5f37\x8feb\x904a\x6232\x5c07\x5b83\x7576\x6210 shader 1.4 \x986f\x793a\x5361\n-use20\t\t\x5f37\x8feb\x904a\x6232\x5c07\x5b83\x7576\x6210 shader 2.0 \x986f\x793a\x5361\n-safemode\t\x5728\x904a\x6232\x4e2d\x5118\x53ef\x80fd\x505c\x7528\n\n-window\t\t\x5728\x8996\x7a97\x4e2d\x57f7\x884c\n-width640\t\x5f37\x8feb\x904a\x6232\x4ee5 640*480 \x7684\x89e3\x6790\x5ea6\x57f7\x884c\n-vidmode w,h,r\t\x5f37\x8feb\x904a\x6232\x4ee5\x4e0b\x5217\x5bec\x5ea6\x548c\x9ad8\x5ea6[, refresh] \x57f7\x884c\n-adapter x\t\x5f37\x8feb\x904a\x6232\x5728\x591a\x91cd\x76e3\x8996\x4ecb\x9762\x5361\x4e0a\x4ee5\x5168\x87a2\x5e55\x6a21\x5f0f\x57f7\x884c\n\n-port x\t\t\x4e3b\x6301\x904a\x6232\x6642\x6240\x7528\x7684\x4f3a\x670d\x5668\x9023\x63a5\x57e0\x4f4d\x5740\n-cport x\t\t\x52a0\x5165\x904a\x6232\x6642\x6240\x7528\x7684\x7528\x6236\x7aef\x9023\x63a5\x57e0\x4f4d\x5740\n-ip x.x.x.x\t\x7576\x60a8\x4f7f\x7528\x591a\x500b IP \x4f4d\x5740\x6642\x7684\x4f3a\x670d\x5668 IP \x4f4d\x5740\n-screenshot\t\x4f7f\x7528 Print Scrn \x9375\x4f86\x7522\x751f\x87a2\x5e55\x64f7\x53d6\x756b\x9762\n-timedemo\t\x57f7\x884c\x56db\x500b\x96fb\x5f71\x6a94\x4e26\x7522\x751f timedemo.txt \x6a94\n-console\t\t\x555f\x7528\x5075\x932f\x6a5f\n"
+  137, L"\x6700\x5f8c\x4e00\x6230\x904a\x6232\x7684\x67d0\x500b\x76f8\x95dc\x6a94\x6848\x5df2\x7d93\x907a\x5931\x6216\x6bc0\x640d\x3002\x5efa\x8b70\x60a8\x79fb\x9664\x6216\x91cd\x65b0\x5b89\x88dd\x672c\x904a\x6232\x3002"
+  139, L"\x5f88\x62b1\x6b49\xff0c\x5728\x5b58\x53d6\x60a8\x96fb\x8166\x4e0a\x6211\x7684\x6587\x4ef6\x8cc7\x6599\x593e\x4e2d\x672c\x904a\x6232\x76f8\x95dc\x6a94\x6848\x6642\x767c\x751f\x554f\x984c\x3002"
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"\x6700\x5f8c\x4e00\x6230\x904a\x6232\x8207\x63a7\x5236\x53f0\x4e2d\x7684\x6d88\x9664\x92f8\x9f52\x6a21\x5f0f\x8986\x5beb\x8a2d\x5b9a\x4e0d\x76f8\x5bb9\x3002\x8acb\x5c07\x6b64\x8a2d\x5b9a\x95dc\x9589\x6216\x6539\x6210\x61c9\x7528\x7a0b\x5f0f\x8a2d\x5b9a\x503c\x3002"
+  142, L"\x60a8\x96fb\x8166\x4e0a\x7684\x97f3\x6548\x9a45\x52d5\x7a0b\x5f0f\x8207\x672c\x904a\x6232\x7684\x76f8\x5bb9\x6027\x4e26\x672a\x7d93\x904e\x6e2c\x8a66\x3002\x8f03\x65b0\x7248\x672c\x4e14\x8207\x672c\x904a\x6232\x76f8\x5bb9\x7684\x9a45\x52d5\x7a0b\x5f0f\x53ef\x80fd\x5df2\x7d93\x767c\x884c\x3002\x5982\x679c\x60a8\x60f3\x8981\x66f4\x65b0\x60a8\x7684\x9a45\x52d5\x7a0b\x5f0f\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+  143, L"\x76ee\x524d\x5df2\x77e5\x60a8\x96fb\x8166\x4e0a\x7684\x97f3\x6548\x9a45\x52d5\x7a0b\x5f0f\x5728\x57f7\x884c\x672c\x904a\x6232\x6642\x6703\x51fa\x73fe\x554f\x984c\x3002\x8f03\x65b0\x7248\x672c\x4e14\x8207\x672c\x904a\x6232\x76f8\x5bb9\x7684\x9a45\x52d5\x7a0b\x5f0f\x53ef\x80fd\x5df2\x7d93\x767c\x884c\x3002\x5982\x679c\x60a8\x60f3\x8981\x66f4\x65b0\x9a45\x52d5\x7a0b\x5f0f\xff0c\x8acb\x8207\x60a8\x7684\x96fb\x8166\x88fd\x9020\x5546\x806f\x7d61\xff0c\x4ee5\x4fbf\x5c0b\x6c42\x76f8\x95dc\x7684\x5354\x52a9\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  128, "Halo - Schwerer Fehler"
+  129, L"Bei der Initialisierung von Direct3D ist ein Fehler aufgetreten. M\366glicherweise ist die Hardwarebeschleunigung deaktiviert. Bitte f\374hren Sie DXDIAG aus."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"Die Farbeinstellung muss f\374r die Ausf\374hrung von Halo PC im Fenstermodus auf \x201eTrue Color (32 Bit)\x201c eingestellt sein. Klicken Sie unter Windows mit der rechten Maustaste auf den Desktop, und w\344hlen Sie im Kontextmen\374 die Option \x201eEigenschaften\x201c, um diese Einstellung zu \344ndern."
+  132, "eula.rtf"
+  135, L"Sie haben das Spiel gestartet und dabei die Taste STRG gedr\374ckt gehalten."
+  136, L"-nosound\t\tTon vollst\344ndig deaktivieren\n-novideo\t\tVideowiedergabe deaktivieren\n-nojoystick\tJoysticks und Gamepads deaktivieren\n-nogamma\tGamma-Anpassung deaktivieren\n-noSSE\t\tSSE- und 3DNow!-Optimierungen deaktivieren\n-useff\t\tErzwingt die Ausf\374hrung des Spiels als Festfunktionskarte\n-use11\t\tErzwingt die Ausf\374hrung des Spiels als Shader 1.1-Karte\n-use14\t\tErzwingt die Ausf\374hrung des Spiels als Shader 1.4-Karte\n-safemode\tDeaktiviert so viele Funktionen wie m\366glich im Spiel\n\n-window\t\tSpiel wird in einem Fenster ausgef\374hrt\n-width640\tErzwingt die Ausf\374hrung des Spiels mit einer Aufl\366sung von 640x480\n-vidmode w,h,r\tErzwingt die Ausf\374hrung des Spiels mit den Werten w (Breite), h (H\366he) und[, r (Refresh-Rate)]\n-adapter x\tErzwingt die Vollbild-Ausf\374hrung des Spiels auf einem Multimonitor-Adapter\n\n-port x\t\tPort-Adresse des Servers, die beim Hosten von Spielen verwendet wird\n-cport x\t\tPort-Adresse des Servers f\374r das Beitreten zu Spielen\n-ip x.x.x.x\tIP-Adresse des Servers, die bei mehreren IP-Adressen verwendet wird\n-screenshot\tErm\366glicht die Erzeugung von Screenshots \374ber die Taste \x201eDruck S-Abf\x201c\n-timedemo\tF\374hrt vier Filme aus und schreibt timedemo.txt aus\n-console\t\tFehlerbehebungskonsole aktivieren\n"
+  137, L"Eine der Halo PC-Dateien fehlt oder ist besch\344digt. Bitte deinstallieren Sie das Spiel und installieren Sie es anschlie\337end neu."
+  139, L"Leider ist ein Fehler beim Zugriff auf Ihre pers\366nlichen Halo PC-Dateien im Ordner \x201eEigene Dateien\x201c aufgetreten."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"Halo ist nicht mit den in der Systemsteuerung eingestellten \334berschreiboptionen f\374r den nVidia Anti-Aliasing-Modus kompatibel. Bitte \344ndern Sie die Einstellung, indem Sie die Option abw\344hlen oder die Standardeinstellung ausw\344hlen."
+  142, L"Der Audiotreiber Ihres Computers wurde nicht f\374r die Verwendung mit diesem Spiel getestet. M\366glicherweise ist eine neuere kompatible Version erh\344ltlich. Falls Sie die Treiber aktualisieren m\366chten, erhalten Sie vom Hersteller Ihres Computers Informationen zur Vorgehensweise."
+  143, L"Bei Verwendung des auf Ihrem Computer installierten Audiotreibers zusammen mit diesem Spiel treten bekannterma\337en schwerwiegende Probleme auf. M\366glicherweise ist eine neuere kompatible Version erh\344ltlich. Falls Sie die Treiber aktualisieren m\366chten, erhalten Sie vom Hersteller Ihres Computers Informationen zur Vorgehensweise."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  128, "Halo - Fatal Error"
+  129, "A problem occurred initializing Direct3D.  Hardware acceleration maybe disabled, please run DXDIAG."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, "Halo PC requires a 32 bit color quality setting to play in a windowed mode. In Windows, right-click on the desktop and choose Properties to adjust to this setting."
+  132, "eula.rtf"
+  133, "AWTTWJRUSNRDTLUXDKVYUJTAYPLOWIRTSMSZ"
+  135, "You started the game while holding down the control key."
+  136, "-nosound\t\tDisable all sound\n-novideo\t\tDisable video playback\n-nojoystick\tDisable joysticks / gamepads\n-nogamma\tDisable adjustment of gamma\n-useff\t\tForces the game to run as a fixed fuction card\n-use11\t\tForces the game to run as a shader 1.1 card\n-use14\t\tForces the game to run as a shader 1.4 card\n-use20\t\tForces the game to run as a shader 2.0 card\n-safemode\tDisables as much as possible in the game\n\n-window\t\tRun the game in a window\n-width640\tForces the game to run at 640*480\n-vidmode w,h,r\tForces the game to run at width, height[, refresh]\n-adapter x\tForces the game to run fullscreen on a multimon adapter\n\n-port x\t\tServer port address used when hosting games\n-cport x\t\tClient port address used when joining games\n-ip x.x.x.x\tServer IP address used when you have multiple ip addresses\n-screenshot\tEnables the 'Print Scrn' key to generate screenshots\n-timedemo\tRuns four movies and writes out timedemo.txt\n-console\t\tEnable the debugging console\n"
+  137, "We have detected that one of the Halo PC files is missing or corrupted. We recommend removing and reinstalling the game."
+  139, "We are sorry but there was a problem accessing your personal Halo PC files which are located in your My Documents folder."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, "Halo is not compatible with the anti-aliasing mode overrides set in the control panel. Please adjust this setting to 'Off' or 'Application Default'."
+  142, "Your computer's sound driver was not tested with this game. A newer version that is compatible may be available. If you wish to update your drivers, please contact your computer manufacturer for any necessary assistance."
+  143, "Your computer's sound driver is known to have serious issues with the game. A newer version that is compatible may be available. If you wish to update your drivers, please contact your computer manufacturer for any necessary assistance."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  128, "Halo: Error grave"
+  129, L"Ha ocurrido un problema al inicializar Direct3D.  Es posible que la aceleraci\363n de hardware est\351 desactivada; ejecuta DXDIAG."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"Halo PC requiere una configuraci\363n de calidad de color de 32 bits para jugar en un modo con ventanas. En Windows, haz clic con el bot\363n derecho en el escritorio y selecciona Propiedades para ajustar esta configuraci\363n."
+  132, "cluf.rtf"
+  135, "Has iniciado el juego con la tecla de control pulsada."
+  136, L"-nosound\t\tDesactivar todo el sonido\n-novideo\t\tDesactivar la reproducci\363n de v\355deo\n-nojoystick\tDesactivar los joysticks / consolas de juegos\n-nogamma\tDesactivar los ajustes de gamma\n-noSSE\t\tDesactiva las optimizaciones de SSE y 3DNow!\n-useff\t\tHace que el juego se ejecute como tarjeta de funci\363n fija\n-use11\t\tHace que el juego se ejecute como tarjeta shader 1.1\n-use14\t\tHace que el juego se ejecute como tarjeta shader 1.4\n-safemode\tDesactiva todas las opciones posibles del juego\n\n-window\t\tEjecutar el juego en una ventana\n-width640\tHace que el juego se ejecute a 640*480\n-vidmode w,h,r\tHace que el juego se ejecute con un ancho, alto[, actualizar]\n-adapter x\tHace que el juego se ejecute en pantalla completa en un adaptador para monitores m\372ltiples\n\n-port x\t\tDirecci\363n del puerto de servidor utilizada al actuar como anfitri\363n de partidas\n-cport x\t\tDirecci\363n de puerto cliente utilizada al unirse a partidas\n-ip x.x.x.x\tDirecci\363n IP de servidor utilizada cuando se cuenta con direcciones IP m\372ltiples\n-screenshot\tActiva la tecla 'Impr Pant' para generar capturas de pantalla\n-timedemo\tEjecuta cuatro v\355deos y escribe timedemo.txt\n-console\t\tActiva la consola de depuraci\363n\n"
+  137, L"Se ha detectado que uno de los archivos de Halo PC est\341 da\361ado o falta. Es recomendable eliminar y reinstalar el juego."
+  139, "Lo sentimos, pero ha ocurrido un problema al acceder a los archivos personales de Halo PC que se encuentran en la carpeta Mis documentos."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"Halo no es compatible con la suplantaci\363n del modo de suavizado de gr\341ficos de nVidia establecida en el panel de control. Ajusta esta configuraci\363n para desactivarla o seleccionar la opci\363n predeterminada de la aplicaci\363n."
+  142, L"El controlador de sonido del equipo no se ha probado con este juego. Es posible que exista una versi\363n m\341s reciente que sea compatible. Si deseas actualizar los controladores, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+  143, L"El controlador de sonido del equipo tiene problemas graves conocidos con el juego. Es posible que exista una versi\363n m\341s reciente que sea compatible. Si deseas actualizar los controladores, ponte en contacto con el fabricante del equipo para obtener la asistencia necesaria."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  128, L"Halo - Erreur irr\351cup\351rable"
+  129, L"Un probl\350me est survenu lors de l'initialisation de Direct3D. Il est possible que l'acc\351l\351ration mat\351rielle soit d\351sactiv\351e ; veuillez ex\351cuter DXDIAG."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"Halo PC n\351cessite un param\351trage de qualit\351 couleur de 32 bits pour que vous puissiez jouer en mode fen\352tre. Dans Windows, cliquez \340 l'aide du bouton droit sur le bureau et s\351lectionnez Propri\351t\351s pour ajuster vos param\350tres."
+  132, "eula.rtf"
+  135, L"Vous avez d\351marr\351 le jeu tout en maintenant la touche contr\364le appuy\351e. "
+  136, L"-nosound\t\tD\351sactive tout les sons\n--novideo\t\tD\351sactive la lecture vid\351o\n--nojoystick\tD\351sactive les joysticks / gamepads\n-nogamma\tD\351sactive le r\351glage de gamma\n-noSSE\t\tD\351sactive les optimisations SSE et 3DNow!\n-useff\t\t|Force le jeu \340 \352tre ex\351cut\351 en tant que carte de fonction fixe\n-use11\t\tForce le jeu \340 \352tre ex\351cut\351 en tant que carte Shader 1.1\n-use14\t\tForce le jeu \340 \352tre ex\351cut\351 en tant que carte Shader 1.4\n-safemode\tD\351sactive autant de fonctionnalit\351s du jeu que possible\n\n-window\t\tEx\351cute le jeu dans une fen\352tre\n-width640\tForce le jeu \340 \352tre ex\351cut\351 en 640*480\nvidmode w,h,r\tForce le jeu \340 \352tre ex\351cut\351 en w (largeur), h (hauteur)[, r (actualiser)] \n-adapter x\tForce le jeu \340 \352tre ex\351cut\351 en plein \351cran sur un adaptateur Multimon\n\n-port x\t\tAdresse de port de serveur utilis\351e pour l'h\351bergement de jeux\n-cport x\t\tAdresse de port de client utilis\351e pour rejoindre des jeux\n-ip x.x.x.x\tAdresse de serveur IP utilis\351e lorsque plusieurs adresses ip sont disponibles\n-screenshot\tPermet \340 la touche de g\351n\351rer des copies d'\351cran gr\342ce \340 la touche \253\240Impression \351cran\240\273\n-timedemo\tPasse quatre films et \351crit le fichier timedemo.txt\n-console\t\tActive le d\351bogueur de console\n"
+  137, L"Le syst\350me a d\351tect\351 qu'un des fichiers Halo PC est manquant ou endommag\351. Veuillez d\351sinstaller, puis r\351installer le jeu."
+  139, L"Un probl\350me est survenu lors de l'acc\350s \340 vos fichiers personnels Halo PC situ\351s dans votre dossier Mes documents."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"Halo n'est pas compatible avec les d\351rogations de mode d'anticr\351nelage nVidia param\351tr\351s dans le panneau de commandes. Veuillez modifier ces param\350tres en s\351lectionnant  l'option de d\351sactivation ou les valeurs par d\351faut de l'application."
+  142, L"Le pilote son de votre ordinateur n'a pas \351t\351 test\351 pour ce jeu. Il est possible qu'une nouvelle version compatible soit disponible. Si vous souhaitez mettre \340 niveau vos pilotes, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+  143, L"Le pilote son de votre ordinateur pr\351sente des probl\350mes avec le jeu. Il est possible qu'une nouvelle version compatible soit disponible. Si vous souhaitez mettre \340 niveau vos pilotes, veuillez contacter le fabricant de votre ordinateur pour toute assistance n\351cessaire."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  128, "Halo - Errore irreversibile"
+  129, "Errore durante l'inizializzazione di Direct3D. L'accelerazione hardware potrebbe risultare disattivata. Si prega di eseguire DXDIAG."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"Halo PC richiede un'impostazione del colore a 32 bit per essere eseguito in modalit\340 con finestra. Per regolare tale impostazione in Windows, fare clic sul desktop con il pulsante destro del mouse e selezionare Propriet\340."
+  132, "eula.rtf"
+  135, L"Il gioco \350 stato avviato tenendo premuto il tasto CTRL."
+  136, L"-nosound\t\tDisattiva l'audio\n-novideo\t\tDisattiva la riproduzione video\n-nojoystick\tDisattiva joystick / game pad\n-nogamma\tDisattiva la regolazione del gamma\n-noSSE\t\tDisattiva le ottimizzazioni di ShapeSheet e 3DNow!\n-useff\t\tEsegue il gioco come una scheda a funzione fissa\n-use11\t\tEsegue il gioco come una scheda shader 1.1\n-use14\t\tEsegue gioco come una scheda shader 1.4\n-safemode\tDisattiva quante pi\371 funzioni possibili nel gioco\n\n-window\t\tEsegue il gioco in una finestra\n-width640\tEsegue il gioco a 640*480\n-vidmode w,h,r\tEsegue il gioco a larghezza, altezza[, aggiorna]\n-adapter x\tEsegue il gioco a tutto schermo su una scheda multimon\n\n-port x\t\tIndirizzo porta del server utilizzato quando si ospitano partite\n-cport x\t\tIndirizzo porta del client utilizzato quando si partecipa a partite\n-ip x.x.x.x\tIndirizzo IP del server utilizzato quando si hanno pi\371 indirizzi ip\n-screenshot\tAttiva la chiave 'Print Scrn' per generare screenshot\n-timedemo\tEsegue quattro filmati e crea il file timedemo.txt\n-console\t\tAttiva la console di debugging\n"
+  137, L"Uno dei file per Halo PC \350 mancante o danneggiato. Rimuovere il gioco e reinstallarlo."
+  139, L"Si \350 verificato un errore durante l'accesso ai file di Halo PC contenuti nella cartella Documenti."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"Halo non \350 compatibile con le sovrascritture della modalit\340 anti-aliasing di nVidia impostate nel pannello di controllo. Disattivare questa impostazione o selezionare l'impostazione predefinita dell'applicazione."
+  142, L"Non sono stati eseguiti test di compatibilit\340 tra il driver audio installato e questo gioco. Una versione aggiornata e compatibile del driver potrebbe essere disponibile. Per aggiornare i driver, rivolgersi al produttore del computer."
+  143, L"Al driver audio installato sono associati problemi di incompatibilit\340 noti con questo gioco. Una versione aggiornata e compatibile del driver potrebbe essere disponibile. Per aggiornare i driver, rivolgersi al produttore del computer."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  128, L"Halo - \x81f4\x547d\x7684\x306a\x30a8\x30e9\x30fc"
+  129, L"Direct3D \x306e\x521d\x671f\x5316\x4e2d\x306b\x30a8\x30e9\x30fc\x304c\x767a\x751f\x3057\x3001\x30cf\x30fc\x30c9\x30a6\x30a7\x30a2\x30a2\x30af\x30bb\x30e9\x30ec\x30fc\x30b7\x30e7\x30f3\x304c\x7121\x52b9\x306b\x306a\x3063\x305f\x53ef\x80fd\x6027\x304c\x3042\x308a\x307e\x3059\x3002DirectX \x8a3a\x65ad\x30c4\x30fc\x30eb (DXDIAG) \x3092\x5b9f\x884c\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  130, "http://go.microsoft.com/fwlink/?LinkId=19680"
+  131, L"Halo PC \x3092\x30a6\x30a3\x30f3\x30c9\x30a6\x8868\x793a\x30e2\x30fc\x30c9\x3067\x30d7\x30ec\x30a4\x3059\x308b\x306b\x306f \x753b\x9762\x306e\x8272\x6570\x3092 32 \x30d3\x30c3\x30c8\x306b\x8a2d\x5b9a\x3059\x308b\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002\x30c7\x30b9\x30af\x30c8\x30c3\x30d7\x30a2\x30a4\x30b3\x30f3\x3092\x53f3\x30af\x30ea\x30c3\x30af\x3057\x3066\x30d7\x30ed\x30d1\x30c6\x30a3\x3092\x9078\x3073\x3001\x8a2d\x5b9a\x3092\x5909\x66f4\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  132, "eula.rtf"
+  135, L"Ctrl \x30ad\x30fc\x3092\x62bc\x3057\x305f\x307e\x307e\x30b2\x30fc\x30e0\x3092\x59cb\x3081\x307e\x3057\x305f\x3002"
+  136, "-nosound\t\tDisable all sound\n-novideo\t\tDisable video playback\n-nojoystick\tDisable joysticks / gamepads\n-nogamma\tDisable adjustment of gamma\n-useff\t\tForces the game to run as a fixed fuction card\n-use11\t\tForces the game to run as a shader 1.1 card\n-use14\t\tForces the game to run as a shader 1.4 card\n-use20\t\tForces the game to run as a shader 2.0 card\n-safemode\tDisables as much as possible in the game\n\n-window\t\tRun the game in a window\n-width640\tForces the game to run at 640*480\n-vidmode w,h,r\tForces the game to run at width, height[, refresh]\n-adapter x\tForces the game to run fullscreen on a multimon adapter\n\n-port x\t\tServer port address used when hosting games\n-cport x\t\tClient port address used when joining games\n-ip x.x.x.x\tServer IP address used when you have multiple ip addresses\n-screenshot\tEnables the 'Print Scrn' key to generate screenshots\n-timedemo\tRuns four movies and writes out timedemo.txt\n-console\t\tEnable the debugging console\n"
+  137, L"Halo PC \x30d5\x30a1\x30a4\x30eb\x304c\x898b\x3064\x304b\x3089\x306a\x3044\x304b\x3001\x58ca\x308c\x3066\x3044\x307e\x3059\x3002\x30b2\x30fc\x30e0\x3092\x524a\x9664\x3057\x3066\x518d\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  139, L"\x30de\x30a4\x30c9\x30ad\x30e5\x30e1\x30f3\x30c8\x30d5\x30a9\x30eb\x30c0\x5185\x306e Halo \x306e\x30d5\x30a1\x30a4\x30eb\x3078\x306e\x30a2\x30af\x30bb\x30b9\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f\x3002"
+  140, "http://go.microsoft.com/fwlink/?LinkId=19681"
+  141, L"Halo \x306f\x30a2\x30f3\x30c1\x30a8\x30a4\x30ea\x30a2\x30b9\x30e2\x30fc\x30c9\x3068\x306e\x4e92\x63db\x6027\x304c\x3042\x308a\x307e\x305b\x3093\x3002\x30b3\x30f3\x30c8\x30ed\x30fc\x30eb\x30d1\x30cd\x30eb\x3067\x8a2d\x5b9a\x3092\x30aa\x30d5\x307e\x305f\x306f\x30a2\x30d7\x30ea\x30b1\x30fc\x30b7\x30e7\x30f3\x306e\x65e2\x5b9a\x5024\x306b\x5909\x66f4\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  142, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30b5\x30a6\x30f3\x30c9\x30c9\x30e9\x30a4\x30d0\x306f\x30c6\x30b9\x30c8\x3055\x308c\x3066\x3044\x307e\x305b\x3093\x3002\x65b0\x3057\x3044\x30c9\x30e9\x30a4\x30d0\x304c\x30ea\x30ea\x30fc\x30b9\x3055\x308c\x3066\x3044\x308b\x5834\x5408\x306f\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3057\x3066\x304f\x3060\x3055\x3044\x3002\x30c9\x30e9\x30a4\x30d0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+  143, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30b5\x30a6\x30f3\x30c9\x30c9\x30e9\x30a4\x30d0\x3067\x306f\x6b63\x3057\x304f\x52d5\x4f5c\x3057\x307e\x305b\x3093\x3002\x65b0\x3057\x3044\x30c9\x30e9\x30a4\x30d0\x304c\x30ea\x30ea\x30fc\x30b9\x3055\x308c\x3066\x3044\x308b\x5834\x5408\x306f\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3057\x3066\x304f\x3060\x3055\x3044\x3002\x30c9\x30e9\x30a4\x30d0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3059\x308b\x5834\x5408\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x88fd\x9020\x5143\x306b\x554f\x3044\x5408\x308f\x305b\x3066\x304f\x3060\x3055\x3044\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  128, L"Halo - \xc2ec\xac01\xd55c \xc624\xb958"
+  129, L"Direct3D\xb97c \xcd08\xae30\xd654 \xd558\xb358 \xc911 \xc624\xb958\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. \xd558\xb4dc\xc6e8\xc5b4 \xac00\xc18d \xae30\xb2a5\xc744 \xc0ac\xc6a9\xd558\xc9c0 \xbabb\xd560 \xc218 \xc788\xc2b5\xb2c8\xb2e4. DXDIAG\xb97c \xc2e4\xd589\xd558\xc2ed\xc2dc\xc624."
+  130, "http://support.microsoft.com/default.aspx?pr=drx"
+  131, L"Halo PC\xb97c \xcc3d \xbaa8\xb4dc\xc5d0\xc11c \xc2e4\xd589\xd558\xb824\xba74 \xc0c9 \xd488\xc9c8\xc744 32\xbe44\xd2b8\xb85c \xc124\xc815\xd574\xc57c \xd569\xb2c8\xb2e4. \xc124\xc815\xc744 \xbcc0\xacbd\xd558\xb824\xba74 Windows \xbc14\xd0d5 \xd654\xba74\xc5d0\xc11c \xb9c8\xc6b0\xc2a4 \xc624\xb978\xcabd \xb2e8\xcd94\xb97c \xd074\xb9ad\xd55c \xb2e4\xc74c [\xc18d\xc131]\xc744 \xc120\xd0dd\xd558\xc2ed\xc2dc\xc624."
+  132, "eula.rtf"
+  135, L"<Ctrl>\xd0a4\xb97c \xb204\xb978 \xc0c1\xd0dc\xc5d0\xc11c \xac8c\xc784\xc744 \xc2dc\xc791\xd588\xc2b5\xb2c8\xb2e4."
+  136, L"-nosound\t\t\xc0ac\xc6b4\xb4dc \xc0ac\xc6a9 \xc548 \xd568\n-novideo\t\t\xbe44\xb514\xc624 \xc7ac\xc0dd \xc0ac\xc6a9 \xc548 \xd568\n-nojoystick\t\xc870\xc774\xc2a4\xd2f1/\xac8c\xc784 \xd328\xb4dc \xc0ac\xc6a9 \xc548 \xd568\n-nogamma\t\xac10\xb9c8 \xc870\xc808 \xc0ac\xc6a9 \xc548 \xd568\n-useff\t\t\xace0\xc815 \xd568\xc218 \xce74\xb4dc\xb85c \xac8c\xc784 \xc2e4\xd589\n-use11\t\tshader 1.1 \xce74\xb4dc\xb85c \xac8c\xc784 \xc2e4\xd589\n-use14\t\tshader 1.4 \xce74\xb4dc\xb85c \xac8c\xc784 \xc2e4\xd589\n-use20\t\tshader 2.0 \xce74\xb4dc\xb85c \xac8c\xc784 \xc2e4\xd589\n-safemode\t\xac00\xb2a5\xd55c \xcd5c\xc18c \xae30\xb2a5\xc73c\xb85c \xac8c\xc784 \xc2e4\xd589\n\n-window\t\t\xcc3d\xc5d0\xc11c \xac8c\xc784 \xc2e4\xd589\n-width640\t640*480\xc5d0\xc11c \xac8c\xc784 \xc2e4\xd589\n-vidmode w,h,r\t\xc9c0\xc815\xd55c \xb108\xbe44, \xb192\xc774, \xc8fc\xc0ac\xc728\xc5d0\xc11c \xac8c\xc784 \xc2e4\xd589\n-adapter x\t\xb2e4\xc911 \xbaa8\xb2c8\xd130 \xc5b4\xb311\xd130\xb97c \xc0ac\xc6a9\xd560 \xb54c \xc804\xccb4 \xd654\xba74\xc73c\xb85c \xac8c\xc784 \xc2e4\xd589\n\n-port x\t\t\xac8c\xc784 \xd638\xc2a4\xd305\xd560 \xb54c \xc11c\xbc84 \xd3ec\xd2b8 \xc8fc\xc18c \xc0ac\xc6a9\n-cport x\t\t\xac8c\xc784 \xcc38\xac00\xd560 \xb54c \xd074\xb77c\xc774\xc5b8\xd2b8 \xd3ec\xd2b8 \xc8fc\xc18c \xc0ac\xc6a9\n-ip x.x.x.x\tIP \xc8fc\xc18c\xac00 \xc5ec\xb7ec \xac1c\xc77c \xb54c \xc11c\xbc84 IP \xc8fc\xc18c \xc0ac\xc6a9\n-screenshot\t<Print Scrn> \xd0a4\xb97c \xc0ac\xc6a9\xd558\xc5ec \xc2a4\xd06c\xb9b0\xc0f7 \xb9cc\xb4e4\xae30\n-timedemo\t4\xac1c\xc758 \xc601\xd654 \xbc0f \xd654\xba74\xc5d0 timedemo.txt \xcd9c\xb825\n-console\t\t\xb514\xbc84\xae45 \xcf58\xc194 \xc0ac\xc6a9\n"
+  137, L"Halo PC \xd30c\xc77c \xc911 \xd558\xb098\xac00 \xc5c6\xac70\xb098 \xc190\xc0c1\xb418\xc5c8\xc2b5\xb2c8\xb2e4. \xac8c\xc784\xc744 \xc81c\xac70\xd558\xace0 \xb2e4\xc2dc \xc124\xce58\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4."
+  139, L"\xc8c4\xc1a1\xd569\xb2c8\xb2e4. [\xb0b4 \xbb38\xc11c] \xd3f4\xb354\xc5d0 \xc788\xb294 \xac1c\xc778 Halo PC \xd30c\xc77c\xc5d0 \xc811\xadfc\xd558\xb294\xb370 \xbb38\xc81c\xac00 \xc788\xc5c8\xc2b5\xb2c8\xb2e4."
+  140, "http://www.microsoft.com/games/halo/support.asp"
+  141, L"Halo\xb294 \xd604\xc7ac \xc81c\xc5b4\xd310\xc758 \xc564\xd2f0 \xc568\xb9ac\xc5b4\xc2f1 \xbaa8\xb4dc \xc124\xc815\xacfc \xd638\xd658\xb418\xc9c0 \xc54a\xc2b5\xb2c8\xb2e4. \xc774 \xc124\xc815\xc744 [\xc0ac\xc6a9 \xc548 \xd568] \xb610\xb294 [\xc751\xc6a9 \xd504\xb85c\xadf8\xb7a8 \xae30\xbcf8 \xc124\xc815]\xc73c\xb85c \xc870\xc808\xd558\xc2ed\xc2dc\xc624."
+  142, L"\xcef4\xd4e8\xd130\xc758 \xc0ac\xc6b4\xb4dc \xb4dc\xb77c\xc774\xbc84\xac00 \xc774 \xac8c\xc784\xc5d0\xc11c \xd14c\xc2a4\xd2b8\xb418\xc9c0 \xc54a\xc558\xc2b5\xb2c8\xb2e4. \xc774 \xac8c\xc784\xacfc \xd638\xd658\xb418\xb294 \xc0c8 \xbc84\xc804\xc758 \xb4dc\xb77c\xc774\xbc84\xac00 \xc788\xc744 \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. \xb4dc\xb77c\xc774\xbc84\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+  143, L"\xd604\xc7ac \xc124\xce58\xb41c \xcef4\xd4e8\xd130\xc758 \xc0ac\xc6b4\xb4dc \xb4dc\xb77c\xc774\xbc84\xb85c \xc774 \xac8c\xc784\xc744 \xc2e4\xd589\xd558\xba74 \xc2ec\xac01\xd55c \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd558\xb294 \xac83\xc73c\xb85c \xc54c\xb824\xc838 \xc788\xc2b5\xb2c8\xb2e4. \xc774 \xac8c\xc784\xacfc \xd638\xd658\xb418\xb294 \xc0c8 \xbc84\xc804\xc758 \xb4dc\xb77c\xc774\xbc84\xac00 \xc788\xc744 \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. \xb4dc\xb77c\xc774\xbc84\xb97c \xc5c5\xadf8\xb808\xc774\xb4dc\xd558\xb824\xba74 \xcef4\xd4e8\xd130 \xc81c\xc870\xc5c5\xccb4\xb85c \xbb38\xc758\xd558\xc2ed\xc2dc\xc624."
+END
+
+/* Name: 10.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.tw.txt"
+  145, L"\x81ea\x52d5\x5e73\x8861: \x62d2\x7d55\x8b8a\x66f4\x5718\x968a\x8981\x6c42"
+  146, L"\x60a8\x96fb\x8166\x4e0a\x5df2\x5728\x57f7\x884c\x6700\x5f8c\x4e00\x6230\x904a\x6232\x3002"
+  147, L"\x60a8\x96fb\x8166\x4e0a\x6240\x4f7f\x7528\x7684\x8996\x8a0a\x5361\x53ef\x80fd\x662f\x539f\x5f62\x3002\x5efa\x8b70\x60a8\x4f7f\x7528\x672c\x904a\x6232\x6240\x652f\x63f4\x7684\x5e02\x552e\x8996\x8a0a\x5361\x4f86\x73a9\x672c\x904a\x6232\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.de.txt"
+  145, L"Autobalance: Team\344nderungsanforderung abgelehnt"
+  146, L"Auf diesem Computer wird bereits eine Kopie von Halo ausgef\374hrt."
+  147, L"Bei der Grafikkarte Ihres Computers handelt es sich m\366glicherweise um einen Prototyp. Sie sollten nur unterst\374tzte, im Einzelhandel erh\344ltliche Grafikkarten verwenden, um Halo zu spielen."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.txt"
+  145, "Autobalance: Team Change Request Denied"
+  146, "There is a copy of Halo already running on this machine."
+  147, "We have detected the video card in your machine may be a prototype. We recommend using only supported retail video cards to play Halo."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.es.txt"
+  145, "Autobalance: Solicitud de cambio de equipo denegada"
+  146, L"Ya se est\341 ejecutando una copia de Halo en este equipo."
+  147, L"Se ha detectado que la tarjeta de v\355deo del equipo puede ser un prototipo. Es recomendable utilizar \372nicamente las tarjetas de v\355deo comerciales compatibles con Halo."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.fr.txt"
+  145, L"R\351glage automatique\240: requ\352te de changement d'\351quipe rejet\351e"
+  146, L"Une copie de Halo est d\351j\340 en cours d'ex\351cution sur cet ordinateur."
+  147, L"Le syst\350me a d\351tect\351 que la carte vid\351o de votre ordinateur est peut-\352tre un prototype. Veuillez utiliser uniquement des cartes vid\351os approuv\351es pour jouer \340 Halo."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.it.txt"
+  145, "Bilanciamento automatico: Richiesta di modifica squadra respinta"
+  146, L"Una copia di Halo \350 gi\340 stata installata su questo computer."
+  147, L"\310 stato rilevato che la scheda video installata potrebbe essere un prototipo. Utilizzare solo schede video supportate per giocare con Halo."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.jp.txt"
+  145, L"\x81ea\x52d5\x30d0\x30e9\x30f3\x30b9\x8abf\x6574: \x30c1\x30fc\x30e0\x306e\x5909\x66f4\x306f\x3067\x304d\x307e\x305b\x3093\x3002"
+  146, L"\x3053\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3067 Halo \x306f\x3059\x3067\x306b\x5b9f\x884c\x3055\x308c\x3066\x3044\x307e\x3059\x3002"
+  147, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30ab\x30fc\x30c9\x306f\x30d7\x30ed\x30c8\x30bf\x30a4\x30d7\x306e\x53ef\x80fd\x6027\x304c\x3042\x308a\x307e\x3059\x3002\x6b63\x898f\x306e\x88fd\x54c1\x3067\x3042\x308b\x3053\x3068\x3092\x78ba\x8a8d\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  144, "http://motd-static.hosthpc.com/halopc-motd_110.kr.txt"
+  145, L"\xc790\xb3d9 \xbc30\xce58: \xd300 \xc804\xd658 \xc694\xccad\xc774 \xac70\xbd80\xb418\xc5c8\xc2b5\xb2c8\xb2e4."
+  146, L"\xc774 \xcef4\xd4e8\xd130\xc5d0 \xc774\xbbf8 Halo\xac00 \xc2e4\xd589\xb418\xace0 \xc788\xc2b5\xb2c8\xb2e4."
+  147, L"\xcef4\xd4e8\xd130\xc5d0 \xc788\xb294 \xbe44\xb514\xc624 \xce74\xb4dc\xac00 \xd504\xb85c\xd1a0\xd0c0\xc785\xc77c \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. Halo\xb97c \xc2e4\xd589\xd560 \xb54c \xc9c0\xc6d0\xd558\xb294 \xc815\xd488 \xbe44\xb514\xc624 \xce74\xb4dc\xb97c \xc0ac\xc6a9\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4."
+END
+
+/* Name: 11.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  160, L"\x60a8\x7684\x7522\x54c1\x91d1\x9470\x7121\x6548\x3002\x5efa\x8b70\x60a8\x79fb\x9664\x5b89\x88dd\x518d\x91cd\x65b0\x5b89\x88dd\x4e00\x6b21\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  160, L"Der Produktschl\374ssel ist ung\374ltig. Bitte deinstallieren Sie das Spiel und installieren Sie es anschlie\337end neu."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  160, "Your product key is invalid. We recommend removing and reinstalling the game."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  160, L"La clave del producto no es v\341lida. Es recomendable eliminar y reinstalar el juego."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  160, L"Votre cl\351 de produit est incorrecte. Veuillez d\351sinstaller, puis r\351installer le jeu."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  160, L"Il codice Product Key utilizzato non \350 valido. Rimuovere il gioco e reinstallarlo."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  160, L"\x304a\x4f7f\x3044\x306e CD \x30ad\x30fc\x304c\x6b63\x3057\x304f\x3042\x308a\x307e\x305b\x3093\x3002Halo \x3092\x524a\x9664\x3057\x3066\x518d\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  160, L"\xc81c\xd488 \xd0a4\xac00 \xc62c\xbc14\xb974\xc9c0 \xc54a\xc2b5\xb2c8\xb2e4. \xac8c\xc784\xc744 \xc81c\xac70\xd558\xace0 \xb2e4\xc2dc \xc124\xce58\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4."
+END
+
+/* Name: 1155.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  18466, L"\x53d6\x6d88"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  18466, "Abbrechen"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  18466, "Cancel"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  18466, "Cancelar"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  18466, "Annuler"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  18466, "Annulla"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  18466, L"\x30ad\x30e3\x30f3\x30bb\x30eb"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  18466, L"\xcde8\xc18c"
+END
+
+/* Name: 1259.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  20140, L"\x6b63\x5728\x4e0b\x8f09\x66f4\x65b0..."
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  20140, "Aktualisierung wird heruntergeladen ..."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  20140, "Downloading update..."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  20140, L"Descargando la actualizaci\363n..."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  20140, L"T\351l\351chargement de la mise \340 jour..."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  20140, "Scaricamento dell'aggiornamento in corso..."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  20140, L"\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x3057\x3066\x3044\x307e\x3059..."
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  20140, L"\xc5c5\xb370\xc774\xd2b8 \xb2e4\xc6b4\xb85c\xb4dc \xc911..."
+END
+
+/* Name: 1260.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  20148, L"\x6b63\x5728\x5b89\x88dd\x66f4\x65b0..."
+  20149, L"\x60a8\x7684\x904a\x6232\x5df2\x662f\x6700\x65b0\x7684\x7248\x672c\x3002"
+  20150, L"\x904a\x6232\x51fa\x73fe\x554f\x984c\xff0c\x7121\x6cd5\x9032\x884c\x66f4\x65b0\x3002\x60a8\x53ef\x4ee5\x5f9e http://www.microsoft.com/games/halo/downloads.asp \x7db2\x9801\x4e0b\x8f09\x6700\x65b0\x7684\x66f4\x65b0\x6a94\x6848\x3002"
+  20151, L"\x60a8\x5fc5\x9808\x5148\x7d50\x675f\x904a\x6232\x624d\x80fd\x5b8c\x6210\x66f4\x65b0\x6a94\x6848\x7684\x5b89\x88dd\x3002"
+  20153, L"\x6700\x5f8c\x4e00\x6230\x66f4\x65b0"
+  20154, L"\x6b63\x5728\x7b49\x5f85\x904a\x6232\x7d50\x675f..."
+  20155, L"\x6b63\x5728\x66f4\x65b0\x904a\x6232..."
+  20156, L"\x91cd\x65b0\x958b\x59cb\x904a\x6232..."
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  20148, "Aktualisierung wird installiert ..."
+  20149, "Ihr Spiel ist auf dem neuesten Stand."
+  20150, L"Ein Fehler ist aufgetreten. Das Spiel konnte nicht aktualisiert werden. Die neueste Aktualisierung k\366nnen Sie unter http://www.microsoft.com/games/halo/downloads.asp herunterladen."
+  20151, "Das Spiel muss zur Installation der Aktualisierung beendet werden."
+  20153, "Halo-Aktualisierung"
+  20154, "Warten auf Beendigung des Spiels ..."
+  20155, "Spiel wird aktualisiert ..."
+  20156, "Spiel wird neu gestartet ..."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  20148, "Installing update..."
+  20149, "Your game is up to date."
+  20150, "A problem occurred and the game could not be updated. You can also download the latest update from http://www.microsoft.com/games/halo/downloads.asp"
+  20151, "The game needs to exit to finish installing the update."
+  20153, "Halo Update"
+  20154, "Waiting for the game to exit..."
+  20155, "Updating the game..."
+  20156, "Restarting the game..."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  20148, L"Instalando la actualizaci\363n..."
+  20149, L"El juego est\341 actualizado."
+  20150, L"Ha ocurrido un problema y no se ha podido actualizar el juego. Tambi\351n puedes descargar la actualizaci\363n m\341s reciente desde http://www.microsoft.com/games/halo/downloads.asp"
+  20151, L"Es necesario salir del juego para finalizar la instalaci\363n de la actualizaci\363n."
+  20153, L"Actualizaci\363n de Halo"
+  20154, "Esperando a que el juego se cierre..."
+  20155, "Actualizando el juego..."
+  20156, "Reiniciando el juego..."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  20148, L"Installation de la mise \340 jour..."
+  20149, L"Votre jeu est mis \340 jour."
+  20150, L"Un probl\350me est survenu et le jeu n'a pas pu \352tre mis \340 jour. Vous pouvez \351galement t\351l\351charger la derni\350re mise \340 jour sur http://www.microsoft.com/games/halo/downloads.asp"
+  20151, L"Vous devez quitter le jeu afin de pouvoir terminer l'installation de la mise \340 jour."
+  20153, L"Mise \340 jour Halo "
+  20154, L"Le syst\350me attend que le jeu soit quitt\351..."
+  20155, L"Mise \340 jour du jeu..."
+  20156, L"Red\351marrage du jeu..."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  20148, "Installazione dell'aggiornamento in corso..."
+  20149, L"Il gioco \350 aggiornato."
+  20150, L"Si \350 verificato un errore durante l'aggiornamento del gioco. \310 possibile inoltre scaricare l'ultimo aggiornamento da http://www.microsoft.com/games/halo/downloads.asp"
+  20151, "Uscire dal gioco per completare l'installazione dell'aggiornamento."
+  20153, "Aggiornamento di Halo"
+  20154, "Chiusura del gioco in corso..."
+  20155, "Aggiornamento del gioco in corso..."
+  20156, "Riavvio del gioco in corso..."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  20148, L"\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3057\x3066\x3044\x307e\x3059..."
+  20149, L"\x30d7\x30ed\x30b0\x30e9\x30e0\x306f\x6700\x65b0\x306e\x3082\x306e\x3067\x3059\x3002"
+  20150, L"\x554f\x984c\x304c\x767a\x751f\x3057\x305f\x305f\x3081\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3067\x304d\x307e\x305b\x3093\x3067\x3057\x305f\x3002Halo \x306e\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x30b5\x30a4\x30c8\x304b\x3089\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  20151, L"\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x306e\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3092\x5b8c\x4e86\x3059\x308b\x306b\x306f\x30b2\x30fc\x30e0\x3092\x7d42\x4e86\x3059\x308b\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002"
+  20153, L"Halo \x30a2\x30c3\x30d7\x30c7\x30fc\x30c8"
+  20154, L"\x30b2\x30fc\x30e0\x304c\x7d42\x4e86\x3059\x308b\x306e\x3092\x5f85\x3063\x3066\x3044\x307e\x3059..."
+  20155, L"\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3057\x3066\x3044\x307e\x3059..."
+  20156, L"\x30b2\x30fc\x30e0\x3092\x518d\x8d77\x52d5\x3057\x3066\x3044\x307e\x3059..."
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  20148, L"\xc5c5\xb370\xc774\xd2b8 \xc124\xce58 \xc911..."
+  20149, L"\xac8c\xc784\xc774 \xcd5c\xc2e0 \xc0c1\xd0dc\xc785\xb2c8\xb2e4."
+  20150, L"\xbb38\xc81c\xac00 \xbc1c\xc0dd\xd574 \xac8c\xc784\xc744 \xc5c5\xb370\xc774\xd2b8\xd560 \xc218 \xc5c6\xc2b5\xb2c8\xb2e4. http://www.microsoft.com/games/halo/downloads.asp\xc5d0\xc11c\xb3c4 \xcd5c\xc2e0 \xc5c5\xb370\xc774\xd2b8\xb97c \xb2e4\xc6b4\xb85c\xb4dc\xd560 \xc218 \xc788\xc2b5\xb2c8\xb2e4."
+  20151, L"\xc5c5\xb370\xc774\xd2b8 \xc124\xce58\xb97c \xb9c8\xce58\xb824\xba74 \xac8c\xc784\xc744 \xb05d\xb0b4\xc57c \xd569\xb2c8\xb2e4."
+  20153, L"Halo \xc5c5\xb370\xc774\xd2b8"
+  20154, L"\xac8c\xc784\xc774 \xb05d\xb098\xae30\xb97c \xae30\xb2e4\xb9ac\xb294 \xc911..."
+  20155, L"\xac8c\xc784 \xc5c5\xb370\xc774\xd2b8 \xc911..."
+  20156, L"\xac8c\xc784 \xb2e4\xc2dc \xc2dc\xc791 \xc911..."
+END
+
+/* Name: 1262.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  20187, L"\x6b63\x5728\x6aa2\x67e5\x66f4\x65b0..."
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  20187, L"\334berpr\374fen auf Aktualisierung ..."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  20187, "Checking for update..."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  20187, "Buscando actualizaciones..."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  20187, L"V\351rification des mises \340 jour..."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  20187, "Ricerca dell'aggiornamento in corso..."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  20187, L"\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x78ba\x8a8d\x3057\x3066\x3044\x307e\x3059..."
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  20187, L"\xc5c5\xb370\xc774\xd2b8 \xd655\xc778 \xc911..."
+END
+
+/* Name: 1348.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  21556, L"\x9023\x7dda\x5230 %hs"
+  21561, L"\x9023\x7dda\x51fa\x73fe\x554f\x984c\x3002\x8acb\x78ba\x8a8d\x60a8\x5df2\x9023\x7dda\x5230\x7db2\x969b\x7db2\x8def\xff0c\x4e14\x53ef\x7528\x60a8\x7684\x7db2\x9801\x700f\x89bd\x5668\x5b58\x53d6 http://www.microsoft.com/games/halo/downloads.asp \x7db2\x9801\x3002"
+  21562, L"\x904a\x6232\x5b89\x88dd\x51fa\x73fe\x554f\x984c\x3002\x60a8\x53ef\x80fd\x9700\x8981\x91cd\x65b0\x5b89\x88dd\x624d\x80fd\x89e3\x6c7a\x9019\x500b\x554f\x984c\x3002"
+  21563, L"\x6a94\x6848\x5b58\x53d6\x51fa\x73fe\x554f\x984c\x3002\x60a8\x5fc5\x9808\x4ee5\x7cfb\x7d71\x7ba1\x7406\x54e1\x7684\x8eab\x5206\x767b\x5165 Windows\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  21556, "Verbindung mit %hs wird aufgebaut"
+  21561, L"Es ist ein Problem mit der Verbindung aufgetreten. Vergewissern Sie sich, dass eine Internet-Verbindung aufgebaut wurde, und dass Sie mit dem Web-Browser auf http://www.microsoft.com/games/halo/downloads.asp zugreifen k\366nnen."
+  21562, L"In der Spielinstallation ist ein Fehler aufgetreten. Zur Behebung ist m\366glicherweise eine Neuinstallation des Spiels erforderlich."
+  21563, "Dateizugriffsfehler. Bitte melden Sie sich unter Windows als Benutzer mit Administratorrechten an."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  21556, "Connecting to %hs"
+  21561, "There was a connection problem. Make sure you are connected to the Internet and can access http://www.microsoft.com/games/halo/downloads.asp with your Web browser."
+  21562, "There is a problem with your game installation. You may need to reinstall the game to fix it."
+  21563, "There was a file access problem. You have to be logged into Windows as a user with Admin rights."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  21556, "Conectando a %hs"
+  21561, L"Ha ocurrido un problema con la conexi\363n. Aseg\372rate de que est\341s conectado a Internet y puedes acceder a http://www.microsoft.com/games/halo/downloads.asp con el explorador Web."
+  21562, L"Ha ocurrido un problema con la instalaci\363n del juego. Es posible que sea necesario reinstalar el juego para corregirlo."
+  21563, L"Ha ocurrido un problema de acceso al archivo. Tienes que haber iniciado una sesi\363n en Windows como usuario con derechos de administrador."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  21556, L"Connexion \340 %hs"
+  21561, L"Un probl\350me de connexion est survenu. Assurez-vous que vous \352tes bien connect\351 \340 Internet et que vous avez acc\350s au site http://www.microsoft.com/games/halo/downloads.asp par l'interm\351diaire de votre navigateur Internet."
+  21562, L"Un probl\350me li\351 \340 l'installation de votre jeu est survenu. Il est possible que vous deviez r\351installer le jeu afin de r\351soudre ce probl\350me."
+  21563, L"Un probl\350me d'acc\350s au fichier est survenu. Vous devez \352tre connect\351 \340 Windows en tant qu'utilisateur poss\351dant les droits d'administration."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  21556, "Connessione a %hs in corso"
+  21561, L"Si \350 verificato un errore durante la connessione. Verificare il collegamento a Internet e la possibilit\340 di accedere a http://www.microsoft.com/games/halo/downloads.asp con il browser Web utilizzato."
+  21562, L"Si \350 verificato un problema durante l'installazione del gioco. Per risolverlo pu\362 rendersi necessario reinstallarlo."
+  21563, L"Si \350 verificato un problema di accesso al file. \310 necessario essere connessi a Windows come utenti con diritti di amministrazione."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  21556, L"%hs \x306b\x63a5\x7d9a\x4e2d"
+  21561, L"\x63a5\x7d9a\x306b\x95a2\x3059\x308b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f\x3002\x30a4\x30f3\x30bf\x30fc\x30cd\x30c3\x30c8\x306b\x63a5\x7d9a\x3057\x3066\x3044\x3066 Web \x30d6\x30e9\x30a6\x30b6\x3067 Halo \x306e\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x30b5\x30a4\x30c8\x306b\x30a2\x30af\x30bb\x30b9\x3067\x304d\x308b\x3053\x3068\x3092\x78ba\x8a8d\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+  21562, L"\x30b2\x30fc\x30e0\x306e\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f\x3002\x30b2\x30fc\x30e0\x3092\x518d\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3059\x308b\x3068\x89e3\x6c7a\x3059\x308b\x5834\x5408\x304c\x3042\x308a\x307e\x3059\x3002"
+  21563, L"\x30d5\x30a1\x30a4\x30eb\x3078\x306e\x30a2\x30af\x30bb\x30b9\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f\x3002\x7ba1\x7406\x8005\x6a29\x9650\x306e\x3042\x308b\x30e6\x30fc\x30b6\x30fc\x3068\x3057\x3066 Windows \x306b\x30ed\x30b0\x30a4\x30f3\x3059\x308b\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  21556, L"%hs\xc5d0 \xc5f0\xacb0 \xc911"
+  21561, L"\xc5f0\xacb0\xc5d0 \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. \xc778\xd130\xb137\xc5d0 \xc5f0\xacb0\xb418\xc5b4 \xc788\xace0 \xc6f9 \xbe0c\xb77c\xc6b0\xc800\xb97c \xc0ac\xc6a9\xd574 http://www.microsoft.com/games/halo/downloads.asp\xc5d0 \xc811\xadfc\xd560 \xc218 \xc788\xb294\xc9c0 \xd655\xc778\xd558\xc2ed\xc2dc\xc624."
+  21562, L"\xac8c\xc784 \xc124\xce58\xc5d0 \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. \xac8c\xc784\xc744 \xb2e4\xc2dc \xc124\xce58\xd558\xc5ec \xace0\xce58\xc2ed\xc2dc\xc624."
+  21563, L"\xd30c\xc77c \xc561\xc138\xc2a4 \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. \xad00\xb9ac\xc790 \xad8c\xd55c\xc774 \xc788\xb294 \xc0ac\xc6a9\xc790\xb85c \xb85c\xadf8\xc778\xd574\xc57c \xd569\xb2c8\xb2e4."
+END
+
+/* Name: 1349.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  21573, L"%d%% \x5df2\x5b8c\x6210"
+  21574, L"\x6b63\x5728\x8655\x7406 %hs \x6a94\x6848"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  21573, "%d%% abgeschlossen"
+  21574, "Datei %hs wird verarbeitet"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  21573, "%d%% complete"
+  21574, "Processing file %hs"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  21573, "%d%% completado"
+  21574, "Procesando el archivo %hs"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  21573, L"%d%% termin\351"
+  21574, "Traitement du fichier %hs"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  21573, "%d%% completato"
+  21574, "Elaborazione del file %hs in corso"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  21573, L"%d%% \x5b8c\x4e86"
+  21574, L"\x30d5\x30a1\x30a4\x30eb %hs \x3092\x51e6\x7406\x3057\x3066\x3044\x307e\x3059"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  21573, L"%d%% \xc644\xb8cc"
+  21574, L"%hs \xd30c\xc77c \xc9c4\xd589 \xc911"
+END
+
+/* Name: 1421.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  22726, L"\x904a\x6232\x5df2\x7d93\x6210\x529f\x5730\x66f4\x65b0\x4e86\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  22726, "Das Spiel wurde aktualisiert."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  22726, "The game was successfully updated."
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  22726, "El juego se ha actualizado correctamente."
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  22726, L"Le jeu a \351t\351 mis \340 jour avec succ\350s."
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  22726, "Aggiornamento del gioco completato."
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  22726, L"\x30b2\x30fc\x30e0\x304c\x6b63\x5e38\x306b\x30a2\x30c3\x30d7\x30c7\x30fc\x30c8\x3055\x308c\x307e\x3057\x305f\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  22726, L"\xac8c\xc784\xc774 \xc131\xacf5\xc801\xc73c\xb85c \xc5c5\xb370\xc774\xd2b8\xb418\xc5c8\xc2b5\xb2c8\xb2e4."
+END
+
+/* Name: 1422.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"\x9023\x7dda\x767c\x751f\x554f\x984c\x3002\x8acb\x5f9e http://www.microsoft.com/games/halo/downloads.asp \x4e0b\x8f09\x6700\x65b0\x7684\x66f4\x65b0\x3002"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"Es ist ein Verbindungsfehler aufgetreten. Die neueste Aktualisierung k\366nnen Sie unter http://www.microsoft.com/games/halo/downloads.asp herunterladen."
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  22748, "A connection problem occurred. You can download the latest update from http://www.microsoft.com/games/halo/downloads.asp"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"Ha ocurrido un problema con la conexi\363n. Puedes descargar la actualizaci\363n m\341s reciente desde http://www.microsoft.com/games/halo/downloads.asp"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"Un probl\350me de connexion est survenu. Vous pouvez t\351l\351charger la derni\350re mise \340 jour sur http://www.microsoft.com/games/halo/downloads.asp"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"Si \350 verificato un errore durante la connessione. \310 possibile scaricare l'ultimo aggiornamento da http://www.microsoft.com/games/halo/downloads.asp"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"\x63a5\x7d9a\x4e2d\x306b\x554f\x984c\x304c\x767a\x751f\x3057\x307e\x3057\x305f\x3002Halo \x306e\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x30b5\x30a4\x30c8\x304b\x3089\x6700\x65b0\x30d7\x30ed\x30b0\x30e9\x30e0\x3092\x30c0\x30a6\x30f3\x30ed\x30fc\x30c9\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  22748, L"\xc5f0\xacb0\xc5d0 \xbb38\xc81c\xac00 \xbc1c\xc0dd\xd588\xc2b5\xb2c8\xb2e4. http://www.microsoft.com/games/halo/downloads.asp\xc5d0\xc11c\xb3c4 \xcd5c\xc2e0 \xc5c5\xb370\xc774\xd2b8\xb97c \xb2e4\xc6b4\xb85c\xb4dc\xd560 \xc218 \xc788\xc2b5\xb2c8\xb2e4."
+END
+
+/* Name: 1438.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  23000, L"%6.2f%% (%d / %d \x4f4d\x5143\x7d44)"
+  23001, L"%d \x4f4d\x5143\x7d44"
+  23002, L"%.2f \x4f4d\x5143\x7d44/\x79d2"
+  23003, L"\x60a8\x5fc5\x9808\x91cd\x65b0\x555f\x52d5\x60a8\x7684\x96fb\x8166\xff0c\x624d\x80fd\x5b8c\x6210\x66f4\x65b0\x3002\n\x5982\x679c\x60a8\x60f3\x8981\x7a0d\x5f8c\x518d\x555f\x52d5\x60a8\x7684\x96fb\x8166\xff0c\x6216\x60f3\x5148\x95dc\x9589\x5176\x4ed6\x6b63\x5728\x57f7\x884c\x7684\x7a0b\x5f0f\xff0c\x8acb\x6309 [\x5426]\xff0c\x7a0d\x5f8c\x518d\x624b\x52d5\x91cd\x65b0\x555f\x52d5\x96fb\x8166\x3002\n\n\x60a8\x73fe\x5728\x8981\x555f\x52d5\x60a8\x7684\x96fb\x8166\x55ce?"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  23000, "%6.2f%% (%d / %d Byte)"
+  23001, "%d Byte"
+  23002, "%.2f kB/Sek."
+  23003, L"Zum Abschlie\337en der Aktualisierung muss der Computer neu gestartet werden.\nWenn Sie erst andere Anwendungen schlie\337en und den Neustart sp\344ter selbst durchf\374hren m\366chten, klicken Sie auf ""Nein"".\n\nComputer jetzt neu starten?"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  23000, "%6.2f%% (%d / %d bytes)"
+  23001, "%d bytes"
+  23002, "%.2f kbytes/sec"
+  23003, "You must restart your computer to complete the update.\nIf you want to restart later, or close other programs first, click No, and then restart your computer manually.\n\nDo you want to restart now?"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  23000, "%6.2f%% (%d / %d bytes)"
+  23001, "%d bytes"
+  23002, "%.2f kbytes/seg"
+  23003, L"Debes reiniciar el equipo para completar la actualizaci\363n.\nSi deseas hacerlo m\341s tarde o cerrar otros programa antes, haz clic en No y, a continuaci\363n, reinicia de forma manual.\n\n\277Deseas reiniciar ahora?"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  23000, "%6.2f%% (%d / %d octets)"
+  23001, "%d octets"
+  23002, "%.2f Koctets/sec"
+  23003, L"Vous devez red\351marrer votre ordinateur pour terminer la mise \340 jour.\nSi vous voulez red\351marrer ult\351rieurement, ou fermer tout d'abord les autres programmes, cliquez sur Non, puis red\351marrez l'ordinateur manuellement.\n\nVoulez-vous red\351marrer maintenant ?"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  23000, "%6,2f%% (%d / %d byte)"
+  23001, "%d byte"
+  23002, "%.2f kbyte/sec"
+  23003, L"Per completare l'aggiornamento \350 necessario riavviare il computer .\nSe si desidera riavviare in seguito o chiudere prima altri programmi, fare clic su No, quindi riavviare il computer manualmente.\n\nRiavviare?"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  23000, L"%6.2f%% (%d / %d \x30d0\x30a4\x30c8)"
+  23001, L"%d \x30d0\x30a4\x30c8"
+  23002, L"%.2f KB/\x79d2"
+  23003, L"\x30a4\x30f3\x30b9\x30c8\x30fc\x30eb\x3092\x5b8c\x4e86\x3059\x308b\x306b\x306f\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3092\x518d\x8d77\x52d5\x3059\x308b\x5fc5\x8981\x304c\x3042\x308a\x307e\x3059\x3002\n\x5f8c\x3067\x518d\x8d77\x52d5\x3059\x308b\x5834\x5408\x306f\x3001[\x3044\x3044\x3048] \x3092\x30af\x30ea\x30c3\x30af\x3057\x3066\x304f\x3060\x3055\x3044\x3002\n\n\x518d\x8d77\x52d5\x3057\x307e\x3059\x304b?"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  23000, L"%6.2f%%(%d/%d\xbc14\xc774\xd2b8)"
+  23001, L"%d\xbc14\xc774\xd2b8"
+  23002, L"%.2f KB/\xcd08"
+  23003, L"\xc5c5\xb370\xc774\xd2b8\xb97c \xc644\xb8cc\xd558\xb824\xba74 \xcef4\xd4e8\xd130\xb97c \xb2e4\xc2dc \xc2dc\xc791\xd574\xc57c\xd569\xb2c8\xb2e4.\n\xb098\xc911\xc5d0 \xb2e4\xc2dc \xc2dc\xc791\xd558\xac70\xb098 \xb2e4\xb978 \xd504\xb85c\xadf8\xb7a8\xc744 \xba3c\xc800 \xb2eb\xc73c\xb824\xba74 [\xc544\xb2c8\xc694]\xb97c \xd074\xb9ad\xd55c \xb2e4\xc74c \xcef4\xd4e8\xd130\xb97c \xc218\xb3d9\xc73c\xb85c \xb2e4\xc2dc \xc2dc\xc791\xd558\xc2ed\xc2dc\xc624.\n\n\xb2e4\xc2dc \xc2dc\xc791\xd558\xc2dc\xaca0\xc2b5\xb2c8\xae4c?"
+END
+
+/* Name: 2048.  */
+LANGUAGE 4, 1
+
+STRINGTABLE
+BEGIN
+  32767, L"\x7e41\x9ad4\x4e2d\x6587"
+END
+LANGUAGE 7, 1
+
+STRINGTABLE
+BEGIN
+  32767, "Englisch"
+END
+LANGUAGE 9, 1
+
+STRINGTABLE
+BEGIN
+  32767, "English"
+END
+LANGUAGE 10, 1
+
+STRINGTABLE
+BEGIN
+  32767, L"Espa\361ol"
+END
+LANGUAGE 12, 1
+
+STRINGTABLE
+BEGIN
+  32767, "Anglais"
+END
+LANGUAGE 16, 1
+
+STRINGTABLE
+BEGIN
+  32767, "Italiano"
+END
+LANGUAGE 17, 1
+
+STRINGTABLE
+BEGIN
+  32767, "English"
+END
+LANGUAGE 18, 1
+
+STRINGTABLE
+BEGIN
+  32767, L"\xd55c\xad6d\xc5b4"
+END

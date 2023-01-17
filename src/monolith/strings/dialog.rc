@@ -1,0 +1,150 @@
+/*
+    Halo PC Strings.dll resource data
+    Version 1.0.6.612
+    Tuesday, August 24, 2004 9:22:27 PM
+*/
+
+LANGUAGE 4, 1
+
+102 DIALOGEX  0, 0, 305, 102
+STYLE 0x80c800c0
+CAPTION L"\x6700\x5f8c\x4e00\x6230 - \x8b66\x544a"
+FONT 9, "MingLiU", 400, 0, 136
+BEGIN
+  DEFPUSHBUTTON L"\x7e7c\x7e8c\x57f7\x884c", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON L"\x5728\x5b89\x5168\x6a21\x5f0f\x4e0b\x7e7c\x7e8c", 3, 107, 80, 88, 14, 0x50010000
+  PUSHBUTTON L"\x7d50\x675f", 1005, 209, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX L"\x4e0d\x518d\x986f\x793a\x9019\x500b\x8b66\x544a", 1001, 6, 64, 109, 10, 0x50010003
+  LTEXT L"\x975c\x614b", 1006, 50, 7, 247, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 21, 21, 0x50000003
+  LTEXT L"\x6309\x9019\x88e1\x7372\x5f97\x66f4\x591a\x8cc7\x8a0a", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT L"\x975c\x614b", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT L"\x96fb\x8166\x8cc7\x8a0a", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT L"\x554f\x984c:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 7, 1
+
+102 DIALOGEX  0, 0, 376, 102
+STYLE 0x80c800c8
+CAPTION "Halo - Warnung"
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON "Dennoch fortfahren", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON "Im abgesicherten Modus fortfahren", 3, 102, 80, 147, 14, 0x50010000
+  PUSHBUTTON "Beenden", 1005, 259, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX "Diese Warnmeldung nicht wieder anzeigen.", 1001, 6, 64, 162, 10, 0x50010003
+  LTEXT "Statisch", 1006, 50, 7, 287, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT L"F\374r weitere Informationen hier klicken.", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT "Statisch", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT L"Ger\344teinformationen:", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT "Fehler:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 9, 1
+
+102 DIALOGEX  0, 0, 305, 102
+STYLE 0x80c800c8
+CAPTION "Halo - Warning"
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON "Continue Anyway", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON "Continue in 'Safe Mode'", 3, 107, 80, 88, 14, 0x50010000
+  PUSHBUTTON "Exit", 1005, 209, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX "Don't show this warning again", 1001, 6, 64, 119, 10, 0x50010003
+  LTEXT "Static", 1006, 50, 7, 247, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT "Click here for more information.", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT "Static", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT "Machine Info :", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT "Problem:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 10, 1
+
+102 DIALOGEX  0, 0, 348, 102
+STYLE 0x80c800c8
+CAPTION "Halo: Advertencia"
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON "Continuar", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON "Continuar en modo seguro", 3, 104, 80, 121, 14, 0x50010000
+  PUSHBUTTON "Salir", 1005, 236, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX "No mostrar esta advertencia de nuevo", 1001, 6, 64, 162, 10, 0x50010003
+  LTEXT L"Est\341tico", 1006, 50, 7, 257, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT L"Haz clic aqu\355 para obtener m\341s informaci\363n.", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT L"Est\341tico", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT L"Informaci\363n del equipo:", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT "Problema:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 12, 1
+
+102 DIALOGEX  0, 0, 371, 102
+STYLE 0x80c800c8
+CAPTION "Halo - Avertissement"
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON "Continuer", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON L"Continuer en \253\240Mode sans \351chec\240\273", 3, 100, 80, 160, 14, 0x50010000
+  PUSHBUTTON "Quitter", 1005, 268, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX "Ne plus afficher cet avertissement", 1001, 6, 64, 158, 10, 0x50010003
+  LTEXT "Statique", 1006, 50, 7, 302, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT "Cliquez ici pr plus d'info.", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT "Statique", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT L"Info. sur l'ordinateur\240:", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT L"Probl\350me\240:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 16, 1
+
+102 DIALOGEX  0, 0, 365, 102
+STYLE 0x80c800c8
+CAPTION "Halo - Avvertenza"
+FONT 8, "MS Shell Dlg", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON "Continua", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON L"Continuare in 'Modalit\340 provvisoria'", 3, 103, 80, 133, 14, 0x50010000
+  PUSHBUTTON "Esci", 1005, 246, 80, 88, 14, 0x50010000
+  AUTOCHECKBOX L"Non visualizzare pi\371 questo messaggio", 1001, 6, 64, 165, 10, 0x50010003
+  LTEXT "Static", 1006, 53, 8, 273, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT "Per ulteriori informazioni fare clic qui.", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT "Static", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT "Informazioni sul computer:", 65535, 7, 52, 47, 8, 0x50020000
+  RTEXT "Problema:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 17, 1
+
+102 DIALOGEX  0, 0, 334, 104
+STYLE 0x80c800c0
+CAPTION L"Halo - \x8b66\x544a"
+FONT 9, L"\xff2d\xff33 \xff30\x30b4\x30b7\x30c3\x30af", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON L"\x7121\x8996\x3057\x3066\x7d9a\x884c", 1004, 15, 86, 88, 14, 0x50010001
+  PUSHBUTTON L"\x30bb\x30fc\x30d5\x30e2\x30fc\x30c9\x3067\x5b9f\x884c", 3, 115, 86, 88, 14, 0x50010000
+  PUSHBUTTON L"\x7d42\x4e86", 1005, 214, 86, 88, 14, 0x50010000
+  AUTOCHECKBOX L"\x6b21\x56de\x304b\x3089\x3053\x306e\x30c0\x30a4\x30a2\x30ed\x30b0\x30dc\x30c3\x30af\x30b9\x3092\x8868\x793a\x3057\x306a\x3044", 1001, 6, 68, 151, 10, 0x50010003
+  LTEXT "Static", 1006, 50, 7, 275, 41, 0x50021000, 0x20000, 0
+  ICON 105, 65535, 18, 21, 20, 20, 0x50000003
+  LTEXT L"\x8a73\x7d30\x306a\x60c5\x5831\x3092\x8868\x793a\x3059\x308b", 1007, 185, 71, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT "Static", 1009, 68, 52, 257, 8, 0x50020000
+  LTEXT L"\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x60c5\x5831:", 65535, 7, 52, 57, 8, 0x50020000
+  RTEXT L"\x554f\x984c:", 65535, 7, 7, 36, 8, 0x50020002
+END
+LANGUAGE 18, 1
+
+102 DIALOGEX  0, 0, 305, 102
+STYLE 0x80c800c8
+CAPTION L"Halo - \xacbd\xace0"
+FONT 9, L"\xad74\xb9bc", 400, 0, 1
+BEGIN
+  DEFPUSHBUTTON L"\xacc4\xc18d\xd558\xae30", 1004, 6, 80, 88, 14, 0x50010001
+  PUSHBUTTON L"\xc548\xc804 \xbaa8\xb4dc\xb85c \xc2e4\xd589", 3, 107, 80, 88, 14, 0x50010000
+  PUSHBUTTON L"\xb05d\xb0b4\xae30", 1005, 209, 79, 88, 14, 0x50010000
+  AUTOCHECKBOX L"\xc55e\xc73c\xb85c \xc774 \xacbd\xace0 \xba54\xc2dc\xc9c0 \xd45c\xc2dc \xc548 \xd568", 1001, 6, 64, 119, 10, 0x50010003
+  LTEXT L"\xc815\xc801", 1006, 50, 7, 247, 41, 0x50021000, 0x20000, 0
+  ICON 105, -1, 18, 21, 21, 20, 0x50000003
+  LTEXT L"\xc790\xc138\xd55c \xb0b4\xc6a9", 1007, 195, 65, 102, 8, 0x50020100, 0x1000, 0
+  LTEXT L"\xc815\xc801", 1009, 62, 52, 235, 8, 0x50020000
+  LTEXT L"\xcef4\xd4e8\xd130 \xc815\xbcf4:", -1, 7, 52, 47, 8, 0x50020000
+  RTEXT L"\xbb38\xc81c\xc810:", -1, 7, 7, 36, 8, 0x50020002
+END

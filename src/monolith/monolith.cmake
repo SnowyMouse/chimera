@@ -3,7 +3,7 @@
 # Define the source files
 add_library(monolith MODULE
     src/monolith/monolith.c
-    src/chimera/version.rc
+    src/monolith/strings/strings.rc
 )
 
 # Set the name

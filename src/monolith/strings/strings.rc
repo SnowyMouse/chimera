@@ -1,0 +1,17 @@
+/*
+    Halo PC Strings.dll resource data
+    Version 1.0.6.612
+    Tuesday, August 24, 2004 9:22:27 PM
+*/
+
+#include "guidelines.rc"
+#include "splash.rc"
+#include "dialog.rc"
+#include "stringtable.rc"
+#include "icon.rc"
+
+// Use Chimera Version information
+#include "../../chimera/version.rc"
+// #include "version.rc"
+
+#include "unknown.rc"

@@ -1,0 +1,13 @@
+/*
+    Halo PC Strings.dll resource data
+    Version 1.0.6.612
+    Tuesday, August 24, 2004 9:22:27 PM
+*/
+
+LANGUAGE 7, 1
+
+GUIDELINES DESIGNINFO
+BEGIN
+  0x1L       , 0x5ffffL   , 0x66ffffL  , 0x407L     , 0x18L      , 0xcL       , 0x47L      , 0x165L     ,
+  0x0L
+END
