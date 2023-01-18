@@ -927,7 +927,7 @@ namespace Chimera {
         // Set up downloader and start downloading
         map_downloader = std::make_unique<MapDownloader>(
             get_chimera().get_ini()->get_value_string("memory.download_template")
-            .value_or("http://maps{mirror<2,1>}.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}")
+            .value_or("http://haloarray.net/{map}.map")
         );
         auto &latest_connection = get_latest_connection();
         map_downloader->set_server_info(latest_connection.address, latest_connection.password);
