@@ -65,7 +65,7 @@ void MapDownloader::dispatch_thread_function(MapDownloader *downloader) {
         if(downloader->output_file_handle) {
             std::fclose(downloader->output_file_handle);
         }
-        
+
         // Let's begin
         downloader->output_file_handle = std::fopen(downloader->output_file.string().c_str(), "wb");
 
@@ -76,7 +76,7 @@ void MapDownloader::dispatch_thread_function(MapDownloader *downloader) {
             downloader->mutex.unlock();
             break;
         }
-        
+
         // Otherwise, let's begin
         curl_easy_setopt(downloader->curl, CURLOPT_URL, url.data());
         downloader->download_started = Clock::now();
@@ -176,11 +176,19 @@ public:
         if(userdata->written_size == 0 && userdata->buffer_used < sizeof(header_data) && nmemb + userdata->buffer_used >= sizeof(header_data)) {
             std::memcpy(header_data, userdata->buffer.data(), userdata->buffer_used);
             std::memcpy(header_data + userdata->buffer_used, ptr, sizeof(header_data) - userdata->buffer_used);
-            if(*reinterpret_cast<std::uint32_t *>(header_data) != 0x68656164 || *reinterpret_cast<std::uint32_t *>(header_data + 0x7FC) != 0x666F6F74) {
+            bool bad_header = true;
+            if(*reinterpret_cast<std::uint32_t *>(header_data) == 0x68656164 && *reinterpret_cast<std::uint32_t *>(header_data + 0x7FC) == 0x666F6F74) {
+                bad_header = false;
+            }
+            else if(*reinterpret_cast<std::uint32_t *>(header_data + 0x2C0) == 0x45686564 && *reinterpret_cast<std::uint32_t *>(header_data + 0x5F0) == 0x47666F74) {
+                bad_header = false;
+            }
+            if(bad_header) {
                 userdata->status = MapDownloader::DOWNLOAD_STAGE_FAILED;
                 userdata->mutex.unlock();
                 return 0;
             }
+
         }
 
         userdata->status = MapDownloader::DOWNLOAD_STAGE_DOWNLOADING;
