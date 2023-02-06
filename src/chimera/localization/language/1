@@ -11,6 +11,7 @@ chimera_error_command_error                                                     
 chimera_error_command_unavailable                                               %s: Comando no disponible en tu instalación de Halo (falta %s)
 chimera_error_not_enough_arguments                                              %s: No fueron especificados suficientes argumentos. Se esperaba por lo menos %zu
 chimera_error_too_many_arguments                                                %s: Se especificaron demasiados argumentos. Se esperaba como mucho %zu
+chimera_error_invalid_scripted_chimera_command                                  %s: Comando inválido de Chimera ejecutado por script
 
 chimera_custom_chat_to_all                                                      Todos
 chimera_custom_chat_to_team                                                     Equipo
