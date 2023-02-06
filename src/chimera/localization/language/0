@@ -11,6 +11,7 @@ chimera_error_command_error                                                     
 chimera_error_command_unavailable                                               %s: Command is unavailable on your Halo installation (missing %s)
 chimera_error_not_enough_arguments                                              %s: Not enough arguments were specified. Expected at least %zu
 chimera_error_too_many_arguments                                                %s: Too many arguments were specified. Expected at most %zu
+chimera_error_invalid_scripted_chimera_command                                  %s: Invalid scripted Chimera command
 
 chimera_error_must_be_in_a_server                                               You have to be in a server to do that.
 chimera_error_must_be_host                                                      You have to be the host to do that.
