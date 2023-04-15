@@ -58,7 +58,7 @@ int main(int argc, const char **argv) {
 
         return EXIT_FAILURE;
     }
-    
+
     // Get the size
     std::fseek(input_f, 0, SEEK_END);
     std::vector<std::byte> data_to_read(std::ftell(input_f));
@@ -82,6 +82,8 @@ int main(int argc, const char **argv) {
 
     auto head_foot_valid = *reinterpret_cast<std::uint32_t *>(data_to_read_data) == HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x7FC) == FOOT;
     auto head_foot_valid_demo = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x2C0) == DEMO_HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5F0) == DEMO_FOOT;
+
+    // old compressed map may have this.
     auto head_foot_valid_demo_retail_fourcc = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x2C0) == HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5F0) == FOOT;
 
     // Is it valid?
@@ -91,7 +93,7 @@ int main(int argc, const char **argv) {
     }
 
     // Get the cache version
-    std::uint32_t cache_version, uncompressed_size, tag_data_offset, tag_data_length, map_type, crc32;
+    std::uint32_t cache_version, uncompressed_size, tag_data_offset, tag_data_length, map_type, lua_script_data, lua_script_size, crc32;
     const char *name, *build;
     if(head_foot_valid) {
         cache_version = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x4);
@@ -101,6 +103,8 @@ int main(int argc, const char **argv) {
         name = reinterpret_cast<const char *>(data_to_read_data + 0x20);
         build = reinterpret_cast<const char *>(data_to_read_data + 0x40);
         map_type = *reinterpret_cast<std::uint16_t *>(data_to_read_data + 0x60);
+        lua_script_data = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x310);
+        lua_script_size = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x314);
         crc32 = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x64);
     }
     else {
@@ -111,6 +115,8 @@ int main(int argc, const char **argv) {
         name = reinterpret_cast<const char *>(data_to_read_data + 0x58C);
         build = reinterpret_cast<const char *>(data_to_read_data + 0x2C8);
         map_type = *reinterpret_cast<std::uint16_t *>(data_to_read_data + 0x2);
+        lua_script_data = 0; // Unsupported
+        lua_script_size = 0; // Unsupported
         crc32 = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5B0);
     }
 
@@ -138,9 +144,9 @@ int main(int argc, const char **argv) {
     switch(cache_version) {
         case 6:
             use_demo_header = true;
-            head = HEAD;
-            foot = FOOT;
-            // fallthrough
+            head = DEMO_HEAD;
+            foot = DEMO_FOOT;
+            [[fallthrough]];
         case 7:
         case 609:
             if(!compress) {
@@ -152,7 +158,7 @@ int main(int argc, const char **argv) {
             use_demo_header = true;
             head = DEMO_HEAD;
             foot = DEMO_FOOT;
-            // fallthrough
+            [[fallthrough]];
         case 0x861A0007:
         case 0x861A0261:
             if(compress) {
@@ -217,6 +223,8 @@ int main(int argc, const char **argv) {
         std::strncpy(reinterpret_cast<char *>(file_to_write_data + 0x40), build, 0x20);
         *reinterpret_cast<std::uint16_t *>(file_to_write_data + 0x60) = map_type;
         *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x64) = crc32;
+        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x310) = lua_script_data;
+        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x314) = lua_script_size;
         *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x7FC) = foot;
     }
     else {

@@ -12,6 +12,7 @@
 #include "../version.hpp"
 #include "../chimera.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../halo_data/tag.hpp"
 #include "../output/draw_text.hpp"
 #include "lua_filesystem.hpp"
 #include "lua_game.hpp"
@@ -84,7 +85,7 @@ namespace Chimera {
 
         lua_pushstring(state, global ? "global" : "map");
         lua_setglobal(state, "script_type");
-        
+
         lua_pushboolean(state, sandbox);
         lua_setglobal(state, "sandboxed");
 
@@ -158,16 +159,26 @@ namespace Chimera {
                 load_lua_script(script_name.c_str(), script.c_str(), script.size(), false, false);
             }
         }
-        
-        // TODO: Add a new method for handling Lua scripts in maps, since this gets destroyed by zstandard compression... and there may be invalid stuff in here 
-        /* else if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+        // Load script embbended in tag data. We do not support this on Halo Trial.
+        else if(game_engine() != GameEngine::GAME_ENGINE_DEMO) {
             auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
+
             if(script && script_size) {
-                auto map_filename = std::string(map_header.name) + ".map";
-                load_lua_script(map_filename.c_str(), script, script_size, true, false);
+                // Check that the TNT is where we expect it to be.
+                auto &tag_data_header = get_tag_data_header();
+                auto *tag_data_address = reinterpret_cast<const char *>(&tag_data_header);
+                auto *tag_data_address_end = tag_data_address + (64 * 1024 * 1024);
+                if (script >= tag_data_address && script + script_size < tag_data_address_end) {
+                    // Light the fuse.
+                    auto map_filename = std::string(map_header.name) + ".map";
+                    load_lua_script(map_filename.c_str(), script, script_size, true, false);
+                }
+                else {
+                    console_error("Unable to load embedded Lua script: Invalid location");
+                }
             }
-        } */
+        }
     }
 
     void load_global_scripts() noexcept {
@@ -219,7 +230,7 @@ namespace Chimera {
             }
             lua_close(this->state);
         }
-        
+
         clear_custom_font_overrides();
     }
 

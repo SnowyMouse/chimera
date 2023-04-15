@@ -32,17 +32,17 @@ namespace Chimera {
         }
         return **all_map_indices;
     }
-    
+
     template <typename Header> static bool check_valid_header(const Header &header) {
         return header.head == Header::HEAD_LITERAL && header.foot == Header::FOOT_LITERAL;
     }
-    
+
     bool MapHeader::is_valid() const noexcept {
         return this->head == MapHeader::HEAD_LITERAL && this->foot == MapHeader::FOOT_LITERAL;
     }
-    
+
     bool MapHeaderDemo::is_valid() const noexcept {
-        return (this->engine_type == CacheFileEngine::CACHE_FILE_DEMO ? (this->head == MapHeaderDemo::HEAD_LITERAL && this->foot == MapHeaderDemo::FOOT_LITERAL) : (this->head == MapHeader::HEAD_LITERAL && this->foot == MapHeader::FOOT_LITERAL));
+        return this->head == MapHeaderDemo::HEAD_LITERAL && this->foot == MapHeaderDemo::FOOT_LITERAL;
     }
 
     // hack from Invader
@@ -216,7 +216,7 @@ namespace Chimera {
     void load_ui_map() noexcept {
         load_ui_map_asm();
     }
-    
+
     const char *get_map_name() noexcept {
         return game_engine() == GameEngine::GAME_ENGINE_DEMO ? get_demo_map_header().name : get_map_header().name;
     }

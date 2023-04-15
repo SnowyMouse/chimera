@@ -38,7 +38,7 @@ namespace Chimera {
         /** Must be equal to 0x68656164 */
         std::uint32_t head;
 
-        /** 7 if retail; 0x261 if Custom Edition; 5 if Xbox */
+        /** 7 if retail; 609 if Custom Edition; 5 if Xbox; 13 if MCC CEA */
         CacheFileEngine engine_type;
 
         /** File size in bytes; Halo ignores map files that are >384 MiB */
@@ -54,10 +54,10 @@ namespace Chimera {
 
         PAD(0x8);
 
-        /** File name of map excluding extension; typically matches scenario tag name, but not required */
+        /** File name of map excluding extension; typically matches scenario tag name */
         char name[32];
 
-        /** Unused on PC version of Halo; can be used to extend map name another 32 characters */
+        /** Build string of the tool that built the map; This was enforced to match the game client on Xbox */
         char build[32];
 
         /** Game type of map (e.g. multiplayer) */
@@ -68,13 +68,22 @@ namespace Chimera {
         /** Calculated with CRC32 of BSPs, models, and tag data */
         std::uint32_t crc32;
 
-        PAD(0x2B0);
+        /** MCC CEA cache flags; Not used on Halo PC */
+        std::uint16_t flags;
+
+        PAD(0x2A6);
+
+        /** Memory address of embedded Lua script data within tag space; This is a custom extension */
+        std::uint32_t lua_script_data;
+
+        /** Size of embedded Lua script data; This is a custom extension */
+        std::uint32_t lua_script_size;
 
         PAD(0x4E4);
 
         /** Must be equal to 0x666F6F74 */
         std::uint32_t foot;
-        
+
         bool is_valid() const noexcept;
     };
     static_assert(sizeof(MapHeader) == 0x800);
@@ -124,7 +133,7 @@ namespace Chimera {
         std::uint32_t foot;
 
         PAD(0x20C);
-        
+
         bool is_valid() const noexcept;
     };
     static_assert(sizeof(MapHeaderDemo) == 0x800);
@@ -181,7 +190,7 @@ namespace Chimera {
      * Load ui.map
      */
     void load_ui_map() noexcept;
-    
+
     /**
      * Get the name of the currently loaded map
      * @return name of currently loaded map
