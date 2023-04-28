@@ -818,7 +818,7 @@ namespace Chimera {
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
                             return;
                         }
-                        
+
                         // Needs to be converted to UTF-8
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
@@ -827,7 +827,7 @@ namespace Chimera {
                         // Can be used as-is
                         chat_input_buffer.insert(chat_input_cursor++, 1, character);
                     }
-                    
+
                 }
             }
         }

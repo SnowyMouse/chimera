@@ -20,9 +20,9 @@ namespace Chimera {
             if(new_setting == 0 && STR_TO_BOOL(argv[0])) {
                 new_setting = 1;
             }
-            
+
             setting = static_cast<WidescreenFixSetting>(new_setting);
-            
+
             if(!setting && hud_text_mod_initialized()) {
                 console_warning(localize("chimera_widescreen_fix_command_warning_cannot_disable_font_override_enabled"));
             }

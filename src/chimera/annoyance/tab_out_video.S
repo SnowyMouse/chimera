@@ -16,7 +16,7 @@ _tab_out_video_reacquire_device_subroutine_asm:
     pop ebx
     add esp, 0x38
     ret
-    
+
 .globl _tab_out_video_reacquire_device_subroutine_original_asm
 _tab_out_video_reacquire_device_subroutine_original_asm:
     ;# Video is not disabled, undo the hook and proceed as normal

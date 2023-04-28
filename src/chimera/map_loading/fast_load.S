@@ -13,9 +13,9 @@ _on_get_crc32_hook:
     call _on_get_crc32_custom_edition_loading
     popad
     popfd
-    
+
     ;# Do this
     shl eax, 4
     mov ecx, [eax + edx + 12]
-    
+
     ret

@@ -27,7 +27,7 @@ namespace Chimera {
     static bool rcon_command_used_recently = false;
     static void read_command();
     static char *console_text = NULL;
-    
+
     using SteadyClock = std::chrono::steady_clock;
     struct Line {
         std::string text;
@@ -174,7 +174,7 @@ namespace Chimera {
             new_command->more_stuff = 0x15;
             new_entries_list.emplace_back(new_command.get());
         }
-        
+
         auto &clear_command = new_entries_added.emplace_back(std::make_unique<CommandEntry>());
         clear_command->return_type = 4;
         clear_command->name = "clear";
@@ -252,7 +252,7 @@ namespace Chimera {
         if(std::strcmp(console_text, "clear") == 0) {
             std::strcpy(console_text, "cls");
         }
-        
+
         // Clear the text if needed
         if(std::strcmp(console_text, "cls") == 0) {
             position = 0;

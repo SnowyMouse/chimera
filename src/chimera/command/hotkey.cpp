@@ -85,7 +85,7 @@ namespace Chimera {
             for(auto &h : hotkeys) {
                 if(h.key == key && h.ctrl_held == ctrl && h.alt_held == alt && h.shift_held == shift) {
                     auto &command_to_use = ((h.last_command_is_alternate = !h.last_command_is_alternate) && h.use_alternate_command) ? h.alternate_command : h.command;
-                    
+
                     if(std::strncmp(command_to_use.c_str(), "chimera", strlen("chimera")) == 0) {
                         const Command *found_command;
                         switch(get_chimera().execute_command(command_to_use.c_str(), &found_command)) {

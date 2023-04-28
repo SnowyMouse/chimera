@@ -20,7 +20,7 @@ namespace Chimera {
         std::size_t file_size;
         std::filesystem::file_time_type timestamp; // time it was modified
     };
-    
+
     /**
      * Get the loaded map
      * @param  name name of map
@@ -32,7 +32,7 @@ namespace Chimera {
      * Set up loading maps outside of the maps directory
      */
     void set_up_map_loading();
-    
+
     /**
      * Load the map
      * @param map_name map to load

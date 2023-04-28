@@ -842,7 +842,7 @@ namespace Chimera {
             generate_font(ticker_font_override, "ticker", ticker_font_shadow, ticker_font_offset);
 
             #undef generate_font
-            
+
             // Reload custom font overrides
             for(auto &font : map_custom_overrides) {
                 D3DXCreateFontA(dev, font.scaled_size, 0, font.weight, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, font.family.c_str(), &font.override);
@@ -885,7 +885,7 @@ namespace Chimera {
 
     extern "C" {
         HRESULT (FAR WINAPI * D3DXCreateFontFN)(LPDIRECT3DDEVICE9, INT, UINT, UINT, UINT, BOOL, DWORD, DWORD, DWORD, DWORD, LPCTSTR, LPD3DXFONT) = 0;
-        
+
         __stdcall HRESULT D3DXCreateFontA(LPDIRECT3DDEVICE9 a, INT b, UINT c, UINT d, UINT e, BOOL f, DWORD g, DWORD h, DWORD i, DWORD j, LPCTSTR k, LPD3DXFONT l) {
             return D3DXCreateFontFN(a,b,c,d,e,f,g,h,i,j,k,l);
         }
@@ -907,11 +907,11 @@ namespace Chimera {
             if(!d3dx9_43) {
                 d3dx9_43 = LoadLibrary("d3dx9_43.dll");
             }
-            
+
             // Okay, did we do that? Let's set this value and initialize things.
             if(d3dx9_43) {
                 D3DXCreateFontFN = reinterpret_cast<decltype(D3DXCreateFontFN)>(reinterpret_cast<std::uint32_t>(GetProcAddress(d3dx9_43, "D3DXCreateFontA")));
-                
+
                 auto fonts_dir = std::filesystem::path("fonts");
                 if(std::filesystem::is_directory(fonts_dir)) {
                     try {

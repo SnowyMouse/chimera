@@ -141,7 +141,7 @@ _close_server_connection_asm:
     mov byte ptr [ebx], 0x0
     mov ebx, dword ptr [eax + 0x10]
     mov byte ptr [ebx], 0x0
-    
+
     ;# this is the one that actually makes the thing close the connection
     mov ebx, dword ptr [eax + 0x17]
     mov byte ptr [ebx], 0x1

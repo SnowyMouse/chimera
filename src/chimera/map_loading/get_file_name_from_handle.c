@@ -9,7 +9,7 @@
 // Stolen from https://docs.microsoft.com/en-us/windows/win32/memory/obtaining-a-file-name-from-a-file-handle?redirectedfrom=MSDN
 #define BUFSIZE 512
 
-DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFilePath, DWORD dwFlags) 
+DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFilePath, DWORD dwFlags)
 {
   BOOL bSuccess = FALSE;
   TCHAR pszFilename[MAX_PATH+1];
@@ -17,7 +17,7 @@ DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFi
 
   // Get the file size.
   DWORD dwFileSizeHi = 0;
-  DWORD dwFileSizeLo = GetFileSize(hFile, &dwFileSizeHi); 
+  DWORD dwFileSizeLo = GetFileSize(hFile, &dwFileSizeHi);
 
   if( dwFileSizeLo == 0 && dwFileSizeHi == 0 )
   {
@@ -26,38 +26,38 @@ DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFi
   }
 
   // Create a file mapping object.
-  hFileMap = CreateFileMapping(hFile, 
-                    NULL, 
+  hFileMap = CreateFileMapping(hFile,
+                    NULL,
                     PAGE_READONLY,
-                    0, 
+                    0,
                     1,
                     NULL);
 
-  if (hFileMap) 
+  if (hFileMap)
   {
     // Create a file mapping to get the file name.
     void* pMem = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 1);
 
-    if (pMem) 
+    if (pMem)
     {
-      if (GetMappedFileName (GetCurrentProcess(), 
-                             pMem, 
+      if (GetMappedFileName (GetCurrentProcess(),
+                             pMem,
                              pszFilename,
-                             MAX_PATH)) 
+                             MAX_PATH))
       {
 
         // Translate path with device name to drive letters.
         TCHAR szTemp[BUFSIZE];
         szTemp[0] = '\0';
 
-        if (GetLogicalDriveStrings(BUFSIZE-1, szTemp)) 
+        if (GetLogicalDriveStrings(BUFSIZE-1, szTemp))
         {
           TCHAR szName[MAX_PATH];
           TCHAR szDrive[3] = TEXT(" :");
           BOOL bFound = FALSE;
           TCHAR* p = szTemp;
 
-          do 
+          do
           {
             // Copy the drive letter to the template string
             *szDrive = *p;
@@ -67,12 +67,12 @@ DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFi
             {
               size_t uNameLen = _tcslen(szName);
 
-              if (uNameLen < MAX_PATH) 
+              if (uNameLen < MAX_PATH)
               {
                 bFound = _tcsnicmp(pszFilename, szName, uNameLen) == 0
                          && *(pszFilename + uNameLen) == _T('\\');
 
-                if (bFound) 
+                if (bFound)
                 {
                   // Reconstruct pszFilename using szTempFile
                   // Replace device path with DOS path
@@ -94,12 +94,12 @@ DWORD WINAPI GetFileNameFromHandle(HANDLE hFile, LPSTR lpszFilePath, DWORD cchFi
       }
       bSuccess = TRUE;
       UnmapViewOfFile(pMem);
-    } 
+    }
 
     CloseHandle(hFileMap);
   }
  //_tprintf(TEXT("File name is %s\n"), pszFilename);
-  
+
   if(bSuccess) {
     LPSTR copy_start = pszFilename;
     if(dwFlags & VOLUME_NAME_NONE) {

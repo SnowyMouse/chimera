@@ -49,7 +49,7 @@ namespace Chimera {
             auto &map_header = get_map_header();
             INFO_FROM_HEADER(map_header);
         }
-        
+
         entry = get_map_entry(map_name);
         loaded_map = get_loaded_map(map_name);
 
@@ -122,7 +122,7 @@ namespace Chimera {
         if(get_chimera().get_ini()->get_value_bool("memory.enable_map_memory_buffer").value_or(false)) {
             std::size_t buffer_used = loaded_map->loaded_size;
             std::size_t buffer_size = loaded_map->buffer_size;
-            
+
             float buffer_used_percentage = (static_cast<float>(buffer_used) / buffer_size) * 100;
 
             const char *key_string = localize("chimera_map_info_command_ram_buffer");

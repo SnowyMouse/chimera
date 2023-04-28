@@ -23,7 +23,7 @@ _create_object_query_asm:
     add esp, 4
     sub eax, 6
     mov create_object_query_fn, eax
-    
+
     do_create_query:
 
     ;# Push parent object ID
@@ -53,7 +53,7 @@ _create_object_asm:
     add esp, 4
     sub eax, 24
     mov create_object_fn, eax
-    
+
     do_create_object:
 
     ;# Push object type

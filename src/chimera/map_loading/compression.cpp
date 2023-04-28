@@ -67,7 +67,7 @@ namespace Chimera {
         else {
             *reinterpret_cast<T *>(header_output) = header_copy;
         }
-        
+
         return true;
     }
 
@@ -197,19 +197,19 @@ namespace Chimera {
             std::FILE *output_file;
             std::size_t output_position = 0;
         } output_writer = { std::fopen(output, "wb") };
- 
+
         if(!output_writer.output_file) {
             std::fclose(output_writer.output_file);
             throw std::exception();
         }
- 
+
         LowMemoryDecompression decomp;
         decomp.write_callback = [](const std::byte *decompressed_data, std::size_t size, void *user_data) -> bool {
             auto &output_writer = *reinterpret_cast<OutputWriter *>(user_data);
             output_writer.output_position += size;
             return std::fwrite(decompressed_data, size, 1, reinterpret_cast<std::FILE *>(output_writer.output_file));
         };
- 
+
         try {
             decomp.decompress_map_file(input, &output_writer);
         }
@@ -218,7 +218,7 @@ namespace Chimera {
             throw;
         }
         std::fclose(output_writer.output_file);
- 
+
         return output_writer.output_position;
     }
 
@@ -228,7 +228,7 @@ namespace Chimera {
             std::size_t output_size;
             std::size_t output_position = 0;
         } output_writer = { output, output_size };
- 
+
         LowMemoryDecompression decomp;
         decomp.write_callback = [](const std::byte *decompressed_data, std::size_t size, void *user_data) -> bool {
             OutputWriter &output_writer = *reinterpret_cast<OutputWriter *>(user_data);
@@ -240,14 +240,14 @@ namespace Chimera {
             output_writer.output_position = new_position;
             return true;
         };
- 
+
         try {
             decomp.decompress_map_file(input, &output_writer);
         }
         catch (std::exception &e) {
             throw;
         }
- 
+
         return output_writer.output_position;
     }
 }

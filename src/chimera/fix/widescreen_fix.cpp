@@ -322,7 +322,7 @@ namespace Chimera {
 
             auto &widescreen_element_scaling_sig = get_chimera().get_signature("widescreen_element_scaling_sig");
             hud_element_scaling = reinterpret_cast<float *>(widescreen_element_scaling_sig.data() + 7);
-            
+
             static Hook position_hud;
             auto &widescreen_element_position_hud_sig = get_chimera().get_signature("widescreen_element_position_hud_sig");
             write_function_override(reinterpret_cast<void *>(widescreen_element_position_hud_sig.data()), position_hud, reinterpret_cast<const void *>(widescreen_element_reposition_hud), &widescreen_element_position_hud_fn);
@@ -547,9 +547,9 @@ namespace Chimera {
                 widescreen_mouse_right_bounds = 640;
             }
         }
-        
+
         bool update_on_tick = new_setting && setting != new_setting;
-        
+
         setting = new_setting;
         if(update_on_tick) {
             overwrite(console_width, 640);
@@ -615,7 +615,7 @@ namespace Chimera {
             overwrite(hud_element_scaling, half_width_inverted);
             overwrite(text_scaling, half_width_inverted);
             overwrite(motion_sensor_scaling, half_width_inverted);
-            
+
             float motion_sensor_memes = motion_sensor_x_offset_default / (widescreen_width_480p / 640.0F);
             if(setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
                 overwrite(motion_sensor_x_offset, motion_sensor_memes);

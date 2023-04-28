@@ -12,7 +12,7 @@ namespace Chimera {
 
     void enable_block_update_check() noexcept {
         auto &chimera = get_chimera();
-        
+
         static Hook hook;
         auto *check_for_update_fn_call_sig = chimera.get_signature("check_for_update_fn_call_sig").data();
         const SigByte nop_call[] = { 0x90, 0x90, 0x90, 0x90, 0x90 };

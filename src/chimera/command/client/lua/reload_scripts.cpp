@@ -18,7 +18,7 @@ namespace Chimera {
         // Remove the output prefix
         extern const char *output_prefix;
         output_prefix = nullptr;
-        
+
         ConsoleColor green = {1, 0.235, 0.82, 0};
         console_output(green, localize("chimera_lua_scripts_were_reloaded"));
         return true;

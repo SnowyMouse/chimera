@@ -3,7 +3,7 @@
 #ifndef CHIMERA_EXTENDED_DESCRIPTION_FIX_HPP
 #define CHIMERA_EXTENDED_DESCRIPTION_FIX_HPP
 
-namespace Chimera { 
+namespace Chimera {
     /**
      * Fix the extended description index of the profile settings menu
      */

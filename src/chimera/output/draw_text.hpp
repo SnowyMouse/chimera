@@ -165,7 +165,7 @@ namespace Chimera {
     /**
      * Override a non-generic font.
      * @param font_tag  tag ID of the font to override
-     * @param family    font family to use 
+     * @param family    font family to use
      * @param size      font size
      * @param weight    font weight
      * @param offset    displacement offset

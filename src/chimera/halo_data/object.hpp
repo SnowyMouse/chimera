@@ -79,7 +79,7 @@ namespace Chimera {
      * @param  z        Object Z offset.
      * @param  parent   Parent object.
      * @return          ID of the spawned object.
-     */ 
+     */
     ObjectID spawn_object(const TagID &tag_id, float x, float y, float z, const ObjectID &parent) noexcept;
 
     /** This is the type of object an object is. */

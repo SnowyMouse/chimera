@@ -9,7 +9,7 @@
 namespace Chimera {
     void enable_easter_eggs();
     void disable_easter_eggs();
-    
+
     bool invert_shader_flags_command(int argc, const char **argv) {
         static bool enabled = false;
         if(argc) {

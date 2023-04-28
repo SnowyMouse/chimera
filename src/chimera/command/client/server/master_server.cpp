@@ -62,7 +62,7 @@ namespace Chimera {
 
             set_master_server(list, key, natneg1, natneg2);
         }
-        
+
         get_master_server(&list, &key, &natneg1, &natneg2);
         console_output("%s, %s, %s, %s", list, key, natneg1, natneg2);
         return true;

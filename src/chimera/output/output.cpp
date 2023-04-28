@@ -79,7 +79,7 @@ namespace Chimera {
             return;
         }
         enabled = true;
-        
+
         static Hook hook;
         auto &chimera = get_chimera();
         if(get_chimera().feature_present("client_rcon")) {

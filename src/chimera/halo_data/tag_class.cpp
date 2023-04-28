@@ -5,9 +5,9 @@
 
 namespace Chimera {
     TagClassInt tag_class_from_string(const char *tag_class) {
-        if(std::strcmp(tag_class, "actor") == 0) 
+        if(std::strcmp(tag_class, "actor") == 0)
             return TAG_CLASS_ACTOR;
-        else if(std::strcmp(tag_class, "actor_variant") == 0) 
+        else if(std::strcmp(tag_class, "actor_variant") == 0)
             return TAG_CLASS_ACTOR_VARIANT;
         else if(std::strcmp(tag_class, "antenna") == 0)
             return TAG_CLASS_ANTENNA;

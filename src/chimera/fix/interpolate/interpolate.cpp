@@ -35,10 +35,10 @@ namespace Chimera {
 
     // Set for if interpolation is enabled
     bool interpolation_enabled = false;
-    
+
     // The last value of the tick count
-    std::int32_t previous_tick= 0;
-    
+    std::int32_t previous_tick = 0;
+
 
     static void on_tick() noexcept {
         // Prevent interpolation when the game is paused
@@ -58,7 +58,7 @@ namespace Chimera {
         if(*first_person_camera_tick_rate != current_tick_rate) {
             overwrite(first_person_camera_tick_rate, current_tick_rate);
         }
-        
+
         previous_tick = get_tick_count();
     }
 
@@ -66,7 +66,7 @@ namespace Chimera {
         if(game_paused()) {
             return;
         }
-        
+
         // Check if we've reverted and if so, clear interpolation buffers.
         if (previous_tick > get_tick_count()) {
             interpolate_object_clear();

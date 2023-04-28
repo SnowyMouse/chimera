@@ -141,7 +141,7 @@ namespace Chimera {
 
             // Lol
             set_up_invalid_command_crash_fix();
-            
+
             // The end of an era
             set_up_remove_exception_dialog();
 
@@ -162,7 +162,7 @@ namespace Chimera {
 
                 // Fix camera shake
                 set_up_camera_shake_fix();
-                
+
                 // Fix more bullshit that Gearbox could've fixed but didn't
                 set_up_blue_32bit_color_fix();
                 set_up_contrail_fix();
@@ -212,7 +212,7 @@ namespace Chimera {
 
                 // Fix this broken stuff
                 set_up_auto_center_fix();
-                
+
                 // No interpolation in a 2003 PC game? Seriously, Gearbox?
                 set_up_interpolation();
 
@@ -240,7 +240,7 @@ namespace Chimera {
 
                 // Fix the master server
                 set_up_master_server();
-                
+
                 set_up_model_detail_fix();
 
                 // This could be useful
@@ -591,7 +591,7 @@ namespace Chimera {
                     chimera->execute_command("chimera_af true");
                 }
             }
-            
+
             // Also set these fixes
             char buffer[256];
             auto &commands = chimera->get_commands();
@@ -638,10 +638,10 @@ namespace Chimera {
 
             chimera->reload_config();
         }
-        
+
         // Set up Lua scripting
         setup_lua_scripting();
-        
+
         enable_output(true);
     }
 
@@ -828,7 +828,7 @@ namespace Chimera {
                 auto &map_header = get_map_header();
                 map_name = map_header.name;
             }
-            
+
             // Only cartridge tilt on ui.map
             if(std::strcmp(map_name, "ui") == 0) {
                 add_preframe_event(cartridge_tilt, EVENT_PRIORITY_AFTER);

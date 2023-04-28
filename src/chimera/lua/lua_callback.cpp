@@ -26,7 +26,7 @@ namespace Chimera {
         function(EVENT_PRIORITY_DEFAULT); \
         function(EVENT_PRIORITY_AFTER); \
         function(EVENT_PRIORITY_FINAL) \
-    
+
     static int pcall(lua_State *state, int args, int result_count) noexcept {
         auto result = lua_pcall(state, args, result_count, 0);
         if(result != LUA_OK) {
@@ -309,7 +309,7 @@ namespace Chimera {
         add_rcon_message_event(rcon_message_callback, EVENT_PRIORITY_BEFORE);
         add_precamera_event(camera_callback, EVENT_PRIORITY_AFTER);
         add_command_event(on_command_lua, EVENT_PRIORITY_DEFAULT);
-        
+
         QueryPerformanceCounter(&last_time);
     }
 }

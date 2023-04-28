@@ -17,30 +17,30 @@ namespace Chimera {
         std::optional<CacheFileEngine> engine;
         std::string name;
         std::optional<std::uint32_t> index;
-        
+
         std::filesystem::path get_file_path();
     };
-    
+
     /**
      * Get the map entry for the map
      * @param  map_name map name
      * @return          a pointer to the map entry, if found
      */
     MapEntry *get_map_entry(const char *map_name);
-    
+
     /**
      * Add a map to the map list if it does not exist
      * @param map_name   map to add
      * @return           reference to map in maps list
      */
     MapEntry &add_map_to_map_list(const char *map_name);
-    
+
     /**
      * Resync the map list in the game with our own map list
      */
     void resync_map_list();
-    
-    
+
+
     /**
      * Initialize fast loading
      */

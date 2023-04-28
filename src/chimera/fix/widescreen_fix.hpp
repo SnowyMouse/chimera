@@ -9,7 +9,7 @@ namespace Chimera {
         WIDESCREEN_ON,
         WIDESCREEN_CENTER_HUD
     };
-    
+
     /**
      * Set whether or not to have the widescreen fix
      * @param new_setting setting for the widescreen fix

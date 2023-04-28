@@ -50,7 +50,7 @@ namespace Chimera {
     ObjectID spawn_object(const TagID &tag_id, float x, float y, float z, const ObjectID &parent) noexcept {
         char buffer[1024] = {};
         auto *object_create_query = reinterpret_cast<s_object_creation_disposition *>(buffer);
-        
+
         // Create query
         create_object_query_asm(tag_id, parent, object_create_query);
 
@@ -67,7 +67,7 @@ namespace Chimera {
             3 = client sided object (from giraffe)
         */
         std::uint32_t object_type = (server_type() == SERVER_LOCAL) ? 0 : 3;
-        
+
         auto object_id = create_object_asm(object_create_query, object_type);
         return object_id;
     }

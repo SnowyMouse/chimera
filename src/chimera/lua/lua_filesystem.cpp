@@ -160,7 +160,7 @@ namespace Chimera {
             if(check_path(state, path)) {
                 std::string content = luaL_checkstring(state, 2);
                 bool append_content = (args == 3 && (lua_isboolean(state, 3) && lua_toboolean(state, 3)));
-                
+
                 std::ofstream file;
                 file.open(get_script_data_path(state) / path, (append_content ? std::ios::app : std::ios::trunc));
                 if(file.is_open()) {

@@ -38,7 +38,7 @@ namespace Chimera {
             return get_chimera().get_download_map_path() / (this->name + ".map");
         }
     }
-    
+
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
         while(std::tolower(*a) == std::tolower(*b)) {
@@ -172,42 +172,42 @@ namespace Chimera {
             }
         }
     }
-    
+
     static std::vector<MapEntry> all_maps;
-    
+
     template <typename MapIndexType> static void resync_map_list() {
         // Hold our indices
         static MapIndexType **indices = nullptr;
         static std::uint32_t *count = nullptr;
         static std::vector<MapIndexType> indices_vector;
-        
+
         auto &map_list = get_map_list();
         indices = reinterpret_cast<MapIndexType **>(&map_list.map_list);
         count = reinterpret_cast<std::uint32_t *>(&map_list.map_count);
         indices_vector.clear();
-        
+
         for(auto &i : all_maps) {
             if(!i.multiplayer) {
                 continue;
             }
-            
+
             auto *map = &indices_vector.emplace_back();
             map->file_name = i.name.c_str();
             map->map_name_index = i.index.value_or(19);
-            
+
             if(sizeof(*map) >= sizeof(MapIndexRetail)) {
                 reinterpret_cast<MapIndexRetail *>(map)->loaded = 1;
-                
+
                 if(sizeof(*map) >= sizeof(MapIndexCustomEdition)) {
                     reinterpret_cast<MapIndexCustomEdition *>(map)->crc32 = i.crc32.value_or(0xFFFFFFFF);
                 }
             }
         }
-        
+
         *indices = indices_vector.data();
         *count = indices_vector.size();
     }
-    
+
     void resync_map_list() {
         auto engine = game_engine();
 
@@ -223,7 +223,7 @@ namespace Chimera {
                 break;
         }
     }
-    
+
     MapEntry *get_map_entry(const char *map_name) {
         for(auto &map : all_maps) {
             if(same_string_case_insensitive(map_name, map.name.c_str())) {
@@ -232,32 +232,32 @@ namespace Chimera {
         }
         return nullptr;
     }
-    
+
     static MapEntry *maybe_add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index = std::nullopt) {
         // Don't add maps we've already added
         MapEntry *map_possibly;
         if((map_possibly = get_map_entry(map_name)) != nullptr) {
             return map_possibly;
         }
-        
+
         // First, let's lowercase it
         char map_name_lowercase[32];
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
         for(auto &i : map_name_lowercase) {
             i = std::tolower(i);
         }
-        
+
         // Add it!
         MapEntry map;
         map.name = map_name_lowercase;
         map.index = map_index;
         map.multiplayer = true;
-        
+
         // Make sure it exists first.
         if(!std::filesystem::exists(map.get_file_path())) {
             return nullptr;
         }
-        
+
         // If it's known to not be a multiplayer map, set this
         static const char *NON_MULTIPLAYER_MAPS[] = {
             "a10",
@@ -277,10 +277,10 @@ namespace Chimera {
                 map.multiplayer = false;
             }
         }
-        
+
         return &all_maps.emplace_back(std::move(map));
     }
-    
+
     MapEntry &add_map_to_map_list(const char *map_name) {
         // Attempt to add it. If it fails, exit gracefully
         auto *ptr = maybe_add_map_to_map_list(map_name, std::nullopt);
@@ -297,9 +297,9 @@ namespace Chimera {
         // Clear the bitch
         auto old_maps = all_maps;
         all_maps.clear();
-        
+
         #define ADD_STOCK_MAP(map_name, index) maybe_add_map_to_map_list(map_name, index)
-        
+
         ADD_STOCK_MAP("beavercreek", 0);
         ADD_STOCK_MAP("sidewinder", 1);
         ADD_STOCK_MAP("damnation", 2);
@@ -319,7 +319,7 @@ namespace Chimera {
         ADD_STOCK_MAP("infinity", 16);
         ADD_STOCK_MAP("timberland", 17);
         ADD_STOCK_MAP("gephyrophobia", 18);
-        
+
         auto add_map_folder = [](std::filesystem::path directory) {
             static const char *BLACKLISTED_MAPS[] = {
                 "bitmaps",
@@ -329,39 +329,39 @@ namespace Chimera {
                 "custom_sounds",
                 "custom_loc"
             };
-            
+
             for(auto &map : std::filesystem::directory_iterator(directory)) {
                 if(map.is_regular_file()) {
                     auto &path = map.path();
-                    
+
                     // Get extension
                     auto extension = path.extension().string();
                     if(same_string_case_insensitive(extension.c_str(), ".map")) {
                         // Get name
                         auto name = path.stem().string();
-                        
+
                         // Is it blacklisted?
                         for(auto &b : BLACKLISTED_MAPS) {
                             if(same_string_case_insensitive(name.c_str(), b)) {
                                 goto nope;
                             }
                         }
-                        
+
                         maybe_add_map_to_map_list(name.c_str());
                     }
-                    
+
                     nope: continue;
                 }
             }
         };
-        
+
         auto map_path = get_chimera().get_map_path();
         auto dl_map_path = get_chimera().get_download_map_path();
         add_map_folder(map_path);
         if (dl_map_path != map_path){
             add_map_folder(dl_map_path);
         }
-        
+
         // Reset CRC32
         for(auto &i : old_maps) {
             auto *map = get_map_entry(i.name.c_str());
@@ -369,7 +369,7 @@ namespace Chimera {
                 map->crc32 = i.crc32;
             }
         }
-        
+
         resync_map_list();
     }
 

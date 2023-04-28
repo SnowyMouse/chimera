@@ -123,7 +123,7 @@ namespace Chimera {
             auto &resolution = get_resolution();
             float aspect_ratio = static_cast<float>(resolution.width) / resolution.height;
             float width_scale = (aspect_ratio * 480.0f) / 640.0f;
-            
+
             // Frame bounds
             std::int16_t offset_left = round(luaL_checknumber(state, 2) * width_scale);
             std::int16_t offset_top = luaL_checknumber(state, 3);
@@ -237,7 +237,7 @@ namespace Chimera {
             auto &objects_table = ObjectTable::get_object_table();
             auto &players_table = PlayerTable::get_player_table();
             BaseDynamicObject *dynamic_object = nullptr;
-            
+
             if(args == 0) {
                 auto *player = players_table.get_client_player();
                 if(player) {
@@ -333,7 +333,7 @@ namespace Chimera {
         if(args <= 1) {
             auto &players_table = PlayerTable::get_player_table();
             Player *player = nullptr;
-            
+
             if(args == 0) {
                 player = players_table.get_client_player();
             }
@@ -341,7 +341,7 @@ namespace Chimera {
                 std::size_t index = luaL_checkinteger(state, 1);
                 player = players_table.get_player_by_rcon_id(index);
             }
-            
+
             if(player) {
                 lua_pushinteger(state, reinterpret_cast<std::uint32_t>(player));
             }
@@ -376,7 +376,7 @@ namespace Chimera {
             const char *tag_path = luaL_checkstring(state, 2);
 
             auto tag_class_int = tag_class_from_string(tag_class);
-            
+
             if(tag_class_int != TagClassInt::TAG_CLASS_NULL) {
                 tag = get_tag(tag_path, tag_class_int);
             }
@@ -387,14 +387,14 @@ namespace Chimera {
         else {
             return luaL_error(state, localize("chimera_lua_error_wrong_number_of_arguments"), "get_tag");
         }
-        
+
         if(tag) {
             lua_pushinteger(state, reinterpret_cast<std::uint32_t>(tag));
         }
         else {
             lua_pushnil(state);
         }
-        
+
         return 1;
     }
 
