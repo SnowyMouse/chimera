@@ -11,6 +11,7 @@
 #include "../output/output.hpp"
 #include "../version.hpp"
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/tag.hpp"
 #include "../output/draw_text.hpp"
@@ -160,10 +161,9 @@ namespace Chimera {
             }
         }
         // Load script embbended in tag data. We do not support this on Halo Trial.
-        else if(game_engine() != GameEngine::GAME_ENGINE_DEMO) {
+        else if(get_chimera().get_ini()->get_value_bool("memory.load_embedded_lua").value_or(true) && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
             auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
-
             if(script && script_size) {
                 // Check that the TNT is where we expect it to be.
                 auto &tag_data_header = get_tag_data_header();
