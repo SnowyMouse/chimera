@@ -325,8 +325,9 @@ need an LAA-patched executable to use this feature.
 - `map_size` (size of buffer in MiB for loading maps)
 - `benchmark` (shows a benchmark whenever a map is loaded)
 - `download_font` (change the font used for downloading)
-- `download_preferred_node` (change the initial server node tested)
+- `download_template` (URL template used to downloading maps)
 - `download_retail_maps` (allow downloading of retail Halo PC maps - UNSAFE)
+- `load_embedded_lua` (enables loading Lua scripts embedded into map files)
 
 #### Font override settings
 This allows you to override fonts Chimera uses with system fonts, allowing you
