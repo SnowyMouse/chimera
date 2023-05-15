@@ -45,6 +45,7 @@
 #include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/camera_shake_fix.hpp"
+#include "fix/checkpoint_fix.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/floor_decal_memery.hpp"
 #include "fix/fov_fix.hpp"
@@ -162,6 +163,9 @@ namespace Chimera {
 
                 // Fix camera shake
                 set_up_camera_shake_fix();
+
+                // Fix the checkpoints
+                set_up_checkpoint_fix();
 
                 // Fix more bullshit that Gearbox could've fixed but didn't
                 set_up_blue_32bit_color_fix();
