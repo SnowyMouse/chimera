@@ -68,7 +68,7 @@ namespace Chimera {
 
             // Lastly, if we're not skipping, check if we went really far too quickly in first person
             if(!skip && type == CameraType::CAMERA_FIRST_PERSON) {
-                skip = distance_squared(previous_tick->data.position, current_tick->data.position) > 5.0 * 5.0;
+                skip = distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5;
             }
         }
 
@@ -80,13 +80,18 @@ namespace Chimera {
         auto &data = camera_data();
         extern float interpolation_tick_progress;
 
-        // If we're in a vehicle, interpolate the rotation
+        // If we're in a vehicle, interpolate the rotation, or if we're using the debug camera, don't interpolate
         bool vehicle_first_person = false;
-        if(type == CameraType::CAMERA_FIRST_PERSON) {
+        if(type == CameraType::CAMERA_FIRST_PERSON || type == CameraType::CAMERA_DEBUG) {
             auto *player = PlayerTable::get_player_table().get_client_player();
             if(player) {
                 auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
                 if(object) {
+                    //CHeck if dead and if not, don't interpolate debug/death camera.
+                    if (type == CameraType::CAMERA_DEBUG && object->health >= 0.0) {
+                        skip = true;
+                        return;
+                    }
                     vehicle_first_person = !object->parent.is_null();
                 }
             }

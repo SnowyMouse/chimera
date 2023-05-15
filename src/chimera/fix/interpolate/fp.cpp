@@ -41,6 +41,9 @@ namespace Chimera {
     // If true, skip this tick.
     static bool skip = false;
 
+    // If true, we've cleared the buffers, so skip another tick.
+    static bool revert = false;
+
     // If true, a tick has passed and it's time to re-copy the FP data.
     static bool tick_passed = false;
 
@@ -61,6 +64,12 @@ namespace Chimera {
 
             // This is set to 0 if no first person model is being drawn or the weapon has changed.
             skip = !*reinterpret_cast<std::uint32_t *>(first_person_nodes) || last_weapon != current_weapon;
+
+            // Skip another tick to let the buffers catch up.
+            if (revert) {
+                skip = true;
+                revert = false;
+            }
 
             // Swap buffers.
             if(current_tick == fp_buffers[0]) {
@@ -95,6 +104,12 @@ namespace Chimera {
             FirstPersonNode *fpn = reinterpret_cast<FirstPersonNode *>(first_person_nodes() + 0x8C);
             std::copy(current_tick, current_tick + NODES_PER_BUFFER, fpn);
         }
+    }
+
+    void interpolate_fp_clear() noexcept {
+        skip = true;
+        revert = true;
+        std::memset(fp_buffers, 0, sizeof(fp_buffers));
     }
 
     void interpolate_fp_on_tick() noexcept {
