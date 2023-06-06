@@ -74,6 +74,7 @@ namespace Chimera {
             interpolate_light_clear();
             interpolate_flag_clear();
             interpolate_camera_clear();
+            interpolate_fp_clear();
         }
 
         interpolation_tick_progress = get_tick_progress();
