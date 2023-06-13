@@ -91,6 +91,7 @@ add_library(chimera STATIC
     src/chimera/fix/camera_shake_fix.cpp
     src/chimera/fix/camera_shake_fix.S
     src/chimera/fix/checkpoint_fix.cpp
+    src/chimera/fix/checkpoint_fix.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp

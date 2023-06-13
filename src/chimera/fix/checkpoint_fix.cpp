@@ -7,31 +7,38 @@
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 
+extern "C" {
+    const void *original_save_call;
+    void checkpoint_fix_asm() noexcept;
+
+    std::uint32_t ticks_passed = 0;
+    std::uint8_t *safe_save = nullptr;
+    std::byte *save_func = nullptr;
+    std::byte *skip_save_func = nullptr;
+}
+
 namespace Chimera {
     static std::uint8_t *saving;
 
-    //Disable checkpoint function.
-    static void block_cp() noexcept {
-        overwrite(get_chimera().get_signature("checkpoint_sig").data(), static_cast<std::uint8_t>(0xC3));
-        overwrite(get_chimera().get_signature("checkpoint_sig").data() + 0x1, static_cast<std::uint32_t>(0x90909090));
-    }
-
-    // Check at end of every frame if the game is trying to save and if so, block the checkpoint function until next tick.
-    static void game_save_frame() noexcept {
-        if(*saving) {
-            block_cp();
+    // How many ticks have passed since the save loop last ran to compensate for frames with >1 tick event.
+    static void save_tick_counter() noexcept {
+        if (*saving) {
+            ticks_passed++;
+        }
+        // Sanity check
+        else if (ticks_passed > 0) {
+            ticks_passed = 0;
         }
     }
 
-    // Re-enable checkpoints every tick to ensure one counter update cycle passes every tick.
-    static void game_save_tick() noexcept {
-        get_chimera().get_signature("checkpoint_sig").rollback();
-    }
-
     void set_up_checkpoint_fix() noexcept {
-        auto *save_func = get_chimera().get_signature("checkpoint_sig").data();
-        saving = *reinterpret_cast<std::uint8_t **>(save_func + 195);
-        add_frame_event(game_save_frame);
-        add_pretick_event(game_save_tick);
+        save_func = get_chimera().get_signature("checkpoint_func_sig").data();
+        skip_save_func = get_chimera().get_signature("checkpoint_sig").data() + 13;
+        saving = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("checkpoint_sig").data() + 2);
+        safe_save = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("checkpoint_sig").data() + 2) + 0x1;
+
+        static Hook hook;
+        write_function_override(get_chimera().get_signature("checkpoint_sig").data() + 8, hook, reinterpret_cast<const void *>(checkpoint_fix_asm), &original_save_call);
+        add_tick_event(save_tick_counter);
     }
 }
