@@ -121,7 +121,7 @@ chimera_set_name_help                                                           
 chimera_set_name_invalid_name_error                                             Nombre \"%s\" invalido. El argumento debe tener entre 0 y 16 caracteres.
 chimera_show_coordinates_help                                                   Muestra tus coordenadas en el mapa.
 chimera_show_fps_help                                                           Muestra tu velocidad de fotogramas actual.
-chimera_signature_info_command_dumped                                           Se volcaron todas las signaturas a %s
+chimera_signature_info_command_dumped                                           Se volcaron todas las signaturas a chimera_signature_dump.csv
 chimera_uncap_cinematic_command_help                                            Deshabilita el bloqueo de 30 FPS en las cinemáticas.
 
 chimera_command_no_commands_available_in_category                               No hay comandos disponibles para tu instalación de Halo.

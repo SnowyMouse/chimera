@@ -102,7 +102,7 @@ namespace Chimera {
             o.flush();
             o.close();
 
-            console_output("Dumped %zu command%s to %s", command_entry_count, command_entry_count == 1 ? "" : "s", path);
+            console_output("Dumped %zu command%s to script_command_dump.json", command_entry_count, command_entry_count == 1 ? "" : "s");
         }
 
         if(entries_global) {
@@ -150,7 +150,7 @@ namespace Chimera {
             o.flush();
             o.close();
 
-            console_output("Dumped %zu global%s to %s", global_entry_count, global_entry_count == 1 ? "" : "s", path);
+            console_output("Dumped %zu global%s to script_global_dump.json", global_entry_count, global_entry_count == 1 ? "" : "s");
         }
     }
 

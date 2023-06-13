@@ -59,7 +59,7 @@ namespace Chimera {
             o.close();
 
             // Done
-            console_output(localize("chimera_signature_info_command_dumped"), path);
+            console_output(localize("chimera_signature_info_command_dumped"));
 
             return true;
         }

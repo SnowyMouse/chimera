@@ -169,7 +169,7 @@ chimera_set_name_invalid_name_error                                             
 chimera_show_coordinates_help                                                   Display your coordinates.
 chimera_show_fps_help                                                           Display your frame rate.
 chimera_shrink_empty_weapons_help                                               Shrink all empty weapons on the ground.
-chimera_signature_info_command_dumped                                           Dumped all signatures to %s
+chimera_signature_info_command_dumped                                           Dumped all signatures to chimera_signature_dump.csv
 chimera_signature_info_command_error                                            Unknown signature %s
 chimera_signature_info_command_help                                             Get information for a signature.
 chimera_signature_info_command_signature_address                                Memory Address
