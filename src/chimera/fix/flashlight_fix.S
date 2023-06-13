@@ -3,7 +3,7 @@
 .intel_syntax noprefix
 
 .data
-two_float: .long 0x40000000
+two_float: .long 0x3FC00000
 
 .text
 
