@@ -66,9 +66,9 @@ chimera_category_server                                                         
 chimera_category_visual                                                         visual
 
 chimera_about_command_credits_header                                            Credits
-chimera_about_command_credits                                                   DEVELOPMENT\n    Snowy - Chimera lead developer\n    Vaporeon - Chat color palette, Testing\nSPANISH TRANSLATION\n    dr.oldboi\n    Jerry\n    MrChromed\n    Rock Candy\nTESTING\n    SteamFox
+chimera_about_command_credits                                                   DEVELOPMENT\n    Aerocatia\n    Cambidd\n    MangoFizz\n    num0005\n    pR0Ps\n    Sledmine\n    Snowy (Chimera lead developer)\n    surrealwaffle\nSPANISH TRANSLATION\n    dr.oldboi\n    MangoFizz\n    MrChromed\n    Rock Candy\nTESTING\n    SteamFox
 chimera_about_command_license_header                                            License
-chimera_about_command_license                                                   Copyright (C) 2020 Snowy\n\nThis software is licensed under the GNU General Public License version 3.\nSee https://www.gnu.org/licenses/ for more information.
+chimera_about_command_license                                                   Copyright (C) 2023 Snowy\n\nThis software is licensed under the GNU General Public License version 3.\nSee https://www.gnu.org/licenses/ for more information.
 chimera_about_command_help                                                      List information about this mod.
 chimera_af_command_help                                                         Enable anisotropic filtering.
 chimera_aim_assist_command_help                                                 Enable aim assist.

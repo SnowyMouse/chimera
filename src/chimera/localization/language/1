@@ -97,9 +97,9 @@ chimera_teleport_success_mp                                                     
 chimera_teleport_success_sp                                                     Teletransportado a %f %f %f
 
 chimera_about_command_credits_header                                            Créditos
-chimera_about_command_credits                                                   DESARROLLO\n    Snowy - Desarrollador líder de Chimera\n    Vaporeon - Paleta de colores del chat, testeo\nTRADUCCIÓN AL ESPAÑOL\n    dr.oldboi\n    Jerry\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
+chimera_about_command_credits                                                   DESARROLLO\n    Aerocatia\n    Cambidd\n    MangoFizz\n    num0005\n    pR0Ps\n    Sledmine\n    Snowy (Desarrollador líder de Chimera)\n    surrealwaffle\nTRADUCCIÓN AL ESPAÑOL\n    dr.oldboi\n    MangoFizz\n    MrChromed\n    Rock Candy\nTESTEO\n    SteamFox
 chimera_about_command_license_header                                            Licencia
-chimera_about_command_license                                                   Copyright (C) 2020 Snowy\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
+chimera_about_command_license                                                   Copyright (C) 2023 Snowy\n\nEste software está licenciado bajo la \"Licencia Pública General de GNU\", versión 3.\nVisita https://www.gnu.org/licenses/ para mayor información.
 chimera_about_command_help                                                      Lista de información acerca de este mod.
 chimera_aim_assist_command_help                                                 Habilita la asistencia de apuntado.
 chimera_allow_all_passengers_command_help                                       Deshabilita las restricciones de equipo para vehículos.
