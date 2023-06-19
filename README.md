@@ -893,7 +893,7 @@ anyway.
 We are *not* going to provide an option to re-enable it. Again, use [dgVoodoo2],
 instead.
 
-[dgVoodoo2]: http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2.html
+[dgVoodoo2]: http://dege.freeweb.hu/dgVoodoo2/
 
 ### Why is there no auto updater built into Chimera?
 Short answer: Auto updating is *not* actually a feature you want. For the best
