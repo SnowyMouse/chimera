@@ -1,6 +1,7 @@
 name: build
 
-# Run manually and each time anything is pushed or a PR is made.
+# Run manually and each time anything is pushed or a PR is made
+# Will only create a release for tagged commits
 on:
   workflow_dispatch:
   push:
@@ -19,6 +20,8 @@ jobs:
 
       - name: "Checkout"
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # needed to generate a valid build number
 
       - name: "Compile"
         env:
@@ -49,10 +52,20 @@ jobs:
           cd build
           make -j $(nproc)
 
+      # Strip symbols from the DLL if building a tagged commit
+      - name: "Strip symbols"
+        if: "startsWith(github.ref, 'refs/tags/')"
+        run: |-
+          i686-w64-mingw32-strip ./build/strings.dll
+
       - name: "Package"
         id: package
         run: |-
           7z a -mx=9 chimera.7z LICENSE README.md chimera.ini fonts ./build/strings.dll
+
+          # Set some variables to use when uploading the package
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "SHA=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
 
       # Upload an artifact if building an untagged commit
       - name: "Upload artifact"
@@ -61,3 +74,29 @@ jobs:
         with:
           name: chimera-${{ steps.package.outputs.SHA }}
           path: ./chimera.7z
+
+      # Create a release and upload the build if building a tagged commit
+      # NOTE: the create-release and upload-release-asset actions are
+      # unmaintained, but should keep working for the forseeable future
+      - name: "Create release"
+        id: create_release
+        if: "startsWith(github.ref, 'refs/tags/')"
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package.outputs.VERSION }}
+          release_name: Chimera v${{ steps.package.outputs.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: "Upload build"
+        uses: actions/upload-release-asset@v1
+        if: "startsWith(github.ref, 'refs/tags/')"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chimera.7z
+          asset_name: chimera-${{ steps.package.outputs.VERSION }}.${{ steps.package.outputs.SHA }}.7z
+          asset_content_type: application/x-7z-compressed
