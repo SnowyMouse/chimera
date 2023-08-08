@@ -80,6 +80,7 @@
 #include "config/ini.hpp"
 #include "annoyance/exception_dialog.hpp"
 #include "output/error_box.hpp"
+#include "fix/biped_ui_spawn.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -287,6 +288,9 @@ namespace Chimera {
 
                 // RAICHU
                 set_up_controller();
+
+                // Fix bipeds spawning on UI, oh the horror
+                set_up_fix_biped_ui_spawn();
             }
             else {
                 enable_output(true);
