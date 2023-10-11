@@ -27,6 +27,8 @@ namespace Chimera {
     }
 
     void set_up_fix_biped_ui_spawn() noexcept {
-        add_map_load_event(on_map_load);
+        if(get_chimera().feature_present("client_custom_edition")) {
+            add_map_load_event(on_map_load);
+        }
     }
 }
