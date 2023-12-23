@@ -495,7 +495,8 @@ Set whether or not auto centering in vehicles is disabled.
 
 #### Block buffering
 This feature is known to reduce input lag, and it works like the feature in
-config.txt. You can enable this behavior if you want.
+config.txt. Disabling buffering is known to destroy performance on DXVK, but
+generally works better everywhere else. You can enable this behavior if you want.
 
 **Usage:** `chimera_block_buffering [true/false]`
 

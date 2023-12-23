@@ -7,6 +7,7 @@
 #include <vector>
 #include <utility>
 #include <unordered_map>
+#include <cstdint>
 
 namespace Chimera {
     struct Bookmark {
