@@ -75,6 +75,7 @@ add_library(chimera STATIC
     src/chimera/event/damage.S
     src/chimera/event/frame.cpp
     src/chimera/event/map_load.cpp
+    src/chimera/event/revert.cpp
     src/chimera/event/rcon_message.cpp
     src/chimera/event/tick.cpp
     src/chimera/map_loading/crc32.c
