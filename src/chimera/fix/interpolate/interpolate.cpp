@@ -10,6 +10,7 @@
 #include "../../event/camera.hpp"
 #include "../../event/frame.hpp"
 #include "../../event/tick.hpp"
+#include "../../event/revert.hpp"
 #include "../../halo_data/game_engine.hpp"
 #include "../../output/output.hpp"
 
@@ -36,9 +37,6 @@ namespace Chimera {
     // Set for if interpolation is enabled
     bool interpolation_enabled = false;
 
-    // The last value of the tick count
-    std::int32_t previous_tick = 0;
-
 
     static void on_tick() noexcept {
         // Prevent interpolation when the game is paused
@@ -58,23 +56,11 @@ namespace Chimera {
         if(*first_person_camera_tick_rate != current_tick_rate) {
             overwrite(first_person_camera_tick_rate, current_tick_rate);
         }
-
-        previous_tick = get_tick_count();
     }
 
     static void on_preframe() noexcept {
         if(game_paused()) {
             return;
-        }
-
-        // Check if we've reverted and if so, clear interpolation buffers.
-        if (previous_tick > get_tick_count()) {
-            interpolate_object_clear();
-            interpolate_particle_clear();
-            interpolate_light_clear();
-            interpolate_flag_clear();
-            interpolate_camera_clear();
-            interpolate_fp_clear();
         }
 
         interpolation_tick_progress = get_tick_progress();
@@ -99,6 +85,15 @@ namespace Chimera {
         interpolate_particle_after();
     }
 
+    void clear_buffers() noexcept {
+        interpolate_object_clear();
+        interpolate_particle_clear();
+        interpolate_light_clear();
+        interpolate_flag_clear();
+        interpolate_camera_clear();
+        interpolate_fp_clear();
+    }
+
     void set_up_interpolation() noexcept {
         static auto *fp_interp_ptr = get_chimera().get_signature("fp_interp_sig").data();
         static Hook fp_interp_hook;
@@ -111,6 +106,9 @@ namespace Chimera {
         add_precamera_event(interpolate_camera_before);
         add_camera_event(interpolate_camera_after);
         write_jmp_call(fp_interp_ptr, fp_interp_hook, reinterpret_cast<const void *>(interpolate_fp_before), reinterpret_cast<const void *>(interpolate_fp_after));
+
+        //Clear interpolation buffers on major game state changes to prevent funny things from happening
+        add_revert_event(clear_buffers);
         interpolation_enabled = true;
     }
 
@@ -121,6 +119,7 @@ namespace Chimera {
         remove_frame_event(on_frame);
         remove_precamera_event(interpolate_camera_before);
         remove_camera_event(interpolate_camera_after);
+        remove_revert_event(clear_buffers);
         interpolation_enabled = false;
     }
 }
