@@ -680,6 +680,15 @@ namespace Chimera {
 
     };
     static_assert(sizeof(WeaponDynamicObject) == 0x2D0);
+
+    struct DeviceMachineDynamicObject : BaseDynamicObject {
+        PAD(0x14);
+
+        //** Scale of device position; 0-1  */
+        float device_position;
+    };
+    static_assert(sizeof(DeviceMachineDynamicObject) == 0x20C);
+    
 }
 
 #endif
