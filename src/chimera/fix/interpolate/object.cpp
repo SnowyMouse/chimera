@@ -35,6 +35,9 @@ namespace Chimera {
 
         /** These are the model nodes used by the object. */
         ModelNode nodes[MAX_NODES];
+
+        //** For device machines. */
+        float device_position = 0.0;
     };
 
     // This is the object data to interpolate.
@@ -205,6 +208,14 @@ namespace Chimera {
 
             // Let's check if the distance between the two points is too great (such as if the object was teleported).
             current_tick_object.interpolate = distance_squared(current_tick_object.center, previous_tick[i].center) < MAX_INTERPOLATION_DISTANCES[object->type == OBJECT_TYPE_BIPED];
+
+            // Bodge the damn beam emitters
+            if(object->type == OBJECT_TYPE_DEVICE_MACHINE) {
+                current_tick_object.device_position = reinterpret_cast<DeviceMachineDynamicObject *>(object)->device_position;
+                if(current_tick_object.interpolate) {
+                    current_tick_object.interpolate = !(current_tick_object.device_position < 0.002 && previous_tick[i].device_position > 0.9);
+                }
+            }
 
             // Get any children of this object
             current_tick_object.children_count = 0;
