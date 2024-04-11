@@ -52,6 +52,7 @@ namespace Chimera {
 
     static void copy_objects() noexcept;
     static void interpolate_object(std::size_t);
+    static ObjectID **followed_object;
 
     void interpolate_object_before() noexcept {
         // Check if a tick has passed. If so, swap buffers and copy new objects.
@@ -67,6 +68,7 @@ namespace Chimera {
 
             copy_objects();
             tick_passed = false;
+            followed_object = reinterpret_cast<ObjectID **>(get_chimera().get_signature("followed_object_sig").data() + 10);
         }
 
         static auto **visible_object_count = reinterpret_cast<std::uint32_t **>(get_chimera().get_signature("visible_object_count_sig").data() + 3);
@@ -90,7 +92,7 @@ namespace Chimera {
         auto &previous_tick_object = previous_tick[index];
 
         // Skip objects we can't interpolate or were already interpolated.
-        if(!current_tick_object.interpolate || !previous_tick_object.interpolate || current_tick_object.interpolated_this_frame || previous_tick_object.interpolated_this_frame) {
+        if(!current_tick_object.interpolate || current_tick_object.interpolated_this_frame || previous_tick_object.interpolated_this_frame) {
             return;
         }
 
@@ -110,6 +112,13 @@ namespace Chimera {
         // Skip if the node counts don't match
         if(previous_tick_object.node_count != current_tick_object.node_count) {
             return;
+        }
+
+        // Ensure objects the camera is following + projectiles that were just created are interpolated.
+        if(!previous_tick_object.interpolate) {
+            if(object->full_object_id() != **followed_object || object->type == ObjectType::OBJECT_TYPE_PROJECTILE) {
+                return;
+            }
         }
 
         // Set this flag so we don't need to do all these checks again when rolling things back.
