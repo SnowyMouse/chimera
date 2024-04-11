@@ -32,6 +32,10 @@ namespace Chimera {
     // If true, don't undo the camera (interpolation was skipped this frame)
     static bool skip;
 
+    // Do we need to roll back everything or just the position data?
+    // Rolling back rotation makes aiming feel funny (not coping). Don't do it if we don't have to.
+    static bool rollback;
+
     // Used to force first person rotation interpolation
     extern bool spectate_enabled;
 
@@ -102,11 +106,13 @@ namespace Chimera {
             interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
+
+            rollback = true;
         }
 
-        // Otherwise, only interpolate Z in case of elevators or Halo's glitchy crouching
+        // Otherwise, only interpolate position if in first person
         else {
-            data.position.z = previous_tick->data.position.z + (current_tick->data.position.z - previous_tick->data.position.z) * interpolation_tick_progress;
+            interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
         }
     }
 
@@ -117,7 +123,10 @@ namespace Chimera {
 
         auto &data = camera_data();
         data.position = current_tick->data.position;
-        std::copy(current_tick->data.orientation, current_tick->data.orientation + 1, data.orientation);
+        if(rollback) {
+            std::copy(current_tick->data.orientation, current_tick->data.orientation + 1, data.orientation);
+            rollback = false;
+        }
     }
 
     void interpolate_camera_clear() noexcept {
