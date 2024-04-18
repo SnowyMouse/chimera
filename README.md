@@ -70,6 +70,7 @@ These are features that are always on.
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)
 - [Camera shake fix](#camera-shake-fix)
+- [Checkpoint fix](#checkpoint-fix)
 - [Reduced DRM](#reduced-drm)
 - [Descope fix](#descope-fix)
 - [Extended description fix](#extended-description-fix)
@@ -101,8 +102,7 @@ These are features that are always on.
 #### Interpolation
 The game has an issue where object movement is tied to tick rate, thus objects
 will never move faster than 30 frames per second. Chimera adds interpolation to
-the game for objects. Unlike MCC, it also adds it for cutscenes and plasma
-projectiles, too.
+the game for objects and other effects.
 
 #### Limit increase
 Chimera increases some of the limits of the game. Note that, unless you play a
@@ -125,6 +125,9 @@ Chimera's folder).
 
 #### Camera shake fix
 Chimera fixes a bug where camera shaking does not work at high frame rates.
+
+#### Checkpoint fix
+Chimera fixes a bug where checkpoints time out too fast at high frame rates.
 
 #### Reduced DRM
 Normally, Halo does not allow you to join servers with someone that has the
