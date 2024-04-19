@@ -27,6 +27,9 @@ namespace Chimera {
         /** Tag ID of the object. */
         TagID tag_id;
 
+        /** Object index ID. */
+        std::uint16_t index;
+
         /** This is the position of the object's center. */
         Point3D center;
 
@@ -52,7 +55,6 @@ namespace Chimera {
 
     static void copy_objects() noexcept;
     static void interpolate_object(std::size_t);
-    static ObjectID **followed_object;
 
     void interpolate_object_before() noexcept {
         // Check if a tick has passed. If so, swap buffers and copy new objects.
@@ -68,7 +70,6 @@ namespace Chimera {
 
             copy_objects();
             tick_passed = false;
-            followed_object = reinterpret_cast<ObjectID **>(get_chimera().get_signature("followed_object_sig").data() + 10);
         }
 
         static auto **visible_object_count = reinterpret_cast<std::uint32_t **>(get_chimera().get_signature("visible_object_count_sig").data() + 3);
@@ -109,16 +110,14 @@ namespace Chimera {
             return;
         }
 
-        // Skip if the node counts don't match
-        if(previous_tick_object.node_count != current_tick_object.node_count) {
+        // Skip if object index ID's don't match
+        if(current_tick_object.index != previous_tick_object.index) {
             return;
         }
 
-        // Ensure objects the camera is following + projectiles that were just created are interpolated.
-        if(!previous_tick_object.interpolate) {
-            if(object->full_object_id() != **followed_object || object->type == ObjectType::OBJECT_TYPE_PROJECTILE) {
-                return;
-            }
+        // Skip if the node counts don't match
+        if(previous_tick_object.node_count != current_tick_object.node_count) {
+            return;
         }
 
         // Set this flag so we don't need to do all these checks again when rolling things back.
@@ -167,6 +166,9 @@ namespace Chimera {
 
             // Set this to false so if it doesn't exist or we can't interpolate it for some reason, we don't have to worry about it.
             current_tick_object.interpolate = false;
+
+            // Store index ID
+            current_tick_object.index = object_table.first_element[i].id;
 
             // See if the object exists.
             auto *object = object_table.get_dynamic_object(i);
@@ -266,12 +268,8 @@ namespace Chimera {
     }
 
     void interpolate_object_clear() noexcept {
-        for(std::size_t i = 0; i < OBJECT_BUFFER_SIZE; i++) {
-            current_tick[i].interpolate = false;
-            previous_tick[i].interpolate = false;
-            current_tick[i].interpolated_this_frame = false;
-            previous_tick[i].interpolated_this_frame = false;
-        }
+        // Erase the object buffers to prevent funny things on revert
+        std::memset(object_buffers, 0, sizeof(object_buffers));
     }
 
     void interpolate_object_on_tick() noexcept {
