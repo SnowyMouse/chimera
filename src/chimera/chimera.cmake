@@ -115,6 +115,7 @@ add_library(chimera STATIC
     src/chimera/fix/inverted_flag.S
     src/chimera/fix/interpolate/antenna.cpp
     src/chimera/fix/interpolate/camera.cpp
+    src/chimera/fix/interpolate/contrail.cpp
     src/chimera/fix/interpolate/flag.cpp
     src/chimera/fix/interpolate/fp.cpp
     src/chimera/fix/interpolate/interpolate.cpp
@@ -153,6 +154,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/camera.cpp
     src/chimera/halo_data/chat.cpp
     src/chimera/halo_data/chat.S
+    src/chimera/halo_data/contrail.cpp
     src/chimera/halo_data/controls.cpp
     src/chimera/halo_data/damage.cpp
     src/chimera/halo_data/damage.S
