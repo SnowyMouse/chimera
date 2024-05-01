@@ -215,34 +215,31 @@ add_library(chimera STATIC
     ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
 )
-add_dependencies(chimera chimera-version)
+add_dependencies(chimera chimera-version local_curl local_zstd)
 
 # Set how we'll generate localization_string
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/localizer.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/localizer.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language/*
 )
 
 # Set how we'll generate color_codes
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes_generator.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes_generator.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes
 )
 
 target_include_directories(chimera
     PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/include"
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include"
+    PRIVATE ${LOCAL_CURL_INCLUDE_DIR}
+    PRIVATE ${LOCAL_ZSTD_INCLUDE_DIR}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/lua"
 )
 
 # Set the name
-target_link_libraries(chimera shlwapi map_downloader lua ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32 bcrypt)
-
-# Target this
-target_include_directories(chimera PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/include)
+target_link_libraries(chimera shlwapi map_downloader lua local_curl ws2_32 bcrypt local_zstd)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")

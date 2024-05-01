@@ -11,5 +11,6 @@ set_target_properties(monolith PROPERTIES PREFIX "")
 set_target_properties(monolith PROPERTIES OUTPUT_NAME "strings")
 
 # lol
+add_dependencies(monolith chimera)
 set_target_properties(monolith PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")
-target_link_libraries(monolith chimera ${WINXP_COMPATIBILITY_LIBRARIES} shlwapi map_downloader ${CMAKE_CURRENT_SOURCE_DIR}/ext/curl/lib/libcurl.a ws2_32 ${CMAKE_CURRENT_SOURCE_DIR}/ext/zstd/lib/libzstd.a)
+target_link_libraries(monolith chimera ${WINXP_COMPATIBILITY_LIBRARIES} shlwapi map_downloader local_curl ws2_32 local_zstd)

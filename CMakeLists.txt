@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-# 3.12.4 or newer
-cmake_minimum_required(VERSION 3.12.4)
+# 3.22.1 or newer
+cmake_minimum_required(VERSION 3.22.1)
 
 project(Chimera
     VERSION 1.0.0
@@ -16,10 +16,13 @@ set(CMAKE_CXX_STANDARD 17)
 enable_language(CXX C)
 
 # We need Python for building things
-find_package(PythonInterp 3.7 REQUIRED)
+find_package(Python3 REQUIRED)
 
 # We should have git, too, but it's not 100% required
 find_package(Git)
+
+# Build dependencies
+include(dependencies.cmake)
 
 # If we have Git, try to see if we are in a git repo
 if(${GIT_FOUND})
@@ -48,7 +51,7 @@ set(ASM_EXT S)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_DATE=\\\"${TODAY}\\\"")
 
 # No errors pls
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -Wall -pedantic -Wextra -masm=intel -Wold-style-cast")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -Wall -pedantic -Wextra -masm=intel -Wold-style-cast -Wno-error=format-security")
 
 # Chimera
 #
