@@ -75,25 +75,32 @@ namespace Chimera {
             auto &previous_tick_object = previous_tick[i];
 
             // Skip if we don't want to bodge projectile positions this frame.
-            if(!current_tick_object.rollback || !previous_tick_object.rollback) {
-                continue;
-            }
-
-            // Skip if object ID's do not match
-            if(current_tick_object.object_id != previous_tick_object.object_id) {
+            if(!current_tick_object.rollback) {
                 continue;
             }
 
             auto *object = object_table.get_dynamic_object(current_tick_object.object_id);
+
             // This shouldn't ever happen but just in case it does...
             if(!object) {
+                continue;
+            }
+
+            // Hit the contrail with a sledgehammer. I mean if it works, right?...
+            if (!previous_tick_object.rollback && object->type == ObjectType::OBJECT_TYPE_PROJECTILE) {
+                contrail_table.first_element[i].parent_object_id.whole_id = 0xFFFFFFFF;
                 continue;
             }
 
             // Skip if the tags do not match
             auto &tag_id = object->tag_id;
             if(tag_id != current_tick_object.tag_id || previous_tick_object.tag_id != tag_id) {
-                return;
+                continue;
+            }
+
+            // Skip if object ID's do not match. Mostly a sanity check.
+            if(current_tick_object.object_id != previous_tick_object.object_id) {
+                continue;
             }
 
             // Copy previous tick positions to object table to fudge contrails
@@ -182,6 +189,12 @@ namespace Chimera {
 
             // Skip if we didn't fix the contrails this frame.
             if(!current_tick_object.rollback) {
+                continue;
+            }
+
+            // Unbodge the gigabodge.
+            if (current_tick_object.object_id != contrail_table.first_element[i].parent_object_id && contrail_table.first_element[i].parent_object_id.whole_id == 0xFFFFFFFF) {
+                contrail_table.first_element[i].parent_object_id = current_tick_object.object_id;
                 continue;
             }
 
