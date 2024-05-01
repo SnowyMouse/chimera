@@ -37,7 +37,7 @@ if(${GIT_FOUND})
         set(IN_GIT_REPO FALSE)
     endif()
 else()
-    set(IN_GIT_REPO TRUE)
+    set(IN_GIT_REPO FALSE)
 endif()
 
 # Don't care about this stuff
