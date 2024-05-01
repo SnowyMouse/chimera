@@ -1,3 +1,7 @@
 *.7z*
+*.bat
+*.cmd
 *.sh
 src/chimera/version.hpp
+mingw32/
+build/
