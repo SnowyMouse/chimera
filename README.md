@@ -15,7 +15,7 @@ The official repository is hosted at https://github.com/SnowyMouse/chimera
 - [Mod support](#mod-support)
 - [Features](#features)
 - [FAQ](#faq)
-
+- [Compilation Guide](#compilation-guide)
 
 
 
@@ -1011,3 +1011,36 @@ Halo Custom Edition server, then you should forge the CRC32.
 [Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
 [Why is there no auto updater built into Chimera?]: #why-is-there-no-auto-updater-built-into-chimera
 [Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
+
+## Compilation Guide
+To compile Chimera we use the 32-bit MinGW-w64 toolchain.
+
+> **NOTE:** Versions of GCC 12.X and above produce builds of chimera that crash when a large amount of maps are installed.
+Until it is known why, the recommended way to build Chimera is on Windows with the supplied toolchain links.
+
+### Windows
+The most simple way to compile Chimera on windows is using the standalone MinGW toolchain provided by [Winlibs](https://winlibs.com).
+1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `C:\source\chimera`
+2. Download the 32-bit GCC 11.4.0 MinGW-w64 MSVCRT release from [here (direct link)](https://github.com/brechtsanders/winlibs_mingw/releases/download/11.4.0-11.0.0-msvcrt-r1/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r1.7z)
+3. Extract and copy the `mingw32` directory to where Chimera's source is located.
+4. Create an empty `build` directory where Chimera's source is located.
+5. Create a file called `mingw-console.bat` where Chimera's source is located with the following contents:
+```
+@echo off
+set PATH=%~dp0mingw32\bin;%PATH%
+cd build
+cmd /k
+```
+6. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window, where `<number of threads>` is the number of CPU threads you would like to use.
+```
+cmake.exe .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+mingw32-make.exe -j<number of threads>
+strip.exe strings.dll
+```
+For the correct DLL version information to be set [Git for Windows](https://gitforwindows.org/) must be installed, but this is not required to compile Chimera.
+
+### Linux
+Chimera can be cross-compiled from a Linux host.
+1. Create a build directory
+2. From here run the MinGW cmake command. On Most distros this is `i686-w64-mingw32-cmake <path to source>`
+Because of the mentioned issues with GCC versions 12.X and higher, it may be easier to compile from a Windows environment.
