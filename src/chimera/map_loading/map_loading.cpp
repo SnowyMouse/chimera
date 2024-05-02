@@ -1608,14 +1608,14 @@ namespace Chimera {
                 bool enable;
 
                 switch(get_map_entry("ui")->crc32.value_or(~calculate_crc32_of_map_file(load_map("ui")))) {
-                    case 0x1EBD0AA4:
-                    case 0x73EE7229:
-                    case 0x28BA7172:
-                    case 0x241F13FD:
-                    case 0xEA85B182:
-                    case 0x4DB0817B:
-                    case 0x05D8C6A3:
-                    case 0x1F222A6C:
+                    case 0x1EBD0AA4: // German
+                    case 0x73EE7229: // English
+                    case 0x28BA7172: // Spanish
+                    case 0x241F13FD: // French
+                    case 0xEA85B182: // Italian
+                    case 0x4DB0817B: // Japanese
+                    case 0x05D8C6A3: // Korean
+                    case 0x1F222A6C: // Chinese
                         enable = true;
                         break;
                     default:
