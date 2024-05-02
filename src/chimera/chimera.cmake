@@ -115,7 +115,6 @@ add_library(chimera STATIC
     src/chimera/fix/inverted_flag.S
     src/chimera/fix/interpolate/antenna.cpp
     src/chimera/fix/interpolate/camera.cpp
-    src/chimera/fix/interpolate/contrail.cpp
     src/chimera/fix/interpolate/flag.cpp
     src/chimera/fix/interpolate/fp.cpp
     src/chimera/fix/interpolate/interpolate.cpp

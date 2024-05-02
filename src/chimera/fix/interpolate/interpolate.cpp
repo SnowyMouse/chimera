@@ -16,7 +16,6 @@
 
 #include "antenna.hpp"
 #include "camera.hpp"
-#include "contrail.hpp"
 #include "flag.hpp"
 #include "fp.hpp"
 #include "light.hpp"
@@ -49,7 +48,6 @@ namespace Chimera {
         interpolate_object_on_tick();
         interpolate_camera_on_tick();
         interpolate_particle_on_tick();
-        fix_contrail_on_tick();
         interpolation_tick_progress = 0;
         float current_tick_rate = effective_tick_rate();
         if(*first_person_camera_tick_rate != current_tick_rate) {
@@ -88,15 +86,12 @@ namespace Chimera {
         interpolate_flag_clear();
         interpolate_camera_clear();
         interpolate_fp_clear();
-        fix_contrail_clear();
     }
 
     void set_up_interpolation() noexcept {
         static auto *fp_interp_ptr = get_chimera().get_signature("fp_interp_sig").data();
         static Hook fp_interp_hook;
         first_person_camera_tick_rate = *reinterpret_cast<float **>(get_chimera().get_signature("fp_cam_tick_rate_sig").data() + 2);
-        static auto *contrail_update_ptr = get_chimera().get_signature("contrail_update_func_sig").data();
-        static Hook contail_update_hook;
 
         add_tick_event(on_tick);
         add_preframe_event(on_preframe);
@@ -104,9 +99,6 @@ namespace Chimera {
         add_precamera_event(interpolate_camera_before);
         add_camera_event(interpolate_camera_after);
         write_jmp_call(fp_interp_ptr, fp_interp_hook, reinterpret_cast<const void *>(interpolate_fp_before), reinterpret_cast<const void *>(interpolate_fp_after));
-
-        // Make sure contrails trail their parent object when interpolating said objects.
-        write_jmp_call(contrail_update_ptr, contail_update_hook, reinterpret_cast<const void *>(fix_contrail_before), reinterpret_cast<const void *>(fix_contrail_after));
 
         // Block built-in fp camera interpolation. Let Chimera do it instead.
         overwrite(get_chimera().get_signature("camera_interpolation_sig").data() + 0xF, static_cast<unsigned char>(0xEB));
@@ -119,7 +111,6 @@ namespace Chimera {
     void disable_interpolation() noexcept {
         get_chimera().get_signature("fp_interp_sig").rollback();
         get_chimera().get_signature("camera_interpolation_sig").rollback();
-        get_chimera().get_signature("contrail_update_func_sig").rollback();
         remove_tick_event(on_tick);
         remove_preframe_event(on_preframe);
         remove_frame_event(on_frame);
