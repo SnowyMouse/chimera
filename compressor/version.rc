@@ -1,8 +1,8 @@
 LANGUAGE 9, 1
 
 1 VERSIONINFO
- FILEVERSION 1, 0, 1, 0
- PRODUCTVERSION 1, 0, 1, 0
+ FILEVERSION 1, 0, 2, 0
+ PRODUCTVERSION 1, 0, 2, 0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -10,11 +10,11 @@ BEGIN
     BEGIN
         VALUE "CompanyName",      "Snowy ^.^"
         VALUE "FileDescription",  "Chimera Map Compressor"
-        VALUE "FileVersion",      "1.0.1"
+        VALUE "FileVersion",      "1.0.2"
         VALUE "InternalName",     "chimera-compress"
         VALUE "OriginalFilename", "chimera-compress.exe"
         VALUE "ProductName",      "Chimera Compress"
-        VALUE "ProductVersion",   "1.0.1"
+        VALUE "ProductVersion",   "1.0.2"
         VALUE "LegalCopyright",   "'16'17'18 Snowy"
     END
   END
@@ -25,3 +25,4 @@ BEGIN
 END
 
 IDI_ICON1 ICON "../icon/chimera.ico"
+1 24 "chimera-compress.manifest"

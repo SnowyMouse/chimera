@@ -115,8 +115,8 @@ increases:
 - Draw distance increased to 2250 world units (~6.86 km)
 
 #### Compressed maps
-Chimera supports [Invader](https://github.com/SnowyMouse/invader)-compressed
-maps. This allows you to take advantage of the blazingly fast zstd compression
+Chimera supports maps compressed with the chimera-compress compression tool.
+This allows you to take advantage of the blazingly fast zstd compression
 algorithm, drastically cutting down map size.
 
 If [maps in RAM](#memory-settings) is enabled, compressed maps will be
