@@ -420,10 +420,20 @@ namespace Chimera {
                 override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
             }
             else {
-                if(draw_shadow) {
-                    override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                // Some cheap and nasty hackery to stop DrawText stripping the spaces of the end of chapter titles.
+                // Not perfect but better than nothing.
+                if(u16->at(u16->length()-1) == static_cast<wchar_t>(' ')) {
+                    if(draw_shadow) {
+                        override_font->DrawTextW(NULL, u16->data(), u16->length()+1, &rshadow, align, color_shadow);
+                    }
+                    override_font->DrawTextW(NULL, u16->data(), u16->length()+1, &rect, align, color);
                 }
-                override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
+                else {
+                    if(draw_shadow) {
+                        override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
+                    }
+                    override_font->DrawTextW(NULL, u16->data(), -1, &rect, align, color);
+                }
             }
         }
         else {
