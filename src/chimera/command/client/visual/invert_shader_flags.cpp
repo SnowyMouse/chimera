@@ -7,9 +7,6 @@
 #include "../../../fix/inverted_flag.hpp"
 
 namespace Chimera {
-    void enable_easter_eggs();
-    void disable_easter_eggs();
-
     bool invert_shader_flags_command(int argc, const char **argv) {
         static bool enabled = false;
         if(argc) {
@@ -17,11 +14,9 @@ namespace Chimera {
             if(new_enabled != enabled) {
                 if(!new_enabled) {
                     set_up_inverted_flag_fix();
-                    enable_easter_eggs();
                 }
                 else {
                     unset_up_inverted_flag_fix();
-                    disable_easter_eggs();
                 }
                 enabled = new_enabled;
             }
