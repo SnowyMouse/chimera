@@ -72,7 +72,7 @@ namespace Chimera {
 
             // Lastly, if we're not skipping, check if we went really far too quickly in first person
             if(!skip && type == CameraType::CAMERA_FIRST_PERSON) {
-                skip = distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5;
+                skip = distance_squared(previous_tick->data.position, current_tick->data.position) > 5.0 * 5.0;
             }
         }
 
@@ -91,8 +91,14 @@ namespace Chimera {
             if(player) {
                 auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
                 if(object) {
-                    //CHeck if dead and if not, don't interpolate debug/death camera.
-                    if (type == CameraType::CAMERA_DEBUG && object->health >= 0.0) {
+                    // CHeck if dead and if not, don't interpolate debug/death camera.
+                    if(type == CameraType::CAMERA_DEBUG && object->health >= 0.0) {
+                        skip = true;
+                        return;
+                    }
+
+                    // Is the camera moving fast but the player biped velocity low? Probably teleporting so shouldn't interpolate camera.
+                    if(type == CameraType::CAMERA_FIRST_PERSON && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5 && magnitude_squared(object->velocity) <= 0.5 * 0.5) {
                         skip = true;
                         return;
                     }
@@ -101,18 +107,14 @@ namespace Chimera {
             }
         }
 
+        // Interpolate the position
+        interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
+
         // Don't interpolate rotation if in first person unless we're in a vehicle
         if(type != CameraType::CAMERA_FIRST_PERSON || vehicle_first_person || spectate_enabled) {
-            interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[0], current_tick->data.orientation[0], data.orientation[0], interpolation_tick_progress);
             interpolate_point(previous_tick->data.orientation[1], current_tick->data.orientation[1], data.orientation[1], interpolation_tick_progress);
-
             rollback = true;
-        }
-
-        // Otherwise, only interpolate position if in first person
-        else {
-            interpolate_point(previous_tick->data.position, current_tick->data.position, data.position, interpolation_tick_progress);
         }
     }
 

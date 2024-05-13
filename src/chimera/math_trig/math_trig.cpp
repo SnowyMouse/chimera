@@ -197,6 +197,14 @@ namespace Chimera {
         return std::sqrt(distance_squared(a.x, a.y, b.x, b.y));
     }
 
+    float magnitude_squared(float x, float y, float z) noexcept {
+        return x*x + y*y + z*z;
+    }
+
+    float magnitude_squared(const Point3D &a) noexcept {
+        return a.x*a.x + a.y*a.y + a.z*a.z;
+    }
+
     double counter_time_elapsed(const LARGE_INTEGER &before) noexcept {
         LARGE_INTEGER now;
         QueryPerformanceCounter(&now);

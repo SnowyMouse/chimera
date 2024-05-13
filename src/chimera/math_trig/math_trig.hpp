@@ -193,6 +193,22 @@ namespace Chimera {
     float distance(const Point3D &a, const Point3D &b) noexcept;
 
     /**
+     * Calculate the magnitude of a 3D vector without taking square roots. If the square root isn't necessary, then this is faster.
+     * @param  x This is the X value.
+     * @param  y This is the Y value.
+     * @param  z This is the Z value.
+     * @return    Return the magnitude.
+     */
+    float magnitude_squared(float x, float y, float z) noexcept;
+
+    /**
+     * Calculate the magnitude of a 3D vector without taking square roots. If the square root isn't necessary, then this is faster.
+     * @param  a This is the point vector.
+     * @return    Return the magnitude.
+     */
+    float magnitude_squared(const Point3D &a) noexcept;
+
+    /**
      * Get the time elapsed since a counter.
      */
     double counter_time_elapsed(const LARGE_INTEGER &before) noexcept;
