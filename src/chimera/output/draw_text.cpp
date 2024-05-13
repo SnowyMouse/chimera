@@ -422,7 +422,7 @@ namespace Chimera {
             else {
                 // Some cheap and nasty hackery to stop DrawText stripping the spaces of the end of chapter titles.
                 // Not perfect but better than nothing.
-                if(u16->at(u16->length()-1) == static_cast<wchar_t>(' ')) {
+                if(u16->back() == static_cast<wchar_t>(' ')) {
                     if(draw_shadow) {
                         override_font->DrawTextW(NULL, u16->data(), u16->length()+1, &rshadow, align, color_shadow);
                     }

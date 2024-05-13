@@ -98,7 +98,7 @@ namespace Chimera {
                     }
 
                     // Is the camera moving fast but the player biped velocity low? Probably teleporting so shouldn't interpolate camera.
-                    if(type == CameraType::CAMERA_FIRST_PERSON && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5 && magnitude(object->velocity) <= 0.5) {
+                    if(type == CameraType::CAMERA_FIRST_PERSON && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5 && magnitude_squared(object->velocity) <= 0.5 * 0.5) {
                         skip = true;
                         return;
                     }
