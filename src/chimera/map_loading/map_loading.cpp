@@ -1605,8 +1605,6 @@ namespace Chimera {
 
         else {
             add_map_load_event([]() {
-                bool enable;
-
                 switch(get_map_entry("ui")->crc32.value_or(~calculate_crc32_of_map_file(load_map("ui")))) {
                     case 0x1EBD0AA4: // German
                     case 0x73EE7229: // English
@@ -1616,23 +1614,18 @@ namespace Chimera {
                     case 0x4DB0817B: // Japanese
                     case 0x05D8C6A3: // Korean
                     case 0x1F222A6C: // Chinese
-                        enable = true;
                         break;
                     default:
-                        enable = false;
-                        break;
+                        return;
+                }
+                for(const auto& map : { "a10", "a30", "a50", "b30", "b40", "c10", "c20", "c40", "d20", "d40" }) {
+                    if(!get_map_entry(map)) return;
                 }
 
+                // UI crc32 is correct and we have all the maps, we can enable the campaign button!
                 auto &sig = get_chimera().get_signature("hide_campaign_button_sig");
-
-                // If our UI crc32 is correct and we have all the maps, we can enable the campaign button!
-                if(enable && get_map_entry("a10") && get_map_entry("a30") && get_map_entry("a50") && get_map_entry("b30") && get_map_entry("b40") && get_map_entry("c10") && get_map_entry("c20") && get_map_entry("c40") && get_map_entry("d20") && get_map_entry("d40")) {
-                    static const constexpr SigByte return1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3, 0x90 };
-                    write_code_s(sig.data(), return1);
-                }
-                else {
-                    sig.rollback();
-                }
+                static const constexpr SigByte return1[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3, 0x90 };
+                write_code_s(sig.data(), return1);
             });
         }
 

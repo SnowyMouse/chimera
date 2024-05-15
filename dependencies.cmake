@@ -1,7 +1,9 @@
 # Build our own ZSTD and cURL
 
 # Silence CMake Warning
-cmake_policy(SET CMP0135 NEW)
+if (POLICY CMP0135)
+    cmake_policy(SET CMP0135 NEW)
+endif()
 
 include(ExternalProject)
 
