@@ -8,7 +8,9 @@ option(BUILD_STATIC_ZSTD "Build and use static Zstandard as part of this project
 
 if(BUILD_STATIC_ZSTD)
     # Silence CMake Warning
-    cmake_policy(SET CMP0135 NEW)
+    if (POLICY CMP0135)
+        cmake_policy(SET CMP0135 NEW)
+    endif()
 
     include(ExternalProject)
 
