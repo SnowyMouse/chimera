@@ -69,6 +69,7 @@ These are features that are always on.
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)
+- [Campaign in Custom Edition](#campaign-maps)
 - [Camera shake fix](#camera-shake-fix)
 - [Checkpoint fix](#checkpoint-fix)
 - [Reduced DRM](#reduced-drm)
@@ -122,6 +123,11 @@ algorithm, drastically cutting down map size.
 If [maps in RAM](#memory-settings) is enabled, compressed maps will be
 decompressed directly into RAM. Otherwise, temp files will be used (placed in
 Chimera's folder).
+
+#### Campaign in Custom Edition
+Normally, Halo Custom Edition does not display a "campaign" option on the main
+menu. If all of the campaign maps are availible in the maps folder, Chimera will
+reenable the "campaign" option just like in the retail version.
 
 #### Camera shake fix
 Chimera fixes a bug where camera shaking does not work at high frame rates.
