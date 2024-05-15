@@ -69,7 +69,7 @@ These are features that are always on.
 - [Interpolation](#interpolation)
 - [Limit increase](#limit-increase)
 - [Compressed maps](#compressed-maps)
-- [Campaign in Custom Edition](#campaign-maps)
+- [Campaign in Custom Edition](#campaign-in-custom-edition)
 - [Camera shake fix](#camera-shake-fix)
 - [Checkpoint fix](#checkpoint-fix)
 - [Reduced DRM](#reduced-drm)
