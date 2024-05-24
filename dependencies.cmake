@@ -7,10 +7,14 @@ endif()
 
 include(ExternalProject)
 
+set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
+set(LOCAL_CURL_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/lib)
+
 ExternalProject_Add(curl
     PREFIX ext/curl
-    URL "https://github.com/curl/curl/releases/download/curl-8_7_1/curl-8.7.1.tar.gz"
-    URL_HASH SHA256=f91249c87f68ea00cf27c44fdfa5a78423e41e71b7d408e5901a9896d905c495
+    URL "https://github.com/curl/curl/releases/download/curl-8_8_0/curl-8.8.0.tar.gz"
+    URL_HASH SHA256=77c0e1cd35ab5b45b659645a93b46d660224d0024f1185e8a95cdb27ae3d787d
+    BUILD_BYPRODUCTS ${LOCAL_CURL_LIB_DIR}/libcurl.a
     CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -29,17 +33,18 @@ ExternalProject_Add(curl
         -DHTTP_ONLY=ON
 )
 
-set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
-set(LOCAL_CURL_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/lib)
-
 add_library(local_curl STATIC IMPORTED)
 set_target_properties(local_curl PROPERTIES IMPORTED_LOCATION ${LOCAL_CURL_LIB_DIR}/libcurl.a)
 add_dependencies(local_curl curl)
+
+set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
+set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
 
 ExternalProject_Add(zstd
     PREFIX ext/zstd
     URL "https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-1.5.6.tar.gz"
     URL_HASH SHA256=8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1
+    BUILD_BYPRODUCTS ${LOCAL_ZSTD_LIB_DIR}/libzstd.a
     SOURCE_SUBDIR build/cmake
     CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
@@ -54,9 +59,6 @@ ExternalProject_Add(zstd
         -DZSTD_BUILD_PROGRAMS=OFF
         -DZSTD_BUILD_TESTS=OFF
 )
-
-set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
-set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
 
 add_library(local_zstd STATIC IMPORTED)
 set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/libzstd.a)

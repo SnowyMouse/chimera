@@ -217,10 +217,11 @@ add_library(chimera STATIC
 add_dependencies(chimera chimera-version local_curl local_zstd)
 
 # Set how we'll generate localization_string
+file(GLOB CHIMERA_LOCALIZATION_DEPS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language/*")
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/localizer.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/localization/language/*
+    DEPENDS ${CHIMERA_LOCALIZATION_DEPS}
 )
 
 # Set how we'll generate color_codes

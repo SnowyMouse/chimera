@@ -14,10 +14,14 @@ if(BUILD_STATIC_ZSTD)
 
     include(ExternalProject)
 
+    set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
+    set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
+
     ExternalProject_Add(zstd
         PREFIX ext/zstd
         URL "https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-1.5.6.tar.gz"
         URL_HASH SHA256=8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1
+        BUILD_BYPRODUCTS ${LOCAL_ZSTD_LIB_DIR}/libzstd.a
         SOURCE_SUBDIR build/cmake
         CMAKE_ARGS
             -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
@@ -32,9 +36,6 @@ if(BUILD_STATIC_ZSTD)
             -DZSTD_BUILD_PROGRAMS=OFF
             -DZSTD_BUILD_TESTS=OFF
     )
-
-    set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
-    set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
 
     add_library(local_zstd STATIC IMPORTED)
     set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/libzstd.a)
