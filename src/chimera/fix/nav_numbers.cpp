@@ -19,6 +19,7 @@ namespace Chimera {
 
     static void on_map_load() {
         dimensions = nullptr;
+        spacing = nullptr;
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
 
