@@ -36,9 +36,23 @@ _new_contrail_update_function:
     pop eax
     jmp dword ptr [_original_contrail_update_function]
 
-;# Block contrail update for first tick of exitence to prevent artifacts
 .globl _interpolation_memes
 _interpolation_memes:
+    ;# Check if interpolation is enabled
+    push eax
+    mov eax, dword ptr [_apply_interpolation_hack]
+    test al, al
+    pop eax
+
+    ;# If nonzero, apply the hack
+    jnz hacky_memes
+
+    ;# Interpolation disabled? Proceed as normal
+    jmp dword ptr [_original_instruction]
+
+    hacky_memes:
+    
+    ;# Block contrail update if first tick after creation.
     push eax
     mov eax, dword ptr [init_value]
     cmp eax, dword ptr [esi + 0x24]

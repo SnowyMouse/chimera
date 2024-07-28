@@ -13,6 +13,7 @@ extern "C" {
     const void *original_instruction;
     std::byte *skip_update = nullptr;
     std::uint32_t can_update_contrail = 0;
+    std::uint32_t apply_interpolation_hack = 1;
     float update_contrail_by = 1.0F / 30.0F;
     void new_contrail_update_function();
     void interpolation_memes();
@@ -214,6 +215,8 @@ namespace Chimera {
         can_update_contrail = 1;
         update_contrail_by = 1.0F / effective_tick_rate();
         tick_passed = true;
+
+        apply_interpolation_hack = interpolation_enabled;
     }
 
     void set_up_contrail_fix() noexcept {
