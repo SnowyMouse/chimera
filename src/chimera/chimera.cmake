@@ -133,6 +133,8 @@ add_library(chimera STATIC
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp
     src/chimera/fix/scoreboard_fade_fix.S
+    src/chimera/fix/scope_blur_fix.cpp
+    src/chimera/fix/scope_blur_fix.S
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/timer_offset.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp
@@ -142,6 +144,8 @@ add_library(chimera STATIC
     src/chimera/fix/video_mode.S
     src/chimera/fix/weapon_swap_ticks.cpp
     src/chimera/fix/weapon_swap_ticks.S
+    src/chimera/fix/weather_fix.cpp
+    src/chimera/fix/weather_fix.S
     src/chimera/fix/widescreen_element_reposition_hud.S
     src/chimera/fix/widescreen_element_reposition_letterbox.S
     src/chimera/fix/widescreen_element_reposition_menu.S

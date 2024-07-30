@@ -56,6 +56,7 @@
 #include "fix/timer_offset.hpp"
 #include "fix/sane_defaults.hpp"
 #include "fix/vehicle_team_desync.hpp"
+#include "fix/weather_fix.hpp"
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
@@ -63,6 +64,7 @@
 #include "fix/contrail_fix.hpp"
 #include "fix/interpolate/interpolate.hpp"
 #include "fix/sun_fix.hpp"
+#include "fix/scope_blur_fix.hpp"
 #include "fix/flashlight_fix.hpp"
 #include "fix/motion_sensor_fix.hpp"
 #include "fix/inverted_flag.hpp"
@@ -172,9 +174,11 @@ namespace Chimera {
                 set_up_blue_32bit_color_fix();
                 set_up_contrail_fix();
                 set_up_sun_fix();
+                set_up_scope_blur_fix();
                 set_up_motion_sensor_fix();
                 set_up_flashlight_fix();
                 set_up_inverted_flag_fix();
+                set_up_weather_fix();
 
                 // No more updates
                 enable_block_update_check();
