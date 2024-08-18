@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # 3.22.1 or newer
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.22.0)
 
 project(Chimera
     VERSION 1.0.0
@@ -27,14 +27,14 @@ include(dependencies.cmake)
 # If we have Git, try to see if we are in a git repo
 if(${GIT_FOUND})
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} --git-dir '${CMAKE_CURRENT_SOURCE_DIR}/.git' rev-parse --short HEAD
+        COMMAND ${GIT_EXECUTABLE} --git-dir "${CMAKE_CURRENT_SOURCE_DIR}/.git" rev-parse --short HEAD
         OUTPUT_VARIABLE GIT_COMMIT_F
         ERROR_QUIET
     )
     if("${GIT_COMMIT_F}" STREQUAL "")
-        set(IN_GIT_REPO TRUE)
-    else()
         set(IN_GIT_REPO FALSE)
+    else()
+        set(IN_GIT_REPO TRUE)
     endif()
 else()
     set(IN_GIT_REPO FALSE)

@@ -4,9 +4,9 @@
 #include "../../../lua/lua_script.hpp"
 #include "../../../output/output.hpp"
 #include "../../../chimera.hpp"
-#include "../../../version.hpp"
 #include "../../../config/config.hpp"
 #include "../../command.hpp"
+#include "version.hpp"
 
 namespace Chimera {
     bool Chimera::chimera_command(int argc, const char **argv) noexcept {

@@ -7,15 +7,11 @@ set(CHIMERA_GIT_COMMIT "\"unknown\"")
 # Set things whether or not things worked
 if(${IN_GIT_REPO} STREQUAL "TRUE")
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} --git-dir "${GIT_DIR}" rev-parse --abbrev-ref HEAD
-        OUTPUT_VARIABLE CHIMERA_GIT_BRANCH
-    )
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} --git-dir "${GIT_DIR}" rev-parse --short HEAD
+        COMMAND "${GIT_EXECUTABLE}" --git-dir "${GIT_DIR}" rev-parse --short HEAD
         OUTPUT_VARIABLE CHIMERA_GIT_COMMIT
     )
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} --git-dir "${GIT_DIR}" rev-list --count HEAD
+        COMMAND "${GIT_EXECUTABLE}" --git-dir "${GIT_DIR}" rev-list --count HEAD
         OUTPUT_VARIABLE CHIMERA_GIT_COMMIT_COUNT
     )
     string(STRIP "${CHIMERA_GIT_COMMIT_COUNT}" CHIMERA_GIT_COMMIT_COUNT)
@@ -25,5 +21,5 @@ else()
     set(CHIMERA_FULL_VERSION_TEXT "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.unknown")
 endif()
 
-# Overwrite version_str.hpp
+# Overwrite version.hpp
 file(WRITE "${OUT_FILE}" "#define CHIMERA_VERSION_STRING \"${CHIMERA_FULL_VERSION_TEXT}\"\n#define CHIMERA_VERSION_MAJOR ${PROJECT_VERSION_MAJOR}\n#define CHIMERA_VERSION_MINOR ${PROJECT_VERSION_MINOR}\n#define CHIMERA_VERSION_PATCH ${PROJECT_VERSION_PATCH}\n#define CHIMERA_GIT_COMMIT_COUNT ${CHIMERA_GIT_COMMIT_COUNT}\n")

@@ -9,7 +9,6 @@
 #include "../halo_data/map.hpp"
 #include "../localization/localization.hpp"
 #include "../output/output.hpp"
-#include "../version.hpp"
 #include "../chimera.hpp"
 #include "../config/ini.hpp"
 #include "../halo_data/game_engine.hpp"
@@ -19,6 +18,7 @@
 #include "lua_game.hpp"
 #include "lua_variables.hpp"
 #include "lua_io.hpp"
+#include "version.hpp"
 
 namespace fs = std::filesystem;
 

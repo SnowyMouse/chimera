@@ -4,11 +4,11 @@
 #include <filesystem>
 #include <fstream>
 #include "../localization/localization.hpp"
-#include "../version.hpp"
 #include "../command/command.hpp"
 #include "../output/output.hpp"
 #include "../chimera.hpp"
 #include "config.hpp"
+#include "version.hpp"
 
 namespace Chimera {
     const std::vector<std::string> *Config::get_settings_for_command(const char *command) const {

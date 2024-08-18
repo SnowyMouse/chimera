@@ -6,6 +6,13 @@ add_library(monolith MODULE
     src/monolith/strings/strings.rc
 )
 
+target_include_directories(monolith
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+set_property(SOURCE src/monolith/strings/strings.rc
+             APPEND PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
+
 # Set the name
 set_target_properties(monolith PROPERTIES PREFIX "")
 set_target_properties(monolith PROPERTIES OUTPUT_NAME "strings")

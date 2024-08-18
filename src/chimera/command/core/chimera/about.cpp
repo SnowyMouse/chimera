@@ -2,7 +2,7 @@
 
 #include "../../../output/output.hpp"
 #include "../../../localization/localization.hpp"
-#include "../../../version.hpp"
+#include "version.hpp"
 
 namespace Chimera {
     static void print_section(const char *header, const char *text) noexcept;
