@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#ifndef CHIMERA_WINXP
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
-#endif
-
 #include <windows.h>
 #include <filesystem>
 #include <vector>

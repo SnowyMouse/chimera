@@ -14,11 +14,7 @@ add_custom_target(chimera-version
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/version.hpp"
 )
 
-# Windows XP
-option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
 if(${CHIMERA_WINXP})
-    add_definitions(-DCHIMERA_WINXP)
-
     set(WINXP_COMPATIBILITY_FILES
         src/chimera/map_loading/get_file_name_from_handle.c
     )

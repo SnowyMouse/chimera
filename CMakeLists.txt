@@ -21,6 +21,16 @@ find_package(Python3 REQUIRED)
 # We should have git, too, but it's not 100% required
 find_package(Git)
 
+# Windows XP
+option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
+if(${CHIMERA_WINXP})
+    # Windows Server 2003 with SP1, Windows XP with SP2
+    add_definitions(-D_WIN32_WINNT=0x0502 -DCHIMERA_WINXP)
+else()
+    # Windows 10
+    add_definitions(-D_WIN32_WINNT=0x0A00)
+endif()
+
 # Build dependencies
 include(dependencies.cmake)
 

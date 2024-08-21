@@ -1,9 +1,5 @@
 #define MODS_PATH "mods\\"
 
-#ifndef CHIMERA_WINXP
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
-#endif
-
 #include <w32api.h>
 #include <windows.h>
 #include <winbase.h>
