@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <windows.h>
+#include <versionhelpers.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -183,8 +184,11 @@ namespace Chimera {
                 // No more updates
                 enable_block_update_check();
 
-                // Make the game use max settings as default because it's not 2003 anymore
-                set_up_sane_defaults();
+                // Make the game use max settings as default because it's not 2003 anymore (except when it is)
+                // Defaulting EAX to on is not safe on Windows XP, bad drivers can cause a BSOD.
+                if(IsWindowsVistaOrGreater()) {
+                    set_up_sane_defaults();
+                }
 
                 // Prevent some annoying registry checks that just make the game slower
                 remove_registry_checks();
