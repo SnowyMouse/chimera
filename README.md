@@ -842,16 +842,13 @@ worth answering in a readme.
 ### Will Chimera run on my system?
 Short answer: If your PC is semi-recent and uses Windows 10, it'll work. Note
 that, while Chimera isn't too taxing, especially on modern systems, it can make
-Halo harder to run if you're on extremely ancient hardware. We do not test
-Chimera on Windows XP, Windows Vista, Windows 7, or Windows 8(.1), but it will
-*probably* run on them, too.
+Halo harder to run if you're on extremely ancient hardware.
 
 Long answer: There are the requirements:
 
-- OS (if on Windows): Windows 10 or newer (Windows XP may work, but it is untested)
-- Wine (if on Linux): Wine 4.0 or newer\*
-
-\*We test on the latest wine-staging 5.0 version, but 4.0 should work.
+- OS (if on Windows): Windows 10 or newer, or
+Windows XP and newer if using the dedicated Windows XP release.
+- Wine (if on Linux): Wine 4.0 or newer
 
 If your PC does not at least meet the above requirements, Chimera may fail to
 run properly due to the underlying API being older.
@@ -1021,13 +1018,15 @@ Halo Custom Edition server, then you should forge the CRC32.
 ## Compilation Guide
 To compile Chimera we use the 32-bit MinGW-w64 toolchain.
 
-> **NOTE:** Versions of GCC 12.X and above produce builds of chimera that crash when a large amount of maps are installed.
+> **NOTE:** Versions of GCC 11.5.0/12.X and above produce builds of chimera that crash when a large amount of maps are installed.
 Until it is known why, the recommended way to build Chimera is on Windows with the supplied toolchain links.
 
 ### Windows
 The most simple way to compile Chimera on windows is using the standalone MinGW toolchain provided by [Winlibs](https://winlibs.com).
+A current version of [Python](https://www.python.org/downloads/windows/) is also required to be installed before following these steps.
+
 1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `C:\source\chimera`
-2. Download the 32-bit GCC 11.4.0 MinGW-w64 MSVCRT release from [here (direct link)](https://github.com/brechtsanders/winlibs_mingw/releases/download/11.4.0-11.0.0-msvcrt-r1/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r1.7z)
+2. Download the 32-bit GCC 11.4.0 MinGW-w64 MSVCRT release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r1.7z)
 3. Extract and copy the `mingw32` directory to where Chimera's source is located.
 4. Create an empty `build` directory where Chimera's source is located.
 5. Create a file called `mingw-console.bat` where Chimera's source is located with the following contents:
@@ -1044,6 +1043,11 @@ ninja.exe
 strip.exe strings.dll
 ```
 For the correct DLL version information to be set [Git for Windows](https://gitforwindows.org/) must be installed, but this is not required to compile Chimera.
+
+#### Windows XP
+Compiling Chimera with Windows XP support is mostly the same as normal, however a patched version of winpthread is needed when using the above toolchain.
+1. Download the winpthread patch [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-winpthread-w9x-patch.7z) and overwrite the files in `mingw32` with those provided by the patch.
+2. When running CMake, pass the argument `-DCHIMERA_WINXP=ON` to enable Windows XP support.
 
 ### Linux
 Chimera can be cross-compiled from a Linux host.

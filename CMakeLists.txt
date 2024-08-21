@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-# 3.22.1 or newer
+# 3.22.0 or newer
 cmake_minimum_required(VERSION 3.22.0)
 
 project(Chimera
