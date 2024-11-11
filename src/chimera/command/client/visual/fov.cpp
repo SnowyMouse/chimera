@@ -3,6 +3,8 @@
 #include "../../../event/camera.hpp"
 #include "../../../halo_data/camera.hpp"
 #include "../../../halo_data/resolution.hpp"
+#include "../../../halo_data/player.hpp"
+#include "../../../halo_data/object.hpp"
 #include "../../../output/output.hpp"
 #include "../../../localization/localization.hpp"
 #include "../../../chimera.hpp"
@@ -29,18 +31,18 @@ namespace Chimera {
     static bool vertical_cinematic;
 
     static void change_camera() noexcept {
-        constexpr static float BASE_FOV = DEG_TO_RAD(70.0f);
         auto &camera = camera_data();
-        float fov_multiplier = camera.fov / BASE_FOV;
         previous_value = camera.fov;
 
         // Get the FoV to use
         auto fov_to_use = setting_first_person;
         bool vertical = vertical_first_person;
+        bool use_unit_fov = false;
         switch(camera_type()) {
             case CameraType::CAMERA_FIRST_PERSON:
                 fov_to_use = setting_first_person;
                 vertical = vertical_first_person;
+                use_unit_fov = true;
                 break;
             case CameraType::CAMERA_VEHICLE:
                 fov_to_use = setting_vehicle;
@@ -50,6 +52,24 @@ namespace Chimera {
                 fov_to_use = setting_cinematic;
                 vertical = vertical_cinematic;
                 break;
+        }
+
+        // Get the multiplier.
+        constexpr static float BASE_FOV = DEG_TO_RAD(70.0f);
+        float fov_multiplier = camera.fov / BASE_FOV;
+        auto *player = PlayerTable::get_player_table().get_client_player();
+        if(player && use_unit_fov) {
+            auto &object_table = ObjectTable::get_object_table();
+            auto *player_object = reinterpret_cast<UnitDynamicObject *>(object_table.get_dynamic_object(player->object_id));
+            if(player_object) {
+                auto *player_object_tag = get_tag(player_object->tag_id);
+                float unit_field_of_view = *reinterpret_cast<float *>(player_object_tag->data + 0x17C + 0x24); // unit camera_field_of_view
+                // The game does this somewhere so we have to too.
+                if(unit_field_of_view > DEG_TO_RAD(90.0f) && player_object->zoom_level == 255) {
+                    unit_field_of_view = DEG_TO_RAD(90.0f);
+                }
+                fov_multiplier = camera.fov / unit_field_of_view;
+            }
         }
 
         // If it's not set, default to first person
