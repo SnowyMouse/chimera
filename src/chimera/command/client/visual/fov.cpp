@@ -54,24 +54,6 @@ namespace Chimera {
                 break;
         }
 
-        // Get the multiplier.
-        constexpr static float BASE_FOV = DEG_TO_RAD(70.0f);
-        float fov_multiplier = camera.fov / BASE_FOV;
-        auto *player = PlayerTable::get_player_table().get_client_player();
-        if(player && use_unit_fov) {
-            auto &object_table = ObjectTable::get_object_table();
-            auto *player_object = reinterpret_cast<UnitDynamicObject *>(object_table.get_dynamic_object(player->object_id));
-            if(player_object) {
-                auto *player_object_tag = get_tag(player_object->tag_id);
-                float unit_field_of_view = *reinterpret_cast<float *>(player_object_tag->data + 0x17C + 0x24); // unit camera_field_of_view
-                // The game does this somewhere so we have to too.
-                if(unit_field_of_view > DEG_TO_RAD(90.0f) && player_object->zoom_level == 255) {
-                    unit_field_of_view = DEG_TO_RAD(90.0f);
-                }
-                fov_multiplier = camera.fov / unit_field_of_view;
-            }
-        }
-
         // If it's not set, default to first person
         if(!fov_to_use.has_value()) {
             fov_to_use = setting_first_person;
@@ -81,6 +63,25 @@ namespace Chimera {
         // And if that doesn't work, give up
         if(!fov_to_use.has_value()) {
             return;
+        }
+
+        // Get the multiplier.
+        constexpr static float BASE_FOV = DEG_TO_RAD(70.0f);
+        constexpr static float MAX_UNIT_FOV = DEG_TO_RAD(90.0f);
+        float fov_multiplier = camera.fov / BASE_FOV;
+        auto *player = PlayerTable::get_player_table().get_client_player();
+        if(player && use_unit_fov) {
+            auto &object_table = ObjectTable::get_object_table();
+            auto *player_object = reinterpret_cast<UnitDynamicObject *>(object_table.get_dynamic_object(player->object_id));
+            if(player_object) {
+                auto *player_object_tag = get_tag(player_object->tag_id);
+                float unit_field_of_view = *reinterpret_cast<float *>(player_object_tag->data + 0x17C + 0x24); // unit camera_field_of_view
+                // The game does this somewhere so we have to too.
+                if(unit_field_of_view > MAX_UNIT_FOV && player_object->zoom_level == 255) {
+                    unit_field_of_view = MAX_UNIT_FOV;
+                }
+                fov_multiplier = camera.fov / unit_field_of_view;
+            }
         }
 
         float setting = fov_to_use.value();
