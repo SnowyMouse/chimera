@@ -12,8 +12,8 @@ set(LOCAL_CURL_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/lib)
 
 ExternalProject_Add(curl
     PREFIX ext/curl
-    URL "https://github.com/curl/curl/releases/download/curl-8_11_0/curl-8.11.0.tar.gz"
-    URL_HASH SHA256=264537d90e58d2b09dddc50944baf3c38e7089151c8986715e2aaeaaf2b8118f
+    URL "https://github.com/curl/curl/releases/download/curl-8_11_1/curl-8.11.1.tar.gz"
+    URL_HASH SHA256=a889ac9dbba3644271bd9d1302b5c22a088893719b72be3487bc3d401e5c4e80
     BUILD_BYPRODUCTS ${LOCAL_CURL_LIB_DIR}/libcurl.a
     CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
