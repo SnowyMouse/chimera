@@ -16,7 +16,7 @@ namespace Chimera {
     typedef std::chrono::high_resolution_clock clock;
     static clock::time_point next_frame;
 
-    static void on_preframe() {
+    static void on_frame() {
         while(clock::now() < next_frame) {
             Sleep(0);
         }
@@ -34,13 +34,13 @@ namespace Chimera {
             // If user inputs an invalid framerate, assume they are turning it off.
             if(new_fps <= 0) {
                 enabled = false;
-                remove_preframe_event(on_preframe);
+                remove_frame_event(on_frame);
             }
             else {
                 enabled = true;
                 max_spf = 1.0f / new_fps;
                 next_frame = clock::now();
-                add_preframe_event(on_preframe);
+                add_frame_event(on_frame, EventPriority::EVENT_PRIORITY_FINAL);
             }
         }
 
