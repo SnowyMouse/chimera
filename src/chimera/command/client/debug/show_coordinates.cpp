@@ -6,6 +6,8 @@
 #include "../../../command/command.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
+#include "../../../signature/signature.hpp"
+#include "../../../chimera.hpp"
 
 namespace Chimera {
     static void show_coordinates() noexcept;
@@ -35,7 +37,10 @@ namespace Chimera {
 
     static void show_coordinates() noexcept {
         auto *player = PlayerTable::get_player_table().get_client_player();
+        auto *camx = *reinterpret_cast<float **>(get_chimera().get_signature("camera_rotation_sig").data() + 0xF);
+        auto *camy = *reinterpret_cast<float **>(get_chimera().get_signature("camera_rotation_sig").data() + 0x14);
 
+        char rotation[256] = "";
         char center[256] = "Dead";
         char relative[256] = "";
 
@@ -44,6 +49,7 @@ namespace Chimera {
             auto &object_table = ObjectTable::get_object_table();
             auto *object = object_table.get_dynamic_object(player->object_id);
             if(object) {
+                std::snprintf(rotation, sizeof(center), "Rotation: %.10f, %.10f", *camx , *camy);
                 std::snprintf(center, sizeof(center), "Center: %.05f, %.05f, %.05f", object->center_position.x, object->center_position.y, object->center_position.z);
 
                 auto *vehicle_object = object_table.get_dynamic_object(object->parent);
@@ -58,6 +64,7 @@ namespace Chimera {
 
         auto font = GenericFont::FONT_CONSOLE;
         int font_size = font_pixel_height(font);
+        apply_text(rotation, -240, 220 - font_size * 3, 480, 200, blue, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         apply_text(center, -240, 220 - font_size * 2, 480, 200, blue, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
         apply_text(relative, -240, 220 - font_size, 480, 200, blue, font, FontAlignment::ALIGN_CENTER, TextAnchor::ANCHOR_CENTER);
     }
