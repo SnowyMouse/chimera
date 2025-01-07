@@ -1,7 +1,6 @@
 /*
     Halo PC Strings.dll resource data
-    Version 1.0.6.612
-    Tuesday, August 24, 2004 9:22:27 PM
+    Version 1.0.10.621
 */
 
 LANGUAGE 4, 1
@@ -455,7 +454,7 @@ LANGUAGE 4, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.tw.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.tw.txt"
   145, L"\x81ea\x52d5\x5e73\x8861: \x62d2\x7d55\x8b8a\x66f4\x5718\x968a\x8981\x6c42"
   146, L"\x60a8\x96fb\x8166\x4e0a\x5df2\x5728\x57f7\x884c\x6700\x5f8c\x4e00\x6230\x904a\x6232\x3002"
   147, L"\x60a8\x96fb\x8166\x4e0a\x6240\x4f7f\x7528\x7684\x8996\x8a0a\x5361\x53ef\x80fd\x662f\x539f\x5f62\x3002\x5efa\x8b70\x60a8\x4f7f\x7528\x672c\x904a\x6232\x6240\x652f\x63f4\x7684\x5e02\x552e\x8996\x8a0a\x5361\x4f86\x73a9\x672c\x904a\x6232\x3002"
@@ -464,7 +463,7 @@ LANGUAGE 7, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.de.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.de.txt"
   145, L"Autobalance: Team\344nderungsanforderung abgelehnt"
   146, L"Auf diesem Computer wird bereits eine Kopie von Halo ausgef\374hrt."
   147, L"Bei der Grafikkarte Ihres Computers handelt es sich m\366glicherweise um einen Prototyp. Sie sollten nur unterst\374tzte, im Einzelhandel erh\344ltliche Grafikkarten verwenden, um Halo zu spielen."
@@ -473,7 +472,7 @@ LANGUAGE 9, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.txt"
   145, "Autobalance: Team Change Request Denied"
   146, "There is a copy of Halo already running on this machine."
   147, "We have detected the video card in your machine may be a prototype. We recommend using only supported retail video cards to play Halo."
@@ -482,7 +481,7 @@ LANGUAGE 10, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.es.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.es.txt"
   145, "Autobalance: Solicitud de cambio de equipo denegada"
   146, L"Ya se est\341 ejecutando una copia de Halo en este equipo."
   147, L"Se ha detectado que la tarjeta de v\355deo del equipo puede ser un prototipo. Es recomendable utilizar \372nicamente las tarjetas de v\355deo comerciales compatibles con Halo."
@@ -491,7 +490,7 @@ LANGUAGE 12, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.fr.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.fr.txt"
   145, L"R\351glage automatique\240: requ\352te de changement d'\351quipe rejet\351e"
   146, L"Une copie de Halo est d\351j\340 en cours d'ex\351cution sur cet ordinateur."
   147, L"Le syst\350me a d\351tect\351 que la carte vid\351o de votre ordinateur est peut-\352tre un prototype. Veuillez utiliser uniquement des cartes vid\351os approuv\351es pour jouer \340 Halo."
@@ -500,7 +499,7 @@ LANGUAGE 16, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.it.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.it.txt"
   145, "Bilanciamento automatico: Richiesta di modifica squadra respinta"
   146, L"Una copia di Halo \350 gi\340 stata installata su questo computer."
   147, L"\310 stato rilevato che la scheda video installata potrebbe essere un prototipo. Utilizzare solo schede video supportate per giocare con Halo."
@@ -509,7 +508,7 @@ LANGUAGE 17, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.jp.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.jp.txt"
   145, L"\x81ea\x52d5\x30d0\x30e9\x30f3\x30b9\x8abf\x6574: \x30c1\x30fc\x30e0\x306e\x5909\x66f4\x306f\x3067\x304d\x307e\x305b\x3093\x3002"
   146, L"\x3053\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x3067 Halo \x306f\x3059\x3067\x306b\x5b9f\x884c\x3055\x308c\x3066\x3044\x307e\x3059\x3002"
   147, L"\x304a\x4f7f\x3044\x306e\x30b3\x30f3\x30d4\x30e5\x30fc\x30bf\x306e\x30d3\x30c7\x30aa\x30ab\x30fc\x30c9\x306f\x30d7\x30ed\x30c8\x30bf\x30a4\x30d7\x306e\x53ef\x80fd\x6027\x304c\x3042\x308a\x307e\x3059\x3002\x6b63\x898f\x306e\x88fd\x54c1\x3067\x3042\x308b\x3053\x3068\x3092\x78ba\x8a8d\x3057\x3066\x304f\x3060\x3055\x3044\x3002"
@@ -518,7 +517,7 @@ LANGUAGE 18, 1
 
 STRINGTABLE
 BEGIN
-  144, "http://motd-static.hosthpc.com/halopc-motd_110.kr.txt"
+  144, "http://motd-static.hosthpc.com/haloce-motd_110.kr.txt"
   145, L"\xc790\xb3d9 \xbc30\xce58: \xd300 \xc804\xd658 \xc694\xccad\xc774 \xac70\xbd80\xb418\xc5c8\xc2b5\xb2c8\xb2e4."
   146, L"\xc774 \xcef4\xd4e8\xd130\xc5d0 \xc774\xbbf8 Halo\xac00 \xc2e4\xd589\xb418\xace0 \xc788\xc2b5\xb2c8\xb2e4."
   147, L"\xcef4\xd4e8\xd130\xc5d0 \xc788\xb294 \xbe44\xb514\xc624 \xce74\xb4dc\xac00 \xd504\xb85c\xd1a0\xd0c0\xc785\xc77c \xc218\xb3c4 \xc788\xc2b5\xb2c8\xb2e4. Halo\xb97c \xc2e4\xd589\xd560 \xb54c \xc9c0\xc6d0\xd558\xb294 \xc815\xd488 \xbe44\xb514\xc624 \xce74\xb4dc\xb97c \xc0ac\xc6a9\xd560 \xac83\xc744 \xad8c\xc7a5\xd569\xb2c8\xb2e4."
