@@ -173,8 +173,8 @@ namespace Chimera {
     static std::uint16_t server_message_h_chat_open = 160;
     static TextAnchor server_message_anchor = TextAnchor::ANCHOR_TOP_RIGHT;
     static bool server_message_hide_on_console = false;
-    static GenericFont server_message_font = GenericFont::FONT_LARGE;
-    static float server_message_line_height = 1.0F;
+    static GenericFont server_message_font = GenericFont::FONT_SMALL;
+    static float server_message_line_height = 1.1F;
 
     ////////////////////////////////////////////////////////////////////////////
     // Chat messages
@@ -190,7 +190,7 @@ namespace Chimera {
     static TextAnchor chat_message_anchor = TextAnchor::ANCHOR_TOP_LEFT;
     static bool chat_message_hide_on_console = true;
     static GenericFont chat_message_font = GenericFont::FONT_SMALL;
-    static float chat_message_line_height = 1.0F;
+    static float chat_message_line_height = 1.1F;
 
     ////////////////////////////////////////////////////////////////////////////
     // Chat input
