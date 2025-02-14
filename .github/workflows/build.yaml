@@ -70,7 +70,7 @@ jobs:
       # Upload an artifact if building an untagged commit
       - name: "Upload artifact"
         if: "!startsWith(github.ref, 'refs/tags/')"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chimera-${{ steps.package.outputs.SHA }}
           path: ./chimera.7z
