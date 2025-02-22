@@ -42,8 +42,8 @@ set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
 
 ExternalProject_Add(zstd
     PREFIX ext/zstd
-    URL "https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-1.5.6.tar.gz"
-    URL_HASH SHA256=8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1
+    URL "https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz"
+    URL_HASH SHA256=eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
     BUILD_BYPRODUCTS ${LOCAL_ZSTD_LIB_DIR}/libzstd.a
     SOURCE_SUBDIR build/cmake
     CMAKE_ARGS
