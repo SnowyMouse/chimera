@@ -840,13 +840,13 @@ worth answering in a readme.
 
 
 ### Will Chimera run on my system?
-Short answer: If your PC is semi-recent and uses Windows 10, it'll work. Note
+Short answer: If your PC uses Windows 7 or later, it'll work. Note
 that, while Chimera isn't too taxing, especially on modern systems, it can make
 Halo harder to run if you're on extremely ancient hardware.
 
 Long answer: There are the requirements:
 
-- OS (if on Windows): Windows 10 or newer, or
+- OS (if on Windows): Windows 7 or newer, or
 Windows XP and newer if using the dedicated Windows XP release.
 - Wine (if on Linux): Wine 4.0 or newer
 
