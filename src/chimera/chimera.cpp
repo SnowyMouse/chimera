@@ -160,7 +160,9 @@ namespace Chimera {
                 // Fix some more bullshit
                 set_up_floor_decals_fix();
 
-                add_map_load_event(april_fools);
+                if(chimera->get_ini()->get_value_bool("halo.april_fools").value_or(true)) {
+                    add_map_load_event(april_fools);
+                }
 
                 // Set up this hook
                 set_up_rcon_message_hook();
