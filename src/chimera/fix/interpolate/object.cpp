@@ -50,9 +50,6 @@ namespace Chimera {
     static auto *current_tick = object_buffers[0];
     static auto *previous_tick = object_buffers[1];
 
-    // Array that holds the parent object ID for each object index (if it has one).
-    static ObjectID parent_object_array[OBJECT_BUFFER_SIZE] = {};
-
     // If true, a tick has passed and it's time to re-copy the FP data.
     static bool tick_passed = false;
 
@@ -161,6 +158,9 @@ namespace Chimera {
         // Get the object table
         auto &object_table = ObjectTable::get_object_table();
 
+        // Array that holds the parent object ID for each object index (if it has one).
+        ObjectID parent_object_array[OBJECT_BUFFER_SIZE] = {HaloID::null_id()};
+
         // Go through all objects.
         auto max_size = object_table.current_size;
         for(std::size_t i = 0; i < OBJECT_BUFFER_SIZE; i++) {
@@ -172,9 +172,6 @@ namespace Chimera {
 
             // Store index ID.
             current_tick_object.index = object_table.first_element[i].id;
-
-            // Null this out to prevent memes.
-            parent_object_array[i] = HaloID::null_id();
 
             // Set this to zero for later.
             current_tick_object.children_count = 0;
