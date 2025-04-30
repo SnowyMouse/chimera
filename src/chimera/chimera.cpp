@@ -47,6 +47,7 @@
 #include "fix/name_fade.hpp"
 #include "fix/camera_shake_fix.hpp"
 #include "fix/checkpoint_fix.hpp"
+#include "fix/chicago_multiply_fix.hpp"
 #include "fix/scoreboard_fade_fix.hpp"
 #include "fix/floor_decal_memery.hpp"
 #include "fix/fov_fix.hpp"
@@ -159,6 +160,7 @@ namespace Chimera {
 
                 // Fix some more bullshit
                 set_up_floor_decals_fix();
+                set_up_chicago_multiply_fix();
 
                 if(chimera->get_ini()->get_value_bool("halo.april_fools").value_or(true)) {
                     add_map_load_event(april_fools);
