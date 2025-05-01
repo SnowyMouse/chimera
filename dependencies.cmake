@@ -7,6 +7,10 @@ endif()
 
 include(ExternalProject)
 
+# This was once OFF by default, but newer CMake versions changed this to ON.
+# As long as the hashes are the same it does not matter. Needed for some MinGW-w64 releases.
+set(CMAKE_TLS_VERIFY OFF)
+
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
 set(LOCAL_CURL_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/lib)
 
