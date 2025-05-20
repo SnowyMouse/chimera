@@ -472,6 +472,28 @@ namespace Chimera {
         text_list.clear();
     }
 
+    static LPD3DXFONT get_d3dx9_resource_for_vector_font(VectorFont *vector_font) {
+        LPD3DXFONT d3dx9_font = NULL;
+        switch(font_data->style) {
+            case 1:
+                d3dx9_font = reinterpret_cast<LPD3DXFONT>(vector_font->bold.hardware_format);
+                break;
+            case 2:
+                d3dx9_font = reinterpret_cast<LPD3DXFONT>(vector_font->italic.hardware_format);
+                break;
+            case 3:
+                d3dx9_font = reinterpret_cast<LPD3DXFONT>(vector_font->condensed.hardware_format);
+                break;
+            case 4:
+                d3dx9_font = reinterpret_cast<LPD3DXFONT>(vector_font->underline.hardware_format);
+                break;
+            default:
+                d3dx9_font = reinterpret_cast<LPD3DXFONT>(vector_font->regular.hardware_format);
+                break;
+        }
+        return d3dx9_font;
+    }
+
     std::int16_t font_pixel_height(const std::variant<TagID, GenericFont> &font) noexcept {
         // Find the font
         TagID font_tag = get_generic_font_if_generic(font);
@@ -485,8 +507,20 @@ namespace Chimera {
         }
 
         auto *tag = get_tag(font_tag);
-        auto *tag_data = tag->data;
-        return *reinterpret_cast<std::uint16_t *>(tag_data + 0x4) + *reinterpret_cast<std::uint16_t *>(tag_data + 0x6);
+        std::int16_t height = 0;
+        if(tag->primary_class == TAG_CLASS_VECTOR_FONT) {
+            VectorFont *tag_data = reinterpret_cast<VectorFont *>(tag->data);
+            LPD3DXFONT d3dx9_font = get_d3dx9_resource_for_vector_font(tag_data);
+            height = tag_data->font_size;
+            if(!d3dx9_font) { 
+                return 0; // return 0 if the font is not loaded yet to avoid render the text in the wrong place
+            }
+        }
+        else {
+            auto *tag_data = tag->data;
+            height = *reinterpret_cast<std::uint16_t *>(tag_data + 0x4) + *reinterpret_cast<std::uint16_t *>(tag_data + 0x6);
+        }
+        return height;
     }
 
     template <typename C> static void get_dimensions_template(std::int32_t &width, std::int32_t &height, const C *text) {
@@ -496,6 +530,7 @@ namespace Chimera {
     template<typename T> std::int16_t text_pixel_length_t(const T *text, const std::variant<TagID, GenericFont> &font) {
         // Find the font
         TagID font_tag = get_generic_font_if_generic(font);
+        auto *tag = get_tag(font_tag);
         LPD3DXFONT override_font = get_override_font(font);
 
         // Do the buffer thing
@@ -511,6 +546,15 @@ namespace Chimera {
             }
         }
         buffer[buffer_length] = 0;
+
+        if(tag->primary_class == TAG_CLASS_VECTOR_FONT) {
+            VectorFont *vector_font = reinterpret_cast<VectorFont *>(tag->data);
+            LPD3DXFONT d3dx9_font = get_d3dx9_resource_for_vector_font(vector_font);
+            override_font = d3dx9_font;
+            if(!d3dx9_font) { 
+                return 0; // the font is not loaded yet
+            }
+        }
 
         if(override_font) {
             RECT rect;
@@ -544,9 +588,6 @@ namespace Chimera {
             char i_stopped_caring[16];
         };
         static_assert(sizeof(Character) == 0x14);
-
-        // Get the tag
-        auto *tag = get_tag(font_tag);
 
         // If it's not loaded, don't care
         if(tag->indexed && reinterpret_cast<std::uintptr_t>(tag->data) < 65536) {

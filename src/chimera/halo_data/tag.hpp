@@ -81,6 +81,14 @@ namespace Chimera {
     };
     static_assert(sizeof(TagDataHeader) == 0x28);
 
+    struct TagReference {
+        TagClassInt tag_class;
+        char *path; 
+        size_t path_size; 
+        TagID tag_id;
+    };
+    static_assert(sizeof(TagReference) == 0x10);
+
     /**
      * Get the tag data address
      * @return tag data address

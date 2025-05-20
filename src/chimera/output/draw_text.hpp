@@ -8,6 +8,7 @@
 
 #include "../math_trig/math_trig.hpp"
 #include "../halo_data/type.hpp"
+#include "../halo_data/tag.hpp"
 
 namespace Chimera {
     /**
@@ -61,8 +62,8 @@ namespace Chimera {
         // I don't know
         std::uint32_t unknown1;
 
-        // I still don't know
-        std::int16_t unknown_ffff;
+        // The style of the font
+        std::int16_t style;
 
         // Alignment
         FontAlignment alignment;
@@ -77,6 +78,29 @@ namespace Chimera {
         std::uint32_t xy_offset;
     };
     static_assert(sizeof(FontData) == 0x44);
+
+    struct VectorFontStyle { 
+        TagReference data;
+        void *hardware_format;
+        uint32_t space_width;
+        char pad_421[8];
+    };
+    static_assert(sizeof(VectorFontStyle) == 32);
+
+    struct VectorFont { 
+        char pad_538[8];
+        float font_size;
+        float offset_x;
+        float offset_y;
+        char pad_620[12];
+        VectorFontStyle regular;
+        VectorFontStyle bold;
+        VectorFontStyle italic;
+        VectorFontStyle condensed;
+        VectorFontStyle underline;
+        char pad_787[32];
+    };
+    static_assert(sizeof(VectorFont) == 224);
 
     /**
      * Get the font data for the text currently being drawn
