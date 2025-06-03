@@ -85,6 +85,7 @@
 #include "annoyance/exception_dialog.hpp"
 #include "output/error_box.hpp"
 #include "fix/biped_ui_spawn.hpp"
+#include "fix/z_fighting.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -184,6 +185,9 @@ namespace Chimera {
                 set_up_flashlight_fix();
                 set_up_inverted_flag_fix();
                 set_up_weather_fix();
+
+                // Fix the transparent decals z-fighting on any PC made in the last decade.
+                set_up_z_fighting_fix();
 
                 // No more updates
                 enable_block_update_check();
@@ -655,6 +659,9 @@ namespace Chimera {
 
             // Fix the death reset time
             setup_death_reset_time_fix();
+
+            // Set sane defaults in line with the z-fighting fix.
+            set_z_bias_slope();
 
             chimera->reload_config();
         }

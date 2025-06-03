@@ -93,6 +93,8 @@ add_library(chimera STATIC
     src/chimera/fix/contrail_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
+    src/chimera/fix/z_fighting.cpp
+    src/chimera/fix/z_fighting.S
     src/chimera/fix/descope_fix.cpp
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
@@ -155,6 +157,7 @@ add_library(chimera STATIC
     src/chimera/halo_data/chat.S
     src/chimera/halo_data/contrail.cpp
     src/chimera/halo_data/controls.cpp
+    src/chimera/halo_data/cutscene.cpp
     src/chimera/halo_data/damage.cpp
     src/chimera/halo_data/damage.S
     src/chimera/halo_data/decal.cpp
