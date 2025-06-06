@@ -436,7 +436,6 @@ namespace Chimera {
                         override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
                     }
                     override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
-
                 }
             }
             else if(u16) {

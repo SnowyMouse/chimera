@@ -91,18 +91,18 @@ namespace Chimera {
             if(player) {
                 auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
                 if(object) {
-                    // CHeck if dead and if not, don't interpolate debug/death camera.
+                    vehicle_first_person = !object->parent.is_null();
+                    // Check if dead and if not, don't interpolate debug/death camera.
                     if(type == CameraType::CAMERA_DEBUG && object->health >= 0.0) {
                         skip = true;
                         return;
                     }
 
                     // Is the camera moving fast but the player biped velocity low? Probably teleporting so shouldn't interpolate camera.
-                    if(type == CameraType::CAMERA_FIRST_PERSON && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5 && magnitude_squared(object->velocity) <= 0.5 * 0.5) {
+                    if(type == CameraType::CAMERA_FIRST_PERSON && !vehicle_first_person && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5 && magnitude_squared(object->velocity) <= 0.5 * 0.5) {
                         skip = true;
                         return;
                     }
-                    vehicle_first_person = !object->parent.is_null();
                 }
             }
         }
