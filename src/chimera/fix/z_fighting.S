@@ -6,7 +6,7 @@
 
 .global _frustum_hack_asm
 _frustum_hack_asm:
-    push ecx
+    push ebx
     call _meme_the_transparent_decals
     add esp, 4
     ret
