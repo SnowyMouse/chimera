@@ -41,7 +41,8 @@ namespace Chimera {
 
     static LPD3DXFONT get_override_font(GenericFont font) {
         // Do NOT use these if widescreen fix is disabled unless we're 4:3
-        if(!widescreen_fix_enabled()) {
+        auto *ringworld = GetModuleHandle("ringworld.dll");
+        if(!widescreen_fix_enabled() && !ringworld) {
             auto resolution = get_resolution();
             if(resolution.width / 4 * 3 != resolution.height) {
                 return nullptr;
