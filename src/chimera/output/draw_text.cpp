@@ -413,22 +413,41 @@ namespace Chimera {
 
             auto *override_font = text.override;
 
+            // Calculate the width of a space for the given override font.
+            RECT temp_rect_1;
+            RECT temp_rect_2;
+            override_font->DrawText(NULL," _", -1, &temp_rect_1, DT_CALCRECT, 0xFFFFFFFF);
+            override_font->DrawText(NULL,"_", -1, &temp_rect_2, DT_CALCRECT, 0xFFFFFFFF);
+            //Small fudge factor because override fonts have different widths compared to the games.
+            auto space_width = (temp_rect_1.right - temp_rect_1.left) - (temp_rect_2.right - temp_rect_2.left) + (0.25 * scale);
+
             if(u8) {
-                if(draw_shadow) {
-                    override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
-                }
-                override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
-            }
-            else {
-                // Some cheap and nasty hackery to stop DrawText stripping the spaces of the end of chapter titles.
-                // Not perfect but better than nothing.
-                if(u16->back() == static_cast<wchar_t>(' ')) {
-                    if(draw_shadow) {
-                        override_font->DrawTextW(NULL, u16->data(), u16->length()+1, &rshadow, align, color_shadow);
+                if(!u8->empty()) {
+                    if(align == DT_RIGHT && u8->back() == static_cast<wchar_t>(' ')) {
+                        // Add the trailing spaces as an offset to the rect struct.
+                        auto num_spaces = u8->find_last_not_of(static_cast<wchar_t>(' '));
+                        rect.right = rect.right - (u8->length() - num_spaces) * space_width;
+                        rect.left = rect.left - (u8->length() - num_spaces) * space_width;
+                        rshadow.right = rshadow.right - (u8->length() - num_spaces) * space_width;
+                        rshadow.left = rshadow.left - (u8->length() - num_spaces) * space_width;
                     }
-                    override_font->DrawTextW(NULL, u16->data(), u16->length()+1, &rect, align, color);
+                    if(draw_shadow) {
+                        override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
+                    }
+                    override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
+
                 }
-                else {
+            }
+            else if(u16) {
+                if(!u16->empty()) {
+                    if(align == DT_RIGHT && u16->back() == static_cast<wchar_t>(' ')) {
+                        // Add the trailing spaces as an offset to the rect struct.
+                        auto num_spaces = u16->find_last_not_of(static_cast<wchar_t>(' '));
+                        rect.right = rect.right - (u16->length() - num_spaces) * space_width;
+                        rect.left = rect.left - (u16->length() - num_spaces) * space_width;
+                        rshadow.right = rshadow.right - (u16->length() - num_spaces) * space_width;
+                        rshadow.left = rshadow.left - (u16->length() - num_spaces) * space_width;
+                    }
                     if(draw_shadow) {
                         override_font->DrawTextW(NULL, u16->data(), -1, &rshadow, align, color_shadow);
                     }
