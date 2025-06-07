@@ -44,7 +44,7 @@ Uninstalling Chimera is simple:
 You can install binary mods (i.e. dlls) by creating a folder called "mods" and
 copying the dlls into the directory.
 
-> **NOTE**: Chimera does *not* support dll mods including HAC2 or Open Sauce.
+> **NOTE**: Chimera does *not* support some dll mods such as HAC2 or Open Sauce.
 > This is because they modify the game in similar ways, resulting in them
 > conflicting with one another. Supporting just one of these mods would mean
 > extra development time that we don't have. Sorry.
