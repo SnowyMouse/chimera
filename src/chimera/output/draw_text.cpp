@@ -424,9 +424,9 @@ namespace Chimera {
 
             if(u8) {
                 if(!u8->empty()) {
-                    if(align == DT_RIGHT && u8->back() == static_cast<wchar_t>(' ')) {
+                    if(align == DT_RIGHT && u8->back() == static_cast<char>(' ')) {
                         // Add the trailing spaces as an offset to the rect struct.
-                        auto num_spaces = u8->find_last_not_of(static_cast<wchar_t>(' '));
+                        auto num_spaces = u8->find_last_not_of(static_cast<char>(' '));
                         rect.right = rect.right - (u8->length() - num_spaces) * space_width;
                         rect.left = rect.left - (u8->length() - num_spaces) * space_width;
                         rshadow.right = rshadow.right - (u8->length() - num_spaces) * space_width;
