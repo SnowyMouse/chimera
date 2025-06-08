@@ -51,28 +51,26 @@ namespace Chimera {
                         ObjectID *fp_model = reinterpret_cast<ObjectID *>(first_person_nodes_opt + 0x8);
                         auto type = camera_type();
 
-                        if(!fp_model) {
-                            return;
+                        if(fp_model) {
+                            // Much closer frustum for fp models
+                            if(*fp_model == ParentObject && type == CameraType::CAMERA_FIRST_PERSON) {
+                                rasterizer_set_frustum_z(0.01175f, 512.0f);
+                                reset_frustum = true;
+                                return;
+                            }
                         }
 
-                        // Much closer frustum for fp models
-                        if(*fp_model == ParentObject && type == CameraType::CAMERA_FIRST_PERSON) {
-                            rasterizer_set_frustum_z(0.01175f, 512.0f);
-                            reset_frustum = true;
-                        }
-                        else {
-                            auto *object = ObjectTable::get_object_table().get_dynamic_object(ParentObject);
-                            if(object) {
-                                // Doors etc
-                                if(object->type >= OBJECT_TYPE_SCENERY) {
-                                    rasterizer_set_frustum_z(0.03135f, 2264.0f);
-                                    reset_frustum = true;
-                                }
-                                // Decals on bipeds
-                                else if(object->type == OBJECT_TYPE_BIPED) {
-                                    rasterizer_set_frustum_z(0.0313f, 1750.0f);
-                                    reset_frustum = true;
-                                }
+                        auto *object = ObjectTable::get_object_table().get_dynamic_object(ParentObject);
+                        if(object) {
+                            // Doors etc
+                            if(object->type >= OBJECT_TYPE_SCENERY) {
+                                rasterizer_set_frustum_z(0.03135f, 2264.0f);
+                                reset_frustum = true;
+                            }
+                            // Decals on bipeds
+                            else if(object->type == OBJECT_TYPE_BIPED) {
+                                rasterizer_set_frustum_z(0.0313f, 1750.0f);
+                                reset_frustum = true;
                             }
                         }
                     }
