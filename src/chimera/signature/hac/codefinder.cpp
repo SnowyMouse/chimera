@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include "codefinder.h"
-#define WIN32_MEAN_AND_LEAN
 #include <windows.h>
+#include "codefinder.h"
 
 PIMAGE_SECTION_HEADER CodeFinder::GetSection(HANDLE module) {
 	PIMAGE_DOS_HEADER dosHeader;
