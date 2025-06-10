@@ -60,6 +60,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/visual/block_hold_f1.cpp
     ${COMMAND_DIR}/client/visual/block_letterbox.cpp
     ${COMMAND_DIR}/client/visual/block_loading_screen.cpp
+    ${COMMAND_DIR}/client/visual/block_multitexture_overlays.cpp
     ${COMMAND_DIR}/client/visual/block_server_ip.cpp
     ${COMMAND_DIR}/client/visual/block_zoom_blur.cpp
     ${COMMAND_DIR}/client/visual/camo_fix.cpp

@@ -94,6 +94,7 @@ chimera_block_gametype_indicator_command_help                                   
 chimera_block_gametype_rules_command_help                                       Disable gametype rules at the start of a game.
 chimera_block_hold_f1_command_help                                              Disable the Hold \"F1\" for score prompt.
 chimera_block_loading_screen_command_help                                       Disable loading screen.
+chimera_block_multitexture_overlays_command_help                                Disable multitexture overlays.
 chimera_block_mouse_acceleration_command_help                                   Disable mouse acceleration.
 chimera_block_server_ip_command_help                                            Hide the server IP.
 chimera_block_zoom_blur_command_help                                            Disable scope blur.

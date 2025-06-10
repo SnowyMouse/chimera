@@ -65,6 +65,7 @@ chimera_block_gametype_indicator_command_help                                   
 chimera_block_gametype_rules_command_help                                       Deshabilita las reglas del tipo de juego al comienzo de una partida.
 chimera_block_hold_f1_command_help                                              Deshabilita el aviso \"Mantén presionado F1 para puntajes\".
 chimera_block_loading_screen_command_help                                       Deshabilita la pantalla de carga.
+chimera_block_multitexture_overlays_command_help                                Deshabilita superposiciones de múltiples texturas.
 chimera_block_mouse_acceleration_command_help                                   Deshabilita la aceleración de mouse.
 chimera_block_zoom_blur_command_help                                            Desactiva el desenfoque de la mira.
 chimera_command_categories                                                      Categorías:
