@@ -415,6 +415,7 @@ the chimera folder created by Chimera.
 - [Block hold F1](#block-hold-f1)
 - [Block letterbox](#block-letterbox)
 - [Block loading screen](#block-loading-screen)
+- [Block multitexture overlays](#block-multitexture-overlays)
 - [Block mouse acceleration](#block-mouse-acceleration)
 - [Block server IP](#block-server-ip)
 - [Block zoom blur](#block-zoom-blur)
@@ -558,6 +559,13 @@ and this can make you susceptible to being cheaply killed. This disables that
 loading screen.
 
 **Usage:** `chimera_block_loading_screen [true/false]`
+
+#### Block multitexture overlays
+Multitexture overlays are used for the animated sniper scope ticks.
+Given that most sniper scope tags are broken and misaligned, Chimera provides
+a way to disable them.
+
+**Usage:** `chimera_block_multitexture_overlays [true/false]`
 
 #### Block mouse acceleration
 Halo uses raw input, thus it bypasses the mouse acceleration setting of your
