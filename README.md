@@ -1019,35 +1019,26 @@ Halo Custom Edition server, then you should forge the CRC32.
 To compile Chimera we use the 32-bit MinGW-w64 toolchain.
 
 > **NOTE:** Versions of GCC 11.5.0/12.X and above produce builds of chimera that crash when a large amount of maps are installed.
-Until it is known why, the recommended way to build Chimera is on Windows with the supplied toolchain links.
+Until it is known why, the recommended way to build Chimera is on Windows with the supplied toolchain link.
 
 ### Windows
-The most simple way to compile Chimera on windows is using the standalone MinGW toolchain provided by [Winlibs](https://winlibs.com).
-A current version of [Python](https://www.python.org/downloads/windows/) is also required to be installed before following these steps.
+The most simple way to compile Chimera on windows is using our provided standalone MinGW toolchain based on one provided by [Winlibs](https://winlibs.com).
 
-1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `C:\source\chimera`
-2. Download the 32-bit GCC 11.4.0 MinGW-w64 MSVCRT release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r1.7z)
-3. Extract and copy the `mingw32` directory to where Chimera's source is located.
-4. Create an empty `build` directory where Chimera's source is located.
-5. Create a file called `mingw-console.bat` where Chimera's source is located with the following contents:
+1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `D:\source\chimera`
+2. Download Chimera's 32-bit GCC 11.4.0 MinGW-w64 release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain-v2/winlibs-chimera-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r2.7z)
+3. Extract the contents of the archive: `mingw32`, `build`, and `mingw-console.bat` to where Chimera's source is located.[^1]
+4. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window.
 ```
-@echo off
-set PATH=%~dp0mingw32\bin;%PATH%
-cd build
-cmd /k
-```
-6. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window.
-```
-cmake.exe .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
-ninja.exe
-strip.exe strings.dll
+cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+ninja
+strip strings.dll
 ```
 For the correct DLL version information to be set [Git for Windows](https://gitforwindows.org/) must be installed, but this is not required to compile Chimera.
 
+[^1]: It does not strictly have to be extracted to the same directory as Chimera's source. if you put it somewhere else, replace `..` in the cmake command with the path to Chimera's source code.
+
 #### Windows XP
-Compiling Chimera with Windows XP support is mostly the same as normal, however a patched version of winpthread is needed when using the above toolchain.
-1. Download the winpthread patch [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain/winlibs-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-winpthread-w9x-patch.7z) and overwrite the files in `mingw32` with those provided by the patch.
-2. When running CMake, pass the argument `-DCHIMERA_WINXP=ON` to enable Windows XP support.
+When running CMake, also pass the argument `-DCHIMERA_WINXP=ON` to enable Windows XP support.
 
 ### Linux
 Chimera can be cross-compiled from a Linux host.
