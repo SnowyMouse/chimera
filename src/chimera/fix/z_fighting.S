@@ -6,9 +6,10 @@
 
 .global _frustum_hack_asm
 _frustum_hack_asm:
+    push eax
     push ebx
     call _meme_the_transparent_decals
-    add esp, 4
+    add esp, 8
     ret
 
 .global _frustum_reset_asm
@@ -26,9 +27,4 @@ _frustum_reset_asm:
     popfd
 
     skip_hack_reset:
-    cmp byte ptr [ebx], 0
-    jns skip_fruc_reset
     jmp dword ptr [_original_get_zbias]
-
-    skip_fruc_reset:
-    jmp dword ptr [_reset_zbias]

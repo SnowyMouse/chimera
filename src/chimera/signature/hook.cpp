@@ -97,6 +97,13 @@ namespace Chimera {
                     std::terminate();
                 }
 
+                // cmp eax, <value>
+                case 0x3D: {
+                    offsets.push_back(at - at_start);
+                    bytes.insert(bytes.end(), at, at + 5);
+                    at += 5;
+                    break;
+                }
 
                 // push/pop <register>
                 case 0x50: case 0x54: case 0x58: case 0x5C: case 0x60:
@@ -472,6 +479,19 @@ namespace Chimera {
                     at += 5;
                     break;
 
+                // test something
+                case 0xF7: {
+                    auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    //test dword ptr[x], 0x00000000-0x7FFFFFFF
+                    if(op1 == 0x05) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 10);
+                        at += 10;
+                        break;
+                    }
+                    std::terminate();
+                }
+
                 // call dword ptr[x]
                 case 0xFF: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
@@ -490,7 +510,7 @@ namespace Chimera {
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
                     }
-                    else if(op1 == 0x15 || op1 == 0x92) {
+                    else if(op1 == 0x15 || op1 == 0x92 || op1 == 0x91) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
