@@ -5,9 +5,15 @@
 #include "../../../output/output.hpp"
 #include "../../../event/frame.hpp"
 #include "../../../halo_data/object.hpp"
+#include "../../../halo_data/multiplayer.hpp"
 
 namespace Chimera {
     static void shrink_empty_weapons() {
+        // Only apply to multiplayer maps.
+        if(server_type() == ServerType::SERVER_NONE) {
+            return;
+        }
+
         // Get the object table
         auto &object_table = ObjectTable::get_object_table();
 
