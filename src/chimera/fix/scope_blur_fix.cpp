@@ -16,7 +16,7 @@ namespace Chimera {
         static std::uint16_t height = 0;
         auto resolution = get_resolution();
         if(resolution.height != height) {
-            blur_fix_scale = static_cast<float>(resolution.height) / 600.0F;
+            blur_fix_scale = static_cast<float>(resolution.height) / 480.0F;
         }
     }
 
@@ -24,5 +24,9 @@ namespace Chimera {
         static Hook hook;
         write_jmp_call(get_chimera().get_signature("scope_blur_update_sig").data() + 0xE, hook, reinterpret_cast<const void *>(radius_fix_asm));
         add_preframe_event(correct_blur_radius);
+
+        // Prevent game from initializing the alpha render target at 50% scale.
+        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data(), static_cast<std::uint16_t>(0x9090));
+        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data() + 0xE, static_cast<std::uint16_t>(0x9090));
     }
 }

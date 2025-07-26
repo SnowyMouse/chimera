@@ -6,10 +6,15 @@
 
 .global _frustum_hack_asm
 _frustum_hack_asm:
+    pushfd
+    pushad
     push eax
     push ebx
     call _meme_the_transparent_decals
     add esp, 8
+    popad
+    popfd
+    mov al, byte ptr [_force_zbias_hack]
     ret
 
 .global _frustum_reset_asm

@@ -37,6 +37,7 @@
 #include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/aim_assist.hpp"
+#include "fix/af.hpp"
 #include "fix/bullshit_server_data.hpp"
 #include "fix/invalid_command_crash.hpp"
 #include "fix/death_reset_time.hpp"
@@ -185,6 +186,10 @@ namespace Chimera {
                 set_up_flashlight_fix();
                 set_up_inverted_flag_fix();
                 set_up_weather_fix();
+
+                if(chimera->feature_present("client_af")) {
+                    set_up_model_af();
+                }
 
                 // Fix the transparent decals z-fighting on any PC made in the last decade.
                 set_up_z_fighting_fix();
