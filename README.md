@@ -475,8 +475,8 @@ equivalent mod), or else desyncing will occur.
 
 #### Anisotropic filtering
 This enables the same thing that is done in config.txt but without having to
-edit it. Note that this only applies to the level geometry, not individual
-objects. You'd need AF enabled externally to do that.
+edit it. Chimera also applies anisotropic filtering to individual objects
+instead of just level geometry.
 
 **Usage:** `chimera_af [true/false]`
 
