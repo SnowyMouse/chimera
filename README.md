@@ -81,6 +81,7 @@ These are features that are always on.
 - [Model LOD fix](#model-lod-fix)
 - [FOV fix](#fov-fix)
 - [Sun fix](#sun-fix)
+- [Zoom blur fix](#zoom-blur-fix)
 - [Custom chat](#custom-chat)
 - [NVIDIA camo fix](#nvidia-camo-fix)
 - [Contrail fix](#contrail-fix)
@@ -195,6 +196,11 @@ what `chimera_fov` is for.
 #### Sun fix
 Lens flares are drawn at a set number of pixels regardless of vertical
 resolution. Chimera makes it scale by 768p, instead.
+
+#### Zoom blur fix
+The zoom blur radius is a set number of pixels regardless of vertical resolution.
+Chimera makes it scale by 480p, instead. Chimera also increases the resolution of
+the zoom blur effect, improving the quality.
 
 #### Custom chat
 The Keystone chat is crashy and broken. Chimera adds a replacement chat.
@@ -582,8 +588,9 @@ this feature if you want.
 **Usage:** `chimera_block_server_ip [true/false]`
 
 #### Block zoom blur
-Halo's zoom blur looks like ass on high resolutions. This feature removes it
-without requiring you to use DisableAlphaRenderTargets or safe mode.
+By default, Halo's zoom blur looks like ass on high resolutions. Chimera fixes this
+but this feature removes the blur effect if you want without requiring you to use
+DisableAlphaRenderTargets or safe mode.
 
 **Usage:** `chimera_block_zoom_blur [true/false]`
 
