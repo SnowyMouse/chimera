@@ -35,6 +35,8 @@ ExternalProject_Add(curl
         -DCURL_ZLIB=OFF
         -DCURL_ZSTD=OFF
         -DHTTP_ONLY=ON
+        -DUSE_NGHTTP2=OFF
+        -DUSE_LIBIDN2=OFF
 )
 
 add_library(local_curl STATIC IMPORTED)
