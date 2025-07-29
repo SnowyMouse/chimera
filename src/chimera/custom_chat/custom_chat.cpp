@@ -872,7 +872,7 @@ namespace Chimera {
 
         // Check for missing null terminator. This will happen with strings touched by Eschaton.
         // Halo would normally write a null terminator on access if missing, but we don't do that because it basically means "write zero anywhere you want in RAM"
-        if(*(str + str_len / sizeof(wchar_t)) != '\0') {
+        if(*(str + str_len / sizeof(wchar_t) - 1) != '\0') {
             return std::wstring(L"<invalid string>");
         }
 
