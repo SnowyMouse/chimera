@@ -863,12 +863,18 @@ namespace Chimera {
         auto *ustr_tag_data = ustr->data;
         std::uint32_t strings_count = *reinterpret_cast<std::uint32_t *>(ustr_tag_data);
         if(index >= strings_count) {
-            return std::wstring();
+            return std::wstring(L"<missing string>");
         }
         auto *strings = *reinterpret_cast<std::byte **>(ustr_tag_data + 0x4);
         auto *str_ref = strings + 0x14 * index;
         auto str_len = *reinterpret_cast<std::size_t *>(str_ref + 0x0);
         auto *str = *reinterpret_cast<wchar_t **>(str_ref + 0xC);
+
+        // Check for missing null terminator. This will happen with strings touched by Eschaton.
+        // Halo would normally write a null terminator on access if missing, but we don't do that because it basically means "write zero anywhere you want in RAM"
+        if(*(str + str_len / sizeof(wchar_t)) != '\0') {
+            return std::wstring(L"<invalid string>");
+        }
 
         // Truncate down to this
         return std::wstring(str, str_len);
