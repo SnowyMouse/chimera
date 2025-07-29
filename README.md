@@ -1040,7 +1040,7 @@ Until it is known why, the recommended way to build Chimera is on Windows with t
 The most simple way to compile Chimera on windows is using our provided standalone MinGW toolchain based on one provided by [Winlibs](https://winlibs.com).
 
 1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `D:\source\chimera`
-2. Download Chimera's 32-bit GCC 11.4.0 MinGW-w64 release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain-v2/winlibs-chimera-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r2.7z)
+2. Download Chimera's 32-bit GCC 11.4.0 MinGW-w64 release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain-v2/winlibs-chimera-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r3.7z)
 3. Extract the contents of the archive: `mingw32`, `build`, and `mingw-console.bat` to where Chimera's source is located.[^1]
 4. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window.
 ```
