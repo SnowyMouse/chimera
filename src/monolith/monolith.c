@@ -165,7 +165,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
                 // We only support Halo Trial or retail Halo PC and Custom Edition that has been updated to 1.10
                 const char *demo_version = "01.00.00.0578";
                 const char *full_version = "01.00.10.0621";
-                if(strncmp(exe_version, full_version, 13) != 0 && strncmp(exe_version, demo_version, 13) != 0) {
+                if(strcmp(exe_version, full_version) != 0 && strcmp(exe_version, demo_version) != 0) {
                     char message[256];
                     memset(message, 0, sizeof(message));
                     snprintf(message, sizeof(message), "Current game version is %s.\nOnly the following versions can be used with Chimera:\n\n%s (Halo Trial)\n%s (Retail Halo PC/Halo Custom Edition)", exe_version, demo_version, full_version);
