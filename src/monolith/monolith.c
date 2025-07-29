@@ -3,6 +3,7 @@
 #include <w32api.h>
 #include <windows.h>
 #include <winbase.h>
+#include <winver.h>
 #include <shlwapi.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -121,17 +122,66 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
     switch(reason) {
         case DLL_PROCESS_ATTACH:
             {
-                // Check if we're CD'd into the Halo directory
+                // Get the exe path
                 static char exe_path[MAX_PATH];
                 memset(exe_path, 0, sizeof(exe_path));
                 GetModuleFileNameA(NULL, exe_path, sizeof(exe_path));
+
+                // Check the exe version
+                DWORD handle;
+                DWORD ver_info_size = GetFileVersionInfoSize(exe_path, &handle);
+                const char *ve = "Version check error";
+                if(ver_info_size == 0) {
+                    MessageBox(NULL, "Executable does not have valid version information.", ve, MB_OK | MB_ICONERROR);
+                    ExitProcess(137);
+                }
+
+                LPBYTE ver_info = (LPBYTE)malloc(ver_info_size);
+                if(!ver_info) {
+                    ExitProcess(137);
+                }
+
+                if(!GetFileVersionInfo(exe_path, 0, ver_info_size, ver_info)) {
+                    MessageBox(NULL, "Could not get file version information from executable.", ve, MB_OK | MB_ICONERROR);
+                    free(ver_info);
+                    ExitProcess(137);
+                }
+
+                LPVOID ver_buf;
+                UINT ver_buf_size;
+                if(!VerQueryValue(ver_info, "\\StringFileInfo\\040904B0\\FileVersion", &ver_buf, &ver_buf_size)) {
+                    MessageBox(NULL, "Executable file version was not found.", ve, MB_OK | MB_ICONERROR);
+                    free(ver_info);
+                    ExitProcess(137);
+                }
+
+                char *exe_version = ver_buf;
+                if(ver_buf_size != 14 || *(exe_version + 13) != '\0') {
+                    MessageBox(NULL, "Executable file version is not a valid halo version string.", ve, MB_OK | MB_ICONERROR);
+                    free(ver_info);
+                    ExitProcess(137);
+                }
+
+                // We only support Halo Trial or retail Halo PC and Custom Edition that has been updated to 1.10
+                const char *demo_version = "01.00.00.0578";
+                const char *full_version = "01.00.10.0621";
+                if(strncmp(exe_version, full_version, 13) != 0 && strncmp(exe_version, demo_version, 13) != 0) {
+                    char message[256];
+                    memset(message, 0, sizeof(message));
+                    snprintf(message, sizeof(message), "Current game version is %s.\nOnly the following versions can be used with Chimera:\n\n%s (Halo Trial)\n%s (Retail Halo PC/Halo Custom Edition)", exe_version, demo_version, full_version);
+                    MessageBox(NULL, message, ve, MB_OK | MB_ICONERROR);
+                    free(ver_info);
+                    ExitProcess(137);
+                }
+
+                free(ver_info);
 
                 // Get the current directory
                 static char cd_path[MAX_PATH];
                 memset(cd_path, 0, sizeof(cd_path));
                 DWORD cd_len = GetCurrentDirectory(sizeof(cd_path), cd_path);
 
-                // Make sure we're in the same CD
+                // Check if we're CD'd into the Halo directory
                 bool in_cd;
                 if(strncmp(cd_path, exe_path, cd_len) == 0) { // does the start match?
                     in_cd = true;
