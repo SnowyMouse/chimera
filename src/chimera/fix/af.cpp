@@ -4,19 +4,25 @@
 
 #include "af.hpp"
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 
 namespace Chimera {
+    extern "C" {
+        void schi_set_sampler_states_for_af_asm() noexcept;
+        void scex_set_sampler_states_for_af_asm() noexcept;
+    }
 
     static IDirect3DDevice9 **global_d3d9_device = nullptr;
     static bool *af_is_enabled = nullptr;
     static D3DCAPS9 *d3d9_device_caps = nullptr;
+    static std::uint32_t global_max_anisotropy = 16;
 
     void set_sampler_states_for_models() noexcept {
         if(*af_is_enabled) {
             if((d3d9_device_caps->RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && 1 < d3d9_device_caps->MaxAnisotropy) {
-                auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < 16 ? d3d9_device_caps->MaxAnisotropy : 16;
+                auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < global_max_anisotropy ? d3d9_device_caps->MaxAnisotropy : global_max_anisotropy;
 
                 IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAXANISOTROPY, max_anisotropy);
                 IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAGFILTER, 3);
@@ -40,11 +46,43 @@ namespace Chimera {
     void set_sampler_states_for_decals() noexcept {
         if(*af_is_enabled) {
             if((d3d9_device_caps->RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && 1 < d3d9_device_caps->MaxAnisotropy) {
-                auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < 16 ? d3d9_device_caps->MaxAnisotropy : 16;
+                auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < global_max_anisotropy ? d3d9_device_caps->MaxAnisotropy : global_max_anisotropy;
 
                 IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAXANISOTROPY, max_anisotropy);
                 IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAGFILTER, 3);
                 IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MINFILTER, 3);
+            }
+        }
+    }
+
+    void set_sampler_states_for_plasma() noexcept {
+        if(*af_is_enabled) {
+            if((d3d9_device_caps->RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && 1 < d3d9_device_caps->MaxAnisotropy) {
+                auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < global_max_anisotropy ? d3d9_device_caps->MaxAnisotropy : global_max_anisotropy;
+
+                // Barely makes much difference with shader_transparent_plasma. Whatever.
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAXANISOTROPY, max_anisotropy);
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MAGFILTER, 3);
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MINFILTER, 3);
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 1, D3DSAMP_MAXANISOTROPY, max_anisotropy);
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 1, D3DSAMP_MAGFILTER, 3);
+                IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 1, D3DSAMP_MINFILTER, 3);
+            }
+        }
+    }
+
+    extern "C" void set_sampler_states_for_chicago(std::byte *map, std::uint32_t map_index) noexcept {
+        if(*af_is_enabled) {
+            auto *map_flags = reinterpret_cast<std::uint16_t *>(map);
+            // If unfiltered flag is true, do nothing.
+            if(!(*map_flags & 1)) {
+                if((d3d9_device_caps->RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && 1 < d3d9_device_caps->MaxAnisotropy) {
+                    auto max_anisotropy = d3d9_device_caps->MaxAnisotropy < global_max_anisotropy ? d3d9_device_caps->MaxAnisotropy : global_max_anisotropy;
+
+                    IDirect3DDevice9_SetSamplerState(*global_d3d9_device, map_index, D3DSAMP_MAXANISOTROPY, max_anisotropy);
+                    IDirect3DDevice9_SetSamplerState(*global_d3d9_device, map_index, D3DSAMP_MAGFILTER, 3);
+                    IDirect3DDevice9_SetSamplerState(*global_d3d9_device, map_index, D3DSAMP_MINFILTER, 3);
+                }
             }
         }
     }
@@ -57,12 +95,23 @@ namespace Chimera {
         static Hook model_af;
         static Hook decal_af;
         static Hook glass_af;
+        static Hook chicago_af;
+        static Hook extended_af;
+        static Hook plasma_af;
 
         write_jmp_call(get_chimera().get_signature("model_af_set_sampler_states_sig").data() + 0x1A, model_af, reinterpret_cast<const void *>(set_sampler_states_for_models), nullptr);
         write_jmp_call(get_chimera().get_signature("decal_af_set_sampler_states_sig").data(), decal_af, reinterpret_cast<const void *>(set_sampler_states_for_decals), nullptr);
         write_jmp_call(get_chimera().get_signature("glass_af_set_sampler_states_sig").data(), glass_af, nullptr, reinterpret_cast<const void *>(set_sampler_states_for_decals));
+        write_jmp_call(get_chimera().get_signature("chicago_af_set_sampler_states_sig").data(), chicago_af, nullptr, reinterpret_cast<const void *>(schi_set_sampler_states_for_af_asm));
+        write_jmp_call(get_chimera().get_signature("extended_af_set_sampler_states_sig").data(), extended_af, nullptr, reinterpret_cast<const void *>(scex_set_sampler_states_for_af_asm));
+        write_jmp_call(get_chimera().get_signature("plasma_af_set_sampler_states_sig").data(), plasma_af, nullptr, reinterpret_cast<const void *>(set_sampler_states_for_plasma));
 
-        // Set max supported filtering level for level geo to 16 instead of 8.
-        overwrite(get_chimera().get_signature("af_level_sig").data() + 1, static_cast<std::uint32_t>(16));
+        auto af_level = get_chimera().get_ini()->get_value_long("video_mode.af_level").value_or(16);
+        if(af_level > 0 && af_level <= 16) {
+            global_max_anisotropy = af_level;
+        }
+
+        // Set max supported filtering level for level geo.
+        overwrite(get_chimera().get_signature("af_level_sig").data() + 1, static_cast<std::uint32_t>(global_max_anisotropy));
     }
 }

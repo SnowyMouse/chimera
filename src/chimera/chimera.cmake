@@ -81,6 +81,7 @@ add_library(chimera STATIC
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/af.cpp
+    src/chimera/fix/af.S
     src/chimera/fix/auto_center.cpp
     src/chimera/fix/blue_32bit_color_fix.cpp
     src/chimera/fix/bullshit_server_data.cpp
