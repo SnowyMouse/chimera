@@ -223,16 +223,21 @@ namespace Chimera {
                 // add/or/adc/sbb/and/sub/xor/cmp <something> 0x00000000-0x7FFFFFFF
                 case 0x81: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
+                    // add/or/adc/sbb/and/sub/xor/cmp dword ptr <something> 0x00000000-0x7FFFFFFF
+                    if(op1 == 0x3D) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 10);
+                        at += 10; 
+                        break;
+                    }
                     // add/or/adc/sbb/and/sub/xor/cmp <register> 0x00000000-0x7FFFFFFF
                     if(op1 >= 0xC0 || op1 == 0x0D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;
+                        break;
                     }
-                    else {
-                        std::terminate();
-                    }
-                    break;
+                    std::terminate();
                 }
 
                 // add/or/adc/sbb/and/sub/xor/cmp <something> 0x00-0x7F
@@ -331,7 +336,7 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
-                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2 || a == 0xEC) {
+                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2 || a == 0xEC || a == 0x12) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
@@ -373,6 +378,13 @@ namespace Chimera {
                 }
 
                 // shl
+                case 0xC1: {
+                    offsets.push_back(at - at_start);
+                    bytes.insert(bytes.end(), at, at + 3);
+                    at += 3;
+                    break;
+                }
+
                 case 0xD3: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
                     if(a == 0xE3) {

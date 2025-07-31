@@ -125,6 +125,8 @@ add_library(chimera STATIC
     src/chimera/fix/model_detail.S
     src/chimera/fix/motion_sensor_fix.cpp
     src/chimera/fix/motion_sensor_fix.S
+    src/chimera/fix/multitexture_overlay_fix.cpp
+    src/chimera/fix/multitexture_overlay_fix.S
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
     src/chimera/fix/nav_numbers.cpp

@@ -63,6 +63,7 @@
 #include "fix/uncompressed_sound_fix.hpp"
 #include "fix/video_mode.hpp"
 #include "fix/model_detail.hpp"
+#include "fix/multitexture_overlay_fix.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/contrail_fix.hpp"
 #include "fix/interpolate/interpolate.hpp"
@@ -176,6 +177,7 @@ namespace Chimera {
                 set_up_flashlight_fix();
                 set_up_inverted_flag_fix();
                 set_up_weather_fix();
+                set_up_multitexture_overlay_fix();
 
                 if(chimera->feature_present("client_af")) {
                     set_up_model_af();
