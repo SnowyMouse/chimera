@@ -38,6 +38,7 @@
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/aim_assist.hpp"
 #include "fix/af.hpp"
+#include "fix/bitmap_formats.hpp"
 #include "fix/bullshit_server_data.hpp"
 #include "fix/invalid_command_crash.hpp"
 #include "fix/death_reset_time.hpp"
@@ -178,6 +179,7 @@ namespace Chimera {
                 set_up_inverted_flag_fix();
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
+                set_up_bitmap_formats();
 
                 if(chimera->feature_present("client_af")) {
                     set_up_model_af();
