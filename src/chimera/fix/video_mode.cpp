@@ -107,6 +107,11 @@ namespace Chimera {
             goto cleanup;
         }
 
+        // If the window isn't the foreground window, wait until it is before doing the thing.
+        if(window != GetForegroundWindow()) {
+            return;
+        }
+
         // Query monitor information
         monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
         monitor_info.cbSize = sizeof(monitor_info);
