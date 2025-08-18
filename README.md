@@ -82,6 +82,8 @@ These are features that are always on.
 - [FOV fix](#fov-fix)
 - [Sun fix](#sun-fix)
 - [Zoom blur fix](#zoom-blur-fix)
+- [Multitexture overlay fix](#multitexture-overlay-fix)
+- [Z-fighting fix](#z-fighting-fix)
 - [Custom chat](#custom-chat)
 - [NVIDIA camo fix](#nvidia-camo-fix)
 - [Contrail fix](#contrail-fix)
@@ -201,6 +203,15 @@ resolution. Chimera makes it scale by 768p, instead.
 The zoom blur radius is a set number of pixels regardless of vertical resolution.
 Chimera makes it scale by 480p, instead. Chimera also increases the resolution of
 the zoom blur effect, improving the quality.
+
+#### Multitexture overlay fix
+Chimera fixes an issue where multitexture overlays in weapon_hud_interface tags
+do not blend correctly (notably the sniper rifle angle ticks).
+
+#### Z-fighting fix
+The game has an issue where as the player gets further from the center of a map,
+Z-fighting gets progressively worse due to loss of floating point precision.
+Chimera attempts to reduce decals Z-fighting with level geometry.
 
 #### Custom chat
 The Keystone chat is crashy and broken. Chimera adds a replacement chat.
@@ -361,6 +372,7 @@ vidmode. You can even use refresh rates in excess of 120 Hz.
 - `vsync` (enable double buffer vSync to reduce tearing)
 - `windowed` (display Halo in a window)
 - `borderless` (display Halo in borderless fullscreen - required windowed mode)
+- `af` (Set anisotropic filtering level)
 
 #### Controller settings
 These settings allow you to configure gamepads. See the included chimera.ini
@@ -494,12 +506,10 @@ full speed. You can re-enable this behavior if you want.
 
 #### Block all bullshit
 This feature runs the following commands:
-- `chimera_block_buffering 1`
 - `chimera_block_gametype_indicator 1`
 - `chimera_block_gametype_rules 1`
 - `chimera_block_hold_f1 1`
 - `chimera_block_loading_screen 1`
-- `chimera_block_zoom_blur 1`
 - `chimera_block_mouse_acceleration 1`
 
 **Usage:** `chimera_block_all_bullshit`
@@ -510,9 +520,9 @@ Set whether or not auto centering in vehicles is disabled.
 **Usage:** `chimera_block_auto_center [true/false]`
 
 #### Block buffering
-This feature is known to reduce input lag, and it works like the feature in
-config.txt. Disabling buffering is known to destroy performance on DXVK, but
-generally works better everywhere else. You can enable this behavior if you want.
+This feature is supposed to reduce mouse lag, and it works like the feature in
+config.txt. Disabling buffering is known to destroy performance on DXVK, and it
+is questionable whether it reduces lag. You can enable this behavior if you want.
 
 **Usage:** `chimera_block_buffering [true/false]`
 
