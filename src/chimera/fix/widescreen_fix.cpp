@@ -7,6 +7,7 @@
 #include "../halo_data/pad.hpp"
 
 #include "../chimera.hpp"
+#include "../config/ini.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../event/tick.hpp"
@@ -309,8 +310,8 @@ namespace Chimera {
     }
 
     void set_widescreen_fix(WidescreenFixSetting new_setting) noexcept {
-        auto *ringworld = GetModuleHandle("ringworld.dll");
-        if(!ringworld) {
+        auto ringworld_compat = get_chimera().get_ini()->get_value_bool("debug.ringworld_compatibility").value_or(false);
+        if(!ringworld_compat) {
             if(static_cast<bool>(new_setting) != static_cast<bool>(setting)) {
                 bool demo = get_chimera().feature_present("client_demo");
                 ce = get_chimera().feature_present("client_widescreen_custom_edition");
