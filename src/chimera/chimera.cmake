@@ -69,6 +69,7 @@ add_library(chimera STATIC
     src/chimera/event/damage.cpp
     src/chimera/event/damage.S
     src/chimera/event/frame.cpp
+    src/chimera/event/game_loop.cpp
     src/chimera/event/map_load.cpp
     src/chimera/event/revert.cpp
     src/chimera/event/rcon_message.cpp
@@ -145,6 +146,8 @@ add_library(chimera STATIC
     src/chimera/fix/vehicle_team_desync.S
     src/chimera/fix/video_mode.cpp
     src/chimera/fix/video_mode.S
+    src/chimera/fix/water_fix.cpp
+    src/chimera/fix/water_fix.S
     src/chimera/fix/weapon_swap_ticks.cpp
     src/chimera/fix/weapon_swap_ticks.S
     src/chimera/fix/weather_fix.cpp
@@ -156,6 +159,9 @@ add_library(chimera STATIC
     src/chimera/fix/widescreen_fix.cpp
     src/chimera/fix/widescreen_mouse.S
     src/chimera/fix/biped_ui_spawn.cpp
+    src/chimera/halo_data/shaders/pixel_shaders.cpp
+    src/chimera/halo_data/shaders/vertex_shaders.cpp
+    src/chimera/halo_data/shaders/d3dx_effects.cpp
     src/chimera/halo_data/antenna.cpp
     src/chimera/halo_data/camera.cpp
     src/chimera/halo_data/chat.cpp

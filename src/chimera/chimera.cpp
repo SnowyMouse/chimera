@@ -89,6 +89,7 @@
 #include "output/error_box.hpp"
 #include "fix/biped_ui_spawn.hpp"
 #include "fix/z_fighting.hpp"
+#include "fix/water_fix.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -180,6 +181,9 @@ namespace Chimera {
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
+
+                // This seemed like a good idea at the time...
+                set_up_water_fix();
 
                 if(chimera->feature_present("client_af")) {
                     set_up_model_af();
