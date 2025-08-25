@@ -30,7 +30,6 @@ namespace Chimera {
         auto *flags = reinterpret_cast<std::uint8_t *>(shader + 0x28);
         float psh_constants[4] = {0};
         psh_constants[0] = (*flags >> 2) & 1 ? 1.0f : 0.0f;
-
         IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, start_register, psh_constants, 1);
     }
 

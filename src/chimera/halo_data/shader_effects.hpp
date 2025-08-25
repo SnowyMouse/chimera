@@ -127,6 +127,132 @@ namespace Chimera {
         SHADER_EFFECT_MODEL_MASK_NONE,
         NUM_OF_STOCK_SHADER_EFFECTS,
     };
+
+    enum RetailD3DXEffects {
+        environment_lightmap_normal = 0, //ps_2_0
+        environment_lightmap_no_lightmap, //ps_2_0
+        environment_lightmap_no_illumination, //ps_1_1
+        environment_lightmap_no_illumination_no_lightmap, //ps_2_0
+        environment_diffuse_light, //ps_1_1
+        environment_texture_normal_biased_multiply_biased_multiply, //ps_1_1
+        environment_texture_normal_biased_multiply_multiply,
+        environment_texture_normal_biased_multiply_biased_add,
+        environment_texture_normal_multiply_biased_multiply,
+        environment_texture_normal_multiply_multiply,
+        environment_texture_normal_multiply_biased_add,
+        environment_texture_normal_biased_add_biased_multiply,
+        environment_texture_normal_biased_add_multiply,
+        environment_texture_normal_biased_add_biased_add,
+        environment_texture_blended_biased_multiply_biased_multiply,
+        environment_texture_blended_biased_multiply_multiply,
+        environment_texture_blended_biased_multiply_biased_add,
+        environment_texture_blended_multiply_biased_multiply,
+        environment_texture_blended_multiply_multiply,
+        environment_texture_blended_multiply_biased_add,
+        environment_texture_blended_biased_add_biased_multiply,
+        environment_texture_blended_biased_add_multiply,
+        environment_texture_blended_biased_add_biased_add,
+        environment_texture_specular_mask_biased_multiply_biased_multiply,
+        environment_texture_specular_mask_biased_multiply_multiply,
+        environment_texture_specular_mask_biased_multiply_biased_add,
+        environment_texture_specular_mask_multiply_biased_multiply,
+        environment_texture_specular_mask_multiply_multiply,
+        environment_texture_specular_mask_multiply_biased_add,
+        environment_texture_specular_mask_biased_add_biased_multiply,
+        environment_texture_specular_mask_biased_add_multiply,
+        environment_texture_specular_mask_biased_add_biased_add,
+        environment_reflection_bumped,
+        environment_reflection_flat, //ps_1_4
+        environment_reflection_flat_specular, //ps_2_0
+        environment_reflection_radiosity, //ps_1_1
+        environment_reflection_lightmap_mask,
+        environment_reflection_mirror_bumped, //ps_2_0
+        environment_reflection_mirror_flat, //ps_2_0
+        environment_reflection_mirror_flat_specular, //ps_2_0
+        environment_specular_light_flat, //ps_1_4
+        environment_specular_light_bumped, //ps_1_4
+        environment_specular_lightmap_flat,  //ps_1_4
+        environment_specular_lightmap_bumped,  //ps_1_4
+        transparent_plasma, //ps_1_1
+        shadow_convolve,
+        SOME_FIXED_FUNCTION_THING,
+        environment_shadow,
+        widget_sprite,
+        screen_normal,
+        screen_multitexture_add_add,
+        screen_multitexture_add_dot,
+        screen_multitexture_add_multiply,
+        screen_multitexture_add_multiply2x,
+        screen_multitexture_add_subtract,
+        screen_multitexture_dot_add,
+        screen_multitexture_dot_dot,
+        screen_multitexture_dot_multiply,
+        screen_multitexture_dot_multiply2x,
+        screen_multitexture_dot_subtract,
+        screen_multitexture_multiply_add,
+        screen_multitexture_multiply_dot,
+        screen_multitexture_multiply_multiply,
+        screen_multitexture_multiply_multiply2x,
+        screen_multitexture_multiply_subtract,
+        screen_multitexture_multiply2x_add,
+        screen_multitexture_multiply2x_dot,
+        screen_multitexture_multiply2x_multiply,
+        screen_multitexture_multiply2x_multiply2x,
+        screen_multitexture_multiply2x_subtract,
+        screen_multitexture_subtract_add,
+        screen_multitexture_subtract_dot,
+        screen_multitexture_subtract_multiply,
+        screen_multitexture_subtract_multiply2x,
+        screen_multitexture_subtract_subtract,
+        screen_meter,
+        sun_glow_convolve,
+        sun_glow_draw,
+        effect_multitexture_nonlinear_tint,
+        effect_multitexture_nonlinear_tint_add,
+        effect_multitexture_nonlinear_tint_alpha_blend,
+        effect_multitexture_nonlinear_tint_double_multiply,
+        effect_multitexture_nonlinear_tint_multiply,
+        effect_multitexture_nonlinear_tint_multiply_add,
+        effect_multitexture_normal_tint,
+        effect_multitexture_normal_tint_add,
+        effect_multitexture_normal_tint_alpha_blend,
+        effect_multitexture_normal_tint_double_multiply,
+        effect_multitexture_normal_tint_multiply,
+        effect_multitexture_normal_tint_multiply_add,
+        effect_nonlinear_tint,
+        effect_nonlinear_tint_add,
+        effect_nonlinear_tint_alpha_blend,
+        effect_nonlinear_tint_double_multiply,
+        effect_nonlinear_tint_multiply,
+        effect_nonlinear_tint_multiply_add,
+        effect_normal_tint,
+        effect_normal_tint_add,
+        effect_normal_tint_alpha_blend,
+        effect_normal_tint_double_multiply,
+        effect_normal_tint_multiply,
+        effect_normal_tint_multiply_add,
+        transparent_water_opacity,
+        transparent_water_reflection,
+        transparent_water_bumpmap_convolution,
+        active_camouflage_draw,
+        transparent_glass_reflection_bumped, //ps_2_0
+        transparent_glass_reflection_flat, //ps_1_1
+        transparent_glass_reflection_mirror, //ps_2_0
+        transparent_glass_diffuse, //ps_1_1
+        transparent_generic, //stub
+        transparent_meter,
+        environment_fog,
+        chicago_stub,
+        screen_effect, //mixed
+        screen_flash,
+        model_environment, //ps_2_0
+        model_mask_self_illumination, //ps_2_0
+        model_mask_change_color, //ps_2_0
+        model_mask_multipurpose, //ps_2_0
+        model_mask_reflection, //ps_2_0
+        model_mask_none //ps_2_0
+    };
+
 }
 
 #endif
