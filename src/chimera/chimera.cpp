@@ -91,6 +91,7 @@
 #include "fix/z_fighting.hpp"
 #include "fix/water_fix.hpp"
 #include "fix/shader_code_fix.hpp"
+#include "fix/xbox_channel_order.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -181,6 +182,7 @@ namespace Chimera {
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
+                set_up_xbox_channel_order_support();
 
                 // This seemed like a good idea at the time...
                 set_up_water_fix();

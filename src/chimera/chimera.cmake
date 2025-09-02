@@ -160,6 +160,8 @@ add_library(chimera STATIC
     src/chimera/fix/widescreen_element_reposition_menu_text.S
     src/chimera/fix/widescreen_fix.cpp
     src/chimera/fix/widescreen_mouse.S
+    src/chimera/fix/xbox_channel_order.cpp
+    src/chimera/fix/xbox_channel_order.S
     src/chimera/fix/biped_ui_spawn.cpp
     src/chimera/halo_data/shaders/pixel_shaders.cpp
     src/chimera/halo_data/shaders/vertex_shaders.cpp

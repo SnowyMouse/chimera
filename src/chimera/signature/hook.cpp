@@ -457,6 +457,12 @@ namespace Chimera {
                         at += 3;
                         break;
                     }
+                    else if(op1 == 0x4C) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 4);
+                        at += 4;
+                        break;
+                    }
                     std::terminate();
                 }
 
@@ -473,6 +479,12 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
+                        break;
+                    }
+                    else if(op1 == 0x1D) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 6);
+                        at += 6;
                         break;
                     }
                     else if(op1 == 0x1C || op1 == 0x9C) {
