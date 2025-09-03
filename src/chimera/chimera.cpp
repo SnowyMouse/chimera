@@ -72,7 +72,6 @@
 #include "fix/scope_blur_fix.hpp"
 #include "fix/flashlight_fix.hpp"
 #include "fix/motion_sensor_fix.hpp"
-#include "fix/inverted_flag.hpp"
 #include "halo_data/object.hpp"
 #include "event/tick.hpp"
 #include "event/map_load.hpp"
@@ -190,10 +189,6 @@ namespace Chimera {
                 // Fix the borked shader code
                 if(chimera->feature_present("client_retail_demo")) {
                     set_up_shader_fix();
-                }
-                else {
-                    // Leave this memed on custom edition for a bit longer....
-                    set_up_inverted_flag_fix();
                 }
 
                 if(chimera->feature_present("client_af")) {

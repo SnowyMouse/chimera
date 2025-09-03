@@ -235,7 +235,6 @@ namespace Chimera {
         ADD_COMMAND("chimera_simple_score_screen", "chimera_category_visual", "client_score_screen", simple_score_screen_command, true, 0, 1);
         ADD_COMMAND("chimera_split_screen_hud", "chimera_category_visual", "client_split_screen_hud", split_screen_hud_command, true, 0, 1);
         ADD_COMMAND("chimera_uncap_cinematic", "chimera_category_visual", "client_interpolate", uncap_cinematic_command, true, 0, 1);
-        ADD_COMMAND("chimera_invert_shader_flags", "chimera_category_visual", "client_custom", invert_shader_flags_command, true, 0, 1);
         ADD_COMMAND("chimera_widescreen_fix", "chimera_category_visual", "client_widescreen", widescreen_fix_command, true, 0, 1);
         // ADD_COMMAND("chimera_meme_zone", "chimera_category_visual", "client_widescreen", meme_zone_command, true, 0, 1);
 

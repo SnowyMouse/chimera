@@ -113,8 +113,6 @@ add_library(chimera STATIC
     src/chimera/fix/fov_fix.cpp
     src/chimera/fix/invalid_command_crash.cpp
     src/chimera/fix/invalid_command_crash.S
-    src/chimera/fix/inverted_flag.cpp
-    src/chimera/fix/inverted_flag.S
     src/chimera/fix/interpolate/antenna.cpp
     src/chimera/fix/interpolate/camera.cpp
     src/chimera/fix/interpolate/flag.cpp

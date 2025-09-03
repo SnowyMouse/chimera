@@ -141,7 +141,6 @@ chimera_enable_console_command_warning                                          
 chimera_fix_blue_particles_command_help                                         Fix blue particles appearing in 32-bit maps.
 chimera_fix_contrails_command_help                                              Fix contrail behavior on high frame rates.
 chimera_fix_flashlight_command_help                                             Fix flashlight being too dim.
-chimera_fix_inverted_flags_command_help                                         Fix various shader behavior being inverted.
 chimera_fix_lens_flare_scaling_command_help                                     Fix lens flares not scaling at higher resolutions.
 chimera_fix_motion_sensor_command_help                                          Fix motion sensor behavior on high frame rates.
 

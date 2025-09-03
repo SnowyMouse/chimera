@@ -66,7 +66,6 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/visual/camo_fix.cpp
     ${COMMAND_DIR}/client/visual/console_prompt_color.cpp
     ${COMMAND_DIR}/client/visual/fov.cpp
-    ${COMMAND_DIR}/client/visual/invert_shader_flags.cpp
     ${COMMAND_DIR}/client/visual/interpolate.cpp
     ${COMMAND_DIR}/client/visual/meme_zone.cpp
     ${COMMAND_DIR}/client/visual/model_detail.cpp
