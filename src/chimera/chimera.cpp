@@ -91,6 +91,7 @@
 #include "fix/water_fix.hpp"
 #include "fix/shader_code_fix.hpp"
 #include "fix/xbox_channel_order.hpp"
+#include "fix/fp_animation.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -242,6 +243,9 @@ namespace Chimera {
 
                 // Fix this broken stuff
                 set_up_auto_center_fix();
+
+                // Fix this I guess
+                set_up_fp_animation_fix();
 
                 // No interpolation in a 2003 PC game? Seriously, Gearbox?
                 set_up_interpolation();
