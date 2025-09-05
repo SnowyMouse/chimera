@@ -15,13 +15,6 @@ extern const size_t vs_transparent_water_reflection_size;
 extern unsigned char vs_transparent_water_reflection_m[];
 extern const size_t vs_transparent_water_reflection_m_size;
 
-// Pixel
-extern unsigned char ps_transparent_water_opacity_color_modulated[];
-extern const size_t ps_transparent_water_opacity_color_modulated_size;
-
-extern unsigned char ps_transparent_water_reflection[];
-extern const size_t ps_transparent_water_reflection_size;
-
 // D3DX Effects
 extern unsigned char fx_collection[];
 extern const size_t fx_collection_size;

@@ -189,7 +189,7 @@ namespace Chimera {
                 set_up_xbox_channel_order_support();
                 set_up_alternate_bump_attenuation_support();
 
-                if(chimera->feature_present("client_retail_demo")) {
+                if(!chimera->get_ini()->get_value_bool("debug.use_stock_shader_collection").value_or(false)) {
                     // Fix the borked shader code
                     set_up_shader_fix();
                 }

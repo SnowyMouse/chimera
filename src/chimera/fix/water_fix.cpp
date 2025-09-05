@@ -48,19 +48,6 @@ namespace Chimera {
         IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_opacity_m), opacity_vsh_m);
         IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_reflection), reflection_vsh);
         IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_reflection_m), reflection_vsh_m);
-
-        // Replace whatever shaders custom edition is using with known good ones. Retail is handled seperately.
-        if(get_chimera().feature_present("client_custom_edition")) {
-            auto *opacity_psh_sig = get_chimera().get_signature("water_opacity_shader_ptr").data() + 2;
-            auto *reflection_psh_sig = get_chimera().get_signature("water_reflection_shader_ptr").data() + 2;
-            auto *opacity_psh = reinterpret_cast<IDirect3DPixelShader9 **>(*reinterpret_cast<std::byte **>(**reinterpret_cast<std::byte ***>(opacity_psh_sig) + 0x84) + 0x104);
-            auto *reflection_psh = reinterpret_cast<IDirect3DPixelShader9 **>(*reinterpret_cast<std::byte **>(**reinterpret_cast<std::byte ***>(reflection_psh_sig) + 0x84) + 0x80);
-
-            IDirect3DPixelShader9_Release(*opacity_psh);
-            IDirect3DPixelShader9_Release(*reflection_psh);
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(ps_transparent_water_opacity_color_modulated), opacity_psh);
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(ps_transparent_water_reflection), reflection_psh);
-        }
     }
 
     void initialize_water_hooks() noexcept {

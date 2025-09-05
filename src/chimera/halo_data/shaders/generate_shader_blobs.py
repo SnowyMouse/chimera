@@ -82,8 +82,8 @@ if __name__ == '__main__':
     generate_shader_blobs("ce_effects_collection", sys.argv[1] + "fx/EffectCollection_ps_2_0.bin", 1)
 
     # Pixel Shaders
-    generate_shader_blobs("ps_transparent_water_opacity_color_modulated", sys.argv[1] + "pixel/transparent_water_opacity_color_modulated.cso", 2)
-    generate_shader_blobs("ps_transparent_water_reflection", sys.argv[1] + "pixel/transparent_water_reflection.cso", 2)
+    #generate_shader_blobs("ps_transparent_water_opacity_color_modulated", sys.argv[1] + "pixel/transparent_water_opacity_color_modulated.cso", 2)
+    #generate_shader_blobs("ps_transparent_water_reflection", sys.argv[1] + "pixel/transparent_water_reflection.cso", 2)
 
     #Vertex Shaders
     generate_shader_blobs("vs_transparent_water_opacity", sys.argv[1] + "vertex/transparent_water_opacity.cso", 3)
