@@ -164,9 +164,6 @@ add_library(chimera STATIC
     src/chimera/fix/xbox_channel_order.cpp
     src/chimera/fix/xbox_channel_order.S
     src/chimera/fix/biped_ui_spawn.cpp
-    src/chimera/halo_data/shaders/pixel_shaders.cpp
-    src/chimera/halo_data/shaders/vertex_shaders.cpp
-    src/chimera/halo_data/shaders/d3dx_effects.cpp
     src/chimera/halo_data/antenna.cpp
     src/chimera/halo_data/camera.cpp
     src/chimera/halo_data/chat.cpp
@@ -232,6 +229,10 @@ add_library(chimera STATIC
 
     ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp
 )
 add_dependencies(chimera chimera-version local_curl local_zstd)
 
@@ -248,6 +249,13 @@ add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes_generator.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/output/color_codes
+)
+
+file(GLOB CHIMERA_SHADER_DEPS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/*")
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp" "${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp"
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
+    DEPENDS ${CHIMERA_SHADER_DEPS}
 )
 
 target_include_directories(chimera

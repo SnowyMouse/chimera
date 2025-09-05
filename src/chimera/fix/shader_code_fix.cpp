@@ -28,7 +28,7 @@ namespace Chimera {
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
         auto *hack_it_in = get_chimera().get_signature("d3dx_effect_load_sig").data();
         patched_d3dx_effects_ptr = reinterpret_cast<std::byte *>(&fx_collection);
-        patched_d3dx_effects_size = sizeof(fx_collection);
+        patched_d3dx_effects_size = fx_collection_size;
 
         static Hook hook;
 

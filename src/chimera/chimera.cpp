@@ -183,14 +183,14 @@ namespace Chimera {
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
-                set_up_xbox_channel_order_support();
-                set_up_alternate_bump_attenuation_support();
 
                 // This seemed like a good idea at the time...
                 set_up_water_fix();
+                set_up_xbox_channel_order_support();
+                set_up_alternate_bump_attenuation_support();
 
-                // Fix the borked shader code
                 if(chimera->feature_present("client_retail_demo")) {
+                    // Fix the borked shader code
                     set_up_shader_fix();
                 }
 
