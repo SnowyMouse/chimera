@@ -34,6 +34,5 @@ namespace Chimera {
 
         // Redirect the effects collection the game tries to load to our patched one.
         write_function_override(hack_it_in, hook, reinterpret_cast<const void *>(overwrite_stock_fx_data_asm), &original_effect_load_instruction);
-
     }
 }

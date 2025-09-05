@@ -92,6 +92,7 @@
 #include "fix/shader_code_fix.hpp"
 #include "fix/xbox_channel_order.hpp"
 #include "fix/fp_animation.hpp"
+#include "fix/alternate_bump_attenuation.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -183,6 +184,7 @@ namespace Chimera {
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
                 set_up_xbox_channel_order_support();
+                set_up_alternate_bump_attenuation_support();
 
                 // This seemed like a good idea at the time...
                 set_up_water_fix();

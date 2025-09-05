@@ -13,4 +13,4 @@ extern unsigned char ps_transparent_water_opacity_color_modulated[];
 extern unsigned char ps_transparent_water_reflection[];
 
 // D3DX Effects
-extern unsigned char fx_collection[1030924];
+extern unsigned char fx_collection[1031020];
