@@ -90,3 +90,4 @@ if __name__ == '__main__':
     generate_shader_blobs("vs_transparent_water_opacity_m", sys.argv[1] + "vertex/transparent_water_opacity_m.cso", 3)
     generate_shader_blobs("vs_transparent_water_reflection", sys.argv[1] + "vertex/transparent_water_reflection.cso", 3)
     generate_shader_blobs("vs_transparent_water_reflection_m", sys.argv[1] + "vertex/transparent_water_reflection_m.cso", 3)
+    generate_shader_blobs("vs_environment_specular_spot_light", sys.argv[1] + "vertex/environment_specular_spot_light.cso", 3)

@@ -9,6 +9,7 @@
 #include "../event/frame.hpp"
 #include "../event/game_loop.hpp"
 #include "../halo_data/shaders/shader_blob.hpp"
+#include "../halo_data/shader_effects.hpp"
 
 extern "C" {
     void water_opacity_psh_const_asm() noexcept;
@@ -34,10 +35,11 @@ namespace Chimera {
     }
 
     void load_new_shaders() noexcept {
-        auto *opacity_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("water_opacity_set_vsh_sig").data()));
-        auto *opacity_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("water_opacity_set_vsh_sig").data()) + 8);
-        auto *reflection_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("water_reflection_set_vsh_sig").data()));
-        auto *reflection_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("water_reflection_set_vsh_sig").data()) + 8);
+        auto *vertex_shaders = *reinterpret_cast<std::byte **>(get_chimera().get_signature("vertex_shaders_sig").data() + 3);
+        auto *opacity_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_OPACITY * 8);
+        auto *opacity_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_OPACITY_M * 8);
+        auto *reflection_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_REFLECTION * 8);
+        auto *reflection_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_REFLECTION_M * 8);
 
         // Replace vertex shaders with known good ones.
         IDirect3DVertexShader9_Release(*opacity_vsh);
