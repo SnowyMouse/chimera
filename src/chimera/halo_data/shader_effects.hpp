@@ -127,6 +127,200 @@ namespace Chimera {
         SHADER_EFFECT_MODEL_MASK_NONE,
         NUM_OF_STOCK_SHADER_EFFECTS,
     };
+
+    enum RetailD3DXEffects {
+        environment_lightmap_normal = 0, //ps_2_0
+        environment_lightmap_no_lightmap, //ps_2_0
+        environment_lightmap_no_illumination, //ps_1_1
+        environment_lightmap_no_illumination_no_lightmap, //ps_2_0
+        environment_diffuse_light, //ps_1_1
+        environment_texture_normal_biased_multiply_biased_multiply, //ps_1_1
+        environment_texture_normal_biased_multiply_multiply,
+        environment_texture_normal_biased_multiply_biased_add,
+        environment_texture_normal_multiply_biased_multiply,
+        environment_texture_normal_multiply_multiply,
+        environment_texture_normal_multiply_biased_add,
+        environment_texture_normal_biased_add_biased_multiply,
+        environment_texture_normal_biased_add_multiply,
+        environment_texture_normal_biased_add_biased_add,
+        environment_texture_blended_biased_multiply_biased_multiply,
+        environment_texture_blended_biased_multiply_multiply,
+        environment_texture_blended_biased_multiply_biased_add,
+        environment_texture_blended_multiply_biased_multiply,
+        environment_texture_blended_multiply_multiply,
+        environment_texture_blended_multiply_biased_add,
+        environment_texture_blended_biased_add_biased_multiply,
+        environment_texture_blended_biased_add_multiply,
+        environment_texture_blended_biased_add_biased_add,
+        environment_texture_specular_mask_biased_multiply_biased_multiply,
+        environment_texture_specular_mask_biased_multiply_multiply,
+        environment_texture_specular_mask_biased_multiply_biased_add,
+        environment_texture_specular_mask_multiply_biased_multiply,
+        environment_texture_specular_mask_multiply_multiply,
+        environment_texture_specular_mask_multiply_biased_add,
+        environment_texture_specular_mask_biased_add_biased_multiply,
+        environment_texture_specular_mask_biased_add_multiply,
+        environment_texture_specular_mask_biased_add_biased_add,
+        environment_reflection_bumped,
+        environment_reflection_flat, //ps_1_4
+        environment_reflection_flat_specular, //ps_2_0
+        environment_reflection_radiosity, //ps_1_1
+        environment_reflection_lightmap_mask,
+        environment_reflection_mirror_bumped, //ps_2_0
+        environment_reflection_mirror_flat, //ps_2_0
+        environment_reflection_mirror_flat_specular, //ps_2_0
+        environment_specular_light_flat, //ps_1_4
+        environment_specular_light_bumped, //ps_1_4
+        environment_specular_lightmap_flat,  //ps_1_4
+        environment_specular_lightmap_bumped,  //ps_1_4
+        transparent_plasma, //ps_1_1
+        shadow_convolve,
+        SOME_FIXED_FUNCTION_THING,
+        environment_shadow,
+        widget_sprite,
+        screen_normal,
+        screen_multitexture_add_add,
+        screen_multitexture_add_dot,
+        screen_multitexture_add_multiply,
+        screen_multitexture_add_multiply2x,
+        screen_multitexture_add_subtract,
+        screen_multitexture_dot_add,
+        screen_multitexture_dot_dot,
+        screen_multitexture_dot_multiply,
+        screen_multitexture_dot_multiply2x,
+        screen_multitexture_dot_subtract,
+        screen_multitexture_multiply_add,
+        screen_multitexture_multiply_dot,
+        screen_multitexture_multiply_multiply,
+        screen_multitexture_multiply_multiply2x,
+        screen_multitexture_multiply_subtract,
+        screen_multitexture_multiply2x_add,
+        screen_multitexture_multiply2x_dot,
+        screen_multitexture_multiply2x_multiply,
+        screen_multitexture_multiply2x_multiply2x,
+        screen_multitexture_multiply2x_subtract,
+        screen_multitexture_subtract_add,
+        screen_multitexture_subtract_dot,
+        screen_multitexture_subtract_multiply,
+        screen_multitexture_subtract_multiply2x,
+        screen_multitexture_subtract_subtract,
+        screen_meter,
+        sun_glow_convolve,
+        sun_glow_draw,
+        effect_multitexture_nonlinear_tint,
+        effect_multitexture_nonlinear_tint_add,
+        effect_multitexture_nonlinear_tint_alpha_blend,
+        effect_multitexture_nonlinear_tint_double_multiply,
+        effect_multitexture_nonlinear_tint_multiply,
+        effect_multitexture_nonlinear_tint_multiply_add,
+        effect_multitexture_normal_tint,
+        effect_multitexture_normal_tint_add,
+        effect_multitexture_normal_tint_alpha_blend,
+        effect_multitexture_normal_tint_double_multiply,
+        effect_multitexture_normal_tint_multiply,
+        effect_multitexture_normal_tint_multiply_add,
+        effect_nonlinear_tint,
+        effect_nonlinear_tint_add,
+        effect_nonlinear_tint_alpha_blend,
+        effect_nonlinear_tint_double_multiply,
+        effect_nonlinear_tint_multiply,
+        effect_nonlinear_tint_multiply_add,
+        effect_normal_tint,
+        effect_normal_tint_add,
+        effect_normal_tint_alpha_blend,
+        effect_normal_tint_double_multiply,
+        effect_normal_tint_multiply,
+        effect_normal_tint_multiply_add,
+        transparent_water_opacity,
+        transparent_water_reflection,
+        transparent_water_bumpmap_convolution,
+        active_camouflage_draw,
+        transparent_glass_reflection_bumped, //ps_2_0
+        transparent_glass_reflection_flat, //ps_1_1
+        transparent_glass_reflection_mirror, //ps_2_0
+        transparent_glass_diffuse, //ps_1_1
+        transparent_generic, //stub
+        transparent_meter,
+        environment_fog,
+        chicago_stub,
+        screen_effect, //mixed
+        screen_flash,
+        model_environment, //ps_2_0
+        model_mask_self_illumination, //ps_2_0
+        model_mask_change_color, //ps_2_0
+        model_mask_multipurpose, //ps_2_0
+        model_mask_reflection, //ps_2_0
+        model_mask_none //ps_2_0
+    };
+
+enum VertexShaderIndex {
+    VSH_CONVOLUTION = 0,
+    VSH_DEBUG,
+    VSH_DECAL,
+    VSH_DETAIL_OBJECT_TYPE0,
+    VSH_DETAIL_OBJECT_TYPE1,
+    VSH_EFFECT,
+    VSH_EFFECT_MULTITEXTURE,
+    VSH_EFFECT_MULTITEXTURE_SCREENSPACE,
+    VSH_EFFECT_ZSPRITE,
+    VSH_ENVIRONMENT_DIFFUSE_LIGHT,
+    VSH_ENVIRONMENT_DIFFUSE_LIGHT_FF,
+    VSH_ENVIRONMENT_FOG,
+    VSH_ENVIRONMENT_FOG_SCREEN,
+    VSH_ENVIRONMENT_LIGHTMAP,
+    VSH_ENVIRONMENT_REFLECTION_BUMPED,
+    VSH_ENVIRONMENT_REFLECTION_FLAT,
+    VSH_ENVIRONMENT_REFLECTION_LIGHTMAP_MASK,
+    VSH_ENVIRONMENT_REFLECTION_MIRROR,
+    VSH_ENVIRONMENT_REFLECTION_RADIOSITY,
+    VSH_ENVIRONMENT_SHADOW,
+    VSH_ENVIRONMENT_SPECULAR_LIGHT,
+    VSH_ENVIRONMENT_SPECULAR_SPOT_LIGHT,
+    VSH_ENVIRONMENT_SPECULAR_LIGHTMAP,
+    VSH_ENVIRONMENT_TEXTURE,
+    VSH_LENS_FLARE,
+    VSH_MODEL_FOGGED,
+    VSH_MODEL,
+    VSH_MODEL_FF,
+    VSH_MODEL_FAST,
+    VSH_MODEL_SCENERY,
+    VSH_MODEL_ACTIVE_CAMOUFLAGE,
+    VSH_MODEL_ACTIVE_CAMOUFLAGE_FF,
+    VSH_MODEL_FOG_SCREEN,
+    VSH_MODEL_SHADOW,
+    VSH_MODEL_ZBUFFER,
+    VSH_SCREEN,
+    VSH_SCREEN2,
+    VSH_TRANSPARENT_GENERIC,
+    VSH_TRANSPARENT_GENERIC_LIT_M,
+    VSH_TRANSPARENT_GENERIC_M,
+    VSH_TRANSPARENT_GENERIC_OBJECT_CENTERED,
+    VSH_TRANSPARENT_GENERIC_OBJECT_CENTERED_M,
+    VSH_TRANSPARENT_GENERIC_REFLECTION,
+    VSH_TRANSPARENT_GENERIC_REFLECTION_M,
+    VSH_TRANSPARENT_GENERIC_SCREENSPACE,
+    VSH_TRANSPARENT_GENERIC_SCREENSPACE_M,
+    VSH_TRANSPARENT_GENERIC_VIEWER_CENTERED,
+    VSH_TRANSPARENT_GENERIC_VIEWER_CENTERED_M,
+    VSH_TRANSPARENT_GLASS_DIFFUSE_LIGHT,
+    VSH_TRANSPARENT_GLASS_DIFFUSE_LIGHT_M,
+    VSH_TRANSPARENT_GLASS_REFLECTION_BUMPED,
+    VSH_TRANSPARENT_GLASS_REFLECTION_BUMPED_M,
+    VSH_TRANSPARENT_GLASS_REFLECTION_FLAT,
+    VSH_TRANSPARENT_GLASS_REFLECTION_FLAT_M,
+    VSH_TRANSPARENT_GLASS_REFLECTION_MIRROR,
+    VSH_TRANSPARENT_GLASS_TINT,
+    VSH_TRANSPARENT_GLASS_TINT_M,
+    VSH_TRANSPARENT_METER,
+    VSH_TRANSPARENT_METER_M,
+    VSH_TRANSPARENT_PLASMA_M,
+    VSH_TRANSPARENT_WATER_OPACITY,
+    VSH_TRANSPARENT_WATER_OPACITY_M,
+    VSH_TRANSPARENT_WATER_REFLECTION,
+    VSH_TRANSPARENT_WATER_REFLECTION_M,
+    NUM_OF_VERTEX_SHADERS
+};
+
 }
 
 #endif

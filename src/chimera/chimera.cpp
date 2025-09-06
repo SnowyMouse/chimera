@@ -72,7 +72,6 @@
 #include "fix/scope_blur_fix.hpp"
 #include "fix/flashlight_fix.hpp"
 #include "fix/motion_sensor_fix.hpp"
-#include "fix/inverted_flag.hpp"
 #include "halo_data/object.hpp"
 #include "event/tick.hpp"
 #include "event/map_load.hpp"
@@ -89,6 +88,11 @@
 #include "output/error_box.hpp"
 #include "fix/biped_ui_spawn.hpp"
 #include "fix/z_fighting.hpp"
+#include "fix/water_fix.hpp"
+#include "fix/shader_code_fix.hpp"
+#include "fix/xbox_channel_order.hpp"
+#include "fix/fp_animation.hpp"
+#include "fix/alternate_bump_attenuation.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -176,10 +180,19 @@ namespace Chimera {
                 set_up_scope_blur_fix();
                 set_up_motion_sensor_fix();
                 set_up_flashlight_fix();
-                set_up_inverted_flag_fix();
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
+
+                // This seemed like a good idea at the time...
+                set_up_water_fix();
+                set_up_xbox_channel_order_support();
+                set_up_alternate_bump_attenuation_support();
+
+                if(!chimera->get_ini()->get_value_bool("debug.use_stock_shader_collection").value_or(false)) {
+                    // Fix the borked shader code
+                    set_up_shader_fix();
+                }
 
                 if(chimera->feature_present("client_af")) {
                     set_up_model_af();
@@ -232,6 +245,9 @@ namespace Chimera {
 
                 // Fix this broken stuff
                 set_up_auto_center_fix();
+
+                // Fix this I guess
+                set_up_fp_animation_fix();
 
                 // No interpolation in a 2003 PC game? Seriously, Gearbox?
                 set_up_interpolation();
