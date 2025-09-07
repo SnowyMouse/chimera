@@ -2,21 +2,9 @@
 
 #include <cstddef>
 
-// Vertex
-extern unsigned char vs_transparent_water_opacity[];
-extern const size_t vs_transparent_water_opacity_size;
-
-extern unsigned char vs_transparent_water_opacity_m[];
-extern const size_t vs_transparent_water_opacity_m_size;
-
-extern unsigned char vs_transparent_water_reflection[];
-extern const size_t vs_transparent_water_reflection_size;
-
-extern unsigned char vs_transparent_water_reflection_m[];
-extern const size_t vs_transparent_water_reflection_m_size;
-
-extern unsigned char vs_environment_specular_spot_light[];
-extern const size_t vs_environment_specular_spot_light_size;
+// Vertex Shaders
+extern unsigned char vsh_collection[];
+extern const size_t vsh_collection_size;
 
 // D3DX Effects
 extern unsigned char fx_collection[];

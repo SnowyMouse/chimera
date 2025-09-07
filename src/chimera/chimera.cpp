@@ -44,7 +44,6 @@
 #include "fix/death_reset_time.hpp"
 #include "fix/descope_fix.hpp"
 #include "fix/extend_limits.hpp"
-#include "fix/flashlight_fix.hpp"
 #include "fix/extended_description_fix.hpp"
 #include "fix/name_fade.hpp"
 #include "fix/camera_shake_fix.hpp"
@@ -70,7 +69,6 @@
 #include "fix/interpolate/interpolate.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/scope_blur_fix.hpp"
-#include "fix/flashlight_fix.hpp"
 #include "fix/motion_sensor_fix.hpp"
 #include "halo_data/object.hpp"
 #include "event/tick.hpp"
@@ -179,7 +177,6 @@ namespace Chimera {
                 set_up_sun_fix();
                 set_up_scope_blur_fix();
                 set_up_motion_sensor_fix();
-                set_up_flashlight_fix();
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();

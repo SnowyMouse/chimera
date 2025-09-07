@@ -15,9 +15,6 @@ def generate_shader_blobs(name, binary, type):
         collection = open(sys.argv[2] + "effects_collection.cpp", "a")
         collection_size = os.path.getsize(sys.argv[2] + "effects_collection.cpp")
     elif type == 2:
-        collection = open(sys.argv[2] + "pixel_shaders.cpp", "a")
-        collection_size = os.path.getsize(sys.argv[2] + "pixel_shaders.cpp")
-    elif type == 3:
         collection = open(sys.argv[2] + "vertex_shaders.cpp", "a")
         collection_size = os.path.getsize(sys.argv[2] + "vertex_shaders.cpp")
 
@@ -60,8 +57,6 @@ if __name__ == '__main__':
         os.remove(sys.argv[2] + "d3dx_effects.cpp")
     if os.path.exists(sys.argv[2] + "effects_collection.cpp"):
         os.remove(sys.argv[2] + "effects_collection.cpp")
-    if os.path.exists(sys.argv[2] + "pixel_shaders.cpp"):
-        os.remove(sys.argv[2] + "pixel_shaders.cpp")
     if os.path.exists(sys.argv[2] + "vertex_shaders.cpp"):
         os.remove(sys.argv[2] + "vertex_shaders.cpp")
 
@@ -69,8 +64,6 @@ if __name__ == '__main__':
     with open(sys.argv[2] + "d3dx_effects.cpp", "w") as fp:
         pass
     with open(sys.argv[2] + "effects_collection.cpp", "w") as fp:
-        pass
-    with open(sys.argv[2] + "pixel_shaders.cpp", "w") as fp:
         pass
     with open(sys.argv[2] + "vertex_shaders.cpp", "w") as fp:
         pass
@@ -81,13 +74,5 @@ if __name__ == '__main__':
     # Custom edition pixel shader collection
     generate_shader_blobs("ce_effects_collection", sys.argv[1] + "fx/EffectCollection_ps_2_0.bin", 1)
 
-    # Pixel Shaders
-    #generate_shader_blobs("ps_transparent_water_opacity_color_modulated", sys.argv[1] + "pixel/transparent_water_opacity_color_modulated.cso", 2)
-    #generate_shader_blobs("ps_transparent_water_reflection", sys.argv[1] + "pixel/transparent_water_reflection.cso", 2)
-
     #Vertex Shaders
-    generate_shader_blobs("vs_transparent_water_opacity", sys.argv[1] + "vertex/transparent_water_opacity.cso", 3)
-    generate_shader_blobs("vs_transparent_water_opacity_m", sys.argv[1] + "vertex/transparent_water_opacity_m.cso", 3)
-    generate_shader_blobs("vs_transparent_water_reflection", sys.argv[1] + "vertex/transparent_water_reflection.cso", 3)
-    generate_shader_blobs("vs_transparent_water_reflection_m", sys.argv[1] + "vertex/transparent_water_reflection_m.cso", 3)
-    generate_shader_blobs("vs_environment_specular_spot_light", sys.argv[1] + "vertex/environment_specular_spot_light.cso", 3)
+    generate_shader_blobs("vsh_collection", sys.argv[1] + "vertex/vsh.bin", 2)

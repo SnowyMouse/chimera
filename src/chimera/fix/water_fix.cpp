@@ -34,24 +34,6 @@ namespace Chimera {
         IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, start_register, psh_constants, 1);
     }
 
-    void load_new_shaders() noexcept {
-        auto *vertex_shaders = *reinterpret_cast<std::byte **>(get_chimera().get_signature("vertex_shaders_sig").data() + 3);
-        auto *opacity_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_OPACITY * 8);
-        auto *opacity_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_OPACITY_M * 8);
-        auto *reflection_vsh = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_REFLECTION * 8);
-        auto *reflection_vsh_m = reinterpret_cast<IDirect3DVertexShader9 **>(vertex_shaders + VSH_TRANSPARENT_WATER_REFLECTION_M * 8);
-
-        // Replace vertex shaders with known good ones.
-        IDirect3DVertexShader9_Release(*opacity_vsh);
-        IDirect3DVertexShader9_Release(*opacity_vsh_m);
-        IDirect3DVertexShader9_Release(*reflection_vsh);
-        IDirect3DVertexShader9_Release(*reflection_vsh_m);
-        IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_opacity), opacity_vsh);
-        IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_opacity_m), opacity_vsh_m);
-        IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_reflection), reflection_vsh);
-        IDirect3DDevice9_CreateVertexShader(*global_d3d9_device, reinterpret_cast<DWORD *>(vs_transparent_water_reflection_m), reflection_vsh_m);
-    }
-
     void initialize_water_hooks() noexcept {
         // This depends on ps_2_0 shaders so check caps for memes.
         if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
@@ -74,8 +56,6 @@ namespace Chimera {
             write_jmp_call(opacity_psh, opacity_set_psh_const, reinterpret_cast<const void *>(water_opacity_psh_const_asm), nullptr);
             write_jmp_call(reflection_psh, reflection_set_psh_const, nullptr, reinterpret_cast<const void *>(water_reflection_psh_const_asm));
         }
-
-        load_new_shaders();
     }
 
     void set_up_water_fix() noexcept {
