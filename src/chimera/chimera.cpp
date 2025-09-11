@@ -91,6 +91,7 @@
 #include "fix/xbox_channel_order.hpp"
 #include "fix/fp_animation.hpp"
 #include "fix/alternate_bump_attenuation.hpp"
+#include "fix/specular_memes.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -187,8 +188,11 @@ namespace Chimera {
                 set_up_alternate_bump_attenuation_support();
 
                 if(!chimera->get_ini()->get_value_bool("debug.use_stock_shader_collection").value_or(false)) {
-                    // Fix the borked shader code
+                    // Fix the borked shader code.
                     set_up_shader_fix();
+
+                    // Gearbox relying on undefined texture sampling behaviour? I'm shocked!
+                    set_up_specular_light_fix();
                 }
 
                 if(chimera->feature_present("client_af")) {

@@ -17,6 +17,9 @@ def generate_shader_blobs(name, binary, type):
     elif type == 2:
         collection = open(sys.argv[2] + "vertex_shaders.cpp", "a")
         collection_size = os.path.getsize(sys.argv[2] + "vertex_shaders.cpp")
+    elif type == 3:
+        collection = open(sys.argv[2] + "pixel_shaders.cpp", "a")
+        collection_size = os.path.getsize(sys.argv[2] + "pixel_shaders.cpp")
 
     # write the include if file is new
     if collection_size == 0:
@@ -59,6 +62,8 @@ if __name__ == '__main__':
         os.remove(sys.argv[2] + "effects_collection.cpp")
     if os.path.exists(sys.argv[2] + "vertex_shaders.cpp"):
         os.remove(sys.argv[2] + "vertex_shaders.cpp")
+    if os.path.exists(sys.argv[2] + "pixel_shaders.cpp"):
+        os.remove(sys.argv[2] + "pixel_shaders.cpp")
 
     # Create new empty cpp files
     with open(sys.argv[2] + "d3dx_effects.cpp", "w") as fp:
@@ -67,6 +72,8 @@ if __name__ == '__main__':
         pass
     with open(sys.argv[2] + "vertex_shaders.cpp", "w") as fp:
         pass
+    with open(sys.argv[2] + "pixel_shaders.cpp", "w") as fp:
+        pass
 
     # Retail effects collection
     generate_shader_blobs("fx_collection", sys.argv[1] + "fx/fx.bin", 0)
@@ -74,5 +81,7 @@ if __name__ == '__main__':
     # Custom edition pixel shader collection
     generate_shader_blobs("ce_effects_collection", sys.argv[1] + "fx/EffectCollection_ps_2_0.bin", 1)
 
-    #Vertex Shaders
+    # Vertex Shaders
     generate_shader_blobs("vsh_collection", sys.argv[1] + "vertex/vsh.bin", 2)
+
+    # Pixel Shaders

@@ -140,6 +140,8 @@ add_library(chimera STATIC
     src/chimera/fix/scoreboard_fade_fix.S
     src/chimera/fix/scope_blur_fix.cpp
     src/chimera/fix/scope_blur_fix.S
+    src/chimera/fix/specular_memes.cpp
+    src/chimera/fix/specular_memes.S
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/timer_offset.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp
@@ -228,6 +230,7 @@ add_library(chimera STATIC
     ${CMAKE_CURRENT_BINARY_DIR}/localization_strings.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/color_codes.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp
 )
@@ -250,7 +253,7 @@ add_custom_command(
 
 file(GLOB CHIMERA_SHADER_DEPS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/*")
 add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp" "${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp" "${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp"
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
     DEPENDS ${CHIMERA_SHADER_DEPS}
 )
