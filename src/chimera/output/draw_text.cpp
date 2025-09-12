@@ -416,10 +416,13 @@ namespace Chimera {
             // Calculate the width of a space for the given override font.
             RECT temp_rect_1;
             RECT temp_rect_2;
-            override_font->DrawText(NULL," _", -1, &temp_rect_1, DT_CALCRECT, 0xFFFFFFFF);
-            override_font->DrawText(NULL,"_", -1, &temp_rect_2, DT_CALCRECT, 0xFFFFFFFF);
+
+            std::string space = ("_ _");
+            std::string underscore = ("__");
+            override_font->DrawText(NULL, space.data(), -1, &temp_rect_1, DT_CALCRECT, 0xFFFFFFFF);
+            override_font->DrawText(NULL, underscore.data(), -1, &temp_rect_2, DT_CALCRECT, 0xFFFFFFFF);
             //Small fudge factor because override fonts have different widths compared to the games.
-            auto space_width = (temp_rect_1.right - temp_rect_1.left) - (temp_rect_2.right - temp_rect_2.left) + (0.25 * scale);
+            auto space_width = (temp_rect_1.right - temp_rect_1.left) - (temp_rect_2.right - temp_rect_2.left) + (0.15 * scale);
 
             if(u8) {
                 if(!u8->empty()) {

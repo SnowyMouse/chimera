@@ -53,6 +53,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/server/spectate.cpp
     ${COMMAND_DIR}/client/server/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp
+    ${COMMAND_DIR}/client/visual/force_alternate_bump_attenuation.cpp
     ${COMMAND_DIR}/client/visual/block_auto_center.cpp
     ${COMMAND_DIR}/client/visual/block_camera_shake.cpp
     ${COMMAND_DIR}/client/visual/block_gametype_indicator.cpp
@@ -66,7 +67,6 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/visual/camo_fix.cpp
     ${COMMAND_DIR}/client/visual/console_prompt_color.cpp
     ${COMMAND_DIR}/client/visual/fov.cpp
-    ${COMMAND_DIR}/client/visual/invert_shader_flags.cpp
     ${COMMAND_DIR}/client/visual/interpolate.cpp
     ${COMMAND_DIR}/client/visual/meme_zone.cpp
     ${COMMAND_DIR}/client/visual/model_detail.cpp
