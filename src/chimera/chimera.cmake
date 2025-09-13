@@ -132,8 +132,10 @@ add_library(chimera STATIC
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
     src/chimera/fix/nav_numbers.cpp
-    src/chimera/fix/shader_code_fix.cpp
-    src/chimera/fix/shader_code_fix.S
+    src/chimera/fix/glass_fix.cpp
+    src/chimera/fix/glass_fix.S
+    src/chimera/fix/internal_shaders.cpp
+    src/chimera/fix/internal_shaders.S
     src/chimera/fix/sane_defaults.cpp
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp

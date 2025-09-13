@@ -87,11 +87,12 @@
 #include "fix/biped_ui_spawn.hpp"
 #include "fix/z_fighting.hpp"
 #include "fix/water_fix.hpp"
-#include "fix/shader_code_fix.hpp"
+#include "fix/internal_shaders.hpp"
 #include "fix/xbox_channel_order.hpp"
 #include "fix/fp_animation.hpp"
 #include "fix/alternate_bump_attenuation.hpp"
 #include "fix/specular_memes.hpp"
+#include "fix/glass_fix.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -187,9 +188,12 @@ namespace Chimera {
                 set_up_xbox_channel_order_support();
                 set_up_alternate_bump_attenuation_support();
 
+                // Custom edition's screwed up glass is screwed up.
+                set_up_ce_glass_fix();
+
                 if(!chimera->get_ini()->get_value_bool("debug.use_stock_shader_collection").value_or(false)) {
                     // Fix the borked shader code.
-                    set_up_shader_fix();
+                    set_up_internal_shaders();
 
                     // Gearbox relying on undefined texture sampling behaviour? I'm shocked!
                     set_up_specular_light_fix();

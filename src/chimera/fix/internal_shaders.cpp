@@ -2,7 +2,7 @@
 
 #include <d3d9.h>
 
-#include "shader_code_fix.hpp"
+#include "internal_shaders.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -36,7 +36,7 @@ namespace Chimera {
         return d3d9_device_caps->PixelShaderVersion < 0xfffe0200;
     }
 
-    void set_up_shader_fix() noexcept {
+    void set_up_internal_shaders() noexcept {
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
         static Hook hook;
 
