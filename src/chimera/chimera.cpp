@@ -191,7 +191,7 @@ namespace Chimera {
                 // Custom edition's screwed up glass is screwed up.
                 set_up_ce_glass_fix();
 
-                if(!chimera->get_ini()->get_value_bool("debug.use_stock_shader_collection").value_or(false)) {
+                if(!chimera->get_ini()->get_value_bool("debug.use_external_shader_collection").value_or(false)) {
                     // Fix the borked shader code.
                     set_up_internal_shaders();
 

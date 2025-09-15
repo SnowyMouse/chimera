@@ -32,10 +32,6 @@ namespace Chimera {
         return d3d9_device_caps->PixelShaderVersion < 0xffff0200;
     }
 
-    extern "C" bool vsh_load_check_device_caps() {
-        return d3d9_device_caps->PixelShaderVersion < 0xfffe0200;
-    }
-
     void set_up_internal_shaders() noexcept {
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
         static Hook hook;

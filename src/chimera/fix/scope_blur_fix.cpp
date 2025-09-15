@@ -26,7 +26,7 @@ namespace Chimera {
         add_preframe_event(correct_blur_radius);
 
         // Prevent game from initializing the alpha render target at 50% scale.
-        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data(), static_cast<std::uint16_t>(0x9090));
-        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data() + 0xE, static_cast<std::uint16_t>(0x9090));
+        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data() + 10, static_cast<std::uint16_t>(0x9090));
+        overwrite(get_chimera().get_signature("render_targets_initialize_sig").data() + 24, static_cast<std::uint16_t>(0x9090));
     }
 }

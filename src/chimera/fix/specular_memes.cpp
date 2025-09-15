@@ -53,5 +53,4 @@ namespace Chimera {
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
         add_game_start_event(meme_the_speular_light_draw);
     }
-
 }
