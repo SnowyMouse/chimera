@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include "nav_numbers.hpp"
+#include "name_fade.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"

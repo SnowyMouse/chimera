@@ -55,7 +55,6 @@
 #include "fix/fp_reverb.hpp"
 #include "fix/force_crash.hpp"
 #include "fix/leak_descriptors.hpp"
-#include "fix/nav_numbers.hpp"
 #include "fix/timer_offset.hpp"
 #include "fix/sane_defaults.hpp"
 #include "fix/vehicle_team_desync.hpp"
@@ -93,6 +92,7 @@
 #include "fix/alternate_bump_attenuation.hpp"
 #include "fix/specular_memes.hpp"
 #include "fix/glass_fix.hpp"
+#include "fix/hud_bitmap_scale.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -292,7 +292,7 @@ namespace Chimera {
                 set_up_name_font();
 
                 // lol
-                set_up_nav_numbers_fix();
+                set_up_hud_bitmap_scale_fix();
                 set_up_name_fade_fix();
                 set_up_scoreboard_fade_fix();
 

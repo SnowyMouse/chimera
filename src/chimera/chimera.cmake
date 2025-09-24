@@ -112,6 +112,8 @@ add_library(chimera STATIC
     src/chimera/fix/fp_reverb.cpp
     src/chimera/fix/fp_reverb.S
     src/chimera/fix/fov_fix.cpp
+    src/chimera/fix/hud_bitmap_scale.cpp
+    src/chimera/fix/hud_bitmap_scale.S
     src/chimera/fix/invalid_command_crash.cpp
     src/chimera/fix/invalid_command_crash.S
     src/chimera/fix/interpolate/antenna.cpp
@@ -131,7 +133,6 @@ add_library(chimera STATIC
     src/chimera/fix/multitexture_overlay_fix.S
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
-    src/chimera/fix/nav_numbers.cpp
     src/chimera/fix/glass_fix.cpp
     src/chimera/fix/glass_fix.S
     src/chimera/fix/internal_shaders.cpp
