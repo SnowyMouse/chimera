@@ -1192,9 +1192,18 @@ namespace Chimera {
                 auto tag_data = tag.data;
 
                 switch(tag.primary_class) {
-                    case TagClassInt::TAG_CLASS_BITMAP:
+                    case TagClassInt::TAG_CLASS_BITMAP: {
                         tag.data = translate_index(tag_data, custom_edition_bitmaps_tag_data).data();
+                        auto *bitmap_count = reinterpret_cast<std::uint32_t *>(tag.data + 0x60);
+                        auto *bitmap_data = *reinterpret_cast<std::byte **>(tag.data + 0x64);
+
+                        // For each bitmap data block, set correct tag ID.
+                        for(std::uint32_t j = 0; j < *bitmap_count; j++) {
+                            *reinterpret_cast<TagID *>(bitmap_data + 0x20) = tag.id;
+                            bitmap_data += 0x30;
+                        }
                         break;
+                    }
                     case TagClassInt::TAG_CLASS_SOUND: {
                         std::optional<std::size_t> path_index;
 
