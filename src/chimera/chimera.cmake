@@ -124,6 +124,7 @@ add_library(chimera STATIC
     src/chimera/fix/interpolate/light.cpp
     src/chimera/fix/interpolate/object.cpp
     src/chimera/fix/interpolate/particle.cpp
+    src/chimera/fix/jason_jones_hacks.cpp
     src/chimera/fix/leak_descriptors.cpp
     src/chimera/fix/model_detail.cpp
     src/chimera/fix/model_detail.S

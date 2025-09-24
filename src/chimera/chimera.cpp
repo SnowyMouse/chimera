@@ -93,6 +93,7 @@
 #include "fix/specular_memes.hpp"
 #include "fix/glass_fix.hpp"
 #include "fix/hud_bitmap_scale.hpp"
+#include "fix/jason_jones_hacks.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -295,6 +296,9 @@ namespace Chimera {
                 set_up_hud_bitmap_scale_fix();
                 set_up_name_fade_fix();
                 set_up_scoreboard_fade_fix();
+
+                // This is just to get broken shit working.
+                set_up_jason_jones_hacks();
 
                 // More lol
                 set_up_extended_description_fix();
