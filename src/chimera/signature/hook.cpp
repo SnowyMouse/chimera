@@ -43,7 +43,7 @@ namespace Chimera {
                         break;
                     }
                     else if(op1 == 0xBF || op1 == 0xB6 || op1 == 0xB7) {
-                        if(op2 == 0x6E || op2 == 0x4E) {
+                        if(op2 == 0x6E || op2 == 0x4E || op2 == 0x4B || op2 == 0x43) {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 4);
                             at += 4;
@@ -288,7 +288,7 @@ namespace Chimera {
                         break;
                     }
 
-                    if(a == 0x6C || a == 0x4C) {
+                    if(a == 0x6C || a == 0x4C || a == 0x44) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
@@ -475,7 +475,7 @@ namespace Chimera {
                 // fld / fst
                 case 0xD9: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0x47 || op1 == 0x55 || op1 == 0x42) {
+                    if(op1 == 0x47 || op1 == 0x55 || op1 == 0x42 || op1 == 0x46) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;
