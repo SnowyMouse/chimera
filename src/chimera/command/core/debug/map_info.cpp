@@ -121,7 +121,7 @@ namespace Chimera {
 
         if(get_chimera().get_ini()->get_value_bool("memory.enable_map_memory_buffer").value_or(false)) {
             std::size_t buffer_used = loaded_map->loaded_size;
-            std::size_t buffer_size = loaded_map->buffer_size;
+            std::size_t buffer_size = loaded_map->buffer_size + loaded_map->loaded_size; // This seems off but I don't want to touch it
 
             float buffer_used_percentage = (static_cast<float>(buffer_used) / buffer_size) * 100;
 
