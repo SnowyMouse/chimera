@@ -1341,12 +1341,17 @@ namespace Chimera {
         std::FILE *sounds = nullptr;
         std::FILE *loc = nullptr;
         auto is_custom_edition = game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
-
         auto maps_folder = get_chimera().get_map_path();
-
-        bitmaps = std::fopen((maps_folder / custom_bitmaps_file).string().c_str(), "rb");
-        sounds = std::fopen((maps_folder / custom_sounds_file).string().c_str(), "rb");
-        loc = std::fopen((maps_folder / custom_loc_file).string().c_str(), "rb");
+        if(is_custom_edition) {
+            bitmaps = std::fopen((maps_folder / bitmaps_file).string().c_str(), "rb");
+            sounds = std::fopen((maps_folder / sounds_file).string().c_str(), "rb");
+            loc = std::fopen((maps_folder / loc_file).string().c_str(), "rb");
+        }
+        else {
+            bitmaps = std::fopen((maps_folder / custom_bitmaps_file).string().c_str(), "rb");
+            sounds = std::fopen((maps_folder / custom_sounds_file).string().c_str(), "rb");
+            loc = std::fopen((maps_folder / custom_loc_file).string().c_str(), "rb");
+        }
 
         auto try_close = [](auto *&what) {
             if(what) {
@@ -1355,26 +1360,6 @@ namespace Chimera {
             what = nullptr;
         };
 
-        if(is_custom_edition) {
-            if(bitmaps && sounds && loc) {
-                // TODODILE: make Halo Custom Edition load these files instead
-                std::printf("fixme:set_up_custom_edition_map_support:custom_* maps are not yet supported\n");
-                goto spaghetti_monster;
-            }
-            else {
-                spaghetti_monster:
-
-                // Fail on Custom Edition - try opening the normal ones
-                try_close(bitmaps);
-                try_close(sounds);
-                try_close(loc);
-
-                bitmaps = std::fopen((maps_folder / bitmaps_file).string().c_str(), "rb");
-                sounds = std::fopen((maps_folder / sounds_file).string().c_str(), "rb");
-                loc = std::fopen((maps_folder / loc_file).string().c_str(), "rb");
-            }
-        }
-
         // Fail
         if(!bitmaps || !sounds || !loc) {
             try_close(bitmaps);
@@ -1382,7 +1367,7 @@ namespace Chimera {
             try_close(loc);
 
             if(is_custom_edition) {
-                show_error_box("Map error", "Missing bitmaps.map/sounds.map/loc.map or custom_bitmaps.map/custom_sounds.map/custom_loc.map from your maps folder.");
+                show_error_box("Map error", "Missing bitmaps.map/sounds.map/loc.map from your maps folder.");
                 std::exit(EXIT_FAILURE);
             }
             return false;
