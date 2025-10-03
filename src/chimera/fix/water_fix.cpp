@@ -17,6 +17,7 @@ extern "C" {
     void water_bumpmap_memes_asm() noexcept;
     void water_bumpmap_memes_2_asm() noexcept;
     void adjust_water_render_target_mip_asm() noexcept;
+    void set_water_bumpmap_sampler_states_asm() noexcept;
     const void *original_opacity_set_vsh = nullptr;
     const void *original_reflection_set_vsh = nullptr;
     std::uint32_t render_target_create_loop_counter = 0;
@@ -84,6 +85,16 @@ namespace Chimera {
         }
     }
 
+    extern "C" void make_water_go_brr_samplers(std::byte *shader) noexcept {
+        float detaiL_lod_bias = - (*reinterpret_cast<float *>(shader + 0xE0));
+        DWORD *mip_lod_bias = reinterpret_cast<DWORD *>(&detaiL_lod_bias);
+
+        IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 0, D3DSAMP_MIPMAPLODBIAS, *mip_lod_bias);
+        IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 1, D3DSAMP_MIPMAPLODBIAS, *mip_lod_bias);
+        IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 2, D3DSAMP_MIPMAPLODBIAS, *mip_lod_bias);
+        IDirect3DDevice9_SetSamplerState(*global_d3d9_device, 3, D3DSAMP_MIPMAPLODBIAS, *mip_lod_bias);
+    }
+
     void set_up_water_fix() noexcept {
         global_d3d9_device = reinterpret_cast<IDirect3DDevice9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("model_af_set_sampler_states_sig").data() + 1));
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
@@ -92,35 +103,28 @@ namespace Chimera {
         add_game_start_event(initialize_water_hooks);
 
         // Make ripple mipmapping work. This is based on Mango's fix from ringoworld.
+        global_render_targets = *reinterpret_cast<std::byte **>(get_chimera().get_signature("render_targets_initialize_sig").data() + 1);
+        std::byte *water_bump = nullptr;
+        auto *water_bump_2 = get_chimera().get_signature("water_bumpmap_draw_2_sig").data() + 6;;
+        static Hook render_target_hook, sampler_hook, water_bump_hook, water_bump_hook_2;
+
+        write_jmp_call(get_chimera().get_signature("render_targets_create_texture_sig").data(), render_target_hook, reinterpret_cast<const void *>(adjust_water_render_target_mip_asm), nullptr);
+
+        // Fixed function check that doesn't even work right. This can go in the bin.
+        SigByte mod[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+        write_code_s(get_chimera().get_signature("water_bumpmap_update_sig").data(), mod);
+        write_jmp_call(get_chimera().get_signature("water_bumpmap_samplers_sig").data(), sampler_hook, nullptr, reinterpret_cast<const void *>(set_water_bumpmap_sampler_states_asm));
+
         if(get_chimera().feature_present("client_retail_demo")) {
-            global_render_targets = *reinterpret_cast<std::byte **>(get_chimera().get_signature("render_targets_initialize_sig").data() + 1);
-            auto *create_texture = get_chimera().get_signature("render_targets_create_texture_sig").data();
-            static Hook render_target_hook;
-            write_jmp_call(create_texture, render_target_hook, reinterpret_cast<const void *>(adjust_water_render_target_mip_asm), nullptr);
-
-            auto *water_bump = get_chimera().get_signature("water_bumpmap_draw_sig").data();
-            static Hook water_bump_hook;
-            write_jmp_call(water_bump, water_bump_hook, reinterpret_cast<const void *>(water_bumpmap_memes_asm), nullptr);
-
-            auto *water_bump_2 = get_chimera().get_signature("water_bumpmap_draw_2_sig").data() + 6;
+            water_bump = get_chimera().get_signature("water_bumpmap_draw_sig").data();
             bump_vertices = *reinterpret_cast<std::byte **>(get_chimera().get_signature("water_bumpmap_vertices_sig").data() + 3);
-            static Hook water_bump_hook_2;
-            write_jmp_call(water_bump_2, water_bump_hook_2, reinterpret_cast<const void *>(water_bumpmap_memes_2_asm), nullptr);
         }
         else if(get_chimera().feature_present("client_custom_edition")) {
-            global_render_targets = *reinterpret_cast<std::byte **>(get_chimera().get_signature("render_targets_initialize_sig").data() + 1);
-            auto *create_texture = get_chimera().get_signature("render_targets_create_texture_sig").data();
-            static Hook render_target_hook;
-            write_jmp_call(create_texture, render_target_hook, reinterpret_cast<const void *>(adjust_water_render_target_mip_asm), nullptr);
-
-            auto *water_bump = get_chimera().get_signature("water_bumpmap_draw_ce_sig").data() + 6;
-            static Hook water_bump_hook;
-            write_jmp_call(water_bump, water_bump_hook, reinterpret_cast<const void *>(water_bumpmap_memes_asm), nullptr);
-
-            auto *water_bump_2 = get_chimera().get_signature("water_bumpmap_draw_2_sig").data() + 6;
+            water_bump = get_chimera().get_signature("water_bumpmap_draw_ce_sig").data() + 6;
             bump_vertices = *reinterpret_cast<std::byte **>(get_chimera().get_signature("water_bumpmap_vertices_ce_sig").data() + 3);
-            static Hook water_bump_hook_2;
-            write_jmp_call(water_bump_2, water_bump_hook_2, reinterpret_cast<const void *>(water_bumpmap_memes_2_asm), nullptr);
         }
+
+        write_jmp_call(water_bump, water_bump_hook, reinterpret_cast<const void *>(water_bumpmap_memes_asm), nullptr);
+        write_jmp_call(water_bump_2, water_bump_hook_2, reinterpret_cast<const void *>(water_bumpmap_memes_2_asm), nullptr);
     }
 }
