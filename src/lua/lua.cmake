@@ -11,7 +11,6 @@ add_library(lua STATIC
     src/lua/lapi.c
     src/lua/lauxlib.c
     src/lua/lbaselib.c
-    src/lua/lbitlib.c
     src/lua/lcode.c
     src/lua/lcorolib.c
     src/lua/lctype.c

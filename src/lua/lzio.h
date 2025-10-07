@@ -1,4 +1,9 @@
-// SPDX-License-Identifier: GPL-3.0-only
+/*
+** $Id: lzio.h $
+** Buffered streams
+** See Copyright Notice in lua.h
+*/
+
 
 #ifndef lzio_h
 #define lzio_h
