@@ -134,6 +134,8 @@ add_library(chimera STATIC
     src/chimera/fix/multitexture_overlay_fix.S
     src/chimera/fix/name_fade.cpp
     src/chimera/fix/name_fade.S
+    src/chimera/fix/pas_crash_fix.cpp
+    src/chimera/fix/pas_crash_fix.S
     src/chimera/fix/glass_fix.cpp
     src/chimera/fix/glass_fix.S
     src/chimera/fix/internal_shaders.cpp

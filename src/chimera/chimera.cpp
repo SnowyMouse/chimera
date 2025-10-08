@@ -94,6 +94,7 @@
 #include "fix/glass_fix.hpp"
 #include "fix/hud_bitmap_scale.hpp"
 #include "fix/jason_jones_hacks.hpp"
+#include "fix/pas_crash_fix.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -305,6 +306,9 @@ namespace Chimera {
 
                 // wtf
                 set_up_force_crash_fix();
+
+                // Hilarious
+                set_up_sound_pas_crash_fix();
 
                 // Fuck this
                 set_up_abolish_safe_mode();

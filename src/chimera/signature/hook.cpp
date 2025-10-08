@@ -164,9 +164,16 @@ namespace Chimera {
                     }
                     // cmp reg, [reg+op3] or mov reg, [reg+op3]
                     else if(op1 == 0x3B || op1 == 0x3D || op1 == 0x8B) {
-                        offsets.push_back(at - at_start);
-                        bytes.insert(bytes.end(), at, at + 4);
-                        at += 4;
+                        if(op2 == 0xCE) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 3);
+                            at += 3;
+                        }
+                        else {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 4);
+                            at += 4;
+                        }
                         break;
                     }
                     std::terminate();
@@ -336,7 +343,7 @@ namespace Chimera {
                         at += 4;
                         break;
                     }
-                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2 || a == 0xEC || a == 0x12) {
+                    else if(a == 0xE5 || a == 0xF8 || a == 0xC3 || a == 0xC2 || a == 0xEC || a == 0x12 || a == 0xF0) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
