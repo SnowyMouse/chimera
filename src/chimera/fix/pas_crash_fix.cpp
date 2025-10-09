@@ -15,6 +15,5 @@ namespace Chimera {
         auto *ptr = get_chimera().get_signature("cluster_sound_distance_func_sig").data() + 1;
         static Hook hook;
         write_function_override(ptr, hook, reinterpret_cast<const void *>(skip_accessing_sound_pas_data_asm), &original_cluster_sound_distances_inst);
-
     }
 }

@@ -231,6 +231,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_fov", "chimera_category_visual", "client", fov_command, true, 0, 1);
         ADD_COMMAND("chimera_fov_vehicle", "chimera_category_visual", "client", fov_vehicle_command, true, 0, 1);
         ADD_COMMAND("chimera_fov_cinematic", "chimera_category_visual", "client", fov_cinematic_command, true, 0, 1);
+        ADD_COMMAND("chimera_low_detail_water", "chimera_category_visual", "client", low_detaiL_water_command, true, 0, 1);
         ADD_COMMAND("chimera_model_detail", "chimera_category_visual", "client_lod", model_detail_command, true, 0, 1);
         ADD_COMMAND("chimera_shrink_empty_weapons", "chimera_category_visual", "client", shrink_empty_weapons_command, true, 0, 1);
         ADD_COMMAND("chimera_simple_score_screen", "chimera_category_visual", "client_score_screen", simple_score_screen_command, true, 0, 1);
