@@ -36,7 +36,6 @@ add_library(lua STATIC
     src/lua/ltable.c
     src/lua/ltablib.c
     src/lua/ltm.c
-    src/lua/luac.c
     src/lua/lundump.c
     src/lua/lutf8lib.c
     src/lua/lvm.c

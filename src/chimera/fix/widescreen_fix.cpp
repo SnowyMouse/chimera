@@ -183,7 +183,7 @@ namespace Chimera {
             }
             else if(center_x < 320.0f) {
                 increase_x = 0.0f;
-            } 
+            }
         }
 
         // Adjust elements
@@ -474,7 +474,7 @@ namespace Chimera {
 
             static Hook position_teammate_indicator;
             auto &widescreen_teammate_indicator_sig = get_chimera().get_signature("widescreen_teammate_indicator_sig");
-           // write_function_override(reinterpret_cast<void *>(widescreen_teammate_indicator_sig.data()), position_teammate_indicator, reinterpret_cast<const void *>(widescreen_element_upscale_hud), &widescreen_element_position_hud_2_fn);
+            write_function_override(reinterpret_cast<void *>(widescreen_teammate_indicator_sig.data()), position_teammate_indicator, reinterpret_cast<const void *>(widescreen_element_upscale_hud), &widescreen_element_position_hud_2_fn);
 
             static Hook pickup_icon;
             auto &widescreen_hud_pickup_icon_sig = get_chimera().get_signature("widescreen_hud_pickup_icon_sig");
