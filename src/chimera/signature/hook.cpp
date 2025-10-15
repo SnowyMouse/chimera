@@ -295,7 +295,7 @@ namespace Chimera {
                         break;
                     }
 
-                    if(a == 0x6C || a == 0x4C || a == 0x44) {
+                    if(a == 0x6C || a == 0x4C || a == 0x44 || a == 0x54) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 4);
                         at += 4;
@@ -327,6 +327,13 @@ namespace Chimera {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;
+                        break;
+                    }
+
+                    if(a == 0x54) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 4);
+                        at += 4;
                         break;
                     }
 
@@ -494,7 +501,7 @@ namespace Chimera {
                         at += 2;
                         break;
                     }
-                    else if(op1 == 0x1D) {
+                    else if(op1 == 0x1D || op1 == 0x05) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;

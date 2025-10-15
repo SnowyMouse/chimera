@@ -7,7 +7,8 @@ namespace Chimera {
     enum WidescreenFixSetting {
         WIDESCREEN_OFF = 0,
         WIDESCREEN_ON,
-        WIDESCREEN_CENTER_HUD
+        WIDESCREEN_CENTER_HUD,
+        WIDESCREEN_16_9_HUD
     };
 
     /**

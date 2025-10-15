@@ -62,6 +62,31 @@ _on_hud_text_esi_asm:
     popfd
     ret
 
+.globl _on_hud_text_textbox_esi_asm
+_on_hud_text_textbox_esi_asm:
+    cmp dword ptr [_hud_text_draw_is_textbox], 1
+    je skip_this
+    pushfd
+    pushad
+    push dword ptr [ecx]
+    push esi
+    push dword ptr [esp+0x38]
+    call _on_hold_hud_text
+    add esp, 0xC
+    popad
+    popfd
+    jmp dword ptr [_skip_icon_hud_test_draw]
+
+    skip_this:
+    jmp dword ptr [_on_hud_text_textbox_esi_inst]
+
+.globl _on_draw_textbox_icons_asm
+_on_draw_textbox_icons_asm:
+    push ecx
+    call _is_textbox_with_icons
+    add esp, 4
+    ret
+
 .globl _on_weapon_pick_up_hud_text_asm
 _on_weapon_pick_up_hud_text_asm:
     pushfd

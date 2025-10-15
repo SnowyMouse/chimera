@@ -73,6 +73,12 @@ _widescreen_set_upscale_flag:
 mov dword ptr _widescreen_upscale_nav_element, 1
 ret
 
+.globl _widescreen_get_nav_marker_distance
+_widescreen_get_nav_marker_distance:
+movzx eax, word ptr [esp + 0x34]
+mov dword ptr [_widescreen_nav_element_distance], eax
+ret
+
 .globl _widescreen_unset_upscale_flag
 _widescreen_unset_upscale_flag:
 
@@ -90,3 +96,8 @@ _widescreen_unset_hud_no_center_flag:
 
 mov dword ptr _widescreen_hud_no_center, 0
 ret
+
+.globl _widescreen_unfuck_scaline_effect
+_widescreen_unfuck_scaline_effect:
+mov edi, 0x44200000
+jmp dword ptr [_original_widescreen_scaline_instr]

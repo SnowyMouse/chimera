@@ -19,6 +19,20 @@ popfd
 jmp dword ptr _widescreen_element_position_menu_text_fn
 
 
+.globl _widescreen_element_reposition_menu_text_icon
+_widescreen_element_reposition_menu_text_icon:
+
+pushfd
+pushad
+push ecx
+call _reposition_menu_text_element
+add esp, 4
+popad
+popfd
+
+jmp dword ptr _widescreen_element_position_menu_text_icon_fn
+
+
 .globl _widescreen_element_reposition_menu_text_2
 _widescreen_element_reposition_menu_text_2:
 

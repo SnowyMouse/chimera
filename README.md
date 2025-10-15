@@ -477,6 +477,7 @@ the chimera folder created by Chimera.
 - [Unblock all extra weapons](#unblock-all-extra-weapons)
 - [Widescreen fix](#widescreen-fix)
 - [Alternate bump attenuation](#alternate-bump-attenuation)
+- [Low detail water](#low-detail-water)
 
 #### Aim assist
 Halo's aim assist was broken in the PC release. Chimera fixes it. It only works
@@ -843,9 +844,10 @@ Uncap the cinematic frame rate from 30 FPS.
 Fix the scaling of HUD, menu, and text elements for wider aspect ratios. This
 may break some maps, and this will not be fixed as fixing one thing will break
 another thing due to the nature of these fixes. Setting 1 has the HUD fill the
-screen, while setting 2 restricts the HUD to the center 4:3 area of the screen.
+screen, setting 2 restricts the HUD to the center 4:3 area of the screen, while
+setting 3 restricts the HUD to the center 16:9 area of the screen.
 
-**Usage:** `chimera_widescreen_fix [0/1/2]`
+**Usage:** `chimera_widescreen_fix [0/1/2/3]`
 
 #### Alternate bump attenuation
 Force enables the alternate bump attenuation method for envrionemntal bumpmapping.
@@ -855,6 +857,11 @@ standard "classic" method.
 
 **Usage:** `chimera_force_alternate_bump_attenuation [true/false]`
 
+#### Low detail water
+Adjusts the mipmap LOD bias for water ripples to imitate the level of detail seen
+when playing at 480p. You can enable this if you want.
+
+**Usage:** `chimera_low_detail_water [true/false]`
 
 
 
