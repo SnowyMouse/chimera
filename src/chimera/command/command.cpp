@@ -215,7 +215,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_master_server", "chimera_category_server", "core", master_server_command, true, 0, 4);
 
         // Visuals
-        ADD_COMMAND("chimera_af", "chimera_category_visual", "client_af", af_command, true, 0, 1);
+        ADD_COMMAND("chimera_af", "chimera_category_visual", "client", af_command, true, 0, 1);
         ADD_COMMAND("chimera_force_alternate_bump_attenuation", "chimera_category_visual", "client", force_alternate_bump_attenuation_command, true, 0, 1);
         ADD_COMMAND("chimera_block_auto_center", "chimera_category_visual", "client", block_auto_center_command, true, 0, 1);
         ADD_COMMAND("chimera_block_camera_shake", "chimera_category_visual", "client_camera_shake", block_camera_shake_command, true, 0, 1);

@@ -201,9 +201,8 @@ namespace Chimera {
                     set_up_specular_light_fix();
                 }
 
-                if(chimera->feature_present("client_af")) {
-                    set_up_model_af();
-                }
+                // Because it's not 2003.
+                set_up_model_af();
 
                 // Fix the transparent decals z-fighting on any PC made in the last decade.
                 set_up_z_fighting_fix();
@@ -639,9 +638,7 @@ namespace Chimera {
                 chimera->execute_command("chimera_fp_reverb true");
                 chimera->execute_command("chimera_throttle_fps 300");
                 chimera->execute_command("chimera_uncap_cinematic true");
-                if(chimera->feature_present("client_af")) {
-                    chimera->execute_command("chimera_af true");
-                }
+                chimera->execute_command("chimera_af true");
             }
 
             // Also set these fixes

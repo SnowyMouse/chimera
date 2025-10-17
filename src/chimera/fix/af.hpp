@@ -4,6 +4,9 @@
 #define CHIMERA_AF_HPP
 
 namespace Chimera {
+    // Trial has no built in AF, so use this to substitute the flag used in retail/custom.
+    extern bool af_trial;
+
     /**
      * Enable AF for models and decals.
      */
