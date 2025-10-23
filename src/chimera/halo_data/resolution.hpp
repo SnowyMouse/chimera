@@ -13,6 +13,9 @@ namespace Chimera {
 
         /** Width in pixels */
         std::uint16_t width;
+
+        /** Frame bounds in pixels (y0, x0, y1, x1) */
+        std::uint16_t frame_bounds[4];
     };
 
     /**
