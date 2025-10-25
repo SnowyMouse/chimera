@@ -160,8 +160,8 @@ namespace Chimera {
                 load_lua_script(script_name.c_str(), script.c_str(), script.size(), false, false);
             }
         }
-        // Load script embbended in tag data. We do not support this on Halo Trial.
-        else if(get_chimera().get_ini()->get_value_bool("memory.load_embedded_lua").value_or(true) && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
+        // Load script embbended in tag data if allowed. We do not support this on Halo Trial.
+        else if(get_chimera().get_ini()->get_value_bool("memory.load_embedded_lua").value_or(false) && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
             auto *script = reinterpret_cast<const char *>(map_header.lua_script_data);
             auto script_size = map_header.lua_script_size;
             if(script && script_size) {
