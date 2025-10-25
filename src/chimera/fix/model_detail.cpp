@@ -35,7 +35,7 @@ namespace Chimera {
             detail = 0.01F;
         }
         model_detail = detail;
-        lod_fix_scale = static_cast<float>(get_resolution().height) / 640.0F / model_detail;
+        lod_fix_scale = static_cast<float>(get_resolution().height) / 480.0F / model_detail;
     }
 
     float get_model_detail() noexcept {
