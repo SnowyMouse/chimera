@@ -31,16 +31,13 @@ namespace Chimera {
     static std::byte *global_render_targets = nullptr;
     static std::byte *bump_vertices = nullptr;
 
-    bool apply_water_mipmap_hack = false;
-
     extern "C" void set_water_shader_const(std::byte *shader, std::uint32_t start_register) noexcept {
-        // Apply mip map lod bias to ripple maps. Bullshit the value specified in the tag if we want it to look
-        // like 480p ripples (This is not how it's implemented on xbox but 4K gamers don't seem to like that).
+        // Apply mip map lod bias to ripple maps. Bullshit the value specified in the tag to look like 480p ripples.
+        // This is not how it's implemented on xbox but 4K gamers don't seem to like that.
         if(d3d9_device_caps->PixelShaderVersion >= 0xffff0101 && start_register == 1) {
 
             // Probably not "correct" but as close as I'm willing to try and make it.
-            float adjusted_lod_bias = apply_water_mipmap_hack ? log2f(get_resolution().height / 480.f) : 0.f;
-            adjusted_lod_bias = adjusted_lod_bias - (*reinterpret_cast<float *>(shader + 0xE0));
+            float adjusted_lod_bias = log2f(get_resolution().height / 480.f) - (*reinterpret_cast<float *>(shader + 0xE0));
 
             // Bump map is on sampler 0.
             DWORD *mip_lod_bias = reinterpret_cast<DWORD *>(&adjusted_lod_bias);
