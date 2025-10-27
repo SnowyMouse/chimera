@@ -489,7 +489,7 @@ namespace Chimera {
                 // fld / fst
                 case 0xD9: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0x47 || op1 == 0x55 || op1 == 0x42 || op1 == 0x46) {
+                    if(op1 == 0x47 || op1 == 0x55 || op1 == 0x42 || op1 == 0x45 || op1 == 0x46) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

@@ -185,8 +185,8 @@ size check.
 #### Model LOD fix
 The game uses your vertical resolution to determine how detailed to draw a
 model. However, this results in levels like The Pillar of Autumn showing the
-highest LOD for some mods when it shouldn't, leading to infamous glitches like
-the "4K headless chief" glitch. Chimera makes it scale by 480p, instead.
+highest LOD for some models when it shouldn't, leading to infamous glitches
+like the "4K headless chief" glitch. Chimera makes it scale by 480p, instead.
 
 #### FOV fix
 There is a bug in the game where, when you increase the vertical resolution of
@@ -477,7 +477,6 @@ the chimera folder created by Chimera.
 - [Unblock all extra weapons](#unblock-all-extra-weapons)
 - [Widescreen fix](#widescreen-fix)
 - [Alternate bump attenuation](#alternate-bump-attenuation)
-- [Low detail water](#low-detail-water)
 
 #### Aim assist
 Halo's aim assist was broken in the PC release. Chimera fixes it. It only works
@@ -716,12 +715,11 @@ Spanish.
 **Usage:** `chimera_language [en/es]`
 
 #### Model detail
-Change the model detail. Higher values increase LODs. This will not make models
-extra detailed. Instead, it will change the threshold for when higher LODs
-appear. Extremely high values will cause the aforementioned "4K headless chief"
-glitch, except at any vertical resolution this time.
+Force highest LOD level for all models. The exception being the cryotube model
+which will always scale by 480p regardless of this to prevent the afformentioned
+"4K headless chief" glitch.
 
-**Usage:** `chimera_model_detail [detail]`
+**Usage:** `chimera_model_detail [true/false]`
 
 #### Mouse sensitivity
 Set the mouse sensitivity. This is more granular than using Halo's settings. It
@@ -856,13 +854,6 @@ to shader_environment tags with the appropriate flag set and otherwise use the
 standard "classic" method.
 
 **Usage:** `chimera_force_alternate_bump_attenuation [true/false]`
-
-#### Low detail water
-Adjusts the mipmap LOD bias for water ripples to imitate the level of detail seen
-when playing at 480p. You can enable this if you want.
-
-**Usage:** `chimera_low_detail_water [true/false]`
-
 
 
 ## FAQ

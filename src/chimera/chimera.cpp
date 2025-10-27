@@ -639,6 +639,7 @@ namespace Chimera {
                 chimera->execute_command("chimera_throttle_fps 300");
                 chimera->execute_command("chimera_uncap_cinematic true");
                 chimera->execute_command("chimera_af true");
+                chimera->execute_command("chimera_model_detail true");
             }
 
             // Also set these fixes
