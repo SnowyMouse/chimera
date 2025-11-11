@@ -34,13 +34,14 @@ namespace Chimera {
             // If user inputs an invalid framerate, assume they are turning it off.
             if(new_fps <= 0) {
                 enabled = false;
-                remove_frame_event(on_frame);
+                get_chimera().get_signature("d3d9_present_frame_sig").rollback();
             }
             else {
                 enabled = true;
                 max_spf = 1.0f / new_fps;
                 next_frame = clock::now();
-                add_frame_event(on_frame, EventPriority::EVENT_PRIORITY_FINAL);
+                static Hook hook;
+                write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data() + 3, hook, reinterpret_cast<const void*>(on_frame), nullptr);
             }
         }
 
