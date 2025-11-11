@@ -95,6 +95,10 @@
 #include "fix/hud_bitmap_scale.hpp"
 #include "fix/jason_jones_hacks.hpp"
 #include "fix/pas_crash_fix.hpp"
+#include "rasterizer/rasterizer.hpp"
+#include "rasterizer/shader_transparent_generic.hpp"
+#include "halo_data/game_functions.hpp"
+#include "halo_data/game_variables.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -157,6 +161,16 @@ namespace Chimera {
                 const char *value_true = "true";
                 camo_fix_command(1, &value_true);
                 add_preframe_event(initial_tick);
+
+                // Memes
+                set_up_function_hooks();
+                set_up_game_variables();
+
+                // For renderer memes
+                set_up_rasterizer();
+
+                // Well it was going to happen eventually.
+                set_up_shader_transparent_generic();
 
                 // Fix some more bullshit
                 set_up_floor_decals_fix();

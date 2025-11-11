@@ -15,9 +15,9 @@ namespace Chimera {
     }
 
     static IDirect3DDevice9 **global_d3d9_device = nullptr;
-    static bool *af_is_enabled = nullptr;
+    bool *af_is_enabled = nullptr;
     static D3DCAPS9 *d3d9_device_caps = nullptr;
-    static std::uint32_t global_max_anisotropy = 16;
+    std::uint32_t global_max_anisotropy = 16;
     bool af_trial = false;
 
     void set_sampler_states_for_models() noexcept {

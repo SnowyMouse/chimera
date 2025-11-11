@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include <cmath>
-
 #include "math_trig.hpp"
 
 namespace Chimera {
@@ -216,4 +214,17 @@ namespace Chimera {
         if(performance_frequency.QuadPart == 0) QueryPerformanceFrequency(&performance_frequency);
         return static_cast<double>(after.QuadPart - before.QuadPart) / performance_frequency.QuadPart;
     }
+
+    long fast_ftol(float float_to_round) noexcept {
+        long rounded_down = static_cast<long>(float_to_round);
+
+        long a = rounded_down;
+        long b = rounded_down + 1;
+
+        long low = float_to_round - (static_cast<float>(a));
+        long high = (static_cast<float>(b)) - float_to_round;
+
+        return (low < high) ? a : b;
+    }
+
 }

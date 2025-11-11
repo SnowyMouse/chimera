@@ -89,6 +89,13 @@ namespace Chimera {
     };
     static_assert(sizeof(TagReference) == 0x10);
 
+    struct TagBlock {
+        std::uint32_t count;
+        std::byte *address;
+        struct tag_block_definition *definition;
+    };
+    static_assert(sizeof(TagBlock) == 0xC);
+
     /**
      * Get the tag data address
      * @return tag data address
@@ -128,6 +135,17 @@ namespace Chimera {
      * @return           pointer to the tag if found, nullptr if not
      */
     Tag *get_tag(std::size_t tag_index) noexcept;
+
+    /**
+     * Get tag block data
+     * @param  block tag block
+     * @param  index index of the tag
+     * @param  size  size of block
+
+     * @return           pointer to the block data
+     */
+    std::byte *get_tag_block_data(TagBlock *block, std::uint32_t index, std::uint32_t size) noexcept;
+
 }
 
 #endif

@@ -11,6 +11,7 @@
 #include "../../../chimera.hpp"
 #include "../../../signature/signature.hpp"
 #include "../../../fix/extend_limits.hpp"
+#include "../../../rasterizer/shader_transparent_generic.hpp"
 
 namespace Chimera {
     static void show_budget() noexcept;
@@ -55,7 +56,7 @@ namespace Chimera {
     static void show_budget() noexcept {
         auto font = GenericFont::FONT_CONSOLE;
         std::int16_t increment = font_pixel_height(font);
-        std::int16_t y = 480 - increment * 10;
+        std::int16_t y = 480 - increment * 12;
 
         // Header
         apply_text("Type", x_name, y, x_name_width, 480, blue, font, FontAlignment::ALIGN_RIGHT, TextAnchor::ANCHOR_TOP_RIGHT);
@@ -115,6 +116,14 @@ namespace Chimera {
         // Particles
         auto &particle_table = ParticleTable::get_particle_table();
         output_limit("particles", particle_table.count, use_stock_limits ? 1024 : particle_table.max_elements, y, font);
+        y += increment;
+
+        // Generic tags
+        output_limit("generic tags", generic_tag_cache_index, MAX_GENERIC_TAG_COUNT, y, font);
+        y += increment;
+
+        // Generic instances
+        output_limit("generic instances", generic_instance_index, MAX_GENERIC_INSTANCE_COUNT, y, font);
         y += increment;
 
         if(use_stock_limits) {

@@ -84,4 +84,19 @@ if __name__ == '__main__':
     # Vertex Shaders
     generate_shader_blobs("vsh_collection", sys.argv[1] + "vertex/vsh.bin", 2)
 
+    generate_shader_blobs("vsh_transparent_generic", sys.argv[1] + "vertex/transparent_generic.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_lit_m", sys.argv[1] + "vertex/transparent_generic_lit_m.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_m", sys.argv[1] + "vertex/transparent_generic_m.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_object_centered", sys.argv[1] + "vertex/transparent_generic_object_centered.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_object_centered_m", sys.argv[1] + "vertex/transparent_generic_object_centered_m.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_reflection", sys.argv[1] + "vertex/transparent_generic_reflection.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_reflection_m", sys.argv[1] + "vertex/transparent_generic_reflection_m.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_screenspace", sys.argv[1] + "vertex/transparent_generic_screenspace.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_screenspace_m", sys.argv[1] + "vertex/transparent_generic_screenspace_m.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_viewer_centered", sys.argv[1] + "vertex/transparent_generic_viewer_centered.cso", 2)
+    generate_shader_blobs("vsh_transparent_generic_viewer_centered_m", sys.argv[1] + "vertex/transparent_generic_viewer_centered_m.cso", 2)
+
     # Pixel Shaders
+    generate_shader_blobs("shader_transparent_generic_source", sys.argv[1] + "pixel/shader_transparent_generic.hlsl", 3)
+    generate_shader_blobs("disabled_shader", sys.argv[1] + "pixel/disabled.cso", 3)
+

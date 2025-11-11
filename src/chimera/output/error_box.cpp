@@ -20,4 +20,12 @@ namespace Chimera {
             MessageBox(nullptr, text, header, MB_OK | MB_ICONERROR);
         }
     }
+
+    void throw_error(bool condition, const char *message) noexcept {
+        if(!condition) {
+            show_error_box("Error", message);
+            std::exit(1);
+        }
+    }
+
 }

@@ -92,4 +92,12 @@ namespace Chimera {
         }
         return address.value();
     }
+
+    std::byte *get_tag_block_data(TagBlock *block, std::uint32_t index, std::uint32_t size) noexcept {
+        if(index < block->count) {
+            return block->address + index * size;
+        }
+
+        return nullptr;
+    }
 }

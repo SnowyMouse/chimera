@@ -22,12 +22,20 @@ if(${CHIMERA_WINXP})
     set(WINXP_COMPATIBILITY_LIBRARIES
         psapi
     )
+
+    set(D3DCOMPILER_LIBRARY
+        d3dcompiler_43
+    )
 else()
     set(WINXP_COMPATIBILITY_FILES
 
     )
     set(WINXP_COMPATIBILITY_LIBRARIES
 
+    )
+
+    set(D3DCOMPILER_LIBRARY
+        d3dcompiler
     )
 endif()
 
@@ -183,6 +191,9 @@ add_library(chimera STATIC
     src/chimera/halo_data/effect.cpp
     src/chimera/halo_data/flag.cpp
     src/chimera/halo_data/game_engine.cpp
+    src/chimera/halo_data/game_functions.cpp
+    src/chimera/halo_data/game_functions.S
+    src/chimera/halo_data/game_variables.cpp
     src/chimera/halo_data/globals.cpp
     src/chimera/halo_data/hud_fonts.cpp
     src/chimera/halo_data/hud_fonts.S
@@ -227,6 +238,11 @@ add_library(chimera STATIC
     src/chimera/output/error_box.cpp
     src/chimera/output/output.cpp
     src/chimera/output/output.S
+    src/chimera/rasterizer/shader_transparent_generic.cpp
+    src/chimera/rasterizer/shader_transparent_generic.S
+    src/chimera/rasterizer/rasterizer_transparent_geometry.cpp
+    src/chimera/rasterizer/rasterizer.cpp
+    src/chimera/rasterizer/rasterizer_vertex_shaders.cpp
     src/chimera/signature/hook.cpp
     src/chimera/signature/signature.cpp
     src/chimera/signature/hac/codefinder.cpp
@@ -272,7 +288,7 @@ target_include_directories(chimera
 )
 
 # Set the name
-target_link_libraries(chimera shlwapi map_downloader lua local_curl ws2_32 bcrypt local_zstd)
+target_link_libraries(chimera ${D3DCOMPILER_LIBRARY} shlwapi map_downloader lua local_curl ws2_32 bcrypt local_zstd)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")
