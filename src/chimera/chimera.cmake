@@ -255,6 +255,7 @@ add_library(chimera STATIC
     ${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp
 )
 add_dependencies(chimera chimera-version local_curl local_zstd)
 
@@ -278,6 +279,13 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/vertex_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/pixel_shaders.cpp" "${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp" "${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp"
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
     DEPENDS ${CHIMERA_SHADER_DEPS}
+)
+
+file(GLOB CHIMERA_GENERIC_BLOBS_DEPS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel/generic_blobs/*")
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp"
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_transparent_generic_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
+    DEPENDS ${CHIMERA_GENERIC_BLOBS_DEPS}
 )
 
 target_include_directories(chimera

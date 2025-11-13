@@ -20,6 +20,7 @@
 #include "../halo_data/game_variables.hpp"
 #include "../halo_data/tag.hpp"
 #include "../halo_data/shaders/shader_blob.hpp"
+#include "../halo_data/shaders/shader_transparent_generic_blobs.hpp"
 #include "../map_loading/crc32.hpp"
 #include "../event/game_loop.hpp"
 #include "../event/map_load.hpp"
@@ -80,7 +81,7 @@ namespace Chimera {
         std::int16_t output_cd_alpha;
         std::int16_t output_ab_cd_mux_sum_alpha;
         std::int16_t output_mapping_alpha;
-        
+
         std::int16_t is_fog_stage;
     };
     static_assert(sizeof(ShaderStageParams) == sizeof(std::int16_t) * 29);
@@ -113,7 +114,7 @@ namespace Chimera {
         return reinterpret_cast<ShaderTransparentGenericStage *>(stage_data);
     }
 
-    // Stage defines generation copied from ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
+    // Stage defines generation based on ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
     static D3D_SHADER_MACRO generate_stage_define(size_t stage_index, ShaderStageParams params) noexcept {
         char buffer[128];
         sprintf(buffer, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
@@ -123,18 +124,18 @@ namespace Chimera {
             params.input_b, params.input_b_mapping, 
             params.input_c, params.input_c_mapping, 
             params.input_d, params.input_d_mapping, 
-            
+
             params.color_mux, 
             params.output_ab, params.output_ab_function, 
             params.output_cd, params.output_cd_function, 
             params.output_ab_cd_mux_sum, 
             params.output_mapping_color, 
-            
+
             params.input_a_alpha, params.input_a_mapping_alpha, 
             params.input_b_alpha, params.input_b_mapping_alpha, 
             params.input_c_alpha, params.input_c_mapping_alpha, 
             params.input_d_alpha, params.input_d_mapping_alpha, 
-            
+
             params.alpha_mux, 
             params.output_ab_alpha, 
             params.output_cd_alpha, 
@@ -146,7 +147,7 @@ namespace Chimera {
 
         char *macro = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(macro, buffer);
-        
+
         sprintf(buffer, "S%d_CONFIGURATION", stage_index);
         char *name = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(name, buffer);
@@ -158,6 +159,7 @@ namespace Chimera {
         return result;
     }
 
+    // CRC the defines as we already have the code for it.
     std::uint32_t generate_defines_crc(D3D_SHADER_MACRO *defines) noexcept {
         std::uint32_t crc = 0;
         for(size_t i = 0; i < NUM_OF_SHADER_COMPILE_DEFINES; i++) {
@@ -193,7 +195,7 @@ namespace Chimera {
         else {
             for(size_t current_stage = 0; current_stage < shader_data->generic.stages.count && current_stage < 7; current_stage++) {
                 ShaderTransparentGenericStage *stage = shader_transparent_generic_get_stage(shader_data, current_stage);
-                
+
                 params.input_a = stage->color_input_A;
                 params.input_a_mapping = stage->color_input_A_mapping;
                 params.input_b = stage->color_input_B;
@@ -368,13 +370,13 @@ namespace Chimera {
     void write_defines_to_file( D3D_SHADER_MACRO *defines) noexcept {
         for(size_t i = 0; i < NUM_OF_SHADER_COMPILE_DEFINES; i++) {
             if(defines[i].Name != NULL) {
-                shader_file << defines[i].Name << "\n";
+                shader_file << "/D " << defines[i].Name;
             }
             if(defines[i].Definition != NULL) {
-                shader_file << defines[i].Definition << "\n";
+                shader_file << "=" << '"' << defines[i].Definition << '"' << " ";
             }
         }
-        shader_file << "\n\n";
+        shader_file << "\n";
     }
 #endif
 
@@ -396,8 +398,7 @@ namespace Chimera {
             compiled_shader->Release();
 
 #ifdef WRITE_DEFINES_TO_FILE
-            shader_file << "Shader instance " << generic_instance_index << "\n";
-            shader_file << crc << "\n";
+            shader_file << crc << " ";
             write_defines_to_file(defines);
 #endif
 
@@ -425,7 +426,6 @@ namespace Chimera {
         }
 
         if(generic_tag_cache_index == MAX_GENERIC_TAG_COUNT) {
-            shader_transparent_generic_release_instances();
             show_error_box("Error", "Max number of generic tags per map reached");
             std::exit(1);
         }
@@ -465,7 +465,7 @@ namespace Chimera {
                     continue;
                 }
                 else {
-                    shader_transparent_generic_release_instances();
+                    // No, we're actually out of room. Exit.
                     show_error_box("Error", "Max number of generic instances exceeded");
                     std::exit(1);
                 }
@@ -485,6 +485,21 @@ namespace Chimera {
 
     void shader_transparent_generic_update_for_new_map() noexcept {
         shader_transparent_generic_create_for_new_map();
+    }
+
+    void shader_transparent_generic_preload_shaders() noexcept {
+        // Load precompiled shaders for stock tagset.
+        preload_transparent_generic_blobs();
+        for(int i = 0; i < NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS; i++) {
+            if(generic_instance_index < MAX_GENERIC_INSTANCE_COUNT) {
+                IDirect3DPixelShader9 *generic_ps = nullptr;
+                IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(generic_blobs[i]), &generic_ps);
+
+                generic_instance_cache[generic_instance_index].instance_crc = generic_crc[i];
+                generic_instance_cache[generic_instance_index].shader = generic_ps;
+                generic_instance_index++;
+            }
+        }
     }
 
     // The main thingy.
@@ -529,7 +544,6 @@ namespace Chimera {
             short numeric_counter_source_index = (base == 8) ? 3 : 0;
 
             short numeric_counter_limit = shader_data->generic.numeric_counter_limit;
-            // Might need to check this for x87 fp memes.
             short numeric_counter = PIN(fast_ftol_floor(0.5f + group->animation->values[numeric_counter_source_index] * static_cast<float>(numeric_counter_limit)), 0, numeric_counter_limit);
             for(short i = 0; i < group->shader_permutation_index; i++) {
                 numeric_counter /= base;
@@ -607,8 +621,9 @@ namespace Chimera {
                     float map_v_offset = map->offset.y;
                     float map_rotation = map->rotation;
 
-                    shader_texture_animation_evaluate(map_scale.x, map_scale.y, map_u_offset, map_v_offset, map_rotation, global_frame_parameters->elapsed_time_sec, texture_animation, group->animation, &vsh_constants_texanim[map_index * 8], &vsh_constants_texanim[map_index * 8 + 4]);
-
+                    shader_texture_animation_evaluate(map_scale.x, map_scale.y, map_u_offset, map_v_offset, map_rotation, global_frame_parameters->elapsed_time_sec, 
+                                                        texture_animation, group->animation, &vsh_constants_texanim[map_index * 8], 
+                                                        &vsh_constants_texanim[map_index * 8 + 4]);
                 }
                 else if(map_index < shader_data->generic.maps.count && shader_data->generic.flags.first_map_in_screenspace) {
                     vsh_constants_texanim[map_index * 8 + 0] = global_window_parameters->frustum.view_to_world.forward.i;
@@ -643,19 +658,6 @@ namespace Chimera {
             float *stage_color0 = &ps_constants_buffer[8 * 0];
             float *stage_color1 = &ps_constants_buffer[8 * 4];
             float *fog_config   = &ps_constants_buffer[8 * 8];
-
-            // Is this strictly necessary?
-            for(std::uint16_t map_index = 0; map_index < shader_data->generic.maps.count; map_index++) {
-                ShaderTransparentGenericMap *map = shader_transparent_generic_get_map(shader_data, map_index);
-                if(map->map.tag_id.is_null()) {
-                    show_error_box("Error", "Map tag handle is null");
-                    std::exit(1);
-                }
-                if(map->mipmap_bias != 0.0f) {
-                    show_error_box("Error", "Mipmap bias is != 0. This is bad apparently");
-                    std::exit(1);
-                }
-            }
 
             if(*fog_enabled) {
                 std::uint16_t fog_stage = (shader_data->generic.stages.count > 0) ? shader_data->generic.stages.count : 1;
@@ -752,6 +754,7 @@ namespace Chimera {
         if(chimera_rasterizer_enabled) {
             add_game_exit_event(shader_transparent_generic_release_instances);
             add_map_load_event(shader_transparent_generic_update_for_new_map);
+            add_game_start_event(shader_transparent_generic_preload_shaders);
 
             auto *switch_ptr = reinterpret_cast<std::uint32_t *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("transparent_shader_draw_switch_sig").data() + 3) + 4 * 4);
             generic_switch_return = *reinterpret_cast<std::byte **>(switch_ptr);

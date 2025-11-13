@@ -25,7 +25,7 @@ namespace Chimera {
 
     bool rasterizer_compile_shader(const char *source, const char *entry, const char *profile, D3D_SHADER_MACRO *defines, ID3DBlob **compiled_shader) {
         ID3DBlob *error_messages = NULL;
-        DWORD flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY | D3DCOMPILE_OPTIMIZATION_LEVEL3;
+        DWORD flags = D3DCOMPILE_OPTIMIZATION_LEVEL3;
         HRESULT result = D3DCompile(source, strlen(source), NULL, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, flags, 0, compiled_shader, &error_messages);
         if(FAILED(result)) {
             if(error_messages != NULL) {
