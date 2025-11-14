@@ -11,6 +11,7 @@
 
 #include "../halo_data/rasterizer_common.hpp"
 #include "../output/error_box.hpp"
+#include "../output/output.hpp"
 
 
 namespace Chimera {
@@ -18,6 +19,7 @@ namespace Chimera {
     extern IDirect3DDevice9 **global_d3d9_device;
     extern D3DCAPS9 *d3d9_device_caps;
     extern bool chimera_rasterizer_enabled;
+    extern IDirect3DPixelShader9 *disabled_pixel_shader;
 
     /**
     * D3D function calls.

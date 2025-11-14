@@ -367,8 +367,7 @@ namespace Chimera {
         ID3DBlob *compiled_shader = NULL;
         const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_source);
         if(!rasterizer_compile_shader(buffer, "main", "ps_3_0", defines, &compiled_shader)) {
-            show_error_box("Error", "Generic pixel shader failed to compile");
-            std::exit(1);
+            return NULL;
         }
         return compiled_shader;
     }
@@ -401,8 +400,14 @@ namespace Chimera {
         if(generic_instance_index < MAX_GENERIC_INSTANCE_COUNT) {
             ID3DBlob *compiled_shader = shader_transparent_generic_compile_shader(defines);
             IDirect3DPixelShader9 *generic_ps = nullptr;
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
-            compiled_shader->Release();
+            if(compiled_shader) {
+                IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
+                compiled_shader->Release();
+            }
+            else {
+                // If compilation failed, return the disabled shader instead of crashing.
+                generic_ps = disabled_pixel_shader;
+            }
 
 #ifdef WRITE_DEFINES_TO_FILE
             const char *hex = "0x";
