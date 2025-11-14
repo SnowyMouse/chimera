@@ -15,7 +15,6 @@ namespace Chimera {
     /**
     * Constants
     */
-
     enum ShaderType : short{
         SHADER_TYPE_SCREEN,
         SHADER_TYPE_EFFECT,
@@ -147,7 +146,6 @@ namespace Chimera {
     /**
     * shader_transparent_generic
     */
-
     enum ShaderTransparentGenericConstants {
         MAXIMUM_MAPS_PER_SHADER_TRANSPARENT_GENERIC=   4,
         MAXIMUM_STAGES_PER_SHADER_TRANSPARENT_GENERIC= 7,

@@ -10,8 +10,8 @@
 namespace Chimera {
 
     enum {
-        MAX_GENERIC_INSTANCE_COUNT = 320,
-        MAX_GENERIC_TAG_COUNT = 320
+        MAX_GENERIC_INSTANCE_COUNT = 512,
+        MAX_GENERIC_TAG_COUNT = 512
     };
 
     struct GenericTag {

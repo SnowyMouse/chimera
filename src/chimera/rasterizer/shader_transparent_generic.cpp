@@ -38,6 +38,7 @@ namespace Chimera {
 
 #ifdef WRITE_DEFINES_TO_FILE
     std::ofstream shader_file;
+    std::uint32_t defines_count = 0;
 #endif
 
     static GenericTag generic_tag_cache[MAX_GENERIC_TAG_COUNT] = {};
@@ -117,8 +118,8 @@ namespace Chimera {
 
     // Stage defines generation based on ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
     static D3D_SHADER_MACRO generate_stage_define(size_t stage_index, ShaderStageParams params) noexcept {
-        char buffer[180];
-        snprintf(buffer, 180, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
+        char buffer[200];
+        snprintf(buffer, 200, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
             stage_index, 
 
             params.input_a, params.input_a_mapping, 
@@ -149,7 +150,7 @@ namespace Chimera {
         char *macro = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(macro, buffer);
 
-        snprintf(buffer, 180, "S%d_CONFIGURATION", stage_index);
+        snprintf(buffer, 200, "S%d_CONFIGURATION", stage_index);
         char *name = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(name, buffer);
 
@@ -411,20 +412,20 @@ namespace Chimera {
 
 #ifdef WRITE_DEFINES_TO_FILE
             const char *hex = "0x";
-            shader_file << '"';
+            shader_file << "shader_" << std::setw(2) << std::setfill('0') << std::hex << defines_count << " = " << "{ ";
             for(int i = 0; i < 32; i++) {
                 shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
             }
-            shader_file <<'"' << " ";
+            shader_file <<" }; ";
             write_defines_to_file(defines);
+            defines_count++;
 #endif
 
             memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
             generic_instance_cache[generic_instance_index].shader = generic_ps;
-            generic_instance_index++;
             GlobalFree(hash);
 
-            return generic_instance_index - 1;
+            return generic_instance_index++;
         }
         else {
             show_error_box("Error", "Exceeded max generic instance count");
@@ -488,21 +489,13 @@ namespace Chimera {
                     std::exit(1);
                 }
             }
-            if(tag.primary_class != TAG_CLASS_SHADER_TRANSPARENT_GENERIC) {
-                continue;
-            }
-
-            if(!tag.data) {
+            if(tag.primary_class != TAG_CLASS_SHADER_TRANSPARENT_GENERIC || !tag.data) {
                 continue;
             }
             else {
                 shader_transparent_generic_create(reinterpret_cast<ShaderTransparentGeneric *>(tag.data), true);
             }
         }
-    }
-
-    void shader_transparent_generic_update_for_new_map() noexcept {
-        shader_transparent_generic_create_for_new_map();
     }
 
     void shader_transparent_generic_preload_shaders() noexcept {
@@ -771,7 +764,7 @@ namespace Chimera {
     void set_up_shader_transparent_generic() noexcept {
         if(chimera_rasterizer_enabled) {
             add_game_exit_event(shader_transparent_generic_release_instances);
-            add_map_load_event(shader_transparent_generic_update_for_new_map);
+            add_map_load_event(shader_transparent_generic_create_for_new_map);
             add_game_start_event(shader_transparent_generic_preload_shaders);
 
             auto *switch_ptr = reinterpret_cast<std::uint32_t *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("transparent_shader_draw_switch_sig").data() + 3) + 4 * 4);

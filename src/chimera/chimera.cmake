@@ -284,7 +284,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp"
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_transparent_generic_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel/generic_hashes.txt
 )
 
 target_include_directories(chimera

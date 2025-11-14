@@ -65,11 +65,17 @@ if __name__ == '__main__':
         i=i+1
 
     collection = open(sys.argv[2] + "shader_transparent_generic_blobs.cpp", "a")
+    hashlist = open(sys.argv[1] + "pixel/generic_hashes.txt", "rt")
 
     i = 0
+
     for filename in os.listdir(sys.argv[1] + "pixel/generic_blobs"):
-        collection.write("unsigned char generic_hash_" + str(i) + "[32] = " + '{' + filename + '}' + ";\n")
-        i=i+1
+        hashlist.seek(0)
+        for line in hashlist:
+            name = line[0:9]
+            if name == filename:
+                collection.write("unsigned char generic_hash_" + str(i) + "[32]" + line[9:176] + "\n")
+                i=i+1
 
     collection.write("\n\n  void preload_transparent_generic_blobs() noexcept {\n")
 
@@ -81,3 +87,4 @@ if __name__ == '__main__':
 
     collection.write("}\n}")
     collection.close()
+    hashlist.close()

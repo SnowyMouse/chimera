@@ -10,6 +10,7 @@
 #include "../math_trig/math_trig.hpp"
 
 namespace Chimera {
+
     enum BitmapDataType : std::uint16_t {
         BITMAP_TYPE_2D,
         BITMAP_TYPE_3D,
@@ -92,8 +93,6 @@ namespace Chimera {
         TagBlock bitmap_data;
     };
     static_assert(sizeof(Bitmap) == 0x6C);
-
-    
 
 }
 

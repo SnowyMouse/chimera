@@ -242,9 +242,6 @@ namespace Chimera {
     };
     static_assert(sizeof(TransparentGeometryGroup) == 0xA8);
 
-
-
-
 }
 
 #endif

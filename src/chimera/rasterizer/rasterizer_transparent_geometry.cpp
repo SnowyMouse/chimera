@@ -7,6 +7,7 @@
 
 
 namespace Chimera {
+
     extern DynamicVertices *dynamic_vertices;
 
     short rasterizer_dynamic_vertices_get_type(long dynamic_vertex_buffer_index) noexcept {
@@ -30,7 +31,6 @@ namespace Chimera {
 
     short rasterizer_transparent_geometry_get_primary_vertex_type(TransparentGeometryGroup *group) noexcept {
         short vertex_type = -1;
-
         throw_error(group, "transparent geometry group bad pointer");
 
         if(group->vertex_buffers) {
@@ -46,6 +46,5 @@ namespace Chimera {
 
         return vertex_type;
     }
-
 
 }

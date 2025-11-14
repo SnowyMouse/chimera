@@ -83,5 +83,7 @@ include("src/map_downloader/map_downloader.cmake")
 # This is required by Chimera
 include("src/lua/lua.cmake")
 
-#blake3
+# BLAKE3
+#
+# This is used for hashing shader defines to determine unique instances
 include("src/blake3/blake3.cmake")

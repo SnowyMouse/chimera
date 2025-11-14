@@ -10,6 +10,7 @@
 
 
 namespace Chimera {
+
     enum {
         NUMBER_OF_GENERIC_VERTEX_SHADERS = 11,
     };

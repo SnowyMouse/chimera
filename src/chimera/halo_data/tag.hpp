@@ -92,7 +92,7 @@ namespace Chimera {
     struct TagBlock {
         std::uint32_t count;
         std::byte *address;
-        struct tag_block_definition *definition;
+        std::byte *definition;
     };
     static_assert(sizeof(TagBlock) == 0xC);
 

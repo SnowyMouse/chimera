@@ -5,7 +5,6 @@
 
 #include <cstddef>
 #include <cstdint>
-
 #include <d3d9.h>
 #include <d3dcompiler.h>
 
