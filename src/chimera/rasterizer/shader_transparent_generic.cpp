@@ -24,8 +24,9 @@
 #include "../map_loading/crc32.hpp"
 #include "../event/game_loop.hpp"
 #include "../event/map_load.hpp"
-
 #include "../fix/af.hpp"
+
+#include "../../blake3/blake3.h"
 
 namespace Chimera {
 
@@ -116,8 +117,8 @@ namespace Chimera {
 
     // Stage defines generation based on ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
     static D3D_SHADER_MACRO generate_stage_define(size_t stage_index, ShaderStageParams params) noexcept {
-        char buffer[128];
-        sprintf(buffer, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
+        char buffer[180];
+        snprintf(buffer, 180, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
             stage_index, 
 
             params.input_a, params.input_a_mapping, 
@@ -148,7 +149,7 @@ namespace Chimera {
         char *macro = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(macro, buffer);
 
-        sprintf(buffer, "S%d_CONFIGURATION", stage_index);
+        snprintf(buffer, 180, "S%d_CONFIGURATION", stage_index);
         char *name = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(name, buffer);
 
@@ -159,20 +160,26 @@ namespace Chimera {
         return result;
     }
 
-    // CRC the defines as we already have the code for it.
-    std::uint32_t generate_defines_crc(D3D_SHADER_MACRO *defines) noexcept {
-        std::uint32_t crc = 0;
+    // Hash the defines.
+    char *generate_defines_hash(D3D_SHADER_MACRO *defines) noexcept {
+        blake3_hasher hasher;
+        blake3_hasher_init(&hasher);
+
         for(size_t i = 0; i < NUM_OF_SHADER_COMPILE_DEFINES; i++) {
-            if(defines[i].Name != NULL) {
+            // Not really any point hashing the name except for FIRST_MAP_IS_CUBE
+            if(defines[i].Name != NULL && defines[i].Definition == NULL) {
                 std::uint32_t size = strlen(defines[i].Name);
-                crc = crc32(crc, defines[i].Name, size);
+                blake3_hasher_update(&hasher, defines[i].Name, size);
             }
             if(defines[i].Definition != NULL) {
                 std::uint32_t size = strlen(defines[i].Definition);
-                crc = crc32(crc, defines[i].Definition, size);
+                blake3_hasher_update(&hasher, defines[i].Definition, size);
             }
         }
-        return crc;
+        std::uint8_t *output = reinterpret_cast<std::uint8_t *>(GlobalAlloc(GMEM_FIXED, BLAKE3_OUT_LEN));
+        blake3_hasher_finalize(&hasher, output, BLAKE3_OUT_LEN);
+
+        return reinterpret_cast<char *>(output);
     }
 
     static D3D_SHADER_MACRO *generate_defines(ShaderTransparentGeneric *shader_data) noexcept {
@@ -381,11 +388,11 @@ namespace Chimera {
 #endif
 
     std::uint32_t shader_transparent_generic_create_instance(D3D_SHADER_MACRO *defines) {
-        std::uint32_t crc = generate_defines_crc(defines);
+        char *hash = generate_defines_hash(defines);
 
         // Do we already have a shader for these defines?
         for(std::uint16_t i = 0; i < generic_instance_index && i < MAX_GENERIC_INSTANCE_COUNT; i++) {
-            if(generic_instance_cache[i].instance_crc == crc) {
+            if(strncmp(generic_instance_cache[i].instance_hash, hash, 32) == 0) {
                 return i;
             }
         }
@@ -398,13 +405,19 @@ namespace Chimera {
             compiled_shader->Release();
 
 #ifdef WRITE_DEFINES_TO_FILE
-            shader_file << crc << " ";
+            const char *hex = "0x";
+            shader_file << '"';
+            for(int i = 0; i < 32; i++) {
+                shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
+            }
+            shader_file <<'"' << " ";
             write_defines_to_file(defines);
 #endif
 
-            generic_instance_cache[generic_instance_index].instance_crc = crc;
+            memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
             generic_instance_cache[generic_instance_index].shader = generic_ps;
             generic_instance_index++;
+            GlobalFree(hash);
 
             return generic_instance_index - 1;
         }
@@ -495,7 +508,7 @@ namespace Chimera {
                 IDirect3DPixelShader9 *generic_ps = nullptr;
                 IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(generic_blobs[i]), &generic_ps);
 
-                generic_instance_cache[generic_instance_index].instance_crc = generic_crc[i];
+                memcpy(generic_instance_cache[generic_instance_index].instance_hash, generic_hash[i], 32);
                 generic_instance_cache[generic_instance_index].shader = generic_ps;
                 generic_instance_index++;
             }

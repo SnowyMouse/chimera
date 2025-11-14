@@ -17,11 +17,11 @@ def generate_shader_blobs(name, binary):
         collection.write("\n\n")
         collection.write("namespace Chimera {\n")
         collection.write("unsigned char *generic_blobs[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];\n")
-        collection.write("std::uint32_t generic_crc[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];\n")
+        collection.write("unsigned char *generic_hash[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];\n")
 
     collection.write("\n\n")
 
-    collection.write("const size_t " + name +"_size = " + str(binary_size) + ";\n\n")
+    #collection.write("const size_t " + name +"_size = " + str(binary_size) + ";\n\n")
     collection.write("unsigned char " + name +"[" + str(binary_size) + "] = {\n")
 
     i = 0
@@ -59,17 +59,24 @@ if __name__ == '__main__':
         pass
 
     # Pixel Shaders
+    i = 0
     for filename in os.listdir(sys.argv[1] + "pixel/generic_blobs"):
-        generate_shader_blobs("blob_" + filename, sys.argv[1] + "pixel/generic_blobs/" + filename)
+        generate_shader_blobs("blob_" + str(i), sys.argv[1] + "pixel/generic_blobs/" + filename)
+        i=i+1
 
     collection = open(sys.argv[2] + "shader_transparent_generic_blobs.cpp", "a")
+
+    i = 0
+    for filename in os.listdir(sys.argv[1] + "pixel/generic_blobs"):
+        collection.write("unsigned char generic_hash_" + str(i) + "[32] = " + '{' + filename + '}' + ";\n")
+        i=i+1
 
     collection.write("\n\n  void preload_transparent_generic_blobs() noexcept {\n")
 
     i = 0
     for filename in os.listdir(sys.argv[1] + "pixel/generic_blobs"):
-        collection.write("generic_blobs[" + str(i) + "] = blob_" + filename + ";\n")
-        collection.write("generic_crc[" + str(i) + "] = " + filename + ";\n\n")
+        collection.write("generic_blobs[" + str(i) + "] = blob_" + str(i) + ";\n")
+        collection.write("generic_hash[" + str(i) + "] = generic_hash_" + str(i) + ";\n")
         i = i + 1
 
     collection.write("}\n}")

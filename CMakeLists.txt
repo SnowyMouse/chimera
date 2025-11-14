@@ -82,3 +82,6 @@ include("src/map_downloader/map_downloader.cmake")
 #
 # This is required by Chimera
 include("src/lua/lua.cmake")
+
+#blake3
+include("src/blake3/blake3.cmake")

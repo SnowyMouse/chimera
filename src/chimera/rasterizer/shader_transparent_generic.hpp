@@ -21,7 +21,7 @@ namespace Chimera {
     };
 
     struct GenericInstance {
-        std::uint32_t instance_crc;
+        char instance_hash[32];
         IDirect3DPixelShader9 *shader;
     };
 

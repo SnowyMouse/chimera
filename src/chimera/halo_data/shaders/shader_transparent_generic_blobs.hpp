@@ -10,7 +10,7 @@ namespace Chimera {
     };
 
     extern unsigned char *generic_blobs[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];
-    extern std::uint32_t generic_crc[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];
+    extern unsigned char *generic_hash[NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS];
 
     /*
     * Initialize precompiled shader_transparent_generic shaders.

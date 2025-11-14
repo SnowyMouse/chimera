@@ -281,11 +281,10 @@ add_custom_command(
     DEPENDS ${CHIMERA_SHADER_DEPS}
 )
 
-file(GLOB CHIMERA_GENERIC_BLOBS_DEPS "${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel/generic_blobs/*")
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp"
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_transparent_generic_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
-    DEPENDS ${CHIMERA_GENERIC_BLOBS_DEPS}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel
 )
 
 target_include_directories(chimera
@@ -296,7 +295,7 @@ target_include_directories(chimera
 )
 
 # Set the name
-target_link_libraries(chimera ${D3DCOMPILER_LIBRARY} shlwapi map_downloader lua local_curl ws2_32 bcrypt local_zstd)
+target_link_libraries(chimera ${D3DCOMPILER_LIBRARY} shlwapi blake3 map_downloader lua local_curl ws2_32 bcrypt local_zstd)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")
