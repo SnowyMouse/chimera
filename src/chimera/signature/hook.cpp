@@ -234,7 +234,7 @@ namespace Chimera {
                     if(op1 == 0x3D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 10);
-                        at += 10; 
+                        at += 10;
                         break;
                     }
                     // add/or/adc/sbb/and/sub/xor/cmp <register> 0x00000000-0x7FFFFFFF
@@ -323,7 +323,7 @@ namespace Chimera {
                 // mov bl, [eax+esi]
                 case 0x8A: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(a == 0x1C || a == 0x48) {
+                    if(a == 0x1C || a == 0x48 || a == 0x14) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

@@ -7,7 +7,7 @@
 #include "pad.hpp"
 
 namespace Chimera {
-    struct Controls {
+    struct ControlsCustomEdition {
         std::uint8_t jump;
         std::uint8_t switch_grenade;
         std::uint8_t action;
@@ -51,8 +51,46 @@ namespace Chimera {
         std::uint8_t controller_aim;
         PAD(0x3);
     };
+    static_assert(sizeof(ControlsCustomEdition) == 0x34);
 
-    Controls &get_controls() noexcept;
+    struct ControlsRetailDemo {
+        std::uint8_t jump;
+        std::uint8_t switch_grenade;
+        std::uint8_t action;
+        std::uint8_t switch_weapon;
+
+        std::uint8_t melee;
+        std::uint8_t flashlight;
+        std::uint8_t secondary_fire;
+        std::uint8_t primary_fire;
+
+        std::uint8_t menu_forward;
+        std::uint8_t menu_back;
+        std::uint8_t crouch;
+        std::uint8_t zoom;
+
+        std::uint8_t scores;
+        std::uint8_t reload;
+        std::uint8_t exchange_weapons;
+        std::uint8_t all_chat;
+
+        std::uint8_t team_chat;
+        std::uint8_t vehicle_chat;
+        PAD(0x1);
+        PAD(0x1);
+
+        float move_forward;
+        float move_left;
+        float aim_left;
+        float aim_up;
+
+        std::uint8_t controller_aim;
+        PAD(0x3);
+    };
+    static_assert(sizeof(ControlsRetailDemo) == 0x28);
+
+    ControlsCustomEdition &get_custom_edition_controls() noexcept;
+    ControlsRetailDemo &get_retail_demo_controls() noexcept;
 }
 
 #endif

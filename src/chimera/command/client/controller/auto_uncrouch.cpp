@@ -8,6 +8,7 @@
 #include "../../../halo_data/controls.hpp"
 #include "../../../halo_data/player.hpp"
 #include "../../../halo_data/object.hpp"
+#include "../../../halo_data/game_engine.hpp"
 
 extern "C" {
     void auto_uncrouch_asm() noexcept;
@@ -15,8 +16,20 @@ extern "C" {
 
 extern "C" std::uint32_t auto_uncrouch_cpp() {
     using namespace Chimera;
-    auto &controls = get_controls();
-    if(std::abs(controls.move_forward) >= 0.98F || std::abs(controls.move_left) >= 0.98F) {
+    float move_forward;
+    float move_left;
+    if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+        auto &controls = get_custom_edition_controls();
+        move_forward = controls.move_forward;
+        move_left = controls.move_left;
+    }
+    else {
+        auto &controls = get_retail_demo_controls();
+        move_forward = controls.move_forward;
+        move_left = controls.move_left;
+    }
+
+    if(std::abs(move_forward) >= 0.98F || std::abs(move_left) >= 0.98F) {
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(player) {
             auto &object_table = ObjectTable::get_object_table();
