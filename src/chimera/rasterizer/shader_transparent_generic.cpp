@@ -118,30 +118,30 @@ namespace Chimera {
 
     // Stage defines generation based on ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
     static D3D_SHADER_MACRO generate_stage_define(size_t stage_index, ShaderStageParams params) noexcept {
-        char buffer[200];
-        snprintf(buffer, 200, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
-            stage_index, 
+        char buffer[216];
+        snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            stage_index,
 
-            params.input_a, params.input_a_mapping, 
-            params.input_b, params.input_b_mapping, 
-            params.input_c, params.input_c_mapping, 
-            params.input_d, params.input_d_mapping, 
+            params.input_a, params.input_a_mapping,
+            params.input_b, params.input_b_mapping,
+            params.input_c, params.input_c_mapping,
+            params.input_d, params.input_d_mapping,
 
-            params.color_mux, 
-            params.output_ab, params.output_ab_function, 
-            params.output_cd, params.output_cd_function, 
-            params.output_ab_cd_mux_sum, 
-            params.output_mapping_color, 
+            params.color_mux,
+            params.output_ab, params.output_ab_function,
+            params.output_cd, params.output_cd_function,
+            params.output_ab_cd_mux_sum,
+            params.output_mapping_color,
 
-            params.input_a_alpha, params.input_a_mapping_alpha, 
-            params.input_b_alpha, params.input_b_mapping_alpha, 
-            params.input_c_alpha, params.input_c_mapping_alpha, 
-            params.input_d_alpha, params.input_d_mapping_alpha, 
+            params.input_a_alpha, params.input_a_mapping_alpha,
+            params.input_b_alpha, params.input_b_mapping_alpha,
+            params.input_c_alpha, params.input_c_mapping_alpha,
+            params.input_d_alpha, params.input_d_mapping_alpha,
 
-            params.alpha_mux, 
-            params.output_ab_alpha, 
-            params.output_cd_alpha, 
-            params.output_ab_cd_mux_sum_alpha, 
+            params.alpha_mux,
+            params.output_ab_alpha,
+            params.output_cd_alpha,
+            params.output_ab_cd_mux_sum_alpha,
             params.output_mapping_alpha,
 
             params.is_fog_stage
@@ -150,7 +150,7 @@ namespace Chimera {
         char *macro = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(macro, buffer);
 
-        snprintf(buffer, 200, "S%d_CONFIGURATION", stage_index);
+        snprintf(buffer, sizeof(buffer), "S%d_CONFIGURATION", stage_index);
         char *name = reinterpret_cast<char *>(GlobalAlloc(GMEM_FIXED, strlen(buffer) + 1));
         strcpy(name, buffer);
 
@@ -539,7 +539,7 @@ namespace Chimera {
         IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(vertex_type));
         IDirect3DDevice9_SetPixelShader(*global_d3d9_device, NULL);
 
-        rasterizer_set_render_state(D3DRS_CULLMODE, shader_data->generic.flags.two_sided ? D3DCULL_NONE : D3DCULL_CCW);  
+        rasterizer_set_render_state(D3DRS_CULLMODE, shader_data->generic.flags.two_sided ? D3DCULL_NONE : D3DCULL_CCW);
         rasterizer_set_render_state(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
         rasterizer_set_render_state(D3DRS_ALPHABLENDENABLE, TRUE);
         rasterizer_set_render_state(D3DRS_ALPHATESTENABLE, shader_data->generic.flags.alpha_tested ? TRUE : FALSE);
@@ -550,7 +550,7 @@ namespace Chimera {
         // Numeric bitmap indexing
         if(shader_data->generic.flags.numeric && group->animation && shader_data->generic.maps.count > 0) {
             ShaderTransparentGenericMap *map = shader_transparent_generic_get_map(shader_data, 0);
-            
+
             short base = reinterpret_cast<Bitmap *>(get_tag(map->map.tag_id)->data)->bitmap_data.count;
             short numeric_counter_source_index = (base == 8) ? 3 : 0;
 
@@ -632,8 +632,8 @@ namespace Chimera {
                     float map_v_offset = map->offset.y;
                     float map_rotation = map->rotation;
 
-                    shader_texture_animation_evaluate(map_scale.x, map_scale.y, map_u_offset, map_v_offset, map_rotation, global_frame_parameters->elapsed_time_sec, 
-                                                        texture_animation, group->animation, &vsh_constants_texanim[map_index * 8], 
+                    shader_texture_animation_evaluate(map_scale.x, map_scale.y, map_u_offset, map_v_offset, map_rotation, global_frame_parameters->elapsed_time_sec,
+                                                        texture_animation, group->animation, &vsh_constants_texanim[map_index * 8],
                                                         &vsh_constants_texanim[map_index * 8 + 4]);
                 }
                 else if(map_index < shader_data->generic.maps.count && shader_data->generic.flags.first_map_in_screenspace) {
@@ -660,7 +660,7 @@ namespace Chimera {
             IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, vsh_constants_texanim, 8);
         }
 
-        
+
         IDirect3DPixelShader9 *shader = shader_transparent_generic_create(shader_data, false);
 
         if(shader_data->generic.stages.count > 0 || shader_data->generic.maps.count > 0) {
@@ -707,7 +707,7 @@ namespace Chimera {
             if(shader_data->generic.stages.count > 0) {
                 for(std::uint16_t i = 0; i < shader_data->generic.stages.count; i++) {
                     ShaderTransparentGenericStage *stage = shader_transparent_generic_get_stage(shader_data, i);
-                    
+
                     float progress = 0.0f;
                     if(group->animation != NULL && group->animation->values != NULL && stage->flags.A_controls_color0_animation) {
                         progress = group->animation->values[0];
