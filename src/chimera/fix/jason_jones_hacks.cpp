@@ -16,8 +16,8 @@ namespace Chimera {
 
     void jason_jones_numbers() noexcept {
 
-        // Keep the memes to custom edition pls.
-        if(game_engine() != GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+        // No need to do this on demo
+        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
             return;
         }
 
@@ -96,26 +96,58 @@ namespace Chimera {
             if(*static_element_count == 3) {
                 auto *static_element_data = *reinterpret_cast<std::byte **>(tag.data + 0x64);
 
-                auto *multitexture_count_0 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-                auto *anchor_x_0 = reinterpret_cast<short *>(static_element_data + 0x24);
-                auto *anchor_y_0 = reinterpret_cast<short *>(static_element_data + 0x26);
+                const auto *multitexture_count_0 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
+                const auto *anchor_x0 = reinterpret_cast<short *>(static_element_data + 0x24);
+                const auto *anchor_y0 = reinterpret_cast<short *>(static_element_data + 0x26);
                 static_element_data += 0xB4;
-                auto *multitexture_count_1 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-                auto *anchor_x_1 = reinterpret_cast<short *>(static_element_data + 0x24);
-                auto *anchor_y_1 = reinterpret_cast<short *>(static_element_data + 0x26);
+                const auto *multitexture_count_1 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
+                auto *anchor_x1 = reinterpret_cast<short *>(static_element_data + 0x24);
+                auto *anchor_y1 = reinterpret_cast<short *>(static_element_data + 0x26);
                 static_element_data += 0xB4;
-                auto *multitexture_count_2 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-                auto *anchor_x_2 = reinterpret_cast<short *>(static_element_data + 0x24);
-                auto *anchor_y_2 = reinterpret_cast<short *>(static_element_data + 0x26);
+                const auto *multitexture_count_2 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
+                auto *anchor_x2 = reinterpret_cast<short *>(static_element_data + 0x24);
+                auto *anchor_y2 = reinterpret_cast<short *>(static_element_data + 0x26);
 
                 // Make sure it's the thing we want to bullshit.
-                if(*multitexture_count_0 == 0 && *anchor_x_0 == 7 && *anchor_y_0 == 21 && *multitexture_count_1 == 1 && *anchor_x_1 == 92 &&
-                        *anchor_y_1 == 85 && *multitexture_count_2 == 1 && *anchor_x_2 == 445 && *anchor_y_2 == 85) {
+                if(*multitexture_count_0 == 0 &&
+                    *anchor_x0 == 7 && *anchor_y0 == 21 &&
+                    *multitexture_count_1 == 1 && *anchor_x1 == 92 && *anchor_y1 == 85 &&
+                    *multitexture_count_2 == 1 && *anchor_x2 == 445 && *anchor_y2 == 85) {
 
-                    *anchor_x_1 = 132;
-                    *anchor_y_1 = 113;
-                    *anchor_x_2 = 484;
-                    *anchor_y_2 = 113;
+                    *anchor_x1 = 132;
+                    *anchor_y1 = 113;
+                    *anchor_x2 = 484;
+                    *anchor_y2 = 113;
+                }
+            }
+            // 2 static elements? Check for old refined sniper ticks and do a different hack here to fix incorrect multitexture blend mode usage
+            // There is no need to do this on the demo version, as these tags were only used in modded stock maps that can be updated.
+            else if(*static_element_count == 2 && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
+                auto *static_element_data = *reinterpret_cast<std::byte **>(tag.data + 0x64);
+
+                const auto *multitexture_overlay_count_0 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
+                auto *multitexture_overlay_0 = *reinterpret_cast<std::byte **>(static_element_data + 0x7C + 4);
+                const auto *anchor_x0 = reinterpret_cast<short *>(static_element_data + 0x24);
+                const auto *anchor_y0 = reinterpret_cast<short *>(static_element_data + 0x26);
+
+                static_element_data += 0xB4;
+                const auto *multitexture_overlay_count_1 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
+                auto *multitexture_overlay_1 = *reinterpret_cast<std::byte **>(static_element_data + 0x7C + 4);
+                const auto *anchor_x1 = reinterpret_cast<short *>(static_element_data + 0x24);
+                const auto *anchor_y1 = reinterpret_cast<short *>(static_element_data + 0x26);
+
+                if(*multitexture_overlay_count_0 == 1 &&
+                    *anchor_x0 == -176 && (*anchor_y0 == 7 || *anchor_y0 == 9) && // 7: old refined, 9: newer refined
+                    *multitexture_overlay_count_1 == 1 &&
+                    *anchor_x1 == 176 && (*anchor_y1 == 7 || *anchor_y1 == 9)) {
+                    auto *multitexture_blend_function_0 = reinterpret_cast<short *>(multitexture_overlay_0 + 0x2E); // zero to one blend function
+                    auto *multitexture_blend_function_1 = reinterpret_cast<short *>(multitexture_overlay_1 + 0x2E);
+
+                    // Apply filth
+                    if(*multitexture_blend_function_0 == 1 && *multitexture_blend_function_1 == 1) { // subtract
+                        *multitexture_blend_function_0 = 3; // multiply2x
+                        *multitexture_blend_function_1 = 3;
+                    }
                 }
             }
         }
@@ -123,9 +155,7 @@ namespace Chimera {
 
     void set_up_jason_jones_hacks() noexcept {
         add_map_load_event(jason_jones_sniper_ticks);
-
-        // Uncomment to meme maps using the old refined 2x HUD numbers.
-        //add_map_load_event(jason_jones_numbers);
-        //overwrite(get_chimera().get_signature("hud_number_element_highres_sig").data() + 2, &highres_num_multipler);
+        add_map_load_event(jason_jones_numbers);
+        overwrite(get_chimera().get_signature("hud_number_element_highres_sig").data() + 2, &highres_num_multipler);
     }
 }
