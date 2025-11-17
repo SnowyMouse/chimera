@@ -6,7 +6,9 @@
 _auto_uncrouch_asm:
     cmp ecx, 0xA
     jne FINISH
+    push ecx
     call _auto_uncrouch_cpp
+    pop ecx
     cmp eax, 1
     jne FINISH
     ;# If we're supposed to automatically uncrouch, increment ecx by 1 to skip it

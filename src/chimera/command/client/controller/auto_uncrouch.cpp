@@ -16,7 +16,7 @@ extern "C" {
 extern "C" std::uint32_t auto_uncrouch_cpp() {
     using namespace Chimera;
     auto &controls = get_controls();
-    if(std::abs(controls.move_forward) == 1.0F || std::abs(controls.move_left) == 1.0F) {
+    if(std::abs(controls.move_forward) >= 0.98F || std::abs(controls.move_left) >= 0.98F) {
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(player) {
             auto &object_table = ObjectTable::get_object_table();
