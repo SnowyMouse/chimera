@@ -15,7 +15,7 @@ namespace Chimera {
     /**
     * Constants
     */
-    enum ShaderType : short{
+    enum ShaderType : short {
         SHADER_TYPE_SCREEN,
         SHADER_TYPE_EFFECT,
         SHADER_TYPE_DECAL,
@@ -102,6 +102,13 @@ namespace Chimera {
         NUMBER_OF_SHADER_FRAMEBUFFER_FADE_MODES
     };
 
+    enum RadiosityFlags {
+        SHADER_RADIOSITY_SIMPLE_PARAMETERIZATION_BIT,
+        SHADER_RADIOSITY_IGNORE_NORMALS_BIT,
+        SHADER_RADIOSITY_TRANSPARENT_LIT_BIT,
+        NUMBER_OF_SHADER_RADIOSITY_FLAGS
+    };
+
     enum RadiosityDetail : std::uint16_t {
         RADIOSITY_DETAIL_HIGH,
         RADIOSITY_DETAIL_MEDIUM,
@@ -110,16 +117,8 @@ namespace Chimera {
         NUMBER_OF_SHADER_RADIOSITY_DETAIL_LEVELS
     };
 
-    struct RadiosityFlags {
-        std::uint16_t simple_paramertization : 1;
-        std::uint16_t ignore_normals : 1;
-        std::uint16_t transparent_lit : 1;
-        PAD_BIT(std::uint16_t, 13);
-    };
-    static_assert(sizeof(RadiosityFlags) == 0x2);
-
     struct ShaderRadiosityProperties {
-        RadiosityFlags flags;
+        std::uint16_t flags;
         RadiosityDetail detail_level;
         float power;
         ColorRGB color;
@@ -136,7 +135,7 @@ namespace Chimera {
     struct _shader {
         ShaderRadiosityProperties radiosity;
         ShaderPhysicsProperties physics;
-        
+
         ShaderType type;
         std::uint16_t pad;
     };
@@ -151,27 +150,31 @@ namespace Chimera {
         MAXIMUM_STAGES_PER_SHADER_TRANSPARENT_GENERIC= 7,
     };
 
-    struct GenericMapFlags {
-        std::uint16_t map_point_sampled : 1;
-        std::uint16_t map_u_clamped : 1;
-        std::uint16_t map_v_clamped : 1;
-        PAD_BIT(std::uint16_t, 13);
+    enum ShaderTransparentGenericMapFlags {
+        SHADER_TRANSPARENT_GENERIC_MAP_POINT_SAMPLED_BIT,
+        SHADER_TRANSPARENT_GENERIC_MAP_U_CLAMPED_BIT,
+        SHADER_TRANSPARENT_GENERIC_MAP_V_CLAMPED_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_GENERIC_MAP_FLAGS
     };
-    static_assert(sizeof(GenericMapFlags) == 0x2);
 
     struct ShaderTransparentGenericMap {
-        GenericMapFlags flags;
+        std::uint16_t flags;
         short type;
-        
-        Point2D scale; // 0 defaults to 1
+        Point2D scale;
         Point2D offset;
         float rotation;
-        float mipmap_bias; // [0,1]
+        float mipmap_bias;
         TagReference map;
-        
         ShaderTextureAnimation animation;
     };
     static_assert(sizeof(ShaderTransparentGenericMap) == 0x64);
+
+    enum ShaderTransparentGenericStageFlags {
+        SHADER_TRANSPARENT_GENERIC_STAGE_COLOR_MUX_BIT,
+        SHADER_TRANSPARENT_GENERIC_STAGE_ALPHA_MUX_BIT,
+        SHADER_TRANSPARENT_GENERIC_STAGE_A_CONTROLS_COLOR0_ANIMATION_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_GENERIC_STAGE_FLAGS
+    };
 
     enum ShaderTransparentGenericStageColorInputs : short {
         SHADER_TRANSPARENT_GENERIC_STAGE_COLOR_INPUT_ZERO,
@@ -272,16 +275,8 @@ namespace Chimera {
         NUMBER_OF_SHADER_TRANSPARENT_GENERIC_STAGE_OUTPUT_MAPPINGS
     };
 
-    struct GenericStageFlags {
-        std::uint16_t color_mux : 1;
-        std::uint16_t alpha_mux : 1;
-        std::uint16_t A_controls_color0_animation : 1;
-        PAD_BIT(std::uint16_t, 13);
-    };
-    static_assert(sizeof(GenericStageFlags) == 0x2);
-
     struct ShaderTransparentGenericStage {
-        GenericStageFlags flags;
+        std::uint16_t flags;
         short type;
 
         short constant_color0_source;
@@ -329,21 +324,21 @@ namespace Chimera {
         NUMBER_OF_SHADER_TRANSPARENT_GENERIC_TYPES
     };
 
-    struct GenericFlags {
-        std::uint8_t alpha_tested : 1;
-        std::uint8_t decal : 1;
-        std::uint8_t two_sided : 1;
-        std::uint8_t first_map_in_screenspace : 1;
-        std::uint8_t draw_before_water : 1;
-        std::uint8_t ignore_effect : 1;
-        std::uint8_t scale_first_map_with_distance : 1;
-        std::uint8_t numeric : 1;
+    enum ShaderTransparentGenericFlags {
+        SHADER_TRANSPARENT_GENERIC_ALPHA_TESTED_BIT,
+        SHADER_TRANSPARENT_GENERIC_DECAL_BIT,
+        SHADER_TRANSPARENT_GENERIC_TWO_SIDED_BIT,
+        SHADER_TRANSPARENT_GENERIC_FIRST_MAP_IS_IN_SCREENSPACE_BIT,
+        SHADER_TRANSPARENT_GENERIC_DRAW_BEFORE_WATER_BIT,
+        SHADER_TRANSPARENT_GENERIC_IGNORE_EFFECT_BIT,
+        SHADER_TRANSPARENT_GENERIC_SCALE_FIRST_MAP_WITH_DISTANCE_BIT,
+        SHADER_TRANSPARENT_GENERIC_NUMERIC_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_GENERIC_FLAGS
     };
-    static_assert(sizeof(GenericFlags) == 0x1);
 
     struct _shader_transparent_generic {
-        byte numeric_counter_limit;
-        GenericFlags flags;
+        std::uint8_t numeric_counter_limit;
+        std::uint8_t flags;
 
         ShaderTransparentGenericType type;
         FramebufferBlendFunction framebuffer_blend_function;
