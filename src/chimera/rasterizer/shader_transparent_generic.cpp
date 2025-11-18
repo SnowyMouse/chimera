@@ -213,7 +213,7 @@ namespace Chimera {
                 params.input_d = stage->color_input_D;
                 params.input_d_mapping = stage->color_input_D_mapping;
 
-                params.color_mux = TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_COLOR_MUX_BIT);
+                params.color_mux = TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_FLAGS_COLOR_MUX_BIT);
                 params.output_ab = stage->color_output_AB;
                 params.output_ab_function = stage->color_output_AB_function;
                 params.output_cd = stage->color_output_CD;
@@ -230,7 +230,7 @@ namespace Chimera {
                 params.input_d_alpha = stage->alpha_input_D;
                 params.input_d_mapping_alpha = stage->alpha_input_D_mapping;
 
-                params.alpha_mux = TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_ALPHA_MUX_BIT);
+                params.alpha_mux = TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_FLAGS_ALPHA_MUX_BIT);
                 params.output_ab_alpha = stage->alpha_output_AB;
                 params.output_cd_alpha = stage->alpha_output_CD;
                 params.output_ab_cd_mux_sum_alpha = stage->alpha_output_AB_CD;
@@ -539,16 +539,16 @@ namespace Chimera {
         IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(vertex_type));
         IDirect3DDevice9_SetPixelShader(*global_d3d9_device, NULL);
 
-        rasterizer_set_render_state(D3DRS_CULLMODE, TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_TWO_SIDED_BIT) ? D3DCULL_NONE : D3DCULL_CCW);
+        rasterizer_set_render_state(D3DRS_CULLMODE, TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_TWO_SIDED_BIT) ? D3DCULL_NONE : D3DCULL_CCW);
         rasterizer_set_render_state(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
         rasterizer_set_render_state(D3DRS_ALPHABLENDENABLE, TRUE);
-        rasterizer_set_render_state(D3DRS_ALPHATESTENABLE, TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_ALPHA_TESTED_BIT));
+        rasterizer_set_render_state(D3DRS_ALPHATESTENABLE, TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_ALPHA_TESTED_BIT));
         rasterizer_set_render_state(D3DRS_ALPHAREF, 0x0000007F);
 
         rasterizer_set_framebuffer_blend_function(shader_data->generic.framebuffer_blend_function);
 
         // Numeric bitmap indexing
-        if(TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_NUMERIC_BIT) && group->animation && shader_data->generic.maps.count > 0) {
+        if(TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_NUMERIC_BIT) && group->animation && shader_data->generic.maps.count > 0) {
             ShaderTransparentGenericMap *map = shader_transparent_generic_get_map(shader_data, 0);
 
             short base = reinterpret_cast<Bitmap *>(get_tag(map->map.tag_id)->data)->bitmap_data.count;
@@ -583,13 +583,13 @@ namespace Chimera {
                     rasterizer_set_texture(map_index, bitmap_type, BITMAP_USAGE_ADDITIVE, bitmap_index, map->map.tag_id);
 
                     const DWORD bitmap_address_array[4] = {D3DTADDRESS_WRAP, D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP};
-                    if(bitmap_type == BITMAP_DATA_TYPE_2D && TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_U_CLAMPED_BIT)) {
+                    if(bitmap_type == BITMAP_DATA_TYPE_2D && TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_FLAGS_U_CLAMPED_BIT)) {
                         u_address = D3DTADDRESS_CLAMP;
                     }
                     else {
                         u_address = is_first_map ? bitmap_address_array[type] : static_cast<DWORD>(D3DTADDRESS_WRAP);
                     }
-                    if(bitmap_type == BITMAP_DATA_TYPE_2D && TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_V_CLAMPED_BIT)) {
+                    if(bitmap_type == BITMAP_DATA_TYPE_2D && TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_FLAGS_V_CLAMPED_BIT)) {
                         v_address = D3DTADDRESS_CLAMP;
                     }
                     else {
@@ -605,7 +605,7 @@ namespace Chimera {
                         }
                     }
 
-                    bool point_sampled = TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_POINT_SAMPLED_BIT);
+                    bool point_sampled = TEST_FLAG(map->flags, SHADER_TRANSPARENT_GENERIC_MAP_FLAGS_POINT_SAMPLED_BIT);
                     rasterizer_set_sampler_state(map_index, D3DSAMP_ADDRESSU, u_address);
                     rasterizer_set_sampler_state(map_index, D3DSAMP_ADDRESSV, v_address);
                     rasterizer_set_sampler_state(map_index, D3DSAMP_ADDRESSW, w_address);
@@ -618,12 +618,12 @@ namespace Chimera {
                     ShaderTransparentGenericMap *map = shader_transparent_generic_get_map(shader_data, map_index);
                     Point2D map_scale = map->scale;
 
-                    if(map_index == 0 && TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_SCALE_FIRST_MAP_WITH_DISTANCE_BIT)) {
+                    if(map_index == 0 && TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_SCALE_FIRST_MAP_WITH_DISTANCE_BIT)) {
                         map_scale.x *= -group->z_sort;
                         map_scale.y *= -group->z_sort;
                     }
 
-                    if(map_index > 0 || !TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FIRST_MAP_IS_IN_SCREENSPACE_BIT)) {
+                    if(map_index > 0 || !TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_FIRST_MAP_IS_IN_SCREENSPACE_BIT)) {
                         map_scale.x *= group->model_base_map_scale.x;
                         map_scale.y *= group->model_base_map_scale.y;
                     }
@@ -637,7 +637,7 @@ namespace Chimera {
                                                         texture_animation, group->animation, &vsh_constants_texanim[map_index * 8],
                                                         &vsh_constants_texanim[map_index * 8 + 4]);
                 }
-                else if(map_index < shader_data->generic.maps.count && TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FIRST_MAP_IS_IN_SCREENSPACE_BIT)) {
+                else if(map_index < shader_data->generic.maps.count && TEST_FLAG(shader_data->generic.flags, SHADER_TRANSPARENT_GENERIC_FLAGS_FIRST_MAP_IS_IN_SCREENSPACE_BIT)) {
                     vsh_constants_texanim[map_index * 8 + 0] = global_window_parameters->frustum.view_to_world.forward.i;
                     vsh_constants_texanim[map_index * 8 + 1] = global_window_parameters->frustum.view_to_world.forward.j;
                     vsh_constants_texanim[map_index * 8 + 2] = global_window_parameters->frustum.view_to_world.forward.k;
@@ -676,7 +676,7 @@ namespace Chimera {
 
                 fog_config[0] = 1.0f;
 
-                if(group->geometry_flags.sky && shader_data->generic.framebuffer_blend_function == SHADER_FRAMEBUFFER_BLEND_FUNCTION_ALPHA_BLEND) {
+                if(TEST_FLAG(group->geometry_flags, RASTERIZER_GEOMETRY_FLAGS_SKY_BIT) && shader_data->generic.framebuffer_blend_function == SHADER_FRAMEBUFFER_BLEND_FUNCTION_ALPHA_BLEND) {
                     Plane3D *plane = &global_window_parameters->fog.plane;
                     Point3D *camera = &global_window_parameters->camera.position;
                     float eye_distance_to_fog_plane = plane->i * camera->x + plane->j * camera->y + plane->k * camera->z;
@@ -710,7 +710,7 @@ namespace Chimera {
                     ShaderTransparentGenericStage *stage = shader_transparent_generic_get_stage(shader_data, i);
 
                     float progress = 0.0f;
-                    if(group->animation != NULL && group->animation->values != NULL && TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_A_CONTROLS_COLOR0_ANIMATION_BIT)) {
+                    if(group->animation != NULL && group->animation->values != NULL && TEST_FLAG(stage->flags, SHADER_TRANSPARENT_GENERIC_STAGE_FLAGS_A_CONTROLS_COLOR0_ANIMATION_BIT)) {
                         progress = group->animation->values[0];
                     }
                     else {
