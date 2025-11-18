@@ -145,7 +145,7 @@ namespace Chimera {
     static void jason_jones_p8_bumps(std::byte *tag_data) noexcept {
         bool valid = true;
         TagReference *bump_map = reinterpret_cast<TagReference *>(tag_data + 0x128);
-        if(bump_map->tag_id != TagID::null_id()) {
+        if(!bump_map->tag_id.is_null()) {
             auto *bitmap_tag = get_tag(bump_map->tag_id);
             if(!bitmap_tag) {
                 return;
@@ -154,7 +154,7 @@ namespace Chimera {
             auto *bitmap_group = reinterpret_cast<Bitmap *>(bitmap_tag->data);
             for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
                 auto *bitmap = reinterpret_cast<BitmapData *>(get_tag_block_data(&bitmap_group->bitmap_data, i, sizeof(BitmapData)));
-                if(bitmap->format == BITMAP_FORMAT_P8_BUMP) {
+                if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
                     valid = false;
                     break;
                 }

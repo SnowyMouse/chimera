@@ -83,8 +83,8 @@ namespace Chimera {
 
     struct TagReference {
         TagClassInt tag_class;
-        char *path; 
-        size_t path_size; 
+        char *path;
+        size_t path_size;
         TagID tag_id;
     };
     static_assert(sizeof(TagReference) == 0x10);
@@ -95,6 +95,15 @@ namespace Chimera {
         std::byte *definition;
     };
     static_assert(sizeof(TagBlock) == 0xC);
+
+    struct TagData {
+        std::uint32_t size;
+        std::uint32_t flags;
+        std::uint32_t file_offset;
+        std::byte *address;
+        std::byte *definition;
+    };
+    static_assert(sizeof(TagData) == 0x14);
 
     /**
      * Get the tag data address

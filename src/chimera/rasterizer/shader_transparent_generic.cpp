@@ -574,8 +574,8 @@ namespace Chimera {
                     BitmapDataType bitmap_type;
                     bool is_first_map = map_index == 0;
 
-                    const BitmapDataType bitmap_type_array[4] = {BITMAP_TYPE_2D, BITMAP_TYPE_CUBE_MAP, BITMAP_TYPE_CUBE_MAP, BITMAP_TYPE_CUBE_MAP};
-                    bitmap_type = is_first_map ? bitmap_type_array[type] : static_cast<BitmapDataType>(BITMAP_TYPE_2D);
+                    const BitmapDataType bitmap_type_array[4] = {BITMAP_DATA_TYPE_2D, BITMAP_DATA_TYPE_CUBE_MAP, BITMAP_DATA_TYPE_CUBE_MAP, BITMAP_DATA_TYPE_CUBE_MAP};
+                    bitmap_type = is_first_map ? bitmap_type_array[type] : static_cast<BitmapDataType>(BITMAP_DATA_TYPE_2D);
 
                     DWORD u_address, v_address, w_address;
 
@@ -583,13 +583,13 @@ namespace Chimera {
                     rasterizer_set_texture(map_index, bitmap_type, BITMAP_USAGE_ADDITIVE, bitmap_index, map->map.tag_id);
 
                     const DWORD bitmap_address_array[4] = {D3DTADDRESS_WRAP, D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP};
-                    if(bitmap_type == BITMAP_TYPE_2D && map->flags.map_u_clamped) {
+                    if(bitmap_type == BITMAP_DATA_TYPE_2D && map->flags.map_u_clamped) {
                         u_address = D3DTADDRESS_CLAMP;
                     }
                     else {
                         u_address = is_first_map ? bitmap_address_array[type] : static_cast<DWORD>(D3DTADDRESS_WRAP);
                     }
-                    if(bitmap_type == BITMAP_TYPE_2D && map->flags.map_v_clamped) {
+                    if(bitmap_type == BITMAP_DATA_TYPE_2D && map->flags.map_v_clamped) {
                         v_address = D3DTADDRESS_CLAMP;
                     }
                     else {

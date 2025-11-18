@@ -13,7 +13,9 @@
 #define CEILING(n, ceiling) ((n)>(ceiling)?(ceiling):(n))
 #define PIN(n, floor, ceiling) ((n)<(floor) ? (floor) : CEILING(n, ceiling))
 #define fast_ftol_floor(x) fast_ftol(floor(x))
-
+#define FLAG(b) (1<<(b))
+#define TEST_FLAG(f, b) (((f)&FLAG(b))!=0)
+#define SET_FLAG(f, b, v) ((v) ? ((f)|=FLAG(b)) : ((f)&=~FLAG(b)))
 
 namespace Chimera {
     struct ColorARGB;

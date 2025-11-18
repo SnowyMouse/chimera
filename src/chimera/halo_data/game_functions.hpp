@@ -13,7 +13,7 @@ namespace Chimera {
         void rasterizer_transparent_geometry_group_draw(TransparentGeometryGroup *group, bool is_dirty) noexcept;
         short shader_get_vertex_shader_permutation(std::byte *shader) noexcept;
         void rasterizer_set_framebuffer_blend_function(short blend_function) noexcept;
-        void rasterizer_set_texture(std::uint16_t stage, BitmapDataType bitmap_type, BitmapUsages bitmap_usage, std::uint16_t bitmap_data_index, TagID bitmap_tag) noexcept;
+        void rasterizer_set_texture(std::uint16_t stage, BitmapDataType bitmap_type, BitmapUsage bitmap_usage, std::uint16_t bitmap_data_index, TagID bitmap_tag) noexcept;
         void shader_texture_animation_evaluate(float map_u_scale, float map_v_scale, float map_u_offset, float map_v_offset, float map_rotation, float frame_params, ShaderTextureAnimation *texture_animation, RenderAnimation *render_animation, float *u_transform_reference, float *v_transform_reference) noexcept;
         void rasterizer_transparent_geometry_group_draw_vertices(TransparentGeometryGroup *group, bool has_lightmap) noexcept;
         double periodic_function_evaluate(double period, WaveFunction function) noexcept;
