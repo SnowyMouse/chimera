@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-//#define WRITE_DEFINES_TO_FILE
+//#define WRITE_BLOBS_TO_FILE
 
-#ifdef WRITE_DEFINES_TO_FILE
+#ifdef WRITE_BLOBS_TO_FILE
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -36,9 +36,9 @@ namespace Chimera {
         IDirect3DPixelShader9 *generic_pixel_shader = nullptr;
     }
 
-#ifdef WRITE_DEFINES_TO_FILE
+#ifdef WRITE_BLOBS_TO_FILE
     std::ofstream shader_file;
-    std::uint32_t defines_count = 0;
+    std::uint32_t instance_count = 0;
 #endif
 
     static GenericTag generic_tag_cache[MAX_GENERIC_TAG_COUNT] = {};
@@ -167,8 +167,7 @@ namespace Chimera {
         blake3_hasher_init(&hasher);
 
         for(size_t i = 0; i < NUM_OF_SHADER_COMPILE_DEFINES; i++) {
-            // Not really any point hashing the name except for FIRST_MAP_IS_CUBE
-            if(defines[i].Name != NULL && defines[i].Definition == NULL) {
+            if(defines[i].Name != NULL) {
                 std::uint32_t size = strlen(defines[i].Name);
                 blake3_hasher_update(&hasher, defines[i].Name, size);
             }
@@ -373,20 +372,6 @@ namespace Chimera {
         return compiled_shader;
     }
 
-#ifdef WRITE_DEFINES_TO_FILE
-    void write_defines_to_file( D3D_SHADER_MACRO *defines) noexcept {
-        for(size_t i = 0; i < NUM_OF_SHADER_COMPILE_DEFINES; i++) {
-            if(defines[i].Name != NULL) {
-                shader_file << "/D " << defines[i].Name;
-            }
-            if(defines[i].Definition != NULL) {
-                shader_file << "=" << '"' << defines[i].Definition << '"' << " ";
-            }
-        }
-        shader_file << "\n";
-    }
-#endif
-
     std::uint32_t shader_transparent_generic_create_instance(D3D_SHADER_MACRO *defines) {
         char *hash = generate_defines_hash(defines);
 
@@ -402,6 +387,24 @@ namespace Chimera {
             ID3DBlob *compiled_shader = shader_transparent_generic_compile_shader(defines);
             IDirect3DPixelShader9 *generic_ps = nullptr;
             if(compiled_shader) {
+#ifdef WRITE_BLOBS_TO_FILE
+                const char *hex = "0x";
+                char shader_name[24];
+                snprintf(shader_name, sizeof(shader_name), "shader_%.*x", 2, instance_count);
+                shader_file << shader_name << " = " << "{ ";
+                for(int i = 0; i < 32; i++) {
+                    shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
+                }
+                shader_file <<" };\n";
+                //WRITE_BLOBS_TO_FILE(defines);
+
+                FILE* file = fopen(shader_name, "wb");
+                if(file) {
+                    fwrite(compiled_shader->GetBufferPointer(), 1, compiled_shader->GetBufferSize(), file);
+                    fclose(file);
+                }
+                instance_count++;
+#endif
                 IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
                 compiled_shader->Release();
             }
@@ -409,17 +412,6 @@ namespace Chimera {
                 // If compilation failed, return the disabled shader instead of crashing.
                 generic_ps = disabled_pixel_shader;
             }
-
-#ifdef WRITE_DEFINES_TO_FILE
-            const char *hex = "0x";
-            shader_file << "shader_" << std::setw(2) << std::setfill('0') << std::hex << defines_count << " = " << "{ ";
-            for(int i = 0; i < 32; i++) {
-                shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
-            }
-            shader_file <<" }; ";
-            write_defines_to_file(defines);
-            defines_count++;
-#endif
 
             memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
             generic_instance_cache[generic_instance_index].shader = generic_ps;
@@ -652,8 +644,8 @@ namespace Chimera {
                     vsh_constants_texanim[map_index * 8 + 1] = 0.0f;
                     vsh_constants_texanim[map_index * 8 + 2] = 0.0f;
                     vsh_constants_texanim[map_index * 8 + 3] = 0.0f;
-                    vsh_constants_texanim[map_index * 8 + 4] = 1.0f;
-                    vsh_constants_texanim[map_index * 8 + 5] = 0.0f;
+                    vsh_constants_texanim[map_index * 8 + 4] = 0.0f;
+                    vsh_constants_texanim[map_index * 8 + 5] = 1.0f;
                     vsh_constants_texanim[map_index * 8 + 6] = 0.0f;
                     vsh_constants_texanim[map_index * 8 + 7] = 0.0f;
                 }
@@ -756,7 +748,7 @@ namespace Chimera {
         IDirect3DDevice9_SetRenderState(*global_d3d9_device, D3DRS_BLENDOP, D3DBLENDOP_ADD);
     }
 
-#ifdef WRITE_DEFINES_TO_FILE
+#ifdef WRITE_BLOBS_TO_FILE
     void close_shader_defines() noexcept {
         shader_file.close();
     }
@@ -772,8 +764,8 @@ namespace Chimera {
             generic_switch_return = *reinterpret_cast<std::byte **>(switch_ptr);
             overwrite(switch_ptr, reinterpret_cast<uint32_t>(shader_transparent_generic_switch_function));
 
-#ifdef WRITE_DEFINES_TO_FILE
-            shader_file.open ("shader_defines.txt");
+#ifdef WRITE_BLOBS_TO_FILE
+            shader_file.open ("generic_hashes.txt");
             add_game_exit_event(close_shader_defines);
 #endif
         }

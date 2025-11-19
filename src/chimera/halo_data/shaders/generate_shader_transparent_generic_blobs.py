@@ -74,7 +74,7 @@ if __name__ == '__main__':
         for line in hashlist:
             name = line[0:9]
             if name == filename:
-                collection.write("unsigned char generic_hash_" + str(i) + "[32]" + line[9:176] + "\n")
+                collection.write("unsigned char generic_hash_" + str(i) + "[32]" + line[9:177] + "\n")
                 i=i+1
 
     collection.write("\n\n  void preload_transparent_generic_blobs() noexcept {\n")
