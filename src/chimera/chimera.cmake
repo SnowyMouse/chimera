@@ -295,7 +295,7 @@ target_include_directories(chimera
 )
 
 # Set the name
-target_link_libraries(chimera ${D3DCOMPILER_LIBRARY} shlwapi blake3 map_downloader lua local_curl ws2_32 bcrypt local_zstd)
+target_link_libraries(chimera ${D3DCOMPILER_LIBRARY} shlwapi blake3 map_downloader lua ${LOCAL_CURL_LIBRARIES} local_zstd)
 
 # This one isn't worth fixing
 set_source_files_properties(src/chimera/signature/hac/codefinder.cpp PROPERTIES COMPILE_FLAGS "-Wno-old-style-cast")

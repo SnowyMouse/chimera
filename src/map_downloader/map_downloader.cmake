@@ -14,5 +14,5 @@ add_executable(hac_map_downloader_test
 )
 
 add_dependencies(hac_map_downloader_test map_downloader)
-target_link_libraries(hac_map_downloader_test map_downloader local_curl ws2_32 bcrypt)
+target_link_libraries(hac_map_downloader_test map_downloader ${LOCAL_CURL_LIBRARIES})
 set_target_properties(hac_map_downloader_test PROPERTIES LINK_FLAGS "-m32 -static-libgcc -static-libstdc++ -static -lwinpthread")

@@ -25,11 +25,14 @@ find_package(Git)
 option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
 if(${CHIMERA_WINXP})
     # Windows Server 2003 with SP1, Windows XP with SP2
-    add_definitions(-D_WIN32_WINNT=0x0502 -DCHIMERA_WINXP)
+    set(CHIMERA_TARGET_WINDOWS_VERSION 0x0502)
+    add_definitions(-DCHIMERA_WINXP)
 else()
     # Windows 7
-    add_definitions(-D_WIN32_WINNT=0x0601)
+    set(CHIMERA_TARGET_WINDOWS_VERSION 0x0601)
 endif()
+
+add_definitions(-D_WIN32_WINNT=${CHIMERA_TARGET_WINDOWS_VERSION})
 
 # Build dependencies
 include(dependencies.cmake)

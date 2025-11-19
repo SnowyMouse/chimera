@@ -12,6 +12,10 @@ typedef struct {
     HMODULE module;
 } LoadedDLL;
 
+#ifdef CHIMERA_WINXP
+typedef BOOL (WINAPI *SetProcessDEPPolicy_fn_ptr)(DWORD);
+#endif
+
 static LoadedDLL *loaded_dlls;
 static int dll_count = 0;
 static int dll_capacity = 16;
@@ -217,7 +221,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
                 SetProcessDEPPolicy(PROCESS_DEP_ENABLE);
                 #else
                 HANDLE kernel32 = GetModuleHandle("kernel32.dll");
-                BOOL WINAPI (*SetProcessDEPPolicy_fn)(DWORD) = GetProcAddress(kernel32, "SetProcessDEPPolicy");
+                SetProcessDEPPolicy_fn_ptr SetProcessDEPPolicy_fn = (SetProcessDEPPolicy_fn_ptr)GetProcAddress(kernel32, "SetProcessDEPPolicy");
                 if(SetProcessDEPPolicy_fn) {
                     SetProcessDEPPolicy_fn(1);
                 }

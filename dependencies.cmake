@@ -37,6 +37,7 @@ ExternalProject_Add(curl
         -DHTTP_ONLY=ON
         -DUSE_NGHTTP2=OFF
         -DUSE_LIBIDN2=OFF
+        -DCURL_TARGET_WINDOWS_VERSION=${CHIMERA_TARGET_WINDOWS_VERSION}
 )
 
 add_library(local_curl STATIC IMPORTED)
@@ -69,3 +70,9 @@ ExternalProject_Add(zstd
 add_library(local_zstd STATIC IMPORTED)
 set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/libzstd.a)
 add_dependencies(local_zstd zstd)
+
+if(${CHIMERA_WINXP})
+    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt)
+else()
+    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt iphlpapi)
+endif()
