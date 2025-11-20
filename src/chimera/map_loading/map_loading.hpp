@@ -39,5 +39,10 @@ namespace Chimera {
      * @return         loaded map
      */
     LoadedMap *load_map(const char *map_name);
+
+    /**
+     * Check whether a map name in a valid win32 ASCII file name
+     */
+    bool map_name_is_valid(const char *map) noexcept;
 }
 #endif

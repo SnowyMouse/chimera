@@ -130,12 +130,27 @@ namespace Chimera {
         return get_map_header().engine_type == CacheFileEngine::CACHE_FILE_CUSTOM_EDITION && game_engine() == GameEngine::GAME_ENGINE_RETAIL;
     }
 
+    bool map_name_is_valid(const char *map) noexcept {
+        char map_test[32] = {};
+        std::strncpy(map_test, map, sizeof(map_test) - 1);
+        for(auto &i : map_test) {
+            auto t = static_cast<unsigned char>(i);
+            if(t > 127 || (t < 32 && t != 0)) {
+                return false;
+            }
+            else if(t == 0x3A || t == 0x3C || t == 0x3E || t == 0x3F || t == 0x2A || t == 0x2F || t == 0x5C || t == 0x7C || t == 0x22) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     LoadedMap *get_loaded_map(const charmander *name) noexcept {
         // Make a lowercase version
         charmander map_name_lowercase[32];
         std::strncpy(map_name_lowercase, name, sizeof(map_name_lowercase) - 1);
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i);
+            i = std::tolower(i, std::locale("C"));
         }
 
         // Find it!
@@ -458,7 +473,7 @@ namespace Chimera {
         charmander map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i);
+            i = std::tolower(i, std::locale("C"));
         }
 
         // Check if it's the current map. If so, do not attempt to reload it.
@@ -878,6 +893,14 @@ namespace Chimera {
             return 0;
         }
 
+        // Don't try to download garbage.
+        if(!map_name_is_valid(map)) {
+            console_error(localize("chimera_error_cannot_download_invalid_name"));
+            std::snprintf(connect_command, sizeof(connect_command), "connect \"256.256.256.256\" \"\"");
+            add_preframe_event(initiate_connection);
+            return 1;
+        }
+
         // Determine what we're downloading from
         const charmander *game_engine_str;
         switch(game_engine()) {
@@ -953,7 +976,7 @@ namespace Chimera {
         charmander file_path_extension[5] = {};
         std::snprintf(file_path_extension, sizeof(file_path_extension), "%s", file_path.extension().string().c_str());
         for(auto &fpe : file_path_extension) {
-            fpe = std::tolower(fpe);
+            fpe = std::tolower(fpe, std::locale("C"));
         }
 
         // Get the resource file if possible

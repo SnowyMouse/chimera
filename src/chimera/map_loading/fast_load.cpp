@@ -41,7 +41,7 @@ namespace Chimera {
 
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
-        while(std::tolower(*a) == std::tolower(*b)) {
+        while(std::tolower(*a, std::locale("C")) == std::tolower(*b, std::locale("C"))) {
             if(*a == 0) return true;
             a++;
             b++;
@@ -234,6 +234,11 @@ namespace Chimera {
     }
 
     static MapEntry *maybe_add_map_to_map_list(const char *map_name, std::optional<std::uint32_t> map_index = std::nullopt) {
+        // Don't add maps that are bullshit.
+        if(!map_name_is_valid(map_name)) {
+            return nullptr;
+        }
+
         // Don't add maps we've already added
         MapEntry *map_possibly;
         if((map_possibly = get_map_entry(map_name)) != nullptr) {
@@ -241,10 +246,10 @@ namespace Chimera {
         }
 
         // First, let's lowercase it
-        char map_name_lowercase[32];
+        char map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i);
+            i = std::tolower(i, std::locale("C"));
         }
 
         // Add it!

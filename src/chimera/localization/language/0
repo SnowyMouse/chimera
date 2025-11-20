@@ -20,6 +20,7 @@ chimera_error_takes_player_number                                               
 chimera_error_failed_to_open_init                                               Failed to open init file %s
 chimera_error_cannot_download_retail_maps_1                                     Retail Halo PC and HaloMD maps are unsupported by the map downloader.
 chimera_error_cannot_download_retail_maps_2                                     Modify chimera.ini and set \"download_retail_maps\" under \"memory\" to enable.
+chimera_error_cannot_download_invalid_name                                      Map name is invalid.
 
 chimera_tag_map_is_protected                                                    Map is protected (unknown)
 

@@ -175,6 +175,7 @@ chimera_error_takes_player_number                                               
 chimera_error_failed_to_open_init                                               No se pudo abrir el archivo ini %s
 chimera_error_cannot_download_retail_maps_1                                     El descargador de mapas no soporta mapas de Halo PC y Halo MD.
 chimera_error_cannot_download_retail_maps_2                                     Modifica el archivo chimera.ini y establece la opción \"download_retail_maps\" bajo la sección \"memory\" para habilitarla.
+chimera_error_cannot_download_invalid_name                                      El nombre del mapa no es válido.
 chimera_player_list_command_help                                                Muestra a los jugadores del servidor en una lista.
 chimera_player_list_command_none_found                                          No hay jugadores en el servidor.
 chimera_send_chat_message_help                                                  Envía un mensaje por el chat en un canal dado.
