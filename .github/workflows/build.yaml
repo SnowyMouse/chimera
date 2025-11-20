@@ -10,13 +10,13 @@ on:
 jobs:
   build:
     name: "Build Chimera"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: "Install deps"
         run: |-
           sudo apt-get update
-          sudo apt-get install -y software-properties-common gnupg build-essential mingw-w64 cmake python3 p7zip-full curl git zstd
+          sudo apt-get install -y software-properties-common gnupg build-essential mingw-w64 cmake python3 7zip git
 
       - name: "Checkout"
         uses: actions/checkout@v3
@@ -75,28 +75,29 @@ jobs:
           name: chimera-${{ steps.package.outputs.SHA }}
           path: ./chimera.7z
 
+      # Disabled 2025-11-20, We want to make releases with more current MSYS2 compilers and we want to be able to choose between msvcrt and ucrt.
       # Create a release and upload the build if building a tagged commit
       # NOTE: the create-release and upload-release-asset actions are
       # unmaintained, but should keep working for the forseeable future
-      - name: "Create release"
-        id: create_release
-        if: "startsWith(github.ref, 'refs/tags/')"
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.package.outputs.VERSION }}
-          release_name: Chimera v${{ steps.package.outputs.VERSION }}
-          draft: false
-          prerelease: false
-
-      - name: "Upload build"
-        uses: actions/upload-release-asset@v1
-        if: "startsWith(github.ref, 'refs/tags/')"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./chimera.7z
-          asset_name: chimera-${{ steps.package.outputs.VERSION }}.${{ steps.package.outputs.SHA }}.7z
-          asset_content_type: application/x-7z-compressed
+      #- name: "Create release"
+      #  id: create_release
+      #  if: "startsWith(github.ref, 'refs/tags/')"
+      #  uses: actions/create-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    tag_name: ${{ steps.package.outputs.VERSION }}
+      #    release_name: Chimera v${{ steps.package.outputs.VERSION }}
+      #    draft: false
+      #    prerelease: false
+      #
+      #- name: "Upload build"
+      #  uses: actions/upload-release-asset@v1
+      #  if: "startsWith(github.ref, 'refs/tags/')"
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #    asset_path: ./chimera.7z
+      #    asset_name: chimera-${{ steps.package.outputs.VERSION }}.${{ steps.package.outputs.SHA }}.7z
+      #    asset_content_type: application/x-7z-compressed
