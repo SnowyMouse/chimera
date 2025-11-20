@@ -7,18 +7,12 @@ for more information.
 
 The official repository is hosted at https://github.com/SnowyMouse/chimera
 
-
-
-
 ## Table of contents
 - [Installation](#installation)
 - [Mod support](#mod-support)
 - [Features](#features)
 - [FAQ](#faq)
 - [Compilation Guide](#compilation-guide)
-
-
-
 
 ## Installation
 Here is the installation procedure for installing Chimera:
@@ -36,10 +30,6 @@ Uninstalling Chimera is simple:
 1. Delete Chimera's strings.dll and optionally chimera.ini, fonts, and/or mods.
 2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`.
 
-
-
-
-
 ## Mod support
 You can install binary mods (i.e. dlls) by creating a folder called "mods" and
 copying the dlls into the directory.
@@ -48,10 +38,6 @@ copying the dlls into the directory.
 > This is because they modify the game in similar ways, resulting in them
 > conflicting with one another. Supporting just one of these mods would mean
 > extra development time that we don't have. Sorry.
-
-
-
-
 
 ## Features
 Chimera provides a number of features and enhancements to the base Halo game.
@@ -62,7 +48,6 @@ game.
 - [Custom Edition map support on retail](#custom-edition-map-support-on-retail)
 - [Ini features](#ini-features)
 - [Commands](#commands)
-
 
 ### Passive features
 These are features that are always on.
@@ -391,7 +376,6 @@ This allows you to execute Chimera commands, Halo commands, or Halo scripts
 when the key combination is invoked. See the included chimera.ini file for more
 information on these settings.
 
-
 ### Custom Edition map support on retail
 Chimera can enable Halo Custom Edition map support when playing the base Halo PC
 game.
@@ -412,7 +396,6 @@ rename them to have the `custom_` prefixes and copy them into your maps folder.
 > **CAUTION:** Do NOT overwrite your original bitmaps.map or sounds.map files.
 > You need these to load Halo PC maps. Also, Chimera will *not* enable this
 > feature if *any* of the above files are missing.
-
 
 ### Commands
 Chimera provides a number of extra features that can be turned on. Most of
@@ -855,7 +838,6 @@ standard "classic" method.
 
 **Usage:** `chimera_force_alternate_bump_attenuation [true/false]`
 
-
 ## FAQ
 Below is a list of frequently asked questions. These questions are either based
 on questions I have received or questions I *might* receive that I feel are
@@ -867,8 +849,6 @@ worth answering in a readme.
 - [Why does Halo's gamma setting not work when Chimera is installed?]
 - [Why is there no auto updater built into Chimera?]
 - [Why do I get an error when joining Custom Edition servers with modded maps?]
-
-
 
 ### Will Chimera run on my system?
 Short answer: If your PC uses Windows 7 or later, it'll work. Note
@@ -1037,8 +1017,6 @@ this check.
 If you *want* to join a server using a modified Halo Custom Edition map on a
 Halo Custom Edition server, then you should forge the CRC32.
 
-
-
 [Will Chimera run on my system?]: #will-chimera-run-on-my-system
 [Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
 [Why are my custom fonts not working?]: #why-are-my-custom-fonts-not-working
@@ -1049,20 +1027,33 @@ Halo Custom Edition server, then you should forge the CRC32.
 ## Compilation Guide
 To compile Chimera we use the 32-bit MinGW-w64 toolchain.
 
-> **NOTE:** Versions of GCC 11.5.0/12.X and above produce builds of chimera that crash when a large amount of maps are installed.
-Until it is known why, the recommended way to build Chimera is on Windows with the supplied toolchain link.
-
 ### Windows
-The most simple way to compile Chimera on windows is using our provided standalone MinGW toolchain based on one provided by [Winlibs](https://winlibs.com).
 
-1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `D:\source\chimera`
-2. Download Chimera's 32-bit GCC 11.4.0 MinGW-w64 release from [here (direct link)](https://github.com/SnowyMouse/chimera/releases/download/toolchain-v2/winlibs-chimera-i686-posix-dwarf-gcc-11.4.0-mingw-w64msvcrt-11.0.0-r3.7z)
-3. Extract the contents of the archive: `mingw32`, `build`, and `mingw-console.bat` to where Chimera's source is located.[^1]
-4. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window.
+#### MSYS2
+1. If you do not have MSYS2 installed, follow the [installation](https://www.msys2.org/wiki/MSYS2-installation/) instructions.
+2. After it is installed and up to date, install these packages: `pacman -S --needed base-devel mingw-w64-i686-toolchain mingw-w64-i686-cmake mingw-w64-i686-python git`
+3. Create a build directory
+4. From the MINGW32 subsystem, run the cmake command `cmake -S <path to source> -B <build directory> -DCMAKE_BUILD_TYPE=Release` (for release)
+5. build by running `cmake --build <build directory>`
+
+#### Winlibs
+Chimera can also be compiled on windows is using the standalone MinGW toolchain provided by [Winlibs](https://winlibs.com).
+A current version of [Python](https://www.python.org/downloads/windows/) is also required to be installed before following these steps.
+
+1. Ensure Chimera's source code is located in a short path with no spaces to prevent issues with the toolchain. e.g. `C:\source\chimera`
+2. Download the latest 32-bit GCC MinGW-w64 MSVCRT release from [here](https://winlibs.com)
+3. Extract and copy the `mingw32` directory to where Chimera's source is located.
+4. Create an empty `build` directory where Chimera's source is located.
+5. Create a file called `mingw-console.bat` where Chimera's source is located with the following contents:
 ```
-cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
-ninja
-strip strings.dll
+@echo off
+set PATH=%~dp0mingw32\bin;%PATH%
+cmd /k
+```
+6. Run `mingw-console.bat`. A console window should open with the correct paths configured to build Chimera. To create a Release build, Run the following commands in the MinGW console window.
+```
+cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 ```
 For the correct DLL version information to be set [Git for Windows](https://gitforwindows.org/) must be installed, but this is not required to compile Chimera.
 
@@ -1074,5 +1065,5 @@ When running CMake, also pass the argument `-DCHIMERA_WINXP=ON` to enable Window
 ### Linux
 Chimera can be cross-compiled from a Linux host.
 1. Create a build directory
-2. From here run the MinGW cmake command. On Most distros this is `i686-w64-mingw32-cmake <path to source>`
-Because of the mentioned issues with GCC versions 12.X and higher, it may be easier to compile from a Windows environment.
+2. From here run the MinGW cmake command. On Most distros this is `i686-w64-mingw32-cmake -S <path to source> -B <build directory> -DCMAKE_BUILD_TYPE=Release` (for release)
+3. build by running `cmake --build <build directory>`
