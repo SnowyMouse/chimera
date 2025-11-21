@@ -173,6 +173,21 @@ namespace Chimera {
     };
     static_assert(sizeof(Bitmap) == 0x6C);
 
+    /**
+     * Get bitmap tag data
+     * @param  tag_id id of the tag
+     * @return pointer to the tag data if found, nullptr if not
+     */
+    Bitmap *get_bitmap_tag(TagID tag_id) noexcept;
+
+    /**
+     * Get bitmap_data element
+     * @param  bitmap pointer to bitmap tag data
+     * @param  index index of bitmap_data to get
+     * @return pointer to the bitmap_data element if found, nullptr if not
+     */
+    BitmapData *get_bitmap_data_element(Bitmap *bitmap, std::uint32_t index) noexcept;
+
 }
 
 #endif

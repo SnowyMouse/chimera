@@ -10,6 +10,8 @@
 #include "../halo_data/tag_class.hpp"
 #include "../halo_data/game_engine.hpp"
 #include "../halo_data/bitmaps.hpp"
+#include "../halo_data/hud_defs.hpp"
+#include "../math_trig/math_trig.hpp"
 
 namespace Chimera {
 
@@ -27,51 +29,38 @@ namespace Chimera {
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
 
         // Get the hud digits tag
-        auto *tag = get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC));
-        if(!tag) {
+        auto *counter_numbers = reinterpret_cast<HudNumber *>(get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC))->data);
+        if(!counter_numbers) {
             return;
         }
-        auto *tag_data = tag->data;
 
         // Get bitmap tag
-        auto *bitmap_tag = get_tag(*reinterpret_cast<TagID *>(tag_data + 0xC));
-        if(!bitmap_tag) {
+        auto *numbers_bitmap = get_bitmap_tag(counter_numbers->number_bitmap.tag_id);
+        if(!numbers_bitmap) {
             return;
         }
 
-        // Get bitmap tag data
-        auto *bitmap_tag_data = bitmap_tag->data;
-        if(!*reinterpret_cast<std::uint32_t *>(bitmap_tag_data + 0x60)) {
+        // Get the first sprite sheet bitmap
+        auto *first_bitmap = get_bitmap_data_element(numbers_bitmap, 0);
+        if(!first_bitmap) {
             return;
         }
-
-        // Get old data
-        auto *bitmap = *reinterpret_cast<std::byte **>(bitmap_tag_data + 0x64);
-        auto *maybe_dimensions = reinterpret_cast<std::uint16_t *>(bitmap + 0x4);
-        auto *usage_flags = reinterpret_cast<std::uint16_t *>(bitmap_tag_data + 0x6);
 
         // If it's 2x size, set the 0.5 scale flag
-        if(maybe_dimensions[0] == 256) {
+        if(first_bitmap->width == 256 && first_bitmap->height <= 256) {
             // Check the number spacing
-            auto *bitmap_digit_width = reinterpret_cast<std::uint8_t *>(tag_data + 0x10);
-            auto *screen_digit_width = reinterpret_cast<std::uint8_t *>(tag_data + 0x11);
-            auto *x_offset = reinterpret_cast<std::uint8_t *>(tag_data + 0x12);
-            auto *y_offset = reinterpret_cast<std::uint8_t *>(tag_data + 0x13);
-            auto *point_width = reinterpret_cast<std::uint8_t *>(tag_data + 0x14);
-            auto *colon_width = reinterpret_cast<std::uint8_t *>(tag_data + 0x15);
-
-            if(*screen_digit_width == 18) {
+            if(counter_numbers->screen_width == 18) {
                 // These are almost certainly using highres numbers, so meme it to work again.
                 highres_num_multipler = 1.0f;
-                *usage_flags = *usage_flags | 1 << 4;
+                SET_FLAG(numbers_bitmap->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, true);
 
                 // Set stock tag values
-                *bitmap_digit_width = 12;
-                *screen_digit_width = 9;
-                *x_offset = 1;
-                *y_offset = 0;
-                *point_width = 6;
-                *colon_width = 6;
+                counter_numbers->character_width = 12;
+                counter_numbers->screen_width = 9;
+                counter_numbers->x_offset = 1;
+                counter_numbers->y_offset = 0;
+                counter_numbers->decimal_point_width = 6;
+                counter_numbers->colon_width = 6;
             }
         }
     }
@@ -146,14 +135,13 @@ namespace Chimera {
         bool valid = true;
         TagReference *bump_map = reinterpret_cast<TagReference *>(tag_data + 0x128);
         if(!bump_map->tag_id.is_null()) {
-            auto *bitmap_tag = get_tag(bump_map->tag_id);
-            if(!bitmap_tag) {
+            auto *bitmap_group = get_bitmap_tag(bump_map->tag_id);
+            if(!bitmap_group) {
                 return;
             }
 
-            auto *bitmap_group = reinterpret_cast<Bitmap *>(bitmap_tag->data);
             for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
-                auto *bitmap = reinterpret_cast<BitmapData *>(get_tag_block_data(&bitmap_group->bitmap_data, i, sizeof(BitmapData)));
+                auto *bitmap = get_bitmap_data_element(bitmap_group, i);
                 if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
                     valid = false;
                     break;
