@@ -6,6 +6,7 @@
 #include "../signature/hook.hpp"
 #include "../halo_data/tag.hpp"
 #include "../halo_data/map.hpp"
+#include "../halo_data/bitmaps.hpp"
 #include "../event/map_load.hpp"
 
 extern "C" {
@@ -35,32 +36,29 @@ extern "C" {
 
 namespace Chimera {
 
-    extern "C" void check_half_scale_bitmap_flag(std::byte *bitmap, bool highres_scale) noexcept {
-        auto tag_id = *reinterpret_cast<TagID *>(bitmap + 0x20);
+    extern "C" void check_half_scale_bitmap_flag(BitmapData *bitmap, bool highres_scale) noexcept {
         int scale = 1;
 
-        // TagID shouldn't be null, but in case it is..
-        if(!tag_id.is_null()) {
-            auto *tag_data = get_tag(tag_id)->data;
-            auto *usage_flags = reinterpret_cast<std::uint16_t *>(tag_data + 6);
-
+        // This should always be valid, but it might not be.
+        auto *bitmap_group = get_bitmap_tag(bitmap->tag_id);
+        if(bitmap_group) {
             // Is 0.5 scale flag set?
-            if((*usage_flags >> 4) & 1) {
+            if(TEST_FLAG(bitmap_group->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT)) {
                 scale = 2;
             }
 
             // Is "force hud use highres scale" set in the bitmap tag AND "use highres scale" not set in the interface tag?
             // If so, make it scale by another half.
-            if((*usage_flags >> 7) & 1 && !highres_scale) {
+            if(TEST_FLAG(bitmap_group->flags, BITMAP_FLAGS_FORCE_HUD_USE_HIGHRES_SCALE_BIT) && !highres_scale) {
                 scale *= 2;
             }
         }
 
         // Scale it.
-        scaled_bound_w = *reinterpret_cast<std::uint16_t *>(bitmap + 0x4) / scale;
-        scaled_bound_h = *reinterpret_cast<std::uint16_t *>(bitmap + 0x6) / scale;
-        scaled_reg_pt_w = *reinterpret_cast<std::uint16_t *>(bitmap + 0x10) / scale;
-        scaled_reg_pt_h = *reinterpret_cast<std::uint16_t *>(bitmap + 0x12) / scale;
+        scaled_bound_w = bitmap->width / scale;
+        scaled_bound_h = bitmap->height / scale;
+        scaled_reg_pt_w = bitmap->registration_point.x / scale;
+        scaled_reg_pt_h = bitmap->registration_point.y / scale;
     }
 
     void is_using_highres_scale() noexcept {
