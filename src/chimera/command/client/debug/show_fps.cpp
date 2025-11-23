@@ -4,13 +4,13 @@
 #include "../../../output/draw_text.hpp"
 #include "../../../output/output.hpp"
 #include "../../../command/command.hpp"
-#include <chrono>
+#include <windows.h>
 
 namespace Chimera {
-    typedef std::chrono::high_resolution_clock clock;
-    static clock::time_point last_frame;
+    static LARGE_INTEGER last_frame;
 
     static double last_fps;
+    static double pc_freq;
 
     static int total_frames;
     static double total_frame_time;
@@ -25,6 +25,9 @@ namespace Chimera {
             bool new_enabled = STR_TO_BOOL(argv[0]);
             if(new_enabled != enabled) {
                 if(new_enabled) {
+                    LARGE_INTEGER freq;
+                    QueryPerformanceFrequency(&freq);
+                    pc_freq = static_cast<double>(freq.QuadPart);
                     add_preframe_event(show_fps, EventPriority::EVENT_PRIORITY_FINAL);
                 }
                 else {
@@ -39,17 +42,17 @@ namespace Chimera {
     }
 
     static void show_fps() noexcept {
-        auto now = clock::now();
+        LARGE_INTEGER now;
+        QueryPerformanceCounter(&now);
 
         // Add the current frame time to the total
-        auto difference = now - last_frame;
-        auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(difference).count();
+        auto difference = now.QuadPart - last_frame.QuadPart;
         total_frames++;
 
-        auto frame_time = microseconds / 1000000.0;
+        auto frame_time = difference / pc_freq;
         total_frame_time += frame_time;
 
-        // If we've past 1/5 of a second, show the new FPS
+        // If we've past 1/4 of a second, show the new FPS
         if(total_frame_time > (1.0 / 4.0)) {
             last_fps = static_cast<double>(total_frames) / total_frame_time;
             total_frames = 0;

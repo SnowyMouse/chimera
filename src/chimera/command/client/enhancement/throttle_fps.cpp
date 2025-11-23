@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <windows.h>
-#include <chrono>
 #include <thread>
 
 #include "../../command.hpp"
@@ -9,24 +8,29 @@
 #include "../../../signature/signature.hpp"
 #include "../../../chimera.hpp"
 #include "../../../output/output.hpp"
-#include "../../../event/frame.hpp"
 
 namespace Chimera {
-    static float max_spf;
-    typedef std::chrono::high_resolution_clock clock;
-    static clock::time_point next_frame;
+    static double max_spf;
+    static LARGE_INTEGER next_frame;
+    static LARGE_INTEGER current_frame;
+    static double pc_freq;
+    static double duration_to_add;
+    static bool limiter_enabled = false;
 
     static void on_frame() {
-        while(clock::now() < next_frame) {
-            Sleep(0);
+        if(limiter_enabled) {
+            QueryPerformanceCounter(&current_frame);
+            while(static_cast<long long>(current_frame.QuadPart) < static_cast<long long>(next_frame.QuadPart)) {
+                Sleep(0);
+                QueryPerformanceCounter(&current_frame);
+            }
+            next_frame.QuadPart = current_frame.QuadPart + static_cast<long long>(duration_to_add);
         }
-        auto duration_to_add = std::chrono::duration<long long, std::micro>(static_cast<long long>(max_spf * 1000000));
-        long long multiplier = 1 + static_cast<long long>((clock::now() - next_frame) / duration_to_add);
-        next_frame += duration_to_add * multiplier;
     }
 
     bool throttle_fps_command(int argument_count, const char **arguments) noexcept {
         static bool enabled = false;
+        static bool hook_enabled = false;
 
         if(argument_count) {
             float new_fps = std::strtof(arguments[0], nullptr);
@@ -34,14 +38,20 @@ namespace Chimera {
             // If user inputs an invalid framerate, assume they are turning it off.
             if(new_fps <= 0) {
                 enabled = false;
-                get_chimera().get_signature("d3d9_present_frame_sig").rollback();
+                limiter_enabled = false;
             }
             else {
                 enabled = true;
                 max_spf = 1.0f / new_fps;
-                next_frame = clock::now();
-                static Hook hook;
-                write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data() + 3, hook, reinterpret_cast<const void*>(on_frame), nullptr);
+                QueryPerformanceFrequency(&current_frame);
+                pc_freq = static_cast<double>(current_frame.QuadPart);
+                duration_to_add = max_spf * pc_freq;
+                if(!hook_enabled) {
+                    static Hook hook;
+                    write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data() + 3, hook, reinterpret_cast<const void*>(on_frame), nullptr);
+                    hook_enabled = true;
+                }
+                limiter_enabled = true;
             }
         }
 
