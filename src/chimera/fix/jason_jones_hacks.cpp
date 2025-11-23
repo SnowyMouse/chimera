@@ -29,7 +29,7 @@ namespace Chimera {
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
 
         // Get the hud digits tag
-        auto *counter_numbers = reinterpret_cast<HudNumber *>(get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC))->data);
+        auto *counter_numbers = reinterpret_cast<HUDNumber *>(get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC))->data);
         if(!counter_numbers) {
             return;
         }
@@ -41,7 +41,7 @@ namespace Chimera {
         }
 
         // Get the first sprite sheet bitmap
-        auto *first_bitmap = get_bitmap_data_element(numbers_bitmap, 0);
+        auto *first_bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &numbers_bitmap->bitmap_data, 0);
         if(!first_bitmap) {
             return;
         }
@@ -65,65 +65,49 @@ namespace Chimera {
         }
     }
 
-    static void jason_jones_sniper_ticks(std::byte *tag_data) noexcept {
-        auto *static_element_count = reinterpret_cast<std::uint32_t *>(tag_data + 0x60);
-
+    static void jason_jones_sniper_ticks(WeaponHUDInterface *tag_data) noexcept {
         // 3 static elements? Probably stock sniper interface tag.
-        if(*static_element_count == 3) {
-            auto *static_element_data = *reinterpret_cast<std::byte **>(tag_data + 0x64);
-
-            const auto *multitexture_count_0 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-            const auto *anchor_x0 = reinterpret_cast<short *>(static_element_data + 0x24);
-            const auto *anchor_y0 = reinterpret_cast<short *>(static_element_data + 0x26);
-            static_element_data += 0xB4;
-            const auto *multitexture_count_1 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-            auto *anchor_x1 = reinterpret_cast<short *>(static_element_data + 0x24);
-            auto *anchor_y1 = reinterpret_cast<short *>(static_element_data + 0x26);
-            static_element_data += 0xB4;
-            const auto *multitexture_count_2 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-            auto *anchor_x2 = reinterpret_cast<short *>(static_element_data + 0x24);
-            auto *anchor_y2 = reinterpret_cast<short *>(static_element_data + 0x26);
+        if(tag_data->statics.count == 3) {
+            auto *static_elements = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
 
             // Make sure it's the thing we want to bullshit.
-            if(*multitexture_count_0 == 0 &&
-                *anchor_x0 == 7 && *anchor_y0 == 21 &&
-                *multitexture_count_1 == 1 && *anchor_x1 == 92 && *anchor_y1 == 85 &&
-                *multitexture_count_2 == 1 && *anchor_x2 == 445 && *anchor_y2 == 85) {
+            if(static_elements[0].static_element.multitexture_overlays.count == 0 &&
+                static_elements[1].static_element.multitexture_overlays.count == 1 &&
+                static_elements[2].static_element.multitexture_overlays.count == 1 &&
+                static_elements[0].static_element.placement.offset.x == 7 &&
+                static_elements[0].static_element.placement.offset.y == 21 &&
+                static_elements[1].static_element.placement.offset.x == 92 &&
+                static_elements[1].static_element.placement.offset.y == 85 &&
+                static_elements[2].static_element.placement.offset.x == 445 &&
+                static_elements[2].static_element.placement.offset.y == 85) {
 
-                *anchor_x1 = 132;
-                *anchor_y1 = 113;
-                *anchor_x2 = 484;
-                *anchor_y2 = 113;
+                static_elements[1].static_element.placement.offset.x = 132;
+                static_elements[1].static_element.placement.offset.y = 113;
+                static_elements[2].static_element.placement.offset.x = 484;
+                static_elements[2].static_element.placement.offset.y = 113;
             }
         }
 
         // 2 static elements? Check for old refined sniper ticks and do a different hack here to fix incorrect multitexture blend mode usage
         // There is no need to do this on the demo version, as these tags were only used in modded stock maps that can be updated.
-        else if(*static_element_count == 2 && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
-            auto *static_element_data = *reinterpret_cast<std::byte **>(tag_data + 0x64);
+        else if(tag_data->statics.count == 2 && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
+            auto *static_elements = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
+            auto mc0 = static_elements[0].static_element.multitexture_overlays.count;
+            auto mc1 = static_elements[1].static_element.multitexture_overlays.count;
+            auto x0 = static_elements[0].static_element.placement.offset.x;
+            auto y0 = static_elements[0].static_element.placement.offset.y;
+            auto x1 = static_elements[1].static_element.placement.offset.x;
+            auto y1 = static_elements[1].static_element.placement.offset.y;
 
-            const auto *multitexture_overlay_count_0 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-            auto *multitexture_overlay_0 = *reinterpret_cast<std::byte **>(static_element_data + 0x7C + 4);
-            const auto *anchor_x0 = reinterpret_cast<short *>(static_element_data + 0x24);
-            const auto *anchor_y0 = reinterpret_cast<short *>(static_element_data + 0x26);
-
-            static_element_data += 0xB4;
-            const auto *multitexture_overlay_count_1 = reinterpret_cast<std::uint32_t *>(static_element_data + 0x7C);
-            auto *multitexture_overlay_1 = *reinterpret_cast<std::byte **>(static_element_data + 0x7C + 4);
-            const auto *anchor_x1 = reinterpret_cast<short *>(static_element_data + 0x24);
-            const auto *anchor_y1 = reinterpret_cast<short *>(static_element_data + 0x26);
-
-            if(*multitexture_overlay_count_0 == 1 &&
-                *anchor_x0 == -176 && (*anchor_y0 == 7 || *anchor_y0 == 9) && // 7: old refined, 9: newer refined
-                *multitexture_overlay_count_1 == 1 &&
-                *anchor_x1 == 176 && (*anchor_y1 == 7 || *anchor_y1 == 9)) {
-                auto *multitexture_blend_function_0 = reinterpret_cast<short *>(multitexture_overlay_0 + 0x2E); // zero to one blend function
-                auto *multitexture_blend_function_1 = reinterpret_cast<short *>(multitexture_overlay_1 + 0x2E);
+            // y = 7: old refined, y = 9: newer refined
+            if(mc0 == 1 && mc1 == 1 && x0 == -176 && (y0 == 7 || y0 == 9) && x1 == 176 && (y1 == 7 || y1 == 9)) {
+                auto *m0 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &static_elements[0].static_element.multitexture_overlays, 0);
+                auto *m1 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &static_elements[1].static_element.multitexture_overlays, 0);
 
                 // Apply filth
-                if(*multitexture_blend_function_0 == 1 && *multitexture_blend_function_1 == 1) { // subtract
-                    *multitexture_blend_function_0 = 3; // multiply2x
-                    *multitexture_blend_function_1 = 3;
+                if(m0->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT && m1->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT) {
+                    m0->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
+                    m1->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
                 }
             }
         }
@@ -141,7 +125,7 @@ namespace Chimera {
             }
 
             for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
-                auto *bitmap = get_bitmap_data_element(bitmap_group, i);
+                auto *bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &bitmap_group->bitmap_data, i);
                 if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
                     valid = false;
                     break;
@@ -167,7 +151,7 @@ namespace Chimera {
                     jason_jones_p8_bumps(tag.data);
                     break;
                 case TAG_CLASS_WEAPON_HUD_INTERFACE:
-                    jason_jones_sniper_ticks(tag.data);
+                    jason_jones_sniper_ticks(reinterpret_cast<WeaponHUDInterface *>(tag.data));
                     break;
                 default:
                     break;

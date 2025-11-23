@@ -7,6 +7,7 @@
 #include "../config/ini.hpp"
 #include "../output/draw_text.hpp"
 #include "../halo_data/tag.hpp"
+#include "../halo_data/hud_defs.hpp"
 #include "../output/output.hpp"
 #include "../halo_data/resolution.hpp"
 #include "../fix/widescreen_fix.hpp"
@@ -104,17 +105,17 @@ namespace Chimera {
         std::byte *skip_icon_hud_test_draw = nullptr;
     }
 
-    static const std::byte *hud_globals_data() noexcept {
+    static const HUDGlobals *hud_globals_data() noexcept {
         auto *tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *tag_data = tag->data;
         auto *interface_bitmaps = *reinterpret_cast<const std::byte **>(tag_data + 0x140 + 4);
         auto &hud_globals = *reinterpret_cast<const TagID *>(interface_bitmaps + 0x60 + 0xC);
         auto *hud_globals_tag = get_tag(hud_globals);
-        return hud_globals_tag->data;
+        return reinterpret_cast<HUDGlobals *>(hud_globals_tag->data);
     }
 
     static std::uint32_t hud_line_size() noexcept {
-        return *reinterpret_cast<const float *>(hud_globals_data() + 0x90) * font_pixel_height(GenericFont::FONT_LARGE);
+        return hud_globals_data()->messaging.spacing * font_pixel_height(GenericFont::FONT_LARGE);
     }
 
     static void on_frame() noexcept {

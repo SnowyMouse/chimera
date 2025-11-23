@@ -155,6 +155,8 @@ namespace Chimera {
      */
     std::byte *get_tag_block_data(TagBlock *block, std::uint32_t index, std::uint32_t size) noexcept;
 
+#define GET_TAG_BLOCK_ELEMENT(t, b, i) reinterpret_cast<t *>(get_tag_block_data(b, i, sizeof(t)))
+
 }
 
 #endif
