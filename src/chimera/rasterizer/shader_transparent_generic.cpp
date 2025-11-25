@@ -200,7 +200,7 @@ namespace Chimera {
             defines_count++;
         }
         else {
-            for(size_t current_stage = 0; current_stage < shader_data->generic.stages.count && current_stage < 7; current_stage++) {
+            for(std::uint32_t current_stage = 0; current_stage < shader_data->generic.stages.count && current_stage < 7; current_stage++) {
                 ShaderTransparentGenericStage *stage = shader_transparent_generic_get_stage(shader_data, current_stage);
 
                 params.input_a = stage->color_input_A;
@@ -604,6 +604,9 @@ namespace Chimera {
                     rasterizer_set_sampler_state(map_index, D3DSAMP_MAGFILTER, filter_type);
                     rasterizer_set_sampler_state(map_index, D3DSAMP_MINFILTER, point_sampled ? static_cast<DWORD>(D3DTEXF_POINT) : filter_type);
                     rasterizer_set_sampler_state(map_index, D3DSAMP_MIPFILTER, point_sampled ? D3DTEXF_POINT : D3DTEXF_LINEAR);
+                }
+                else {
+                    IDirect3DDevice9_SetTexture(*global_d3d9_device, map_index, NULL);
                 }
 
                 if(map_index < shader_data->generic.maps.count && (map_index > 0 || shader_data->generic.type == SHADER_TRANSPARENT_GENERIC_TYPE_2D_MAP)) {
