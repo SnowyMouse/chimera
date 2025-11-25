@@ -41,6 +41,10 @@ namespace Chimera {
                 limiter_enabled = false;
             }
             else {
+                // Assume 1 means you want the default.
+                if(new_fps == 1.0f) {
+                    new_fps = 300.0f;
+                }
                 enabled = true;
                 max_spf = 1.0f / new_fps;
                 QueryPerformanceFrequency(&current_frame);
