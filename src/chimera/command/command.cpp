@@ -194,7 +194,6 @@ namespace Chimera {
 
         // Enhancements
         this->p_commands.emplace_back("chimera_block_all_bullshit", localize("chimera_category_enhancement"), "client", localize("chimera_block_all_bullshit_help"), Chimera::block_all_bullshit_command, false, 0, 0);
-        ADD_COMMAND("chimera_block_buffering", "chimera_category_enhancement", "client_disable_buffering", block_buffering_command, true, 0, 1);
         ADD_COMMAND("chimera_block_extra_weapon", "chimera_category_enhancement", "client_block_extra_weapon", block_extra_weapon_command, false, 0, 0);
         ADD_COMMAND("chimera_unblock_all_extra_weapons", "chimera_category_enhancement", "client_block_extra_weapon", unblock_all_extra_weapons_command, false, 0, 0);
         ADD_COMMAND("chimera_set_name", "chimera_category_enhancement", "client", set_name_command, true, 0, 1);

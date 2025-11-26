@@ -36,7 +36,6 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/debug/show_coordinates.cpp
     ${COMMAND_DIR}/client/debug/show_fps.cpp
     ${COMMAND_DIR}/client/enhancement/block_all_bullshit.cpp
-    ${COMMAND_DIR}/client/enhancement/block_buffering.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.S
     ${COMMAND_DIR}/client/enhancement/fp_reverb.cpp

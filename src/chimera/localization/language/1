@@ -48,8 +48,6 @@ chimera_bookmark_list_command_querying                                          
 chimera_history_connect_help                                                    Conéctese al servidor con el índice dado.
 chimera_history_list_command_help                                               Muestra todos los servidores recientes.
 chimera_history_list_command_querying                                           Consultando servidores recientes...
-chimera_block_buffering_command_help                                            Deshabilita el buffering. Puede mejorar la respuesta de entrada del mouse.
-chimera_block_buffering_command_warning                                         ¡La deshabilitación del buffering ya está activada (probablemente a través de config.txt)!
 chimera_block_camera_shake_command_help                                         Deshabilita la sacudida de cámara al recibir daños.
 chimera_block_extra_weapon_blocked                                              %s bloqueada
 chimera_block_extra_weapon_error_cannot_get_object                              No se pudo leer tu objeto (estás muerto)

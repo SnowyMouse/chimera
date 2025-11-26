@@ -200,7 +200,6 @@ namespace Chimera {
         "chimera_block_hold_f1",
         "chimera_fov",
         "chimera_mouse_sensitivity",
-        "chimera_block_buffering",
     };
 
     static int lua_execute_chimera_command(lua_State *state) noexcept {

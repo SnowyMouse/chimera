@@ -407,7 +407,6 @@ the chimera folder created by Chimera.
 - [Auto uncrouching](#auto-uncrouching)
 - [Block all bullshit](#block-all-bullshit)
 - [Block auto center](#block-auto-center)
-- [Block buffering](#block-buffering)
 - [Block button quotes](#block-button-quotes)
 - [Block equipment rotation](#block-equipment-rotation)
 - [Block extra weapon](#block-extra-weapon)
@@ -502,13 +501,6 @@ This feature runs the following commands:
 Set whether or not auto centering in vehicles is disabled.
 
 **Usage:** `chimera_block_auto_center [true/false]`
-
-#### Block buffering
-This feature is supposed to reduce mouse lag, and it works like the feature in
-config.txt. Disabling buffering is known to destroy performance on DXVK, and it
-is questionable whether it reduces lag. You can enable this behavior if you want.
-
-**Usage:** `chimera_block_buffering [true/false]`
 
 #### Block button quotes
 Remove the quotation marks in button prompts (e.g. Hold "E")

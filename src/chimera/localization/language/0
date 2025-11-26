@@ -78,8 +78,6 @@ chimera_auto_uncrouch_help                                                      
 chimera_block_all_bullshit_help                                                 Disable various things that most people may find annoying.
 chimera_block_auto_center_command_help                                          Set whether auto centering is disabled.
 chimera_block_button_quotes_command_help                                        Set whether or not to remove quotes from button prompts.
-chimera_block_buffering_command_help                                            Disable buffering. May improve mouse input.
-chimera_block_buffering_command_warning                                         Disable Buffering is already enabled (likely via config.txt)!
 chimera_block_camera_shake_command_help                                         Disable camera shaking from damage.
 chimera_block_extra_weapon_blocked                                              Blocked %s
 chimera_block_extra_weapon_error_cannot_get_object                              Failed to read your object (you are dead)
