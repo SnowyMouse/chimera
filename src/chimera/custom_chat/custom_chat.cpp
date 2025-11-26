@@ -118,7 +118,7 @@ namespace Chimera {
         return custom_chat_initialized;
     }
 
-    typedef std::chrono::high_resolution_clock clock;
+    typedef std::chrono::steady_clock clock;
 
     static float seconds_since_time(const clock::time_point &time) noexcept {
         auto duration = clock::now() - time;
