@@ -103,6 +103,7 @@ add_library(chimera STATIC
     src/chimera/fix/checkpoint_fix.cpp
     src/chimera/fix/checkpoint_fix.S
     src/chimera/fix/chicago_multiply_fix.cpp
+    src/chimera/fix/chicago_multiply_fix.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp
