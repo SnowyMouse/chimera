@@ -674,7 +674,7 @@ namespace Chimera {
                 if(TEST_FLAG(group->geometry_flags, RASTERIZER_GEOMETRY_FLAGS_SKY_BIT) && shader_data->generic.framebuffer_blend_function == SHADER_FRAMEBUFFER_BLEND_FUNCTION_ALPHA_BLEND) {
                     Plane3D *plane = &global_window_parameters->fog.plane;
                     Point3D *camera = &global_window_parameters->camera.position;
-                    float eye_distance_to_fog_plane = plane->i * camera->x + plane->j * camera->y + plane->k * camera->z;
+                    float eye_distance_to_fog_plane = plane->i * camera->x + plane->j * camera->y + plane->k * camera->z - plane->w;
                     float planar_eye_density = global_window_parameters->fog.planar_maximum_density * PIN(-eye_distance_to_fog_plane / global_window_parameters->fog.planar_maximum_depth, 0.0f, 1.0f);
 
                     stage_color0[fog_stage * 4 + 0] = global_window_parameters->fog.planar_color.red;
