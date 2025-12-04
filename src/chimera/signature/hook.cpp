@@ -53,6 +53,11 @@ namespace Chimera {
                             bytes.insert(bytes.end(), at, at + 7);
                             at += 7;
                         }
+                        else if (op2 == 0x54 || op2 == 0x44) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 5);
+                            at += 5;
+                        }
                         else {
                             offsets.push_back(at - at_start);
                             bytes.insert(bytes.end(), at, at + 3);

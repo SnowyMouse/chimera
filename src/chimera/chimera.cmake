@@ -154,8 +154,8 @@ add_library(chimera STATIC
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp
     src/chimera/fix/scoreboard_fade_fix.S
-    src/chimera/fix/scope_blur_fix.cpp
-    src/chimera/fix/scope_blur_fix.S
+    src/chimera/fix/screen_effect_fix.cpp
+    src/chimera/fix/screen_effect_fix.S
     src/chimera/fix/specular_memes.cpp
     src/chimera/fix/specular_memes.S
     src/chimera/fix/sun_fix.cpp
