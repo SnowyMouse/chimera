@@ -29,7 +29,12 @@ namespace Chimera {
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
 
         // Get the hud digits tag
-        auto *counter_numbers = reinterpret_cast<HUDNumber *>(get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC))->data);
+        auto *tag = get_tag(*reinterpret_cast<TagID *>(interface_bitmaps + 0xB0 + 0xC));
+        if(!tag) {
+            return;
+        }
+
+        auto *counter_numbers = reinterpret_cast<HUDNumber *>(tag->data);
         if(!counter_numbers) {
             return;
         }
