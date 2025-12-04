@@ -227,4 +227,11 @@ namespace Chimera {
         return (low < high) ? a : b;
     }
 
+    void pixel32_to_real_argb_color(const std::uint32_t pixel, ColorARGB *color) noexcept {
+        color->alpha = ((pixel >> 24) & 0xFF) / 255.0;
+        color->red = ((pixel >> 16) & 0xFF) / 255.0;
+        color->green = ((pixel >> 8) & 0xFF) / 255.0;
+        color->blue = ((pixel >> 0) & 0xFF) / 255.0;
+    }
+
 }

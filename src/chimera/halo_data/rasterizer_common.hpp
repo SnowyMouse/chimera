@@ -239,6 +239,23 @@ namespace Chimera {
     };
     static_assert(sizeof(TransparentGeometryGroup) == 0xA8);
 
+
+    /*
+    * Other defs
+    */
+   struct RasterizerMeterParams {
+        Pixel32 gradient_min_color;
+        Pixel32 gradient_max_color;
+        Pixel32 background_color;
+        Pixel32 flash_color;
+        std::uint8_t flash_color_is_negative;
+        std::uint8_t tint_mode_2;
+        PAD(0x2);
+        Pixel32 tint_color;
+        float gradient;
+    };
+    static_assert(sizeof(RasterizerMeterParams) == 0x1C);
+
 }
 
 #endif

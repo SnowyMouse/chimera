@@ -99,4 +99,4 @@ if __name__ == '__main__':
     # Pixel Shaders
     generate_shader_blobs("shader_transparent_generic_source", sys.argv[1] + "pixel/shader_transparent_generic.hlsl", 3)
     generate_shader_blobs("disabled_shader", sys.argv[1] + "pixel/disabled.cso", 3)
-
+    generate_shader_blobs("hud_meters", sys.argv[1] + "pixel/hud_meters.cso", 3)

@@ -122,6 +122,8 @@ add_library(chimera STATIC
     src/chimera/fix/fov_fix.cpp
     src/chimera/fix/hud_bitmap_scale.cpp
     src/chimera/fix/hud_bitmap_scale.S
+    src/chimera/fix/hud_meters.cpp
+    src/chimera/fix/hud_meters.S
     src/chimera/fix/invalid_command_crash.cpp
     src/chimera/fix/invalid_command_crash.S
     src/chimera/fix/interpolate/antenna.cpp
