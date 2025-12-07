@@ -7,6 +7,7 @@
 #include "../halo_data/tag.hpp"
 #include "../halo_data/map.hpp"
 #include "../halo_data/bitmaps.hpp"
+#include "../halo_data/hud_defs.hpp"
 #include "../event/map_load.hpp"
 
 extern "C" {
@@ -32,9 +33,15 @@ extern "C" {
     std::uint32_t scaled_reg_pt_h = 1;
 
     bool use_highres_scale_is_set;
+
+    void hud_static_element_child_anchor_asm() noexcept;
+    void hud_meter_element_child_anchor_asm() noexcept;
+    void hud_number_element_child_anchor_asm() noexcept;
 }
 
 namespace Chimera {
+
+    static std::uint16_t child_anchor = 0;
 
     extern "C" void check_half_scale_bitmap_flag(BitmapData *bitmap, bool highres_scale) noexcept {
         int scale = 1;
@@ -63,6 +70,30 @@ namespace Chimera {
 
     void is_using_highres_scale() noexcept {
         use_highres_scale_is_set = true;
+    }
+
+    extern "C" void hud_static_element_use_child_anchors(std::uint16_t **anchor, WeaponHUDInterfaceStaticElement *element) noexcept {
+        child_anchor = 0;
+        if(element->header.child_anchor > 0 && element->header.child_anchor < 6) {
+            child_anchor = element->header.child_anchor - 1;
+            *anchor = &child_anchor;
+        }
+    }
+
+    extern "C" void hud_meter_element_use_child_anchors(std::uint16_t **anchor, WeaponHUDInterfaceMeterElement *element) noexcept {
+        child_anchor = 0;
+        if(element->header.child_anchor > 0 && element->header.child_anchor < 6) {
+            child_anchor = element->header.child_anchor - 1;
+            *anchor = &child_anchor;
+        }
+    }
+
+    extern "C" void hud_number_element_use_child_anchors(std::uint16_t **anchor, WeaponHUDInterfaceNumberElement *element) noexcept {
+        child_anchor = 0;
+        if(element->header.child_anchor > 0 && element->header.child_anchor < 6) {
+            child_anchor = element->header.child_anchor - 1;
+            *anchor = &child_anchor;
+        }
     }
 
     void set_up_hud_bitmap_scale_fix() noexcept {
@@ -101,5 +132,11 @@ namespace Chimera {
         write_code_s(nav_h_ptr, nop3);
         write_function_override(nav_w_ptr, nav_w, reinterpret_cast<const void *>(nav_number_offset_bitmap_bounds_w), &original_get_nav_bounds_w);
         write_function_override(nav_h_ptr, nav_h, reinterpret_cast<const void *>(nav_number_offset_bitmap_bounds_h), &original_get_nav_bounds_h);
+
+        // Child anchors.
+        static Hook static_element_anchor, meter_element_anchor, number_element_anchor;
+        write_jmp_call(get_chimera().get_signature("hud_weapon_draw_static_element_sig").data(), static_element_anchor, reinterpret_cast<const void *>(hud_static_element_child_anchor_asm), nullptr);
+        write_jmp_call(get_chimera().get_signature("hud_weapon_draw_meter_element_sig").data(), meter_element_anchor, reinterpret_cast<const void *>(hud_meter_element_child_anchor_asm), nullptr);
+        write_jmp_call(get_chimera().get_signature("hud_weapon_draw_number_element_sig").data(), number_element_anchor, reinterpret_cast<const void *>(hud_number_element_child_anchor_asm), nullptr);
     }
 }

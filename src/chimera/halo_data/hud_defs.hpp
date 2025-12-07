@@ -528,7 +528,8 @@ namespace Chimera {
         WeaponHUDInterfaceState state_type;
         std::uint16_t runtime_flags;
         HUDUseOnMapType use_on_map_type;
-        PAD(0x1E);
+        HUDChildAnchor child_anchor;
+        PAD(0x1C);
     };
     static_assert(sizeof(WeaponHUDInterfaceElementHeader) == 0x24);
 
