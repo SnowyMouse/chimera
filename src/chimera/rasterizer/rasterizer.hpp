@@ -25,7 +25,6 @@ namespace Chimera {
     */
     void rasterizer_set_render_state(D3DRENDERSTATETYPE state, DWORD value) noexcept;
     void rasterizer_set_sampler_state(std::uint16_t sampler, D3DSAMPLERSTATETYPE type, DWORD value) noexcept;
-
     /**
     * Compile shader binary blobs from HLSL code.
     */

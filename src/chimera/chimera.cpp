@@ -67,7 +67,7 @@
 #include "fix/contrail_fix.hpp"
 #include "fix/interpolate/interpolate.hpp"
 #include "fix/sun_fix.hpp"
-#include "fix/scope_blur_fix.hpp"
+#include "fix/screen_effect_fix.hpp"
 #include "fix/motion_sensor_fix.hpp"
 #include "halo_data/object.hpp"
 #include "event/tick.hpp"
@@ -99,6 +99,7 @@
 #include "rasterizer/shader_transparent_generic.hpp"
 #include "halo_data/game_functions.hpp"
 #include "halo_data/game_variables.hpp"
+#include "fix/hud_meters.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -193,7 +194,7 @@ namespace Chimera {
                 set_up_blue_32bit_color_fix();
                 set_up_contrail_fix();
                 set_up_sun_fix();
-                set_up_scope_blur_fix();
+                set_up_screen_effect_fix();
                 set_up_motion_sensor_fix();
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
@@ -203,6 +204,7 @@ namespace Chimera {
                 set_up_water_fix();
                 set_up_xbox_channel_order_support();
                 set_up_alternate_bump_attenuation_support();
+                set_up_hud_meters_fix();
 
                 // Custom edition's screwed up glass is screwed up.
                 set_up_ce_glass_fix();

@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include <cmath>
+#include <cstdint>
 
 #define HALO_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
 #define DEGREES_TO_RADIANS(deg) (deg / 180.0 * HALO_PI)
@@ -292,6 +293,11 @@ namespace Chimera {
      * Convert float to long except make it do x87 fistp memes
      */
     long fast_ftol(float float_to_round) noexcept;
+
+    /**
+     * Convert 32-bit argb color to float.
+     */
+    void pixel32_to_real_argb_color(const std::uint32_t pixel, ColorARGB *color) noexcept;
 
 }
 

@@ -103,6 +103,7 @@ add_library(chimera STATIC
     src/chimera/fix/checkpoint_fix.cpp
     src/chimera/fix/checkpoint_fix.S
     src/chimera/fix/chicago_multiply_fix.cpp
+    src/chimera/fix/chicago_multiply_fix.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp
@@ -122,6 +123,8 @@ add_library(chimera STATIC
     src/chimera/fix/fov_fix.cpp
     src/chimera/fix/hud_bitmap_scale.cpp
     src/chimera/fix/hud_bitmap_scale.S
+    src/chimera/fix/hud_meters.cpp
+    src/chimera/fix/hud_meters.S
     src/chimera/fix/invalid_command_crash.cpp
     src/chimera/fix/invalid_command_crash.S
     src/chimera/fix/interpolate/antenna.cpp
@@ -152,8 +155,8 @@ add_library(chimera STATIC
     src/chimera/fix/sane_defaults.S
     src/chimera/fix/scoreboard_fade_fix.cpp
     src/chimera/fix/scoreboard_fade_fix.S
-    src/chimera/fix/scope_blur_fix.cpp
-    src/chimera/fix/scope_blur_fix.S
+    src/chimera/fix/screen_effect_fix.cpp
+    src/chimera/fix/screen_effect_fix.S
     src/chimera/fix/specular_memes.cpp
     src/chimera/fix/specular_memes.S
     src/chimera/fix/sun_fix.cpp

@@ -361,6 +361,97 @@ namespace Chimera {
     };
     static_assert(sizeof(ShaderTransparentGeneric) == 0x6C);
 
+
+    /**
+    * shader_transparent_chicago - basically generic without the stages
+    */
+    enum ShaderTransparentChicagoMapFlags {
+        SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_POINT_SAMPLED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_ALPHA_REPLICATE,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_U_CLAMPED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_V_CLAMPED_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS
+    };
+
+    enum ShaderTransparentChicagoExtraFlags {
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_DONT_FADE_ACTIVE_CAMOUFLAGE,
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_NUMERIC_COUNTDOWN_TIMER,
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING,
+    };
+
+    struct ShaderTransparentChicagoMap {
+        std::uint16_t flags;
+        PAD(0x2);
+        PAD(0x28);
+        short color_function;
+        short alpha_function;
+        PAD(0x24);
+
+        Point2D scale;
+        Point2D offset;
+        float rotation;
+        float mipmap_bias;
+        TagReference map;
+        PAD(0x28);
+        ShaderTextureAnimation animation;
+    };
+    static_assert(sizeof(ShaderTransparentChicagoMap) == 0xDC);
+
+    struct _shader_transparent_chicago {
+        std::uint8_t numeric_counter_limit;
+        std::uint8_t flags;
+
+        ShaderTransparentGenericType type;
+        FramebufferBlendFunction framebuffer_blend_function;
+        FramebufferFadeMode framebuffer_fade_mode;
+        short framebuffer_fade_source;
+        short framebuffer_fade_unused;
+
+        float lens_flare_spacing;
+        TagReference lens_flare;
+
+        TagBlock extra_layers;
+        TagBlock maps;
+        std::uint32_t extra_flags;
+    };
+    static_assert(sizeof(_shader_transparent_chicago) == 0x3C);
+
+    struct ShaderTransparentChicago {
+        _shader shader;
+        _shader_transparent_chicago chicago;
+    };
+    static_assert(sizeof(ShaderTransparentChicago) == 0x64);
+
+
+    /**
+    * shader_transparent_chicago_extended - basically chicago with added cringe
+    */
+    struct _shader_transparent_chicago_extended {
+        std::uint8_t numeric_counter_limit;
+        std::uint8_t flags;
+
+        ShaderTransparentGenericType type;
+        FramebufferBlendFunction framebuffer_blend_function;
+        FramebufferFadeMode framebuffer_fade_mode;
+        short framebuffer_fade_source;
+        short framebuffer_fade_unused;
+
+        float lens_flare_spacing;
+        TagReference lens_flare;
+
+        TagBlock extra_layers;
+        TagBlock maps_4_stage;
+        TagBlock maps_2_stage;
+        std::uint32_t extra_flags;
+        PAD(0x8);
+    };
+    static_assert(sizeof(_shader_transparent_chicago_extended) == 0x50);
+
+    struct ShaderTransparentChicagoExtended {
+        _shader shader;
+        _shader_transparent_chicago_extended chicago_extended;
+    };
+    static_assert(sizeof(ShaderTransparentChicagoExtended) == 0x78);
 }
 
 #endif

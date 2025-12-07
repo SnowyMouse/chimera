@@ -11,6 +11,7 @@
 #include "tag.hpp"
 #include "object.hpp"
 #include "vertex_defs.hpp"
+#include "bitmaps.hpp"
 #include "../math_trig/math_trig.hpp"
 
 
@@ -238,6 +239,46 @@ namespace Chimera {
         PAD(0x2);
     };
     static_assert(sizeof(TransparentGeometryGroup) == 0xA8);
+
+
+    /*
+    * Other defs
+    */
+   struct RasterizerMeterParams {
+        Pixel32 gradient_min_color;
+        Pixel32 gradient_max_color;
+        Pixel32 background_color;
+        Pixel32 flash_color;
+        std::uint8_t flash_color_is_negative;
+        std::uint8_t tint_mode_2;
+        PAD(0x2);
+        Pixel32 tint_color;
+        float gradient;
+    };
+    static_assert(sizeof(RasterizerMeterParams) == 0x1C);
+
+    struct RasterizerScreenEffectParams {
+        short convolution_extra_passes;
+        short convolution_type;
+        float convolution_radius;
+        BitmapData *convolution_mask;
+        
+        float filter_light_enhancement_intensity;
+        float filter_desaturation_intensity;
+        ColorRGB filter_desaturation_tint;
+        bool filter_desaturation_is_additive;
+        
+        bool filter_light_enhancement_uses_convolution_mask;
+        bool filter_desaturation_uses_convolution_mask;
+        
+        bool video_on;
+        short video_overbright_mode;
+        BitmapData *video_scanline_map;
+        float video_noise_intensity;
+        float video_noise_map_scale;
+        BitmapData *video_noise_map;
+    };
+    static_assert(sizeof(RasterizerScreenEffectParams) == 0x38);
 
 }
 
