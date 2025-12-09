@@ -37,6 +37,7 @@ extern "C" {
     void hud_static_element_child_anchor_asm() noexcept;
     void hud_meter_element_child_anchor_asm() noexcept;
     void hud_number_element_child_anchor_asm() noexcept;
+    void hud_overlay_element_child_anchor_asm() noexcept;
 }
 
 namespace Chimera {
@@ -96,6 +97,14 @@ namespace Chimera {
         }
     }
 
+    extern "C" void hud_overlay_element_use_child_anchors(std::uint16_t **anchor, WeaponHUDInterfaceOverlaysElement *element) noexcept {
+        child_anchor = 0;
+        if(element->header.child_anchor > 0 && element->header.child_anchor < 6) {
+            child_anchor = element->header.child_anchor - 1;
+            *anchor = &child_anchor;
+        }
+    }
+
     void set_up_hud_bitmap_scale_fix() noexcept {
         static Hook hook_w, hook_h;
         static Hook hud_static_hook, hud_meter_hook;
@@ -134,9 +143,10 @@ namespace Chimera {
         write_function_override(nav_h_ptr, nav_h, reinterpret_cast<const void *>(nav_number_offset_bitmap_bounds_h), &original_get_nav_bounds_h);
 
         // Child anchors.
-        static Hook static_element_anchor, meter_element_anchor, number_element_anchor;
+        static Hook static_element_anchor, meter_element_anchor, number_element_anchor, overlay_element_anchor;
         write_jmp_call(get_chimera().get_signature("hud_weapon_draw_static_element_sig").data(), static_element_anchor, reinterpret_cast<const void *>(hud_static_element_child_anchor_asm), nullptr);
         write_jmp_call(get_chimera().get_signature("hud_weapon_draw_meter_element_sig").data(), meter_element_anchor, reinterpret_cast<const void *>(hud_meter_element_child_anchor_asm), nullptr);
         write_jmp_call(get_chimera().get_signature("hud_weapon_draw_number_element_sig").data(), number_element_anchor, reinterpret_cast<const void *>(hud_number_element_child_anchor_asm), nullptr);
+        write_jmp_call(get_chimera().get_signature("hud_weapon_draw_overlay_element_sig").data(), overlay_element_anchor, reinterpret_cast<const void *>(hud_overlay_element_child_anchor_asm), nullptr);
     }
 }

@@ -586,10 +586,7 @@ namespace Chimera {
     static_assert(sizeof(WeaponHUDInterfaceNumberElement) == 0xA0);
 
     struct WeaponHUDInterfaceOverlaysElement {
-        WeaponHUDInterfaceState state_type;
-        std::uint16_t runtime_flags;
-        HUDUseOnMapType use_on_map_type;
-        PAD(0x1E);
+        WeaponHUDInterfaceElementHeader header;
         WeaponHUDInterfaceOverlay overlays;
         PAD(0x28);
     };

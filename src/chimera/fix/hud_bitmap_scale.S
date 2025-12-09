@@ -120,4 +120,17 @@ _hud_number_element_child_anchor_asm:
     call _hud_number_element_use_child_anchors
     add esp, 8
     ret
-    
+
+.global _hud_overlay_element_child_anchor_asm
+_hud_overlay_element_child_anchor_asm:
+    lea eax, [esp + 0x28]
+    mov ebx, [esp + 0x2C]
+
+    ;# bit dodgy but should always be valid
+    sub ebx, 0x24
+
+    push ebx
+    push eax
+    call _hud_overlay_element_use_child_anchors
+    add esp, 8
+    ret
