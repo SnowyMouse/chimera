@@ -40,3 +40,10 @@ _chicago_extended_multiply2x_set_xbox_blending_asm:
     call _chicago_multiply2x_set_xbox_blending
     add esp, 12
     ret
+
+.global _chicago_set_projective_divide_asm
+_chicago_set_projective_divide_asm:
+    push ecx
+    call _chicago_projective_divide_first_map
+    add esp, 4
+    ret
