@@ -72,47 +72,48 @@ namespace Chimera {
 
     static void jason_jones_sniper_ticks(WeaponHUDInterface *tag_data) noexcept {
         // 3 static elements? Probably stock sniper interface tag.
-        if(tag_data->statics.count == 3) {
-            auto *static_elements = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
+        if(tag_data->statics.count == 3 && tag_data->absolute_placement.anchor == HUD_ANCHOR_TOP_LEFT) {
+            auto *s1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 1);
+            auto *s2 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 2);
 
             // Make sure it's the thing we want to bullshit.
-            if(static_elements[0].static_element.multitexture_overlays.count == 0 &&
-                static_elements[1].static_element.multitexture_overlays.count == 1 &&
-                static_elements[2].static_element.multitexture_overlays.count == 1 &&
-                static_elements[0].static_element.placement.offset.x == 7 &&
-                static_elements[0].static_element.placement.offset.y == 21 &&
-                static_elements[1].static_element.placement.offset.x == 92 &&
-                static_elements[1].static_element.placement.offset.y == 85 &&
-                static_elements[2].static_element.placement.offset.x == 445 &&
-                static_elements[2].static_element.placement.offset.y == 85) {
+            if(s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
+                s2->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
+                s1->static_element.multitexture_overlays.count == 1 &&
+                s2->static_element.multitexture_overlays.count == 1 &&
+                s1->static_element.placement.offset.x == 92 &&
+                s1->static_element.placement.offset.y == 85 &&
+                s2->static_element.placement.offset.x == 445 &&
+                s2->static_element.placement.offset.y == 85) {
 
-                static_elements[1].static_element.placement.offset.x = 132;
-                static_elements[1].static_element.placement.offset.y = 113;
-                static_elements[2].static_element.placement.offset.x = 484;
-                static_elements[2].static_element.placement.offset.y = 113;
+                s1->static_element.placement.offset.x = -176;
+                s2->static_element.placement.offset.x = 176;
+                s1->static_element.placement.offset.y = s2->static_element.placement.offset.y = 9;
+                s1->header.child_anchor = s2->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
             }
         }
 
         // 2 static elements? Check for old refined sniper ticks and do a different hack here to fix incorrect multitexture blend mode usage
-        // There is no need to do this on the demo version, as these tags were only used in modded stock maps that can be updated.
-        else if(tag_data->statics.count == 2 && game_engine() != GameEngine::GAME_ENGINE_DEMO) {
-            auto *static_elements = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
-            auto mc0 = static_elements[0].static_element.multitexture_overlays.count;
-            auto mc1 = static_elements[1].static_element.multitexture_overlays.count;
-            auto x0 = static_elements[0].static_element.placement.offset.x;
-            auto y0 = static_elements[0].static_element.placement.offset.y;
-            auto x1 = static_elements[1].static_element.placement.offset.x;
-            auto y1 = static_elements[1].static_element.placement.offset.y;
+        else if(tag_data->statics.count == 2 && tag_data->absolute_placement.anchor == HUD_ANCHOR_CENTER) {
+            auto *s0 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
+            auto *s1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 1);
+            auto mc0 = s0->static_element.multitexture_overlays.count;
+            auto mc1 = s1->static_element.multitexture_overlays.count;
+            auto x0 = s0->static_element.placement.offset.x;
+            auto y0 = s0->static_element.placement.offset.y;
+            auto x1 = s1->static_element.placement.offset.x;
+            auto y1 = s1->static_element.placement.offset.y;
 
             // y = 7: old refined, y = 9: newer refined
             if(mc0 == 1 && mc1 == 1 && x0 == -176 && (y0 == 7 || y0 == 9) && x1 == 176 && (y1 == 7 || y1 == 9)) {
-                auto *m0 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &static_elements[0].static_element.multitexture_overlays, 0);
-                auto *m1 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &static_elements[1].static_element.multitexture_overlays, 0);
+                auto *m0 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &s0->static_element.multitexture_overlays, 0);
+                auto *m1 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &s1->static_element.multitexture_overlays, 0);
 
                 // Apply filth
-                if(m0->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT && m1->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT) {
-                    m0->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
-                    m1->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
+                if(m0->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT &&
+                    m1->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT) {
+
+                    m0->map_blending_function[0] = m1->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
                 }
             }
         }
