@@ -206,8 +206,8 @@ namespace Chimera {
                 set_up_alternate_bump_attenuation_support();
                 set_up_hud_meters_fix();
 
-                // Custom edition's screwed up glass is screwed up.
-                set_up_ce_glass_fix();
+                // The games screwed up glass is screwed up.
+                set_up_glass_fix();
 
                 // Fix the borked shader code.
                 set_up_internal_shaders();

@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-#ifndef CHIMERA_GLASS_DIFFUSE_FIX_HPP
-#define CHIMERA_GLASS_DIFFUSE_FIX_HPP
+#ifndef CHIMERA_GLASS_FIX_HPP
+#define CHIMERA_GLASS_FIX_HPP
 
 namespace Chimera {
     /**
-     * Custom edition does not use the 2nd shader technique for transparent_glass_diffuse,
-     * transparent_glass_reflection_flat and transparent_glass_reflection_mirror when it should.
-     * Probably a stuff up from when porting the renderer away from using D3DX effects.
+     * shader_transparent_glass is broken in weird and wonderful ways. This fixes that.
      */
-    void set_up_ce_glass_fix() noexcept;
+    void set_up_glass_fix() noexcept;
 }
 
 #endif

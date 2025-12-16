@@ -442,7 +442,8 @@ namespace Chimera {
                 case 0xB8:
                 case 0xBA:
                 case 0xBB:
-                case 0xBE: {
+                case 0xBE:
+                case 0xBF: {
                     offsets.push_back(at - at_start);
                     bytes.insert(bytes.end(), at, at + 5);
                     at += 5;

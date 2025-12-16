@@ -15,19 +15,18 @@ _set_correct_glass_diffuse_psh_asm:
     use_diffuse_model:
     jmp dword ptr [_original_set_glass_diffuse_instr]
 
-.global _set_correct_glass_reflection_psh_asm
-_set_correct_glass_reflection_psh_asm:
-    cmp word ptr [esp + 0xA4], 00
-    je reflection_bumped
+.global _set_glass_reflection_ps_const_custom_asm
+_set_glass_reflection_ps_const_custom_asm:
+    push ecx
+    push edi
+    call _set_correct_glass_reflection_ps_const
+    add esp, 8
+    ret
 
-    mov ax, word ptr [ebx + 0x28]
-    shr eax, 3
-    and al, 0x1
-    test al, al
-    jz reflection_bumped
-
-    ;# Go to 2nd permutation
-    add ecx, 0x00000084
-
-    reflection_bumped:
-    jmp dword ptr [_original_set_glass_reflection_instr]
+.global _set_glass_reflection_ps_const_retail_asm
+_set_glass_reflection_ps_const_retail_asm:
+    ;# move c_group_intensity.x into c_eye_forward.w
+    lea ecx, [esp + 0x88]
+    mov ebx, [esp + 0xAC]
+    mov [ecx], ebx
+    ret

@@ -452,6 +452,74 @@ namespace Chimera {
         _shader_transparent_chicago_extended chicago_extended;
     };
     static_assert(sizeof(ShaderTransparentChicagoExtended) == 0x78);
+
+
+    /**
+    * shader_transparent_glass
+    */
+    enum ShaderTransparentGlassFlags : std::uint16_t {
+        SHADER_TRANSPARENT_GLASS_FLAGS_ALPHA_TESTED_BIT,
+        SHADER_TRANSPARENT_GLASS_FLAGS_DECAL_BIT,
+        SHADER_TRANSPARENT_GLASS_FLAGS_TWO_SIDED_BIT,
+        SHADER_TRANSPARENT_GLASS_FLAGS_BUMP_MAP_IS_SPECULAR_MASK_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_GLASS_FLAGS
+    };
+
+    enum ShaderTransparentGlassReflectionType : short {
+        SHADER_TRANSPARENT_GLASS_REFLECTION_TYPE_BUMPED,
+        SHADER_TRANSPARENT_GLASS_REFLECTION_TYPE_FLAT,
+        SHADER_TRANSPARENT_GLASS_REFLECTION_TYPE_MIRROR,
+        NUMBER_OF_SHADER_TRANSPARENT_GLASS_REFLECTION_TYPES
+    };
+
+    struct _shader_transparent_glass {
+        std::uint16_t flags;
+        short type;
+        
+        // tint pass
+        PAD(0x28);
+        ColorRGB tint_color;
+        float tint_map_scale;
+        TagReference tint_map;
+        PAD(0x14);
+        
+        // reflection pass
+        PAD(0x2);
+        short reflection_type;
+        float reflection_view_perpendicular_brightness;
+        ColorRGB reflection_view_perpendicular_color;
+        float reflection_view_parallel_brightness;
+        ColorRGB reflection_view_parallel_color;
+        TagReference reflection_map;
+        float reflection_bump_map_scale;
+        TagReference reflection_bump_map;
+        
+        PAD(0x80);
+        
+        // diffuse pass
+        PAD(0x4);
+        float diffuse_map_scale;
+        TagReference diffuse_map;
+        float diffuse_detail_map_scale;
+        TagReference diffuse_detail_map;
+        PAD(0x1C);
+        
+        // alpha-blended specular pass
+        PAD(0x4);
+        float specular_map_scale;
+        TagReference specular_map;
+        float specular_detail_map_scale;
+        TagReference specular_detail_map;
+        PAD(0x1C);
+    };
+    static_assert(sizeof(_shader_transparent_glass) == 0x1B8);
+
+    struct ShaderTransparentGlass {
+        _shader shader;
+        _shader_transparent_glass glass;
+    };
+    static_assert(sizeof(ShaderTransparentGlass) == 0x1E0);
+
 }
 
 #endif
