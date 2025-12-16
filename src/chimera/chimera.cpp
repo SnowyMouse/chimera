@@ -209,13 +209,11 @@ namespace Chimera {
                 // Custom edition's screwed up glass is screwed up.
                 set_up_ce_glass_fix();
 
-                if(!chimera->get_ini()->get_value_bool("debug.use_external_shader_collection").value_or(false)) {
-                    // Fix the borked shader code.
-                    set_up_internal_shaders();
+                // Fix the borked shader code.
+                set_up_internal_shaders();
 
-                    // Gearbox relying on undefined texture sampling behaviour? I'm shocked!
-                    set_up_specular_light_fix();
-                }
+                // Gearbox relying on undefined texture sampling behaviour? I'm shocked!
+                set_up_specular_light_fix();
 
                 // Because it's not 2003.
                 set_up_model_af();
