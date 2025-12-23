@@ -19,17 +19,9 @@ _frustum_hack_asm:
 
 .global _frustum_reset_asm
 _frustum_reset_asm:
-    cmp byte ptr [_reset_frustum], 0
-    je skip_hack_reset
     pushfd
     pushad
-    push 0
-    push 0
-    call dword ptr [_rasterizer_set_frustum_z]
-    add esp, 8
-    mov byte ptr [_reset_frustum], 0
+    call _reset_frustum_hacks
     popad
     popfd
-
-    skip_hack_reset:
     jmp dword ptr [_original_get_zbias]

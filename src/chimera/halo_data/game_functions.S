@@ -87,3 +87,11 @@ _periodic_function_evaluate:
     add esp, 8
     pop eax
     ret
+
+.global _rasterizer_set_frustum_z
+_rasterizer_set_frustum_z:
+    push [esp + 8]
+    push [esp + 8]
+    call dword ptr [_rasterizer_set_frustum_z_func]
+    add esp, 8
+    ret

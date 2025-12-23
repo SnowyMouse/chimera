@@ -17,6 +17,7 @@ namespace Chimera {
         void shader_texture_animation_evaluate(float map_u_scale, float map_v_scale, float map_u_offset, float map_v_offset, float map_rotation, float frame_params, ShaderTextureAnimation *texture_animation, RenderAnimation *render_animation, float *u_transform_reference, float *v_transform_reference) noexcept;
         void rasterizer_transparent_geometry_group_draw_vertices(TransparentGeometryGroup *group, bool has_lightmap) noexcept;
         double periodic_function_evaluate(double period, WaveFunction function) noexcept;
+        void rasterizer_set_frustum_z(float z_near, float z_far) noexcept;
     }
 
     /**

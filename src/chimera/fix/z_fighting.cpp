@@ -8,17 +8,19 @@
 #include "../halo_data/camera.hpp"
 #include "../halo_data/cutscene.hpp"
 #include "../halo_data/object.hpp"
+#include "../halo_data/rasterizer_common.hpp"
+#include "../halo_data/game_functions.hpp"
+#include "../halo_data/shader_defs.hpp"
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+
 
 namespace Chimera {
     extern "C" {
         void frustum_hack_asm() noexcept;
         void frustum_reset_asm() noexcept;
-        void (*rasterizer_set_frustum_z)(float, float);
         const void *original_get_zbias;
-        bool reset_frustum = false;
         bool force_zbias_hack = false;
     }
 
@@ -42,7 +44,9 @@ namespace Chimera {
     static float z_near_veh = DEFAULT_Z_MIN;
     static float z_near_fp = DEFAULT_Z_MIN_FP;
 
-    extern "C" void meme_the_transparent_decals(std::byte *group, bool is_decal) noexcept {
+    static bool reset_frustum = false;
+
+    extern "C" void meme_the_transparent_decals(TransparentGeometryGroup *group, bool is_decal) noexcept {
         force_zbias_hack = false;
         if(reset_frustum) {
             force_zbias_hack = (is_decal && !mirror_pass);
@@ -52,28 +56,50 @@ namespace Chimera {
         float *z_far = reinterpret_cast<float *>(*reinterpret_cast<std::byte **>(draw_distance_ptr));
 
         if(!cinematic_near_plane_changed && !mirror_pass) {
-            auto *shader = *reinterpret_cast<std::byte **>(group + 0xC);
-            auto *ParentObject= reinterpret_cast<ObjectID *>(group + 0x4);
-            auto *shader_type = reinterpret_cast<std::uint16_t *>(shader + 0x24);
-            std::uint8_t *geometry_flags  = reinterpret_cast<std::uint8_t *>(group);
+            auto *shader = reinterpret_cast<_shader *>(group->shader);
 
             // Only compensate for generic/chicago/extended tags.
-            if(*shader_type == 5 || *shader_type == 6 || *shader_type == 7) {
+            if(shader->type >= SHADER_TYPE_TRANSPARENT_GENERIC && shader->type <= SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED) {
                 // first person flag set in geometry flags
-                if((*geometry_flags >> 7) & 1) {
+                if(TEST_FLAG(group->geometry_flags, RASTERIZER_GEOMETRY_FLAGS_FIRST_PERSON_BIT)) {
                     rasterizer_set_frustum_z(z_near_fp, 1024.0f);
                     force_zbias_hack = false;
                     return;
                 }
-                auto *map_count = reinterpret_cast<std::uint8_t *>(shader + 0x54);
+
+                short map_count = 0;
+                short stage_count = 0;
+
+                switch(shader->type) {
+                    case SHADER_TYPE_TRANSPARENT_GENERIC: {
+                        ShaderTransparentGeneric *shader_data = reinterpret_cast<ShaderTransparentGeneric *>(group->shader);
+                        map_count = shader_data->generic.maps.count;
+                        stage_count = shader_data->generic.stages.count;
+                        break;
+                    }
+
+                    case SHADER_TYPE_TRANSPARENT_CHICAGO: {
+                        ShaderTransparentChicago *shader_data = reinterpret_cast<ShaderTransparentChicago *>(group->shader);
+                        map_count = shader_data->chicago.maps.count;
+                        break;
+                    }
+
+                    case SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED: {
+                        ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(group->shader);
+                        map_count = shader_data->chicago_extended.maps_4_stage.count;
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
 
                 // Shader is not attached to an object.
-                if(ParentObject->whole_id == 0) {
-                    if(*map_count < 2) {
+                if(group->object_index.whole_id == 0) {
+                    if(map_count < 2) {
                         // Bullshit edge case where we just want to force use the z-bias method
-                        if(*shader_type == 5) {
-                            auto *stage_count = reinterpret_cast<std::uint32_t *>(shader + 0x60);
-                            if(*stage_count > 0 && is_decal) {
+                        if(shader->type == SHADER_TYPE_TRANSPARENT_GENERIC) {
+                            if(stage_count > 0 && is_decal) {
                                 force_zbias_hack = (!mirror_pass);
                                 return;
                             }
@@ -91,7 +117,7 @@ namespace Chimera {
                 else {
                     // decals on objects only
                     if(is_decal) {
-                        auto *object = ObjectTable::get_object_table().get_dynamic_object(*ParentObject);
+                        auto *object = ObjectTable::get_object_table().get_dynamic_object(group->object_index);
                         if(object) {
                             switch(object->type) {
                                 case OBJECT_TYPE_BIPED:
@@ -99,9 +125,13 @@ namespace Chimera {
                                     reset_frustum = true;
                                     break;
 
+                                case OBJECT_TYPE_SCENERY:                                
                                 case OBJECT_TYPE_VEHICLE:
+                                    // Uh huh
                                     rasterizer_set_frustum_z(z_near_veh, *z_far);
                                     reset_frustum = true;
+                                    force_zbias_hack = true;
+                                    return;
                                     break;
 
                                 case OBJECT_TYPE_DEVICE_MACHINE:
@@ -120,6 +150,13 @@ namespace Chimera {
         }
         // If the frustum hack is applied, don't adjust the z-bias values.
         force_zbias_hack = (is_decal && !reset_frustum && !mirror_pass);
+    }
+
+    extern "C" void reset_frustum_hacks() noexcept {
+        if(reset_frustum) {
+            rasterizer_set_frustum_z(0,0);
+            reset_frustum = false;
+        }
     }
 
     void cinematic_playing_this_frame() noexcept {
@@ -155,7 +192,6 @@ namespace Chimera {
         auto *z_bias_adjust = get_chimera().get_signature("transparent_geometry_draw_zbias").data() + 0xE;
         auto *undo_the_memes = get_chimera().get_signature("transparent_geometry_draw_reset_frus").data() + 0x3;
         auto *render_window_mirror_pass = get_chimera().get_signature("render_window_mirror_pass").data();
-        rasterizer_set_frustum_z = reinterpret_cast<void (*)(float, float)>(get_chimera().get_signature("rasterizer_set_frustum_z_func").data());
         cinematic_screen_effect_ptr = *reinterpret_cast<std::byte **>(get_chimera().get_signature("cinematic_screen_effect_sig").data() + 0x2);
         draw_distance_ptr = get_chimera().get_signature("draw_distance_sig").data() + 0x1;
 
@@ -172,15 +208,15 @@ namespace Chimera {
     }
 
     void set_z_bias_slope() noexcept {
-        auto *decal_slope = *reinterpret_cast<float **>(get_chimera().get_signature("transparent_decal_zbias_sig").data() + 0xE) + 1;
-        auto *transparent_decal_slope = *reinterpret_cast<float **>(get_chimera().get_signature("transparent_decal_zbias_sig").data() + 0xE) + 2;
+        auto *default_transparent_decal_slope = *reinterpret_cast<float **>(get_chimera().get_signature("transparent_decal_zbias_sig").data() + 0xE) + 2;
+        auto *default_decal_slope = *reinterpret_cast<float **>(get_chimera().get_signature("transparent_decal_zbias_sig").data() + 0xE) + 1;
 
         // Reduces transparent decals with a low slope (ie on the ground or ceiling) z-fighting with bsp geo
         // Game defaults this to -2 on ATI/AMD cards only. Set to -2 globally.
-        overwrite(transparent_decal_slope, -2.0f);
+        overwrite(default_transparent_decal_slope, -2.0f);
 
         // Reduces other decals (ie blood splatters, grenade explosions marks etc) with a low slope z-fighting 
         // with bsp geo. Game sets this to -2 on ATI/AMD cards only by default.
-        overwrite(decal_slope, -2.0f);
+        overwrite(default_decal_slope, -2.0f);
     }
 }
