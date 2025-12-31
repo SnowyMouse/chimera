@@ -6,6 +6,7 @@
 #include "../halo_data/shader_defs.hpp"
 #include "../halo_data/rasterizer_common.hpp"
 #include "../halo_data/bitmaps.hpp"
+#include "../halo_data/vertex_defs.hpp"
 
 namespace Chimera {
     // Yuck
@@ -18,6 +19,7 @@ namespace Chimera {
         void rasterizer_transparent_geometry_group_draw_vertices(TransparentGeometryGroup *group, bool has_lightmap) noexcept;
         double periodic_function_evaluate(double period, WaveFunction function) noexcept;
         void rasterizer_set_frustum_z(float z_near, float z_far) noexcept;
+        void rasterizer_draw_dynamic_triangles_static_vertices2(std::int32_t dynamic_triangle_buffer_index, std::int32_t first_triangle_index, std::int32_t triangle_count, VertexBuffer *vertex_buffer0, VertexBuffer *vertex_buffer1) noexcept;
     }
 
     /**

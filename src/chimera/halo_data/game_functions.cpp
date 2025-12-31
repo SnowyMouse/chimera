@@ -17,6 +17,7 @@ namespace Chimera {
         void *rasterizer_transparent_geometry_group_draw_vertices_func = nullptr;
         void *periodic_function_evaluate_func = nullptr;
         void *rasterizer_set_frustum_z_func = nullptr;
+        void *rasterizer_draw_dynamic_triangles_static_vertices2_func = nullptr;
     }
 
     void set_up_function_hooks() noexcept {
@@ -30,6 +31,7 @@ namespace Chimera {
             rasterizer_transparent_geometry_group_draw_vertices_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_transparent_geometry_group_draw_vertices_sig").data());
             periodic_function_evaluate_func = reinterpret_cast<void *>(get_chimera().get_signature("periodic_function_evaluate_sig").data());
             rasterizer_set_frustum_z_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_set_frustum_z_func").data());
+            rasterizer_draw_dynamic_triangles_static_vertices2_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_draw_dynamic_triangles_static_vertices2_sig").data());
 
             functions_hooks_enabled = true;
         }

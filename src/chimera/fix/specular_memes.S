@@ -41,3 +41,50 @@ _specular_light_adjust_ps_const_retail:
 
     skip_retail:
     ret
+    
+.global _specular_lightmap_draw_set_constants_asm
+_specular_lightmap_draw_set_constants_asm:
+    mov eax, dword ptr [ebp]
+    mov ecx, dword ptr [_specular_constants_table]
+    mov ecx, [ecx + 0x18]
+    mov ecx, [ecx]
+    mov esi, dword ptr [esp + 0x30]
+    mov edx, [eax]
+    push esi
+    push ecx
+    push eax
+    call dword ptr [edx + 0x88]
+    mov eax, dword ptr [ebp]
+    mov ecx, dword ptr [_specular_constants_table]
+    mov ecx, [ecx + 0x18]
+    mov ecx, [ecx + 0x4]
+    mov esi, dword ptr [esp + 0x30]
+    add esi, 0x10
+    mov edx, [eax]
+    push esi
+    push ecx
+    push eax
+    call dword ptr [edx + 0x88]
+    mov eax, dword ptr [ebp]
+    mov ecx, dword ptr [_specular_constants_table]
+    mov ecx, [ecx + 0x18]
+    mov ecx, [ecx + 0x8]
+    mov esi, dword ptr [esp + 0x30]
+    add esi, 0x20
+    mov edx, [eax]
+    push esi
+    push ecx
+    push eax
+    call dword ptr [edx + 0x88]
+    mov eax, dword ptr [ebp]
+    mov ecx, dword ptr [_specular_constants_table]
+    mov ecx, [ecx + 0x18]
+    mov ecx, [ecx + 0xC]
+    mov esi, dword ptr [esp + 0x30]
+    add esi, 0x30
+    mov edx, [eax]
+    push esi
+    push ecx
+    push eax
+    call dword ptr [edx + 0x88]
+    ret

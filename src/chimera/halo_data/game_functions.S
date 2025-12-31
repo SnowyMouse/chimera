@@ -88,10 +88,25 @@ _periodic_function_evaluate:
     pop eax
     ret
 
-.global _rasterizer_set_frustum_z
+.globl _rasterizer_set_frustum_z
 _rasterizer_set_frustum_z:
     push [esp + 8]
     push [esp + 8]
     call dword ptr [_rasterizer_set_frustum_z_func]
     add esp, 8
+    ret
+
+.globl _rasterizer_draw_dynamic_triangles_static_vertices2
+_rasterizer_draw_dynamic_triangles_static_vertices2:
+    push eax
+    push edi
+    mov edi, dword ptr [esp + 24]
+    mov eax, dword ptr [esp + 20]
+    push [esp + 28]
+    push [esp + 20]
+    push [esp + 20]
+    call dword ptr [_rasterizer_draw_dynamic_triangles_static_vertices2_func]
+    add esp, 12
+    pop edi
+    pop eax
     ret

@@ -7,18 +7,20 @@
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
 #include "../event/game_loop.hpp"
+#include "../rasterizer/rasterizer.hpp"
 
 extern "C" {
     void specular_light_draw_set_texture_asm() noexcept;
     void specular_light_adjust_ps_const_retail() noexcept;
     void specular_light_adjust_ps_const_custom() noexcept;
     std::uint8_t *specular_light_is_spotlight = nullptr;
+
+    void specular_lightmap_draw_set_constants_asm() noexcept;
+    std::byte *specular_constants_table = nullptr;
 }
 
 namespace Chimera {
-
-    static D3DCAPS9 *d3d9_device_caps = nullptr;
-
+    
     void meme_the_speular_light_draw() noexcept {
         if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
             return;
@@ -50,7 +52,22 @@ namespace Chimera {
     }
 
     void set_up_specular_light_fix() noexcept {
-        d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
+        // Fix specular_light texture/sampler mismatch
         add_game_start_event(meme_the_speular_light_draw);
+
+        // Fix specular_lightmap not setting brightness multiplier const.
+        if(get_chimera().feature_present("client_custom_edition")) {
+           auto *ps_const_count = get_chimera().get_signature("env_specular_lightmap_set_const_custom").data() + 1;
+            static const SigByte mod[] = {0x04};
+            write_code_s(ps_const_count, mod);
+        }
+        else if(get_chimera().feature_present("client_retail_demo")) {
+            auto *ps_const_count = get_chimera().get_signature("env_specular_lightmap_set_const_retail").data() + 1;
+            static Hook dank_memes;
+            specular_constants_table = *reinterpret_cast<std::byte **>(get_chimera().get_signature("env_specular_retail_const_table").data() + 1);
+
+            // Gearbox didn't set the shader constants to the constants table for specular_lightmap, so it never worked.
+            write_jmp_call(ps_const_count + 50, dank_memes, reinterpret_cast<const void *>(specular_lightmap_draw_set_constants_asm), nullptr);
+        }
     }
 }
