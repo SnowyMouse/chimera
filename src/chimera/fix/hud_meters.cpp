@@ -23,11 +23,9 @@ namespace Chimera {
         std::uint32_t hud_meter_draw_vertices_offset = 0;
     }
 
-    static IDirect3DPixelShader9 *hud_meter_ps = nullptr;
-
     extern "C" bool hud_meter_shader_draw(RasterizerMeterParams *meter, const void *vertices) noexcept {
         // Use fixed function draw if we don't have ps_2_0 support
-        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 || !hud_meter_ps) {
             return false;
         }
 
@@ -93,18 +91,7 @@ namespace Chimera {
         meter->gradient = PIN(element->min_alpha, 0.001f, 1.0f);
     }
 
-    void create_hud_meter_ps() noexcept {
-        IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(hud_meters), &hud_meter_ps);
-    }
-
-    void release_hud_meter_ps() noexcept {
-        IDirect3DPixelShader9_Release(hud_meter_ps);
-    }
-
     void set_up_hud_meters_fix() noexcept {
-        add_game_start_event(create_hud_meter_ps);
-        add_game_exit_event(release_hud_meter_ps);
-
         skip_ff_hud_meters_pointer = get_chimera().get_signature("hud_meter_draw_end_sig").data() + 14;
         hud_meter_draw_vertices_offset = game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION ? 0x180 : 0x184;
 

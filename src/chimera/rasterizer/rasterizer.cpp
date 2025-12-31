@@ -17,6 +17,7 @@ namespace Chimera {
 
     // Use this if the generic shader fails to compile instead of crashing out.
     IDirect3DPixelShader9 *disabled_pixel_shader = nullptr;
+    IDirect3DPixelShader9 *hud_meter_ps = nullptr;
 
     void rasterizer_set_render_state(D3DRENDERSTATETYPE state, DWORD value) noexcept {
         throw_error(global_d3d9_device, "d3d device missing");
@@ -28,15 +29,27 @@ namespace Chimera {
         IDirect3DDevice9_SetSamplerState(*global_d3d9_device, sampler, type, value);
     }
 
-    void rasterizer_create_disabled_shader() noexcept {
+    void rasterizer_create_pixel_shaders() noexcept {
+        // Ensure ps2.0 support.
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
+            return;
+        }
+
+        //Create the things.
         if(!disabled_pixel_shader) {
             IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(disabled_shader), &disabled_pixel_shader);
         }
+        if(!hud_meter_ps) {
+            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(hud_meters), &hud_meter_ps);
+        }
     }
 
-    void rasterizer_release_disabled_shader() noexcept {
+    void rasterizer_release_pixel_shaders() noexcept {
         if(disabled_pixel_shader) {
             IDirect3DPixelShader9_Release(disabled_pixel_shader);
+        }
+        if(hud_meter_ps) {
+            IDirect3DPixelShader9_Release(hud_meter_ps);
         }
     }
 
@@ -61,8 +74,8 @@ namespace Chimera {
         global_d3d9_device = reinterpret_cast<IDirect3DDevice9 **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("model_af_set_sampler_states_sig").data() + 1));
         d3d9_device_caps = reinterpret_cast<D3DCAPS9 *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("d3d9_device_caps_sig").data() + 1));
         add_game_exit_event(rasterizer_release_vertex_shaders_3_0);
-        add_game_exit_event(rasterizer_release_disabled_shader);
-        add_game_start_event(rasterizer_create_disabled_shader);
+        add_game_exit_event(rasterizer_release_pixel_shaders);
+        add_game_start_event(rasterizer_create_pixel_shaders);
 
         chimera_rasterizer_enabled = true;
     }
