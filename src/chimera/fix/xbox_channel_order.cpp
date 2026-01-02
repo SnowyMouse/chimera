@@ -4,14 +4,14 @@
 #include "../chimera.hpp"
 #include "../signature/hook.hpp"
 #include "../signature/signature.hpp"
+#include "../halo_data/shader_defs.hpp"
 
 namespace Chimera {
     extern "C" void set_psh_const_for_xbox_order_asm() noexcept;
     static float *c_self_illumination_color_w = nullptr;
 
-    extern "C" void set_psh_const_for_xbox_order(std::byte *shader) noexcept {
-        auto *model_flags = reinterpret_cast<std::uint16_t *>(shader + 0x28);
-        if((*model_flags >> 6) & 1) {
+    extern "C" void set_psh_const_for_xbox_order(ShaderModel *shader) noexcept {
+        if(TEST_FLAG(shader->model.flags, SHADER_MODEL_FLAGS_USE_XBOX_MULTIPURPOSE_CHANNEL_ORDER_BIT)) {
             // gearbox defaults this to 1.0f, which is opposite of MCC. The shader code should be set up accordingly.
             *c_self_illumination_color_w = 0.0f;
         }

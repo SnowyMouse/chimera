@@ -143,6 +143,101 @@ namespace Chimera {
 
 
     /**
+    * shader_model
+    */
+
+    enum ShaderModelFlags {
+        SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT,
+        SHADER_MODEL_FLAGS_TWO_SIDED_BIT,
+        SHADER_MODEL_FLAGS_NOT_ALPHA_TESTED_BIT,
+        SHADER_MODEL_FLAGS_ALPHA_BLENDED_DECAL_BIT,
+        SHADER_MODEL_FLAGS_TRUE_ATMOSPHERIC_FOG_BIT,
+        SHADER_MODEL_FLAGS_DISABLE_TWO_SIDED_CULLING_BIT,
+        SHADER_MODEL_FLAGS_USE_XBOX_MULTIPURPOSE_CHANNEL_ORDER_BIT,
+        NUMBER_OF_SHADER_MODEL_FLAGS
+    };
+
+    enum ShaderModelDetailMask : short {
+        SHADER_MODEL_DETAIL_MASK_NONE,
+        SHADER_MODEL_DETAIL_MASK_REFLECTION_MASK_INVERSE,
+        SHADER_MODEL_DETAIL_MASK_REFLECTION_MASK,
+        SHADER_MODEL_DETAIL_MASK_SELF_ILLUMINATION_MASK_INVERSE,
+        SHADER_MODEL_DETAIL_MASK_SELF_ILLUMINATION_MASK,
+        SHADER_MODEL_DETAIL_MASK_CHANGE_COLOR_MASK_INVERSE,
+        SHADER_MODEL_DETAIL_MASK_CHANGE_COLOR_MASK,
+        SHADER_MODEL_DETAIL_MASK_AUXILIARY_MASK_INVERSE,
+        SHADER_MODEL_DETAIL_MASK_AUXILIARY_MASK,
+        NUMBER_OF_SHADER_MODEL_DETAIL_MASKS
+    };
+
+    enum ShaderModelDetailFunctions : short {
+        SHADER_MODEL_DETAIL_FUNCTION_BIASED_MULTIPLY,
+        SHADER_MODEL_DETAIL_FUNCTION_MULTIPLY,
+        SHADER_MODEL_DETAIL_FUNCTION_BIASED_ADD,
+        NUMBER_OF_SHADER_MODEL_DETAIL_FUNCTIONS
+    };
+
+    enum ShaderModelSelfIlluminationFlags {
+        SHADER_MODEL_SELF_ILLUMINATION_NO_RANDOM_PHASE_BIT,
+        NUMBER_OF_SHADER_MODEL_SELF_ILLUMINATION_FLAGS
+    };
+
+    struct _shader_model {
+        std::uint16_t flags;
+        PAD(0x2);
+        PAD(0xC);
+
+        float translucency;
+        PAD(0x10);
+        
+        FunctionOut diffuse_change_color_source;
+        PAD(0x2);
+        PAD(0x1C);
+        
+        std::uint16_t self_illumination_flags;
+        PAD(0x2);
+        FunctionOut self_illumination_color_source;
+        short self_illumination_animation_function;
+        float self_illumination_animation_period;
+        ColorRGB self_illumination_animation_color_lower_bound;
+        ColorRGB self_illumination_animation_color_upper_bound;
+        PAD(0xC);
+        
+        Point2D map_scale;
+        TagReference base_map;
+        PAD(0x8);
+        TagReference multipurpose_map;
+        PAD(0x8);
+        ShaderModelDetailFunctions detail_function;
+        ShaderModelDetailMask detail_mask;
+        float detail_map_scale;
+        TagReference detail_map;
+        float detail_map_v_scale;
+        PAD(0xC);
+        
+        ShaderTextureAnimation animation;
+        PAD(0x8);
+        
+        float reflection_falloff_distance;
+        float reflection_cutoff_distance;
+        ColorARGB reflection_view_perpendicular_color;
+        ColorARGB reflection_view_parallel_color;
+        TagReference reflection_map;
+        PAD(0x10);
+        
+        float reflection_bump_map_scale;
+        TagReference reflection_bump_map;
+        PAD(0x20);
+    };
+    static_assert(sizeof(_shader_model) == 0x190);
+
+    struct ShaderModel {
+        _shader shader;
+        _shader_model model;
+    };
+    static_assert(sizeof(ShaderModel) == 0x1B8);
+
+    /**
     * shader_transparent_generic
     */
     enum ShaderTransparentGenericConstants {
