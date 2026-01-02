@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "chicago_fix.hpp"
+#include "map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -21,6 +22,10 @@ namespace Chimera {
     }
 
     extern "C" void chicago_multiply_set_xbox_blending(_shader *shader, std::uint32_t stage, DWORD tss_option_argument) noexcept {
+        if(global_fix_flags.gearbox_chicago_multiply) {
+            return;
+        }
+
         bool extended = shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED;
         if(extended) {
             ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(shader);
@@ -40,6 +45,10 @@ namespace Chimera {
     }
 
     extern "C" void chicago_multiply2x_set_xbox_blending(_shader *shader, std::uint32_t stage, DWORD tss_option_argument) noexcept {
+        if(global_fix_flags.gearbox_chicago_multiply) {
+            return;
+        }
+
         bool extended = shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED;
         if(extended) {
             ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(shader);

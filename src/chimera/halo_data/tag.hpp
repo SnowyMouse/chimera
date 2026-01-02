@@ -56,7 +56,7 @@ namespace Chimera {
         TagID scenario_tag;
 
         /** Unused random number */
-        std::uint32_t random_number;
+        std::uint32_t checksum;
 
         /** Number of tags in tag array */
         std::uint32_t tag_count;

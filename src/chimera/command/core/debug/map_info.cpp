@@ -3,6 +3,7 @@
 #include <cstring>
 #include "../../../config/ini.hpp"
 #include "../../../halo_data/game_engine.hpp"
+#include "../../../fix/map_hacks.hpp"
 #include "../../../halo_data/map.hpp"
 #include "../../../halo_data/tag.hpp"
 #include "../../../map_loading/fast_load.hpp"
@@ -61,6 +62,7 @@ namespace Chimera {
 
         // Tag count
         auto tag_count = get_tag_data_header().tag_count;
+        auto tag_crc32 = get_tag_data_header().checksum;
 
         // Output colors
         auto header_color = ConsoleColor::header_color();
@@ -129,6 +131,7 @@ namespace Chimera {
             OUTPUT_WITH_COLOR("%s: %.2f MiB / %.2f MiB (%.2f%%)", key_string, SIZE_IN_MIB(buffer_used), SIZE_IN_MIB(buffer_size), buffer_used_percentage);
         }
 
+        OUTPUT_WITH_COLOR("Tag CRC32: %u", tag_crc32);
         OUTPUT_WITH_COLOR("%s: %d / %d", localize("chimera_map_info_command_map_tag_count"), tag_count, MAX_TAG_COUNT);
         OUTPUT_WITH_COLOR("%s: %.2f MiB / %.2f MiB", localize("chimera_map_info_command_map_tag_data_size"), SIZE_IN_MIB(tag_data_size), MAX_TAG_DATA_SIZE_MIB);
 
@@ -140,6 +143,32 @@ namespace Chimera {
         else {
             console_error("%s: %s", localize("chimera_map_info_command_map_protected"), map_protected);
         }
+
+        if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            console_output(header_color, "%s", "Map config settings:");
+            if(global_fix_flags.gearbox_chicago_multiply) {
+                OUTPUT_WITH_COLOR("gearbox_chicago_multiply");
+            }
+            if(global_fix_flags.gearbox_meters) {
+                OUTPUT_WITH_COLOR("gearbox_meters");
+            }
+            if(global_fix_flags.gearbox_multitexture_blend_modes) {
+                OUTPUT_WITH_COLOR("gearbox_multitexture_blend_modes");
+            }
+            if(global_fix_flags.alternate_bump_attenuation) {
+                OUTPUT_WITH_COLOR("alternate_bump_attenuation");
+            }
+            if(global_fix_flags.invert_detail_after_reflection) {
+                OUTPUT_WITH_COLOR("invert_detail_after_reflection");
+            }
+            if(global_fix_flags.embedded_lua) {
+                OUTPUT_WITH_COLOR("embedded_lua");
+            }
+            if(global_fix_flags.refined_number_scale) {
+                OUTPUT_WITH_COLOR("refined_number_scale");
+            }
+        }
+
 
         // Restore the output prefix
         output_prefix = prefix;

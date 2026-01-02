@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "alternate_bump_attenuation.hpp"
+#include "map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
+#include "../rasterizer/rasterizer.hpp"
 
 namespace Chimera {
     extern "C" {
@@ -21,15 +23,19 @@ namespace Chimera {
         force_alternate_bump_attenuation = false;
     }
 
-    extern "C" void set_psh_constant_for_alternate_bump(std::byte *shader, std::byte &psh_consts) noexcept {
+    extern "C" void set_psh_constant_for_alternate_bump(std::byte *shader, float *c_material_color) noexcept {
         auto *environment_flags = reinterpret_cast<std::uint16_t *>(shader + 0x28);
-        auto *c_material_color_a = reinterpret_cast<float *>(&psh_consts + 0xC);
 
-        if(((*environment_flags >> 3) & 1) || force_alternate_bump_attenuation) {
+        if(((*environment_flags >> 3) & 1) || force_alternate_bump_attenuation || global_fix_flags.alternate_bump_attenuation) {
             // The alpha channel for this constant defaults to 1.0 on the gearbox port and is unused by the shader
             // for anything else so we'll repurpose it for this.
-            *c_material_color_a = 0.0f;
+            c_material_color[3] = 0.0f;
         }
+
+        // Force gearbox bump attenuation
+        float gearbox_attenuation[4] = {0};
+        gearbox_attenuation[3] = global_fix_flags.gearbox_bump_attenuation ? 1.0f : 0.0f;
+        IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 6, gearbox_attenuation, 1);
     }
 
     void set_up_alternate_bump_attenuation_support() noexcept {

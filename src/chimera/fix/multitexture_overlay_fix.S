@@ -46,7 +46,11 @@ _set_multiexture_shader_index_ce_asm:
     add esp, 4
     popad
     popfd
+    cmp dword ptr [_multitexture_shader_index], 0
+    je exit_custom
     mov ebx, dword ptr [_multitexture_shader_index]
+
+    exit_custom:
     jmp dword ptr [_original_multitexture_index_ins]
 
 .global _set_multiexture_shader_index_retail_asm
@@ -58,5 +62,9 @@ _set_multiexture_shader_index_retail_asm:
     add esp, 4
     popad
     popfd
+    cmp dword ptr [_multitexture_shader_index], 0
+    je exit_retail
     mov ebp, dword ptr [_multitexture_shader_index]
+
+    exit_retail:
     jmp dword ptr [_original_multitexture_index_ins]

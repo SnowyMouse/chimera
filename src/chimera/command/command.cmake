@@ -35,6 +35,7 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/debug/send_chat_message.cpp
     ${COMMAND_DIR}/client/debug/show_coordinates.cpp
     ${COMMAND_DIR}/client/debug/show_fps.cpp
+    ${COMMAND_DIR}/client/debug/map_config_flags.cpp
     ${COMMAND_DIR}/client/enhancement/block_all_bullshit.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.cpp
     ${COMMAND_DIR}/client/enhancement/block_extra_weapon.S

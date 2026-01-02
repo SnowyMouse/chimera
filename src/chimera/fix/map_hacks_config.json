@@ -1,0 +1,61 @@
+{
+    "per_map_config": [
+        {
+            "map_name": "bigass_v3",
+            "tags_checksum": 2234443607,
+            "gearbox_meters": true,
+            "embedded_lua": true
+        },
+        {
+            "map_name": "cursed-sidewinder",
+            "tags_checksum": 618599002,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "birdcage-plus",
+            "tags_checksum": 2768256190,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "co2-plus",
+            "tags_checksum": 4135685317,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "hektik-plus",
+            "tags_checksum": 406543850,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "intensity-plus",
+            "tags_checksum": 2527303275,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "h3 foundry",
+            "tags_checksum": 3492375562,
+            "gearbox_meters": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "CMT_tensity",
+            "tags_checksum": 2223809626,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        }
+    ]
+}

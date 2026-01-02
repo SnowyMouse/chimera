@@ -2,6 +2,7 @@
 
 
 #include "jason_jones_hacks.hpp"
+#include "map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -19,7 +20,7 @@ namespace Chimera {
 
     void jason_jones_numbers() noexcept {
         // No need to do this on demo
-        if(game_engine() == GameEngine::GAME_ENGINE_DEMO) {
+        if(!global_fix_flags.refined_number_scale) {
             return;
         }
 
@@ -92,31 +93,6 @@ namespace Chimera {
                 s1->header.child_anchor = s2->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
             }
         }
-
-        // 2 static elements? Check for old refined sniper ticks and do a different hack here to fix incorrect multitexture blend mode usage
-        else if(tag_data->statics.count == 2 && tag_data->absolute_placement.anchor == HUD_ANCHOR_CENTER) {
-            auto *s0 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 0);
-            auto *s1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 1);
-            auto mc0 = s0->static_element.multitexture_overlays.count;
-            auto mc1 = s1->static_element.multitexture_overlays.count;
-            auto x0 = s0->static_element.placement.offset.x;
-            auto y0 = s0->static_element.placement.offset.y;
-            auto x1 = s1->static_element.placement.offset.x;
-            auto y1 = s1->static_element.placement.offset.y;
-
-            // y = 7: old refined, y = 9: newer refined
-            if(mc0 == 1 && mc1 == 1 && x0 == -176 && (y0 == 7 || y0 == 9) && x1 == 176 && (y1 == 7 || y1 == 9)) {
-                auto *m0 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &s0->static_element.multitexture_overlays, 0);
-                auto *m1 = GET_TAG_BLOCK_ELEMENT(HUDMultitextureOverlay, &s1->static_element.multitexture_overlays, 0);
-
-                // Apply filth
-                if(m0->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT &&
-                    m1->map_blending_function[0] == HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_SUBTRACT) {
-
-                    m0->map_blending_function[0] = m1->map_blending_function[0] = HUD_MULTITEXTURE_OVERLAY_BLEND_FUNCTION_MULTIPLY2X;
-                }
-            }
-        }
     }
 
     // FIXME: This will dereference the bumpmap in shader_environment tags if they are p8 bump format.
@@ -144,6 +120,20 @@ namespace Chimera {
         }
     }
 
+    static void jason_jones_detail_after_reflection(ShaderModel *tag_data) noexcept {
+        if(!global_fix_flags.invert_detail_after_reflection) {
+            return;
+        }
+
+        // Flip detail after reflection flag.
+        if(TEST_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT)) {
+            SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 0);
+        }
+        else {
+            SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 1);
+        }
+    }
+
     void jason_jones_tag_fixup() noexcept {
         auto &tag_data_header = get_tag_data_header();
         for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
@@ -159,6 +149,8 @@ namespace Chimera {
                 case TAG_CLASS_WEAPON_HUD_INTERFACE:
                     jason_jones_sniper_ticks(reinterpret_cast<WeaponHUDInterface *>(tag.data));
                     break;
+                case TAG_CLASS_SHADER_MODEL:
+                    jason_jones_detail_after_reflection(reinterpret_cast<ShaderModel *>(tag.data));
                 default:
                     break;
             }

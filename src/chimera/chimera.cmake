@@ -114,6 +114,7 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
     src/chimera/fix/extended_description_fix.cpp
+    src/chimera/fix/map_hacks.cpp
     src/chimera/fix/floor_decal_memery.cpp
     src/chimera/fix/floor_decal_memery.S
     src/chimera/fix/force_crash.cpp
@@ -260,6 +261,7 @@ add_library(chimera STATIC
     ${CMAKE_CURRENT_BINARY_DIR}/d3dx_effects.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/effects_collection.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/map_hacks_config.cpp
 )
 add_dependencies(chimera chimera-version local_curl local_zstd)
 
@@ -289,6 +291,12 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/shader_transparent_generic_blobs.cpp"
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/generate_shader_transparent_generic_blobs.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/halo_data/shaders/pixel/generic_hashes.txt
+)
+
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/map_hacks_config.cpp"
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks_config_generate.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/ ${CMAKE_CURRENT_BINARY_DIR}/
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks_config.json
 )
 
 target_include_directories(chimera

@@ -191,6 +191,11 @@ namespace Chimera {
         ADD_COMMAND("chimera_script_command_dump", "chimera_category_debug", "core", script_command_dump_command, false, 0, 0);
         ADD_COMMAND("chimera_send_chat_message", "chimera_category_debug", "client", send_chat_message_command, false, 2, 2);
         ADD_COMMAND("chimera_map_info", "chimera_category_debug", "client", map_info_command, false, 0, 0);
+        ADD_COMMAND("chimera_debug_gearbox_meters", "chimera_category_debug", "client_custom_edition", map_config_gearbox_meters, false, 0, 0);
+        ADD_COMMAND("chimera_debug_gearbox_multitexture_blending", "chimera_category_debug", "client_custom_edition", map_config_gearbox_multitexture, false, 0, 0);
+        ADD_COMMAND("chimera_debug_gearbox_bump_attenuation", "chimera_category_debug", "client_custom_edition", map_config_gearbox_bump_attenuation, false, 0, 0);
+        ADD_COMMAND("chimera_debug_gearbox_chicago_multiply", "chimera_category_debug", "client_custom_edition", map_config_gearbox_chicago_multiply, false, 0, 0);
+        ADD_COMMAND("chimera_debug_invert_detail_after_reflection", "chimera_category_debug", "client_custom_edition", map_config_detail_after_reflection, false, 0, 0);
 
         // Enhancements
         this->p_commands.emplace_back("chimera_block_all_bullshit", localize("chimera_category_enhancement"), "client", localize("chimera_block_all_bullshit_help"), Chimera::block_all_bullshit_command, false, 0, 0);

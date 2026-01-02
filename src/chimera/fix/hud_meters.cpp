@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "hud_meters.hpp"
+#include "map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -25,7 +26,7 @@ namespace Chimera {
 
     extern "C" bool hud_meter_shader_draw(RasterizerMeterParams *meter, const void *vertices) noexcept {
         // Use fixed function draw if we don't have ps_2_0 support
-        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 || !hud_meter_ps) {
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 || !hud_meter_ps || global_fix_flags.gearbox_meters) {
             return false;
         }
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "multitexture_overlay_fix.hpp"
+#include "map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../halo_data/shader_effects.hpp"
 #include "../math_trig/math_trig.hpp"
@@ -33,6 +34,11 @@ namespace Chimera {
     }
 
     extern "C" void fix_the_multitexture_shader_indexing(std::byte &geometry_params) noexcept {
+        if(global_fix_flags.gearbox_multitexture_blend_modes) {
+            multitexture_shader_index = 0;
+            return;
+        }
+
         auto *map0_to_1_blend_function = reinterpret_cast<std::int16_t *>(&geometry_params + 0x84);
         auto *map1_to_2_blend_function = reinterpret_cast<std::int16_t *>(&geometry_params + 0x86);
         auto *map2 = reinterpret_cast<std::uint32_t *>(&geometry_params + 0x10);

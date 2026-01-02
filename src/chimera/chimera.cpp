@@ -34,6 +34,7 @@
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
 #include "map_loading/fast_load.hpp"
+#include "fix/map_hacks.hpp"
 #include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/aim_assist.hpp"
@@ -166,6 +167,7 @@ namespace Chimera {
                 // Memes
                 set_up_function_hooks();
                 set_up_game_variables();
+                set_up_map_config_control();
 
                 // For renderer memes
                 set_up_rasterizer();
