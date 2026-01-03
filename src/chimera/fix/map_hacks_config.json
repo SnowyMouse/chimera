@@ -1,14 +1,6 @@
 {
     "per_map_config": [
         {
-            "map_name": "birdcage-plus",
-            "tags_checksum": 2768256190,
-            "gearbox_meters": true,
-            "gearbox_multitexture_blend_modes": true,
-            "gearbox_chicago_multiply": true,
-            "refined_number_scale": true
-        },
-        {
             "map_name": "bigass",
             "tags_checksum": 2485176458,
             "gearbox_meters": true
@@ -23,6 +15,14 @@
             "map_name": "bigassv2,104",
             "tags_checksum": 720101929,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "birdcage-plus",
+            "tags_checksum": 2768256190,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
         },
         {
             "map_name": "cmt_abandonedm",
@@ -223,6 +223,21 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "refined_number_scale": true
+        },
+        {
+            "map_name": "deltaruined_intense",
+            "tags_checksum": 2827805978,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "deltaruins",
+            "tags_checksum": 178195327,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "deltaruins_v2",
+            "tags_checksum": 3456020581,
+            "gearbox_bump_attenuation": true
         },
         {
             "map_name": "h3 foundry",
