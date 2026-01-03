@@ -21,6 +21,11 @@
             "refined_number_scale": true
         },
         {
+            "map_name": "battlecraft_hd",
+            "tags_checksum": 3710647297,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "bigass",
             "tags_checksum": 2485176458,
             "gearbox_meters": true
@@ -42,6 +47,12 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "blood_covenantv3",
+            "tags_checksum": 1643072039,
+            "gearbox_meters": true,
             "refined_number_scale": true
         },
         {
@@ -182,6 +193,11 @@
             "refined_number_scale": true
         },
         {
+            "map_name": "cold_valley",
+            "tags_checksum": 1679323263,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "cursed-beavercreek",
             "tags_checksum": 2568646208,
             "gearbox_meters": true,
@@ -260,6 +276,11 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "dualing_keeps",
+            "tags_checksum": 1269502609,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "frogfoot v1.1",
             "tags_checksum": 4231359426,
             "gearbox_meters": true,
@@ -267,6 +288,12 @@
             "gearbox_chicago_multiply": true,
             "refined_number_scale": true,
             "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "gn_mech_war_52f_reconmix",
+            "tags_checksum": 1312108579,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true
         },
         {
             "map_name": "h3 foundry",
@@ -560,6 +587,11 @@
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "sledding02",
+            "tags_checksum": 3619982776,
+            "gearbox_meters": true
         }
     ]
 }
