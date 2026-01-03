@@ -152,8 +152,64 @@
             "refined_number_scale": true
         },
         {
+            "map_name": "cursed-beavercreek",
+            "tags_checksum": 2568646208,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-bloodgulch",
+            "tags_checksum": 3383198224,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-chillout",
+            "tags_checksum": 52719196,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-damnation",
+            "tags_checksum": 3736327078,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-deathisland",
+            "tags_checksum": 4096677183,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-derelict",
+            "tags_checksum": 1546142864,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-hangemhigh",
+            "tags_checksum": 90609041,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
             "map_name": "cursed-sidewinder",
             "tags_checksum": 618599002,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "cursed-wizard",
+            "tags_checksum": 3115864755,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "refined_number_scale": true
