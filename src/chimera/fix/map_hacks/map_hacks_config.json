@@ -1,6 +1,26 @@
 {
     "per_map_config": [
         {
+            "map_name": "[h3]ice_coagulation",
+            "tags_checksum": 2034166844,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "2ump-edifice-pb04",
+            "tags_checksum": 3285613283,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "refined_number_scale": true
+        },
+        {
+            "map_name": "ambushed_again",
+            "tags_checksum": 3627847885,
+            "gearbox_meters": true,
+            "refined_number_scale": true
+        },
+        {
             "map_name": "bigass",
             "tags_checksum": 2485176458,
             "gearbox_meters": true
@@ -343,6 +363,11 @@
         {
             "map_name": "medical block",
             "tags_checksum": 2390234435,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "pit_v2",
+            "tags_checksum": 3713543725,
             "gearbox_meters": true
         },
         {
