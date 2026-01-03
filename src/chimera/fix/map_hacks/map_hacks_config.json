@@ -341,6 +341,11 @@
             "refined_number_scale": true
         },
         {
+            "map_name": "medical block",
+            "tags_checksum": 2390234435,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "rev_beavercreek_cavebeta",
             "tags_checksum": 2580196703,
             "gearbox_meters": true,
