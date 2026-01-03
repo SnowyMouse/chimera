@@ -24,48 +24,54 @@ namespace Chimera {
         global_fix_flags.refined_number_scale = false;
 
         auto &map_header = get_map_header();
+        
+        char map_name_lowercase[32] = {};
+        std::strncpy(map_name_lowercase, map_header.name, sizeof(map_name_lowercase));
+        for(auto &i : map_name_lowercase) {
+            i = std::tolower(i, std::locale("C"));
+        }
 
         // Do not apply to stock campaign.
-        if( std::strcmp("ui",map_header.name) == 0 ||
-            std::strcmp("a10",map_header.name) == 0 ||
-            std::strcmp("a30",map_header.name) == 0 ||
-            std::strcmp("a50",map_header.name) == 0 ||
-            std::strcmp("b30",map_header.name) == 0 ||
-            std::strcmp("b40",map_header.name) == 0 ||
-            std::strcmp("c10",map_header.name) == 0 ||
-            std::strcmp("c20",map_header.name) == 0 ||
-            std::strcmp("c40",map_header.name) == 0 ||
-            std::strcmp("d20",map_header.name) == 0 ||
-            std::strcmp("d40",map_header.name) == 0
+        if( std::strncmp("ui", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("a10", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("a30", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("a50", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("b30", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("b40", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("c10", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("c20", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("c40", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("d20", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("d40", map_name_lowercase, sizeof(map_name_lowercase)) == 0
         ) {
                 return;
         }
 
         // Also don't apply to stock multiplayer I guess.
-        if(std::strcmp("beavercreek",map_header.name) == 0 ||
-            std::strcmp("bloodgulch",map_header.name) == 0 ||
-            std::strcmp("boardingaction",map_header.name) == 0 ||
-            std::strcmp("carousel",map_header.name) == 0 ||
-            std::strcmp("chillout",map_header.name) == 0 ||
-            std::strcmp("damnation",map_header.name) == 0 ||
-            std::strcmp("dangercanyon",map_header.name) == 0 ||
-            std::strcmp("deathisland",map_header.name) == 0 ||
-            std::strcmp("gephyrophobia",map_header.name) == 0 ||
-            std::strcmp("hangemhigh",map_header.name) == 0 ||
-            std::strcmp("icefields",map_header.name) == 0 ||
-            std::strcmp("infinity",map_header.name) == 0 ||
-            std::strcmp("longest",map_header.name) == 0 ||
-            std::strcmp("prisoner",map_header.name) == 0 ||
-            std::strcmp("putput",map_header.name) == 0 ||
-            std::strcmp("ratrace",map_header.name) == 0 ||
-            std::strcmp("sidewinder",map_header.name) == 0 ||
-            std::strcmp("timberland",map_header.name) == 0
+        if(std::strncmp("beavercreek", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("bloodgulch", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("boardingaction", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("carousel", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("chillout", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("damnation", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("dangercanyon", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("deathisland", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("gephyrophobia", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("hangemhigh", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("icefields", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("infinity", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("longest", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("prisoner", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("putput", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("ratrace", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("sidewinder", map_name_lowercase, sizeof(map_name_lowercase)) == 0 ||
+            std::strncmp("timberland", map_name_lowercase, sizeof(map_name_lowercase)) == 0
         ) {
                 return;
         }
 
         for(std::uint32_t i = 0; i < blacklist_map_count; i++) {
-            if(strncmp(map_header.name, chimera_fix_blacklist[i].map_name, 32) != 0) {
+            if(strncmp(chimera_fix_blacklist[i].map_name, map_name_lowercase, sizeof(map_name_lowercase)) != 0) {
                 continue;
             }
 

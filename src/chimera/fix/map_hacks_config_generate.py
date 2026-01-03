@@ -32,7 +32,7 @@ if __name__ == '__main__':
     for config_dict in map_config['per_map_config']:
         if "map_name" in config_dict:
             if "tags_checksum" in config_dict:
-                fix_config.write("{ " + '"' + str(config_dict["map_name"]) + '"' + " ,")
+                fix_config.write("{ " + '"' + str(config_dict["map_name"]).lower() + '"' + " ,")
                 fix_config.write(" " + str(config_dict["tags_checksum"]) + ", ")
             else:
                 continue
