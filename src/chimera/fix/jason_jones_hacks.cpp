@@ -19,12 +19,10 @@ namespace Chimera {
     static float highres_num_multipler = 0.5f;
 
     void jason_jones_numbers() noexcept {
-        // No need to do this on demo
         if(!global_fix_flags.refined_number_scale) {
+            highres_num_multipler = 0.5f;
             return;
         }
-
-        highres_num_multipler = 0.5f;
 
         auto *globals_tag = get_tag("globals\\globals", TagClassInt::TAG_CLASS_GLOBALS);
         auto *interface_bitmaps = *reinterpret_cast<std::byte **>(globals_tag->data + 0x140 + 0x4);
@@ -46,29 +44,17 @@ namespace Chimera {
             return;
         }
 
-        // Get the first sprite sheet bitmap
-        auto *first_bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &numbers_bitmap->bitmap_data, 0);
-        if(!first_bitmap) {
-            return;
-        }
+        // Meme the numbers into working again
+        highres_num_multipler = 1.0f;
+        SET_FLAG(numbers_bitmap->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, true);
 
-        // If it's 2x size, set the 0.5 scale flag
-        if(first_bitmap->width == 256 && first_bitmap->height <= 256) {
-            // Check the number spacing
-            if(counter_numbers->screen_width == 18) {
-                // These are almost certainly using highres numbers, so meme it to work again.
-                highres_num_multipler = 1.0f;
-                SET_FLAG(numbers_bitmap->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, true);
-
-                // Set stock tag values
-                counter_numbers->character_width = 12;
-                counter_numbers->screen_width = 9;
-                counter_numbers->x_offset = 1;
-                counter_numbers->y_offset = 0;
-                counter_numbers->decimal_point_width = 6;
-                counter_numbers->colon_width = 6;
-            }
-        }
+        // Set stock counter number tag values
+        counter_numbers->character_width = 12;
+        counter_numbers->screen_width = 9;
+        counter_numbers->x_offset = 1;
+        counter_numbers->y_offset = 0;
+        counter_numbers->decimal_point_width = 6;
+        counter_numbers->colon_width = 6;
     }
 
     static void jason_jones_sniper_ticks(WeaponHUDInterface *tag_data) noexcept {
