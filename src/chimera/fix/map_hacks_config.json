@@ -7,6 +7,76 @@
             "embedded_lua": true
         },
         {
+            "map_name": "cmt_abandonedm",
+            "tags_checksum": 1754210995,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "cmt_cliffrun",
+            "tags_checksum": 1291916188,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_coagulation_ce",
+            "tags_checksum": 2473594792,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_dissolusion",
+            "tags_checksum": 1324663642,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "cmt_fragment",
+            "tags_checksum": 2246640397,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_fragment_v3",
+            "tags_checksum": 3897403347,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_g3_augur",
+            "tags_checksum": 1934072626,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_g3_mousetrap",
+            "tags_checksum": 2359930239,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_g3_ruins",
+            "tags_checksum": 2257260941,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_g3_vestigial",
+            "tags_checksum": 4253924307,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_tensity",
+            "tags_checksum": 2223809626,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "cursed-sidewinder",
             "tags_checksum": 618599002,
             "gearbox_meters": true,
@@ -50,12 +120,6 @@
             "tags_checksum": 3492375562,
             "gearbox_meters": true,
             "refined_number_scale": true
-        },
-        {
-            "map_name": "CMT_tensity",
-            "tags_checksum": 2223809626,
-            "gearbox_meters": true,
-            "gearbox_bump_attenuation": true
         }
     ]
 }
