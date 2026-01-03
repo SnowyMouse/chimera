@@ -71,10 +71,69 @@
             "invert_detail_after_reflection": true
         },
         {
+            "map_name": "cmt_icy_swamps",
+            "tags_checksum": 3617152886,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_iron_tomb",
+            "tags_checksum": 1513513703,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "cmt_ivory_tower",
+            "tags_checksum": 3390209255,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "cmt_junglewarfare",
+            "tags_checksum": 4106990675,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "cmt_snowtorn_cove",
+            "tags_checksum": 1267427580,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_snow_grove",
+            "tags_checksum": 1177749472,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_snow_grove_v2",
+            "tags_checksum": 1756051681,
+            "gearbox_meters": true,
+            "invert_detail_after_reflection": true
+        },
+        {
             "map_name": "cmt_tensity",
             "tags_checksum": 2223809626,
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "cmt_v2_dissolusion",
+            "tags_checksum": 2370097034,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "cmt_v2_fragment",
+            "tags_checksum": 3897403347,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
+        },
+        {
+            "map_name": "cmt_vestige",
+            "tags_checksum": 2968734392,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "invert_detail_after_reflection": true
         },
         {
             "map_name": "cursed-sidewinder",
