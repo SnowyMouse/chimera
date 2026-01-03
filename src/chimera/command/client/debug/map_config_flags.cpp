@@ -2,7 +2,7 @@
 
 #include "../../../output/output.hpp"
 #include "../../../command/command.hpp"
-#include "../../../fix/map_hacks.hpp"
+#include "../../../fix/map_hacks/map_hacks.hpp"
 #include "../../../halo_data/tag.hpp"
 #include "../../../halo_data/shader_defs.hpp"
 

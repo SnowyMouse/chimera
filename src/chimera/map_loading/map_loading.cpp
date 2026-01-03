@@ -1286,6 +1286,14 @@ namespace Chimera {
                         break;
                     }
                 }
+
+                // Mark as loaded so we can check this later
+                tag.externally_loaded = 1;
+            }
+            else {
+
+                // Ensure this is zero if it was not externally loaded
+                tag.externally_loaded = 0;
             }
         }
 

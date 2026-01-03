@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "chicago_fix.hpp"
-#include "map_hacks.hpp"
+#include "map_hacks/map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -83,7 +83,7 @@ namespace Chimera {
             // Something seriously borkus must have happened for this to ever happen
             return;
         }
-    
+
         if(!first_map_is_cube) {
             IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_PROJECTED);
         }

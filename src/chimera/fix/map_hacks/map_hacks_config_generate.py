@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 continue
         else:
             continue
-            
+
         if "gearbox_chicago_multiply" in config_dict:
             fix_config.write(" " + str(config_dict["gearbox_chicago_multiply"]).lower() + ", ")
         else:
@@ -68,10 +68,14 @@ if __name__ == '__main__':
         else:
             fix_config.write(" false, ")
         if "refined_number_scale" in config_dict:
-            fix_config.write(" " + str(config_dict["refined_number_scale"]).lower() + "}, ")
+            fix_config.write(" " + str(config_dict["refined_number_scale"]).lower() + ", ")
+        else:
+            fix_config.write(" false, ")
+        if "disable_bitmap_hud_scale_flags" in config_dict:
+            fix_config.write(" " + str(config_dict["disable_bitmap_hud_scale_flags"]).lower() + "}, ")
         else:
             fix_config.write(" false }, ")
-        
+
         fix_config.write("\n")
         count = count + 1
 
@@ -81,4 +85,3 @@ if __name__ == '__main__':
 
     fix_config.close()
     f.close()
-        

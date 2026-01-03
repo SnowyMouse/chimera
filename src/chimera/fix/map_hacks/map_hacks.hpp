@@ -19,6 +19,7 @@ namespace Chimera {
         bool invert_detail_after_reflection; // Flips the flag in shader model tags
         bool embedded_lua; // Doesn't do anything yet
         bool refined_number_scale; // Hacks the tag to scale down old refined oversized numbers tags.
+        bool disable_bitmap_hud_scale_flags; // Clears HUD scale flags from internal bitmap tags
     };
 
     struct MapFixConfig {

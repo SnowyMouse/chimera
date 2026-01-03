@@ -240,6 +240,15 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "frogfoot v1.1",
+            "tags_checksum": 4231359426,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "refined_number_scale": true,
+            "disable_bitmap_hud_scale_flags": true
+        },
+        {
             "map_name": "h3 foundry",
             "tags_checksum": 3492375562,
             "gearbox_meters": true,

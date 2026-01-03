@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "map_hacks.hpp"
-#include "../chimera.hpp"
-#include "../signature/hook.hpp"
-#include "../signature/signature.hpp"
-#include "../halo_data/map.hpp"
-#include "../halo_data/tag.hpp"
-#include "../halo_data/game_engine.hpp"
-#include "../event/map_load.hpp"
+#include "../../chimera.hpp"
+#include "../../signature/hook.hpp"
+#include "../../signature/signature.hpp"
+#include "../../halo_data/map.hpp"
+#include "../../halo_data/tag.hpp"
+#include "../../halo_data/game_engine.hpp"
+#include "../../event/map_load.hpp"
 
 namespace Chimera {
     ChimeraFixes global_fix_flags;
@@ -22,9 +22,10 @@ namespace Chimera {
         global_fix_flags.invert_detail_after_reflection = false;
         global_fix_flags.embedded_lua = false;
         global_fix_flags.refined_number_scale = false;
+        global_fix_flags.disable_bitmap_hud_scale_flags = false;
 
         auto &map_header = get_map_header();
-        
+
         char map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_header.name, sizeof(map_name_lowercase));
         for(auto &i : map_name_lowercase) {
@@ -105,6 +106,9 @@ namespace Chimera {
             if(chimera_fix_blacklist[i].config.refined_number_scale) {
                 global_fix_flags.refined_number_scale = true;
             }
+            if(chimera_fix_blacklist[i].config.disable_bitmap_hud_scale_flags) {
+                global_fix_flags.disable_bitmap_hud_scale_flags = true;
+            }
             break;
         }
     }
@@ -119,6 +123,7 @@ namespace Chimera {
         global_fix_flags.invert_detail_after_reflection = false;
         global_fix_flags.embedded_lua = false;
         global_fix_flags.refined_number_scale = false;
+        global_fix_flags.disable_bitmap_hud_scale_flags = false;
 
         // This is really only applicable to custom edition
         if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {

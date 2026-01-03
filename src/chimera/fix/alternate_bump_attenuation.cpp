@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "alternate_bump_attenuation.hpp"
-#include "map_hacks.hpp"
+#include "map_hacks/map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -14,7 +14,7 @@ namespace Chimera {
     }
 
     static bool force_alternate_bump_attenuation = false;
-    
+
     void enable_forced_alternate_bump_attenuation() noexcept {
         force_alternate_bump_attenuation = true;
     }

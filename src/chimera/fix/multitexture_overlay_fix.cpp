@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "multitexture_overlay_fix.hpp"
-#include "map_hacks.hpp"
+#include "map_hacks/map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../halo_data/shader_effects.hpp"
 #include "../math_trig/math_trig.hpp"

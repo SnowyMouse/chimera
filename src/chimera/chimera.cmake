@@ -114,7 +114,7 @@ add_library(chimera STATIC
     src/chimera/fix/extend_limits.cpp
     src/chimera/fix/extend_limits.S
     src/chimera/fix/extended_description_fix.cpp
-    src/chimera/fix/map_hacks.cpp
+    src/chimera/fix/map_hacks/map_hacks.cpp
     src/chimera/fix/floor_decal_memery.cpp
     src/chimera/fix/floor_decal_memery.S
     src/chimera/fix/force_crash.cpp
@@ -295,8 +295,8 @@ add_custom_command(
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/map_hacks_config.cpp"
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks_config_generate.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/ ${CMAKE_CURRENT_BINARY_DIR}/
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks_config.json
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks/map_hacks_config_generate.py ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks/ ${CMAKE_CURRENT_BINARY_DIR}/
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/chimera/fix/map_hacks/map_hacks_config.json
 )
 
 target_include_directories(chimera

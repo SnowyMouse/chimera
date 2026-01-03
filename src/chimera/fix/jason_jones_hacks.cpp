@@ -2,7 +2,7 @@
 
 
 #include "jason_jones_hacks.hpp"
-#include "map_hacks.hpp"
+#include "map_hacks/map_hacks.hpp"
 #include "../chimera.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
@@ -85,8 +85,8 @@ namespace Chimera {
                 s1->static_element.placement.offset.x == 92 &&
                 s1->static_element.placement.offset.y == 85 &&
                 s2->static_element.placement.offset.x == 445 &&
-                s2->static_element.placement.offset.y == 85) {
-
+                s2->static_element.placement.offset.y == 85
+            ) {
                 s1->static_element.placement.offset.x = -176;
                 s2->static_element.placement.offset.x = 176;
                 s1->static_element.placement.offset.y = s2->static_element.placement.offset.y = 9;
@@ -129,15 +129,30 @@ namespace Chimera {
         SWAP_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT);
     }
 
+    static void jason_jones_unintended_hud_scale(Bitmap *tag_data) noexcept {
+        if(!global_fix_flags.disable_bitmap_hud_scale_flags) {
+            return;
+        }
+
+        // Clear HUD scale flags.
+        SET_FLAG(tag_data->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, false);
+        SET_FLAG(tag_data->flags, BITMAP_FLAGS_FORCE_HUD_USE_HIGHRES_SCALE_BIT, false);
+    }
+
     void jason_jones_tag_fixup() noexcept {
         auto &tag_data_header = get_tag_data_header();
         for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
             auto &tag = tag_data_header.tag_array[i];
-            if(!tag.data) {
+
+            // Don't touch external tags. If this changes later make sure not to touch external HUD scale flags
+            if(!tag.data || tag.externally_loaded) {
                 continue;
             }
 
             switch(tag.primary_class) {
+                case TAG_CLASS_BITMAP:
+                    jason_jones_unintended_hud_scale(reinterpret_cast<Bitmap *>(tag.data));
+                    break;
                 case TAG_CLASS_SHADER_ENVIRONMENT:
                     jason_jones_p8_bumps(tag.data);
                     break;

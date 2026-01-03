@@ -34,7 +34,7 @@
 #include "master_server/master_server.hpp"
 #include "map_loading/map_loading.hpp"
 #include "map_loading/fast_load.hpp"
-#include "fix/map_hacks.hpp"
+#include "fix/map_hacks/map_hacks.hpp"
 #include "fix/auto_center.hpp"
 #include "fix/abolish_safe_mode.hpp"
 #include "fix/aim_assist.hpp"

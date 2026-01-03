@@ -37,11 +37,14 @@ namespace Chimera {
         std::byte *data;
 
         /**
-         * This is set to 1 if indexed. Otherwise unused once the map is fully loaded
+         * This is set to 1 if indexed. Used to check if the tag has been loaded yet
          */
         std::uint32_t indexed;
 
-        PAD(0x4);
+        /**
+         * This is normally 4 bytes of padding, but we are going to use it to know if the tag was loaded from Custom Edition resource maps
+         */
+        std::uint32_t externally_loaded;
     };
     static_assert(sizeof(Tag) == 0x20);
 
