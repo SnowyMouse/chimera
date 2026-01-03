@@ -9,10 +9,20 @@
             "refined_number_scale": true
         },
         {
+            "map_name": "bigass",
+            "tags_checksum": 2485176458,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "bigass_v3",
             "tags_checksum": 2234443607,
             "gearbox_meters": true,
             "embedded_lua": true
+        },
+        {
+            "map_name": "bigassv2,104",
+            "tags_checksum": 720101929,
+            "gearbox_meters": true
         },
         {
             "map_name": "cmt_abandonedm",
