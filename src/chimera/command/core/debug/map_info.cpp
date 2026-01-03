@@ -145,26 +145,61 @@ namespace Chimera {
         }
 
         if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
-            console_output(header_color, "%s", "Map config settings:");
+            bool header_is_shown = false;
             if(global_fix_flags.gearbox_chicago_multiply) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("gearbox_chicago_multiply");
             }
             if(global_fix_flags.gearbox_meters) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("gearbox_meters");
             }
             if(global_fix_flags.gearbox_multitexture_blend_modes) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("gearbox_multitexture_blend_modes");
             }
             if(global_fix_flags.alternate_bump_attenuation) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("alternate_bump_attenuation");
             }
+            if(global_fix_flags.gearbox_bump_attenuation) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
+                OUTPUT_WITH_COLOR("gearbox_bump_attenuation");
+            }
             if(global_fix_flags.invert_detail_after_reflection) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("invert_detail_after_reflection");
             }
             if(global_fix_flags.embedded_lua) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("embedded_lua");
             }
             if(global_fix_flags.refined_number_scale) {
+                if(!header_is_shown) {
+                    console_output(header_color, "%s", "Map config settings:");
+                    header_is_shown = true;
+                }
                 OUTPUT_WITH_COLOR("refined_number_scale");
             }
         }
