@@ -126,12 +126,7 @@ namespace Chimera {
         }
 
         // Flip detail after reflection flag.
-        if(TEST_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT)) {
-            SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 0);
-        }
-        else {
-            SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 1);
-        }
+        SWAP_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT);
     }
 
     void jason_jones_tag_fixup() noexcept {
