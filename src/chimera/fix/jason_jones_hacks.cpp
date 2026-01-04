@@ -64,8 +64,7 @@ namespace Chimera {
             auto *s2 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 2);
 
             // Make sure it's the thing we want to bullshit.
-            if(s1 && s2 &&
-                s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
+            if(s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 s2->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 s1->static_element.multitexture_overlays.count == 1 &&
                 s2->static_element.multitexture_overlays.count == 1 &&
@@ -97,7 +96,7 @@ namespace Chimera {
         bool valid = true;
         for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
             auto *bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &bitmap_group->bitmap_data, i);
-            if(!bitmap || bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
+            if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
                 valid = false;
                 break;
             }
