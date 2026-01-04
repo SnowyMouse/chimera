@@ -5,20 +5,20 @@
             "tags_checksum": 2034166844,
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "2ump-edifice-pb04",
             "tags_checksum": 3285613283,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "ambushed_again",
             "tags_checksum": 3627847885,
             "gearbox_meters": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "battlecraft_hd",
@@ -47,13 +47,13 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "blood_covenantv3",
             "tags_checksum": 1643072039,
             "gearbox_meters": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cmt_abandonedm",
@@ -190,7 +190,7 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cold_valley",
@@ -202,63 +202,63 @@
             "tags_checksum": 2568646208,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-bloodgulch",
             "tags_checksum": 3383198224,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-chillout",
             "tags_checksum": 52719196,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-damnation",
             "tags_checksum": 3736327078,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-deathisland",
             "tags_checksum": 4096677183,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-derelict",
             "tags_checksum": 1546142864,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-hangemhigh",
             "tags_checksum": 90609041,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-sidewinder",
             "tags_checksum": 618599002,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "cursed-wizard",
             "tags_checksum": 3115864755,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "deltaruined_intense",
@@ -286,7 +286,7 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
-            "refined_number_scale": true,
+            "hud_number_scale": true,
             "disable_bitmap_hud_scale_flags": true
         },
         {
@@ -299,7 +299,7 @@
             "map_name": "h3 foundry",
             "tags_checksum": 3492375562,
             "gearbox_meters": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hektik-plus",
@@ -307,77 +307,77 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-banshee",
             "tags_checksum": 1994327464,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-bowser",
             "tags_checksum": 852203426,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-donut",
             "tags_checksum": 2243540939,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-fort",
             "tags_checksum": 1869607732,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-koopa",
             "tags_checksum": 2349803804,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-moo",
             "tags_checksum": 522148477,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-peach",
             "tags_checksum": 2587299620,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
          {
             "map_name": "hk-sherbert",
             "tags_checksum": 2982849735,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-wario",
             "tags_checksum": 1694495234,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "hk-yoshi",
             "tags_checksum": 972510471,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "intensity-plus",
@@ -385,7 +385,7 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
-            "refined_number_scale": true
+            "hud_number_scale": true
         },
         {
             "map_name": "medical block",

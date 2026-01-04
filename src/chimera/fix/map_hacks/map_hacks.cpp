@@ -21,7 +21,7 @@ namespace Chimera {
         global_fix_flags.gearbox_bump_attenuation = false;
         global_fix_flags.invert_detail_after_reflection = false;
         global_fix_flags.embedded_lua = false;
-        global_fix_flags.refined_number_scale = false;
+        global_fix_flags.hud_number_scale = false;
         global_fix_flags.disable_bitmap_hud_scale_flags = false;
 
         auto &map_header = get_map_header();
@@ -103,8 +103,8 @@ namespace Chimera {
             if(chimera_fix_blacklist[i].config.embedded_lua) {
                 global_fix_flags.embedded_lua = true;
             }
-            if(chimera_fix_blacklist[i].config.refined_number_scale) {
-                global_fix_flags.refined_number_scale = true;
+            if(chimera_fix_blacklist[i].config.hud_number_scale) {
+                global_fix_flags.hud_number_scale = true;
             }
             if(chimera_fix_blacklist[i].config.disable_bitmap_hud_scale_flags) {
                 global_fix_flags.disable_bitmap_hud_scale_flags = true;
@@ -122,7 +122,7 @@ namespace Chimera {
         global_fix_flags.gearbox_bump_attenuation = false;
         global_fix_flags.invert_detail_after_reflection = false;
         global_fix_flags.embedded_lua = false;
-        global_fix_flags.refined_number_scale = false;
+        global_fix_flags.hud_number_scale = false;
         global_fix_flags.disable_bitmap_hud_scale_flags = false;
 
         // This is really only applicable to custom edition

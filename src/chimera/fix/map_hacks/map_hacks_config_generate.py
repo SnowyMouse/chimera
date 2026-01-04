@@ -67,8 +67,8 @@ if __name__ == '__main__':
             fix_config.write(" " + str(config_dict["embedded_lua"]).lower() + ", ")
         else:
             fix_config.write(" false, ")
-        if "refined_number_scale" in config_dict:
-            fix_config.write(" " + str(config_dict["refined_number_scale"]).lower() + ", ")
+        if "hud_number_scale" in config_dict:
+            fix_config.write(" " + str(config_dict["hud_number_scale"]).lower() + ", ")
         else:
             fix_config.write(" false, ")
         if "disable_bitmap_hud_scale_flags" in config_dict:

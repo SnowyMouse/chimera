@@ -152,7 +152,7 @@ namespace Chimera {
                 global_fix_flags.gearbox_bump_attenuation ||
                 global_fix_flags.invert_detail_after_reflection ||
                 global_fix_flags.embedded_lua ||
-                global_fix_flags.refined_number_scale ||
+                global_fix_flags.hud_number_scale ||
                 global_fix_flags.disable_bitmap_hud_scale_flags
             ) {
                 console_output(header_color, "%s", "Map config settings:");
@@ -177,8 +177,8 @@ namespace Chimera {
                 if(global_fix_flags.embedded_lua) {
                     OUTPUT_WITH_COLOR("embedded_lua");
                 }
-                if(global_fix_flags.refined_number_scale) {
-                    OUTPUT_WITH_COLOR("refined_number_scale");
+                if(global_fix_flags.hud_number_scale) {
+                    OUTPUT_WITH_COLOR("hud_number_scale");
                 }
                 if(global_fix_flags.disable_bitmap_hud_scale_flags) {
                     OUTPUT_WITH_COLOR("disable_bitmap_hud_scale_flags");

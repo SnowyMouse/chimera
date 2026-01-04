@@ -18,7 +18,7 @@ namespace Chimera {
         bool gearbox_bump_attenuation; // Force the gearbox bump attenuation (ie none) in shader_environment_lightmap
         bool invert_detail_after_reflection; // Flips the flag in shader model tags
         bool embedded_lua; // Doesn't do anything yet
-        bool refined_number_scale; // Hacks the tag to scale down old refined oversized numbers tags.
+        bool hud_number_scale; // Hacks the tag to scale down oversized HUD counter numbers.
         bool disable_bitmap_hud_scale_flags; // Clears HUD scale flags from internal bitmap tags
     };
 

@@ -19,7 +19,7 @@ namespace Chimera {
     static float highres_num_multipler = 0.5f;
 
     void jason_jones_numbers() noexcept {
-        if(!global_fix_flags.refined_number_scale) {
+        if(!global_fix_flags.hud_number_scale) {
             highres_num_multipler = 0.5f;
             return;
         }
