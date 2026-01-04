@@ -141,11 +141,176 @@ namespace Chimera {
     };
     static_assert(sizeof(_shader) == 0x28);
 
+    /**
+    * shader_environment
+    */
+    enum ShaderEnvironmentDiffuseFlags {
+        SHADER_ENVIRONMENT_DIFFUSE_FLAGS_RESCALE_DETAIL_MAPS_BIT,
+        SHADER_ENVIRONMENT_DIFFUSE_FLAGS_RESCALE_BUMP_MAP_BIT,
+        NUMBER_OF_SHADER_ENVIRONMENT_DIFFUSE_FLAGS
+    };
+
+    enum ShaderEnvironmentDetailFunction : std::uint16_t {
+        SHADER_ENVIRONMENT_DETAIL_FUNCTION_BIASED_MULTIPLY,
+        SHADER_ENVIRONMENT_DETAIL_FUNCTION_MULTIPLY,
+        SHADER_ENVIRONMENT_DETAIL_FUNCTION_BIASED_ADD,
+        NUMBER_OF_SHADER_ENVIRONMENT_DETAIL_FUNCTIONS
+    };
+
+    struct ShaderEnvironmentDiffuseProperties {
+        std::uint16_t flags;
+        std::int16_t type;
+        PAD(0x18);
+        TagReference base_map;
+        PAD(0x18);
+        ShaderEnvironmentDetailFunction detail_map_function;
+        PAD(0x2);
+        float primary_detail_map_scale;
+        TagReference primary_detail_map;
+        float secondary_detail_map_scale;
+        TagReference secondary_detail_map;
+        PAD(0x18);
+        ShaderEnvironmentDetailFunction micro_detail_map_function;
+        PAD(0x2);
+        float micro_detail_map_scale;
+        TagReference micro_detail_map;
+        ColorRGB material_color;
+        PAD(0xC);
+        float bump_map_scale;
+        TagReference bump_map;
+        Vector2D runtime_bump_map_scale;
+        PAD(0x10);
+        WaveFunction u_animation_function;
+        PAD(0x2);
+        float u_animation_period;
+        float u_animation_scale;
+        WaveFunction v_animation_function;
+        PAD(0x2);
+        float v_animation_period;
+        float v_animation_scale;
+        PAD(0x18);
+    };
+    static_assert(sizeof(ShaderEnvironmentDiffuseProperties) == 0x114);
+
+    enum ShaderEnvironmentSelfIlluminationFlags {
+        SHADER_ENVIRONMENT_SELF_ILLUMINATION_FLAGS_MAP_POINT_SAMPLED_BIT,
+        NUMBER_OF_SHADER_ENVIRONMENT_SELF_ILLUMINATION_FLAGS
+    };
+
+    struct ShaderEnvironmentSelfIlluminationProperties {
+        std::uint16_t flags;
+        std::int16_t type;
+        PAD(0x18);
+        ColorRGB primary_on_color;
+        ColorRGB primary_off_color;
+        WaveFunction primary_animation_function;
+        PAD(0x2);
+        float primary_animation_period;
+        float primary_animation_phase;
+        PAD(0x18);
+        ColorRGB secondary_on_color;
+        ColorRGB secondary_off_color;
+        WaveFunction secondary_animation_function;
+        PAD(0x2);
+        float secondary_animation_period;
+        float secondary_animation_phase;
+        PAD(0x18);
+        ColorRGB plasma_on_color;
+        ColorRGB plasma_off_color;
+        WaveFunction plasma_animation_function;
+        PAD(0x2);
+        float plasma_animation_period;
+        float plasma_animation_phase;
+        PAD(0x18);
+        float map_scale;
+        TagReference map;
+        PAD(0x18);
+    };
+    static_assert(sizeof(ShaderEnvironmentSelfIlluminationProperties) == 0xFC);
+
+    enum ShaderEnvironmentSpecularFlags {
+        SHADER_ENVIRONMENT_SPECULAR_FLAGS_OVERBRIGHT_BIT,
+        SHADER_ENVIRONMENT_SPECULAR_FLAGS_EXTRA_SHINY_BIT,
+        SHADER_ENVIRONMENT_SPECULAR_FLAGS_LIGHTMAP_BIT,
+        NUMBER_OF_SHADER_ENVIRONMENT_SPECULAR_FLAGS
+    };
+
+    struct ShaderEnvironmentSpecularProperties {
+        std::uint16_t flags;
+        std::int16_t type;
+        PAD(0x10);
+        float brightness;
+        PAD(0x14);
+        ColorRGB view_perpendicular_color;
+        ColorRGB view_parallel_color;
+        PAD(0x10);
+    };
+    static_assert(sizeof(ShaderEnvironmentSpecularProperties) == 0x54);
+
+    enum ShaderEnvironmentReflectionFlags {
+        SHADER_ENVIRONMENT_REFLECTION_FLAGS_MIRROR_BIT,
+        NUMBER_OF_SHADER_ENVIRONMENT_REFLECTION_FLAGS
+    };
+
+    enum ShaderEnvironmentReflectionType : std::uint16_t {
+        SHADER_ENVIRONMENT_REFLECTION_TYPE_BUMPED,
+        SHADER_ENVIRONMENT_REFLECTION_TYPE_FLAT,
+        SHADER_ENVIRONMENT_REFLECTION_TYPE_RADIOSITY,
+        NUMBER_OF_SHADER_ENVIRONMENT_REFLECTION_TYPES
+    };
+
+    struct ShaderEnvironmentReflectionProperties {
+        std::uint16_t flags;
+        ShaderEnvironmentReflectionType type;
+        float lightmap_brightness_scale;
+        PAD(0x1C);
+        float view_perpendicular_brightness;
+        float view_parallel_brightness;
+        PAD(0x10);
+        float mirror_index_of_refraction;
+        float mirror_depth;
+        PAD(0x10);
+        TagReference map;
+        PAD(0x10);
+    };
+    static_assert(sizeof(ShaderEnvironmentReflectionProperties) == 0x74);
+
+    enum ShaderEnvironmentType : std::uint16_t {
+        SHADER_ENVIRONMENT_TYPE_NORMAL,
+        SHADER_ENVIRONMENT_TYPE_BLENDED,
+        SHADER_ENVIRONMENT_TYPE_BLENDED_BASE_SPECULAR_MASK,
+        NUMBER_OF_SHADER_ENVIRONMENT_TYPES
+    };
+
+    enum ShaderEnvironmentFlags {
+        SHADER_ENVIRONMENT_FLAGS_ALPHA_TESTED_BIT,
+        SHADER_ENVIRONMENT_FLAGS_BUMP_MAP_IS_SPECULAR_MASK_BIT,
+        SHADER_ENVIRONMENT_FLAGS_TRUE_ATMOSPHERIC_FOG_BIT,
+        SHADER_ENVIRONMENT_FLAGS_USE_ALTERNATE_BUMP_ATTENUATION_BIT,
+        NUMBER_OF_SHADER_ENVIRONMENT_FLAGS
+    };
+
+    struct _shader_environment {
+        std::uint16_t flags;
+        ShaderEnvironmentType type;
+        float lens_flare_spacing;
+        TagReference lens_flare;
+        PAD(0x2C);
+        ShaderEnvironmentDiffuseProperties diffuse;
+        ShaderEnvironmentSelfIlluminationProperties self_illumination;
+        ShaderEnvironmentSpecularProperties specular;
+        ShaderEnvironmentReflectionProperties reflection;
+    };
+
+    struct ShaderEnvironment {
+        struct _shader shader;
+        struct _shader_environment environment;
+    };
+    static_assert(sizeof(ShaderEnvironment) == 0x344);
 
     /**
     * shader_model
     */
-
     enum ShaderModelFlags {
         SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT,
         SHADER_MODEL_FLAGS_TWO_SIDED_BIT,
@@ -189,11 +354,11 @@ namespace Chimera {
 
         float translucency;
         PAD(0x10);
-        
+
         FunctionOut diffuse_change_color_source;
         PAD(0x2);
         PAD(0x1C);
-        
+
         std::uint16_t self_illumination_flags;
         PAD(0x2);
         FunctionOut self_illumination_color_source;
@@ -202,7 +367,7 @@ namespace Chimera {
         ColorRGB self_illumination_animation_color_lower_bound;
         ColorRGB self_illumination_animation_color_upper_bound;
         PAD(0xC);
-        
+
         Point2D map_scale;
         TagReference base_map;
         PAD(0x8);
@@ -214,17 +379,17 @@ namespace Chimera {
         TagReference detail_map;
         float detail_map_v_scale;
         PAD(0xC);
-        
+
         ShaderTextureAnimation animation;
         PAD(0x8);
-        
+
         float reflection_falloff_distance;
         float reflection_cutoff_distance;
         ColorARGB reflection_view_perpendicular_color;
         ColorARGB reflection_view_parallel_color;
         TagReference reflection_map;
         PAD(0x10);
-        
+
         float reflection_bump_map_scale;
         TagReference reflection_bump_map;
         PAD(0x20);
@@ -570,14 +735,14 @@ namespace Chimera {
     struct _shader_transparent_glass {
         std::uint16_t flags;
         short type;
-        
+
         // tint pass
         PAD(0x28);
         ColorRGB tint_color;
         float tint_map_scale;
         TagReference tint_map;
         PAD(0x14);
-        
+
         // reflection pass
         PAD(0x2);
         short reflection_type;
@@ -588,9 +753,9 @@ namespace Chimera {
         TagReference reflection_map;
         float reflection_bump_map_scale;
         TagReference reflection_bump_map;
-        
+
         PAD(0x80);
-        
+
         // diffuse pass
         PAD(0x4);
         float diffuse_map_scale;
@@ -598,7 +763,7 @@ namespace Chimera {
         float diffuse_detail_map_scale;
         TagReference diffuse_detail_map;
         PAD(0x1C);
-        
+
         // alpha-blended specular pass
         PAD(0x4);
         float specular_map_scale;

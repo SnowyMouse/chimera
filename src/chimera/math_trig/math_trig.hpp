@@ -95,6 +95,9 @@ namespace Chimera {
         float y;
     };
 
+    using Vector2D = Point2D;
+    using Vector3D = Point3D;
+
     struct VectorIJ {
         float i;
         float j;

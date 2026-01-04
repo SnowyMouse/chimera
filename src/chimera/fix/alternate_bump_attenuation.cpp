@@ -6,6 +6,7 @@
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../rasterizer/rasterizer.hpp"
+#include "../halo_data/shader_defs.hpp"
 
 namespace Chimera {
     extern "C" {
@@ -13,20 +14,8 @@ namespace Chimera {
         void set_psh_constant_for_alternate_bump_custom_asm() noexcept;
     }
 
-    static bool force_alternate_bump_attenuation = false;
-
-    void enable_forced_alternate_bump_attenuation() noexcept {
-        force_alternate_bump_attenuation = true;
-    }
-
-    void disable_forced_alternate_bump_attenuation() noexcept {
-        force_alternate_bump_attenuation = false;
-    }
-
-    extern "C" void set_psh_constant_for_alternate_bump(std::byte *shader, float *c_material_color) noexcept {
-        auto *environment_flags = reinterpret_cast<std::uint16_t *>(shader + 0x28);
-
-        if(((*environment_flags >> 3) & 1) || force_alternate_bump_attenuation || global_fix_flags.alternate_bump_attenuation) {
+    extern "C" void set_psh_constant_for_alternate_bump(ShaderEnvironment *shader, float *c_material_color) noexcept {
+        if(TEST_FLAG(shader->environment.flags, SHADER_ENVIRONMENT_FLAGS_USE_ALTERNATE_BUMP_ATTENUATION_BIT) || global_fix_flags.alternate_bump_attenuation) {
             // The alpha channel for this constant defaults to 1.0 on the gearbox port and is unused by the shader
             // for anything else so we'll repurpose it for this.
             c_material_color[3] = 0.0f;

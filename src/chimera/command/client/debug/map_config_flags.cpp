@@ -7,6 +7,12 @@
 #include "../../../halo_data/shader_defs.hpp"
 
 namespace Chimera {
+    bool map_config_alternate_bump_attenuation(int, const char **) {
+        global_fix_flags.alternate_bump_attenuation = global_fix_flags.alternate_bump_attenuation ? false : true;
+        console_output(BOOL_TO_STR(global_fix_flags.alternate_bump_attenuation));
+        return true;
+    }
+
     bool map_config_gearbox_meters(int, const char **) {
         global_fix_flags.gearbox_meters = global_fix_flags.gearbox_meters ? false : true;
         console_output(BOOL_TO_STR(global_fix_flags.gearbox_meters));
@@ -43,14 +49,10 @@ namespace Chimera {
             auto tag_data = reinterpret_cast<ShaderModel *>(tag.data);
             if(tag.primary_class == TAG_CLASS_SHADER_MODEL) {
                 // Flip detail after reflection flag.
-                if(TEST_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT)) {
-                    SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 0);
-                }
-                else {
-                    SET_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT, 1);
-                }
+                SWAP_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT);
             }
         }
+
         console_output(BOOL_TO_STR(global_fix_flags.invert_detail_after_reflection));
         return true;
     }

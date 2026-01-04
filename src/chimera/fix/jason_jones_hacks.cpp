@@ -64,7 +64,8 @@ namespace Chimera {
             auto *s2 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 2);
 
             // Make sure it's the thing we want to bullshit.
-            if(s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
+            if(s1 && s2 &&
+                s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 s2->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 s1->static_element.multitexture_overlays.count == 1 &&
                 s2->static_element.multitexture_overlays.count == 1 &&
@@ -83,26 +84,27 @@ namespace Chimera {
 
     // FIXME: This will dereference the bumpmap in shader_environment tags if they are p8 bump format.
     // This should be removed if software decoding for p8 bump is ever implemented.
-    static void jason_jones_p8_bumps(std::byte *tag_data) noexcept {
+    static void jason_jones_p8_bumps(ShaderEnvironment *tag_data) noexcept {
+        if(tag_data->environment.diffuse.bump_map.tag_id.is_null()) {
+            return;
+        }
+
+        auto *bitmap_group = get_bitmap_tag(tag_data->environment.diffuse.bump_map.tag_id);
+        if(!bitmap_group) {
+            return;
+        }
+
         bool valid = true;
-        TagReference *bump_map = reinterpret_cast<TagReference *>(tag_data + 0x128);
-        if(!bump_map->tag_id.is_null()) {
-            auto *bitmap_group = get_bitmap_tag(bump_map->tag_id);
-            if(!bitmap_group) {
-                return;
+        for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
+            auto *bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &bitmap_group->bitmap_data, i);
+            if(!bitmap || bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
+                valid = false;
+                break;
             }
+        }
 
-            for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
-                auto *bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &bitmap_group->bitmap_data, i);
-                if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
-                    valid = false;
-                    break;
-                }
-            }
-
-            if(!valid) {
-                bump_map->tag_id = TagID::null_id();
-            }
+        if(!valid) {
+            tag_data->environment.diffuse.bump_map.tag_id = TagID::null_id();
         }
     }
 
@@ -140,13 +142,14 @@ namespace Chimera {
                     jason_jones_unintended_hud_scale(reinterpret_cast<Bitmap *>(tag.data));
                     break;
                 case TAG_CLASS_SHADER_ENVIRONMENT:
-                    jason_jones_p8_bumps(tag.data);
+                    jason_jones_p8_bumps(reinterpret_cast<ShaderEnvironment *>(tag.data));
+                    break;
+                case TAG_CLASS_SHADER_MODEL:
+                    jason_jones_detail_after_reflection(reinterpret_cast<ShaderModel *>(tag.data));
                     break;
                 case TAG_CLASS_WEAPON_HUD_INTERFACE:
                     jason_jones_sniper_ticks(reinterpret_cast<WeaponHUDInterface *>(tag.data));
                     break;
-                case TAG_CLASS_SHADER_MODEL:
-                    jason_jones_detail_after_reflection(reinterpret_cast<ShaderModel *>(tag.data));
                 default:
                     break;
             }

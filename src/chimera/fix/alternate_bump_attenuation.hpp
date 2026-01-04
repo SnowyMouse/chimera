@@ -9,15 +9,6 @@ namespace Chimera {
      */
     void set_up_alternate_bump_attenuation_support() noexcept;
 
-    /**
-     * Always use the alternate bump attenuation behaviour.
-     */
-    void enable_forced_alternate_bump_attenuation() noexcept;
-
-    /**
-     * Only use alternate bump attenuation if the "use alternate bump attenuation" flag is set.
-     */
-    void disable_forced_alternate_bump_attenuation() noexcept;
 }
 
 #endif

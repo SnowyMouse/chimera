@@ -191,6 +191,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_script_command_dump", "chimera_category_debug", "core", script_command_dump_command, false, 0, 0);
         ADD_COMMAND("chimera_send_chat_message", "chimera_category_debug", "client", send_chat_message_command, false, 2, 2);
         ADD_COMMAND("chimera_map_info", "chimera_category_debug", "client", map_info_command, false, 0, 0);
+        ADD_COMMAND("chimera_debug_alternate_bump_attenuation", "chimera_category_debug", "client_custom_edition", map_config_alternate_bump_attenuation, false, 0, 0);
         ADD_COMMAND("chimera_debug_gearbox_meters", "chimera_category_debug", "client_custom_edition", map_config_gearbox_meters, false, 0, 0);
         ADD_COMMAND("chimera_debug_gearbox_multitexture_blending", "chimera_category_debug", "client_custom_edition", map_config_gearbox_multitexture, false, 0, 0);
         ADD_COMMAND("chimera_debug_gearbox_bump_attenuation", "chimera_category_debug", "client_custom_edition", map_config_gearbox_bump_attenuation, false, 0, 0);
@@ -220,7 +221,6 @@ namespace Chimera {
 
         // Visuals
         ADD_COMMAND("chimera_af", "chimera_category_visual", "client", af_command, true, 0, 1);
-        ADD_COMMAND("chimera_force_alternate_bump_attenuation", "chimera_category_visual", "client", force_alternate_bump_attenuation_command, true, 0, 1);
         ADD_COMMAND("chimera_block_auto_center", "chimera_category_visual", "client", block_auto_center_command, true, 0, 1);
         ADD_COMMAND("chimera_block_camera_shake", "chimera_category_visual", "client_camera_shake", block_camera_shake_command, true, 0, 1);
         ADD_COMMAND("chimera_block_gametype_indicator", "chimera_category_visual", "client_gametype_indicator", block_gametype_indicator_command, true, 0, 1);

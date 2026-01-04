@@ -53,7 +53,6 @@ set(COMMAND_FILES
     ${COMMAND_DIR}/client/server/spectate.cpp
     ${COMMAND_DIR}/client/server/spectate.S
     ${COMMAND_DIR}/client/visual/af.cpp
-    ${COMMAND_DIR}/client/visual/force_alternate_bump_attenuation.cpp
     ${COMMAND_DIR}/client/visual/block_auto_center.cpp
     ${COMMAND_DIR}/client/visual/block_camera_shake.cpp
     ${COMMAND_DIR}/client/visual/block_gametype_indicator.cpp
