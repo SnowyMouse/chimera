@@ -10,21 +10,29 @@
 #include "../../../output/output.hpp"
 
 namespace Chimera {
-    static double max_spf;
-    static LARGE_INTEGER next_frame;
+    static LARGE_INTEGER last_frame;
     static LARGE_INTEGER current_frame;
     static double pc_freq;
-    static double duration_to_add;
+    static double frame_time_target;
     static bool limiter_enabled = false;
 
     static void on_frame() {
         if(limiter_enabled) {
+            bool slept_this_frame = false;
             QueryPerformanceCounter(&current_frame);
-            while(static_cast<long long>(current_frame.QuadPart) < static_cast<long long>(next_frame.QuadPart)) {
-                Sleep(0);
+            double time_since_last_frame = (current_frame.QuadPart - last_frame.QuadPart) / pc_freq;
+
+            while(time_since_last_frame < frame_time_target) {
+                // Sleep for a chunk of the remaining time slice...
+                if(time_since_last_frame < (frame_time_target / 2) && !slept_this_frame) {
+                    Sleep(static_cast<long>((time_since_last_frame * 1000) / 2));
+                    slept_this_frame = true;
+                }
+                // And then just spin the while loop for the rest.
                 QueryPerformanceCounter(&current_frame);
+                time_since_last_frame = (current_frame.QuadPart - last_frame.QuadPart) / pc_freq;
             }
-            next_frame.QuadPart = current_frame.QuadPart + static_cast<long long>(duration_to_add);
+            last_frame.QuadPart = current_frame.QuadPart;
         }
     }
 
@@ -46,10 +54,12 @@ namespace Chimera {
                     new_fps = 300.0f;
                 }
                 enabled = true;
-                max_spf = 1.0f / new_fps;
+                frame_time_target = 1.0f / new_fps;
                 QueryPerformanceFrequency(&current_frame);
                 pc_freq = static_cast<double>(current_frame.QuadPart);
-                duration_to_add = max_spf * pc_freq;
+                QueryPerformanceCounter(&current_frame);
+                last_frame.QuadPart = 0;
+
                 if(!hook_enabled) {
                     static Hook hook;
                     write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data() + 3, hook, reinterpret_cast<const void*>(on_frame), nullptr);
@@ -60,7 +70,7 @@ namespace Chimera {
         }
 
         if(enabled) {
-            console_output("%.02f FPS", 1.0 / max_spf);
+            console_output("%.02f FPS", 1.0 / frame_time_target);
         }
         else {
             console_output("off");
