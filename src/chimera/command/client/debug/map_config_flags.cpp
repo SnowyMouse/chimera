@@ -4,6 +4,7 @@
 #include "../../../command/command.hpp"
 #include "../../../fix/map_hacks/map_hacks.hpp"
 #include "../../../halo_data/tag.hpp"
+#include "../../../halo_data/bitmaps.hpp"
 #include "../../../halo_data/shader_defs.hpp"
 
 namespace Chimera {
@@ -42,12 +43,9 @@ namespace Chimera {
         auto &tag_data_header = get_tag_data_header();
         for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
             auto &tag = tag_data_header.tag_array[i];
-            if(!tag.data) {
-                continue;
-            }
+            if(tag.data && tag.primary_class == TAG_CLASS_SHADER_MODEL) {
+                auto tag_data = reinterpret_cast<ShaderModel *>(tag.data);
 
-            auto tag_data = reinterpret_cast<ShaderModel *>(tag.data);
-            if(tag.primary_class == TAG_CLASS_SHADER_MODEL) {
                 // Flip detail after reflection flag.
                 SWAP_FLAG(tag_data->model.flags, SHADER_MODEL_FLAGS_DETAIL_AFTER_REFLECTION_BIT);
             }
@@ -56,4 +54,25 @@ namespace Chimera {
         console_output(BOOL_TO_STR(global_fix_flags.invert_detail_after_reflection));
         return true;
     }
+
+    bool map_config_bitmap_hud_scale_flags(int, const char **) {
+        if(!global_fix_flags.disable_bitmap_hud_scale_flags) {
+            global_fix_flags.disable_bitmap_hud_scale_flags = true;
+            auto &tag_data_header = get_tag_data_header();
+            for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
+                auto &tag = tag_data_header.tag_array[i];
+                if(tag.data && tag.primary_class == TAG_CLASS_BITMAP && !tag.externally_loaded) {
+                    auto tag_data = reinterpret_cast<Bitmap *>(tag.data);
+
+                    // Clear HUD scale flags.
+                    SET_FLAG(tag_data->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, false);
+                    SET_FLAG(tag_data->flags, BITMAP_FLAGS_FORCE_HUD_USE_HIGHRES_SCALE_BIT, false);
+                }
+            }
+        }
+
+        console_output("true");
+        return true;
+    }
+
 }
