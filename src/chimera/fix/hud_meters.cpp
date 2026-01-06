@@ -89,7 +89,14 @@ namespace Chimera {
         }
 
         // gradient is unused and always set to 1 by default. We'll use it for this instead.
-        meter->gradient = PIN(element->min_alpha, 0.001f, 1.0f);
+        if(element->min_alpha == 0.0f) {
+            // Use a default as most tags do not have min_alpha set. This method was chosen based on existing tags and seems safe enough.
+            // MCC CEA does not do this and Xbox does not have min_alpha processing, so in those cases it would have been the same as 0.001.
+            meter->gradient = element->fade < 0.5f ? 1.0f : 0.5f;
+        }
+        else {
+            meter->gradient = PIN(element->min_alpha, 0.001f, 1.0f);
+        }
     }
 
     void set_up_hud_meters_fix() noexcept {

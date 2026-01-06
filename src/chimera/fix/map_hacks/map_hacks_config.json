@@ -292,7 +292,6 @@
         {
             "map_name": "gn_mech_war_52f_reconmix",
             "tags_checksum": 1312108579,
-            "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true
         },
         {
@@ -592,6 +591,11 @@
             "map_name": "sledding02",
             "tags_checksum": 3619982776,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "trenchfoot-truce-beta04",
+            "tags_checksum": 701609001,
+            "gearbox_multitexture_blend_modes": true
         }
     ]
 }
