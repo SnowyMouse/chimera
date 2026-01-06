@@ -15,6 +15,18 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "airlock",
+            "tags_checksum": 2193335335,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "alpine",
+            "tags_checksum": 4209766427,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "ambushed_again",
             "tags_checksum": 3627847885,
             "gearbox_meters": true,
@@ -190,6 +202,13 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "cold_shoulder",
+            "tags_checksum": 1616235348,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
             "hud_number_scale": true
         },
         {
@@ -392,6 +411,18 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "nitra_v2",
+            "tags_checksum": 2591971919,
+            "alternate_bump_attenuation": true
+        },
+        {
+            "map_name": "nk-g3-augur",
+            "tags_checksum": 2892088416,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "disable_bitmap_hud_scale_flags": true
+        },
+        {
             "map_name": "pit_v2",
             "tags_checksum": 3713543725,
             "gearbox_meters": true
@@ -590,6 +621,16 @@
         {
             "map_name": "sledding02",
             "tags_checksum": 3619982776,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "the_cage",
+            "tags_checksum": 3055166625,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "the_cage_un",
+            "tags_checksum": 3055166625,
             "gearbox_meters": true
         },
         {
