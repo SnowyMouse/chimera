@@ -40,6 +40,23 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "ascetic",
+            "tags_checksum": 772258645,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "atruck",
+            "tags_checksum": 552595708,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "alternate_bump_attenuation": true,
+            "embedded_lua": true
+        },
+        {
             "map_name": "battlecraft_hd",
             "tags_checksum": 3710647297,
             "gearbox_meters": true
@@ -53,6 +70,7 @@
             "map_name": "bigass_v3",
             "tags_checksum": 2234443607,
             "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
             "embedded_lua": true
         },
         {
@@ -222,6 +240,12 @@
             "map_name": "cold_valley",
             "tags_checksum": 1679323263,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "crashtest0,1",
+            "tags_checksum": 1643293101,
+            "gearbox_meters": true,
+            "alternate_bump_attenuation": true
         },
         {
             "map_name": "cursed-beavercreek",
@@ -434,6 +458,13 @@
             "map_name": "medical block",
             "tags_checksum": 2390234435,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "metrobyte",
+            "tags_checksum": 2444694444,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "nitra_v2",
