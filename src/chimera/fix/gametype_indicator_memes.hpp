@@ -9,8 +9,8 @@ namespace Chimera {
      */
     extern bool gametype_indicator_disabled;
     /**
-     * Make it so the gametype indicator draw twice when in a vehicle. Also precache the tagID 
-     * of the bitmaps so the draw function doesn't search for the tag every frame.
+     * Make it so the gametype indicator doesn't draw twice when in a vehicle. Also precache
+     * the tagID of the bitmaps so the draw function doesn't search for the tag every frame.
      */
     void set_up_gametype_indicator_fix() noexcept;
 }
