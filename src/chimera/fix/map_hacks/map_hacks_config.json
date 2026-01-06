@@ -33,6 +33,13 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "antfarm",
+            "tags_checksum": 4017698218,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "battlecraft_hd",
             "tags_checksum": 3710647297,
             "gearbox_meters": true
@@ -406,6 +413,24 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "kgm_bosque_perdido",
+            "tags_checksum": 1204364326,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true
+        },
+        {
+            "map_name": "kgm_oficina_abandonada",
+            "tags_checksum": 2073837624,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "kmap1,0",
+            "tags_checksum": 736075359,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "medical block",
             "tags_checksum": 2390234435,
             "gearbox_meters": true
@@ -423,9 +448,20 @@
             "disable_bitmap_hud_scale_flags": true
         },
         {
+            "map_name": "paradis_perdu",
+            "tags_checksum": 649617161,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "pit_v2",
             "tags_checksum": 3713543725,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "preservation_site",
+            "tags_checksum": 1972643426,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true
         },
         {
             "map_name": "rev_beavercreek_cavebeta",
