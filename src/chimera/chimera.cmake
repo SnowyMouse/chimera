@@ -122,6 +122,8 @@ add_library(chimera STATIC
     src/chimera/fix/fp_reverb.cpp
     src/chimera/fix/fp_reverb.S
     src/chimera/fix/fov_fix.cpp
+    src/chimera/fix/gametype_indicator_memes.cpp
+    src/chimera/fix/gametype_indicator_memes.S
     src/chimera/fix/hud_bitmap_scale.cpp
     src/chimera/fix/hud_bitmap_scale.S
     src/chimera/fix/hud_meters.cpp

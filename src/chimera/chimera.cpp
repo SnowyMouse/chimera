@@ -101,6 +101,7 @@
 #include "halo_data/game_functions.hpp"
 #include "halo_data/game_variables.hpp"
 #include "fix/hud_meters.hpp"
+#include "fix/gametype_indicator_memes.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -225,6 +226,8 @@ namespace Chimera {
 
                 // No more updates
                 enable_block_update_check();
+
+                set_up_gametype_indicator_fix();
 
                 // Make the game use max settings as default because it's not 2003 anymore (except when it is)
                 // Defaulting EAX to on is not safe on Windows XP, bad drivers can cause a BSOD.
