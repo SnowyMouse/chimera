@@ -701,6 +701,11 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "the_land_of_hyrule_v0.2.1",
+            "tags_checksum": 1852711120,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "trenchfoot-truce-beta04",
             "tags_checksum": 701609001,
             "gearbox_multitexture_blend_modes": true
