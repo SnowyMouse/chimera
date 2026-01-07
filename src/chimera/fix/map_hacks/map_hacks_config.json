@@ -1,6 +1,61 @@
 {
     "per_map_config": [
         {
+            "map_name": "[h2]_ascension",
+            "tags_checksum": 323624966,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h2]_beavercreek",
+            "tags_checksum": 332305787,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h2]_coagulation",
+            "tags_checksum": 2371572374,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h2]_ivory_tower",
+            "tags_checksum": 2543101071,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h2]_lockout",
+            "tags_checksum": 307814276,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h2]_new_mombassa",
+            "tags_checksum": 1408726905,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h2]_sanctuary",
+            "tags_checksum": 3317449520,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h2]_turf",
+            "tags_checksum": 798340357,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h2]_warlock",
+            "tags_checksum": 2363319160,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h2]_zanzibar",
+            "tags_checksum": 146300553,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "[h3] core",
             "tags_checksum": 475422351,
             "gearbox_meters": true,
