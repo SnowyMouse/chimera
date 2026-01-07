@@ -591,6 +591,97 @@
             "gearbox_multitexture_blend_modes": true
         },
         {
+            "map_name": "h1x_beavercreek_v3",
+            "tags_checksum": 3009870144,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_bloodgulch_v3",
+            "tags_checksum": 3666815480,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_boardingaction_v3",
+            "tags_checksum": 3390367509,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_carousel_v3",
+            "tags_checksum": 1949897330,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_chillout_v3",
+            "tags_checksum": 47131387,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_damnation_v3",
+            "tags_checksum": 2881732697,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_hangemhigh_v3",
+            "tags_checksum": 405775656,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_longest_v3",
+            "tags_checksum": 47131387,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_prisoner_v3",
+            "tags_checksum": 2445339903,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_putput_v3",
+            "tags_checksum": 2246294674,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_ratrace_v3",
+            "tags_checksum": 405775656,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_sidewinder_v3",
+            "tags_checksum": 3749550258,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "h1x_wizard_v3",
+            "tags_checksum": 4001519565,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "h3 foundry",
             "tags_checksum": 3492375562,
             "gearbox_meters": true,
@@ -747,6 +838,7 @@
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "disable_bitmap_hud_scale_flags": true,
+            "alternate_bump_attenuation": true,
             "hud_number_scale": true
         },
         {
