@@ -310,6 +310,11 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "[hsp]the-pit",
+            "tags_checksum": 1632131053,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "2ump-edifice-pb04",
             "tags_checksum": 3285613283,
             "gearbox_meters": true,
@@ -392,6 +397,11 @@
             "tags_checksum": 1643072039,
             "gearbox_meters": true,
             "hud_number_scale": true
+        },
+        {
+            "map_name": "chronopolis_c3_public_beta0.2",
+            "tags_checksum": 2577351432,
+            "gearbox_bump_attenuation": true
         },
         {
             "map_name": "cmt_abandonedm",
@@ -632,6 +642,11 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "dustbeta",
+            "tags_checksum": 2541887377,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "frogfoot v1.1",
             "tags_checksum": 4231359426,
             "gearbox_meters": true,
@@ -821,6 +836,12 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "homestead",
+            "tags_checksum": 955137156,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "intensity-plus",
             "tags_checksum": 2527303275,
             "gearbox_meters": true,
@@ -858,6 +879,21 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "hud_number_scale": true
+        },
+        {
+            "map_name": "mystic",
+            "tags_checksum": 3343627246,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "mystic_classic",
+            "tags_checksum": 2104007597,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "mystic_mod",
+            "tags_checksum": 202461333,
+            "gearbox_bump_attenuation": true
         },
         {
             "map_name": "nitra_v2",
@@ -1112,6 +1148,11 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "the_abyss_3",
+            "tags_checksum": 2165132826,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "the_cage",
             "tags_checksum": 3055166625,
             "gearbox_meters": true
@@ -1130,6 +1171,37 @@
             "map_name": "trenchfoot-truce-beta04",
             "tags_checksum": 701609001,
             "gearbox_multitexture_blend_modes": true
+        },
+        {
+            "map_name": "tsce_mp_v1",
+            "tags_checksum": 2712588110,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "tsce_multiplayerv1",
+            "tags_checksum": 3611179539,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "tsce-bk-multiplayer",
+            "tags_checksum": 2672450550,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "windfall_island_v.2",
+            "tags_checksum": 3505626269,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "z_sanctuary_h2_pb2",
+            "tags_checksum": 3363242221,
+            "gearbox_meters": true
         }
     ]
 }
