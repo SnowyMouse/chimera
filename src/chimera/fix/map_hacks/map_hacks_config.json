@@ -1,6 +1,12 @@
 {
     "per_map_config": [
         {
+            "map_name": "[h3] core",
+            "tags_checksum": 475422351,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "[h3]ice_coagulation",
             "tags_checksum": 2034166844,
             "gearbox_meters": true,
@@ -52,7 +58,6 @@
             "tags_checksum": 552595708,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "gearbox_chicago_multiply": true,
             "alternate_bump_attenuation": true,
             "embedded_lua": true
         },
@@ -440,7 +445,8 @@
             "map_name": "kgm_bosque_perdido",
             "tags_checksum": 1204364326,
             "gearbox_meters": true,
-            "gearbox_multitexture_blend_modes": true
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "kgm_oficina_abandonada",

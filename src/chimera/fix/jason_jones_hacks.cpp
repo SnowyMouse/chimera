@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#include <cmath>
 
 #include "jason_jones_hacks.hpp"
 #include "map_hacks/map_hacks.hpp"
@@ -48,13 +49,13 @@ namespace Chimera {
         highres_num_multipler = 1.0f;
         SET_FLAG(numbers_bitmap->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, true);
 
-        // Set stock counter number tag values
-        counter_numbers->character_width = 12;
-        counter_numbers->screen_width = 9;
-        counter_numbers->x_offset = 1;
-        counter_numbers->y_offset = 0;
-        counter_numbers->decimal_point_width = 6;
-        counter_numbers->colon_width = 6;
+        // Divide these by 2, rounding up
+        counter_numbers->character_width = std::ceil(static_cast<float>(counter_numbers->character_width) / 2);
+        counter_numbers->screen_width = std::ceil(static_cast<float>(counter_numbers->screen_width) / 2);
+        counter_numbers->x_offset = std::ceil(static_cast<float>(counter_numbers->x_offset) / 2);
+        counter_numbers->y_offset = std::ceil(static_cast<float>(counter_numbers->y_offset) / 2);
+        counter_numbers->decimal_point_width = std::ceil(static_cast<float>(counter_numbers->decimal_point_width) / 2);
+        counter_numbers->colon_width = std::ceil(static_cast<float>(counter_numbers->colon_width) / 2);
     }
 
     static void jason_jones_sniper_ticks(WeaponHUDInterface *tag_data) noexcept {
