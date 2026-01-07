@@ -7,10 +7,251 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "[h3] imposing v2",
+            "tags_checksum": 2036349886,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]_sandtrap",
+            "tags_checksum": 833166862,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]_sandtrap_race",
+            "tags_checksum": 379253962,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]_snowgulch",
+            "tags_checksum": 2807296481,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]_turf",
+            "tags_checksum": 2387773557,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]_valhalla",
+            "tags_checksum": 2296050574,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]ancient_sanctuary",
+            "tags_checksum": 3826604379,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]bloodgulch-legend",
+            "tags_checksum": 1378398675,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]camp_of_death",
+            "tags_checksum": 340605197,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]city",
+            "tags_checksum": 3611743673,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h3]coagulation",
+            "tags_checksum": 3913295074,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h3]coagulation_v2",
+            "tags_checksum": 1476083807,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]cold_v1",
+            "tags_checksum": 817870245,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]darkcreek",
+            "tags_checksum": 3973185539,
+            "gearbox_meters": true,
+            "alternate_bump_attenuation": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]darkwar",
+            "tags_checksum": 3421318503,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]deltaruins_ice",
+            "tags_checksum": 2656047750,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h3]derelict",
+            "tags_checksum": 3086947849,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]down_ruins",
+            "tags_checksum": 1115972832,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]field",
+            "tags_checksum": 3710413179,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]greengulch",
+            "tags_checksum": 1976338479,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]greenwinder",
+            "tags_checksum": 422600166,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]ground-battle",
+            "tags_checksum": 1715868109,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "[h3]ice_coagulation",
             "tags_checksum": 2034166844,
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]icefields",
+            "tags_checksum": 1362109723,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]island_of_halo_(fixed)",
+            "tags_checksum": 1390284911,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]last_resort",
+            "tags_checksum": 3561248664,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]narrows",
+            "tags_checksum": 736969227,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]new_mombasa",
+            "tags_checksum": 959262073,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]peril",
+            "tags_checksum": 3492209744,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]represa",
+            "tags_checksum": 3942525064,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h3]ruins",
+            "tags_checksum": 2904769270,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]sand-of-warriors",
+            "tags_checksum": 4086720569,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]sandtrap_v2",
+            "tags_checksum": 1938657367,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]silent_lexicon",
+            "tags_checksum": 4101169659,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]sniper_beavercreek",
+            "tags_checksum": 1862055332,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]sniper_ratrace",
+            "tags_checksum": 1802942984,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]stiftung",
+            "tags_checksum": 119793574,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]stronghold",
+            "tags_checksum": 943126055,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]trench",
+            "tags_checksum": 2398519350,
+            "gearbox_meters": true
+        },
+        {
+            "map_name": "[h3]valhalla",
+            "tags_checksum": 2057275896,
+            "gearbox_meters": true,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "[h3]war_island",
+            "tags_checksum": 3705609614,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]wizard",
+            "tags_checksum": 277163313,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "[h3]zanzibar",
+            "tags_checksum": 4023121829,
+            "gearbox_meters": true,
             "hud_number_scale": true
         },
         {
@@ -505,21 +746,24 @@
             "tags_checksum": 2580196703,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_carousel_cavebeta",
             "tags_checksum": 2991758082,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_damnation_delta_cavebeta",
             "tags_checksum": 3631150094,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_deltaruins_cavebeta",
@@ -527,77 +771,88 @@
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_delta_station_cavebeta",
             "tags_checksum": 3558402979,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_dichotomy_cavebeta",
             "tags_checksum": 1655823823,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_downrush_cavebeta",
             "tags_checksum": 2109131072,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_fortress_cavebeta",
             "tags_checksum": 1649497208,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_gridiron_cavebeta",
             "tags_checksum": 1934412547,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_hangemhigh_cavebeta",
             "tags_checksum": 783534432,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_icefields_cavebeta",
             "tags_checksum": 2610836694,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_immure_cavebeta",
             "tags_checksum": 3128918873,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_lockout_cavebeta",
             "tags_checksum": 2382596327,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_midship_cavebeta",
             "tags_checksum": 1108243424,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_paradox_cavebeta",
@@ -605,91 +860,104 @@
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_portent_cavebeta",
             "tags_checksum": 3062916923,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_prisoner_cavebeta",
             "tags_checksum": 4218757999,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_ratrace_cavebeta",
             "tags_checksum": 1626487017,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_sanctuary_cavebeta",
             "tags_checksum": 3042439455,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_savior_cave_prerelease",
             "tags_checksum": 3422007092,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_shockwave_cavebeta",
             "tags_checksum": 1610839607,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_snowcast_cavebeta",
             "tags_checksum": 1683840640,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_snowed_in_cavebeta",
             "tags_checksum": 4113545648,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_tensity_cavebeta",
             "tags_checksum": 806016667,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_trench_cavebeta",
             "tags_checksum": 1915675677,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_valhalla_cavebeta",
             "tags_checksum": 2963716070,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "rev_wizard_cavebeta",
             "tags_checksum": 2337478547,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
-            "disable_bitmap_hud_scale_flags": true
+            "disable_bitmap_hud_scale_flags": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "sledding02",
