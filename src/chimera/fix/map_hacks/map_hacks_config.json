@@ -553,6 +553,16 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "colossus",
+            "tags_checksum": 573516686,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "colossus_beta",
+            "tags_checksum": 2382813252,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "crashtest0,1",
             "tags_checksum": 1643293101,
             "gearbox_meters": true,
