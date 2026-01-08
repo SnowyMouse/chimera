@@ -2,6 +2,7 @@
 
 #include "map_hacks.hpp"
 #include "../../chimera.hpp"
+#include "../../config/ini.hpp"
 #include "../../signature/hook.hpp"
 #include "../../signature/signature.hpp"
 #include "../../halo_data/map.hpp"
@@ -127,7 +128,9 @@ namespace Chimera {
 
         // This is really only applicable to custom edition
         if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
-            add_map_load_event(set_fix_config_for_new_map, EventPriority::EVENT_PRIORITY_BEFORE);
+            if(get_chimera().get_ini()->get_value_bool("maps.map_compatibility_list").value_or(true)) {
+                add_map_load_event(set_fix_config_for_new_map, EventPriority::EVENT_PRIORITY_BEFORE);
+            }
         }
     }
 }
