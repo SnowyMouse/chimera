@@ -11,13 +11,23 @@ include(ExternalProject)
 # As long as the hashes are the same it does not matter. Needed for some MinGW-w64 releases.
 set(CMAKE_TLS_VERIFY OFF)
 
+# curl versions past 8.17.0 dropped support for Windows XP using the older MSVCRT C runtime.
+# 8.18.0 will work with UCRT and is assumed to be the last version to support Windows XP at all.
+if(${CHIMERA_WINXP})
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.gz")
+    set(LOCAL_CURL_URL_HASH e8e74cdeefe5fb78b3ae6e90cd542babf788fa9480029cfcee6fd9ced42b7910)
+else()
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz")
+    set(LOCAL_CURL_URL_HASH e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f)
+endif()
+
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
 set(LOCAL_CURL_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/lib)
 
 ExternalProject_Add(curl
     PREFIX ext/curl
-    URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz"
-    URL_HASH SHA256=e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f
+    URL ${LOCAL_CURL_URL}
+    URL_HASH SHA256=${LOCAL_CURL_URL_HASH}
     BUILD_BYPRODUCTS ${LOCAL_CURL_LIB_DIR}/libcurl.a
     CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
