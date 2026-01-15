@@ -47,6 +47,13 @@ namespace Chimera {
     static GenericInstance generic_instance_cache[MAX_GENERIC_INSTANCE_COUNT] = {};
     std::uint32_t generic_instance_index = 0;
 
+    enum ShaderTransparentGenericCompileFlags : short {
+        SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_3_0 = 0,
+        SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0,
+        SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_FOGGED,
+        SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_NO_FOG
+    };
+
     enum {
         NUM_OF_SHADER_COMPILE_DEFINES = 10
     };
@@ -353,8 +360,14 @@ namespace Chimera {
 
         // Release pixel shaders.
         for(std::uint16_t i = 0; i < MAX_GENERIC_INSTANCE_COUNT; i++) {
-            if(generic_instance_cache[i].shader) {
+            if(generic_instance_cache[i].shader && (generic_instance_cache[i].shader != disabled_pixel_shader_1_1 || generic_instance_cache[i].shader != disabled_pixel_shader)) {
                 IDirect3DPixelShader9_Release(generic_instance_cache[i].shader);
+            }
+            if(generic_instance_cache[i].shader_fogged && generic_instance_cache[i].shader_fogged != disabled_pixel_shader_1_1) {
+                IDirect3DPixelShader9_Release(generic_instance_cache[i].shader_fogged);
+            }
+            if(generic_instance_cache[i].shader_nofog && generic_instance_cache[i].shader_nofog != disabled_pixel_shader_1_1) {
+                IDirect3DPixelShader9_Release(generic_instance_cache[i].shader_nofog);
             }
         }
 
@@ -363,10 +376,32 @@ namespace Chimera {
         generic_instance_index = 0;
     }
 
-    ID3DBlob *shader_transparent_generic_compile_shader(D3D_SHADER_MACRO *defines) noexcept {
+    ID3DBlob *shader_transparent_generic_compile_shader(D3D_SHADER_MACRO *defines, ShaderTransparentGenericCompileFlags flags) noexcept {
         ID3DBlob *compiled_shader = NULL;
-        const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_source);
-        if(!rasterizer_compile_shader(buffer, "main", "ps_3_0", defines, &compiled_shader)) {
+        bool success = false;
+        switch(flags) {
+            case SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_3_0: {
+                const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_source);
+                success = rasterizer_compile_shader(buffer, "main", "ps_3_0", defines, &compiled_shader);
+                break;
+            }
+            case SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0: {
+                const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_2_0_source);
+                success = rasterizer_compile_shader(buffer, "main_T0_P0", "ps_2_0", defines, &compiled_shader);
+                break;
+            }
+            case SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_FOGGED: {
+                const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_2_0_source);
+                success = rasterizer_compile_shader(buffer, "main_T0_P1", "ps_2_0", defines, &compiled_shader);
+                break;
+            }
+            case SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_NO_FOG: {
+                const char *buffer = reinterpret_cast<const char *>(shader_transparent_generic_2_0_source);
+                success = rasterizer_compile_shader(buffer, "main_T0_P2", "ps_2_0", defines, &compiled_shader);
+                break;
+            }
+        }
+        if(!success) {
             return NULL;
         }
         return compiled_shader;
@@ -384,38 +419,77 @@ namespace Chimera {
 
         // Compile a new shader if we don't already have a valid one.
         if(generic_instance_index < MAX_GENERIC_INSTANCE_COUNT) {
-            ID3DBlob *compiled_shader = shader_transparent_generic_compile_shader(defines);
-            IDirect3DPixelShader9 *generic_ps = nullptr;
-            if(compiled_shader) {
-#ifdef WRITE_BLOBS_TO_FILE
-                const char *hex = "0x";
-                char shader_name[24];
-                snprintf(shader_name, sizeof(shader_name), "shader_%.*x", 2, instance_count);
-                shader_file << shader_name << " = " << "{ ";
-                for(int i = 0; i < 32; i++) {
-                    shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
-                }
-                shader_file <<" };\n";
-                //WRITE_BLOBS_TO_FILE(defines);
+            if(d3d9_device_caps->PixelShaderVersion < 0xffff0300) {
+                // We need to break up the pixel shader into several permutations to get the intruction count under ps_2_0 limits.
+                ID3DBlob *compiled_shader = shader_transparent_generic_compile_shader(defines, SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0);
+                ID3DBlob *compiled_shader_fogged = shader_transparent_generic_compile_shader(defines, SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_FOGGED);
+                ID3DBlob *compiled_shader_nofog = shader_transparent_generic_compile_shader(defines, SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_2_0_NO_FOG);
 
-                FILE* file = fopen(shader_name, "wb");
-                if(file) {
-                    fwrite(compiled_shader->GetBufferPointer(), 1, compiled_shader->GetBufferSize(), file);
-                    fclose(file);
+                IDirect3DPixelShader9 *generic_ps = nullptr;
+                IDirect3DPixelShader9 *generic_ps_fogged = nullptr;
+                IDirect3DPixelShader9 *generic_ps_nofog = nullptr;
+
+                if(compiled_shader && compiled_shader_fogged && compiled_shader_nofog) {
+                    IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
+                    IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader_fogged->GetBufferPointer()), &generic_ps_fogged);
+                    IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader_nofog->GetBufferPointer()), &generic_ps_nofog);
+
+                    compiled_shader->Release();
+                    compiled_shader_fogged->Release();
+                    compiled_shader_nofog->Release();
                 }
-                instance_count++;
-#endif
-                IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
-                compiled_shader->Release();
+                else {
+                    // If compilation failed, return the disabled shader instead of crashing.
+                    generic_ps = disabled_pixel_shader_1_1;
+                    generic_ps_fogged = disabled_pixel_shader_1_1;
+                    generic_ps_nofog = disabled_pixel_shader_1_1;
+                }
+
+                generic_instance_cache[generic_instance_index].shader = generic_ps;
+                generic_instance_cache[generic_instance_index].shader_fogged = generic_ps_fogged;
+                generic_instance_cache[generic_instance_index].shader_nofog = generic_ps_nofog;
+
+                memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
+                GlobalFree(hash);
             }
             else {
-                // If compilation failed, return the disabled shader instead of crashing.
-                generic_ps = disabled_pixel_shader;
-            }
+                // If we have ps_3_0 support, we can do what we need in 1 shader.
+                ID3DBlob *compiled_shader = shader_transparent_generic_compile_shader(defines, SHADER_TRANSPARENT_GENERIC_COMPILE_FLAGS_PS_3_0);
+                IDirect3DPixelShader9 *generic_ps = nullptr;
+                if(compiled_shader) {
+    #ifdef WRITE_BLOBS_TO_FILE
+                    const char *hex = "0x";
+                    char shader_name[24];
+                    snprintf(shader_name, sizeof(shader_name), "shader_%.*x", 2, instance_count);
+                    shader_file << shader_name << " = " << "{ ";
+                    for(int i = 0; i < 32; i++) {
+                        shader_file << hex << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(static_cast<unsigned char>(hash[i])) << ",";
+                    }
+                    shader_file <<" };\n";
+                    //WRITE_BLOBS_TO_FILE(defines);
 
-            memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
-            generic_instance_cache[generic_instance_index].shader = generic_ps;
-            GlobalFree(hash);
+                    FILE* file = fopen(shader_name, "wb");
+                    if(file) {
+                        fwrite(compiled_shader->GetBufferPointer(), 1, compiled_shader->GetBufferSize(), file);
+                        fclose(file);
+                    }
+                    instance_count++;
+    #endif
+                    IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(compiled_shader->GetBufferPointer()), &generic_ps);
+                    compiled_shader->Release();
+                }
+                else {
+                    // If compilation failed, return the disabled shader instead of crashing.
+                    generic_ps = disabled_pixel_shader;
+                }
+
+                generic_instance_cache[generic_instance_index].shader = generic_ps;
+                generic_instance_cache[generic_instance_index].shader_fogged = NULL;
+                generic_instance_cache[generic_instance_index].shader_nofog = NULL;
+
+                memcpy(generic_instance_cache[generic_instance_index].instance_hash, hash, 32);
+                GlobalFree(hash);
+            }
 
             return generic_instance_index++;
         }
@@ -454,7 +528,58 @@ namespace Chimera {
         return shader;
     }
 
+    IDirect3DPixelShader9 *shader_transparent_generic_create_ps_2_0(ShaderTransparentGeneric *shader_data, bool on_map_load, bool fogged) noexcept {
+        // Check if the tag has already been used to create a generic shader. This should never happen on map load,
+        // so don't waste time checking this on map load.
+        if(!on_map_load) {
+            for(std::uint16_t i = 0; i < generic_tag_cache_index && i < MAX_GENERIC_TAG_COUNT; i++) {
+                if(shader_data == generic_tag_cache[i].tag_address) {
+                    if(!(*fog_enabled)) {
+                        return generic_instance_cache[generic_tag_cache[i].instance_index].shader_nofog;
+                    }
+                    if(fogged) {
+                        return generic_instance_cache[generic_tag_cache[i].instance_index].shader_fogged;
+                    }
+                    return generic_instance_cache[generic_tag_cache[i].instance_index].shader;
+                }
+            }
+        }
+
+        if(generic_tag_cache_index == MAX_GENERIC_TAG_COUNT) {
+            show_error_box("Error", "Max number of generic tags per map reached");
+            std::exit(1);
+        }
+
+        // If the tag has not been used, check whether a valid generic instance already exists.
+        // Reference that if possible, otherwise compile a new shader.
+        D3D_SHADER_MACRO *defines = generate_defines(shader_data);
+        generic_tag_cache[generic_tag_cache_index].instance_index = shader_transparent_generic_create_instance(defines);
+        generic_tag_cache[generic_tag_cache_index].tag_address = shader_data;
+        free_defines(defines);
+
+        IDirect3DPixelShader9 *shader = nullptr;
+        if(!(*fog_enabled)) {
+            shader = generic_instance_cache[generic_tag_cache[generic_tag_cache_index].instance_index].shader_nofog;
+        }
+        else {
+            if(fogged) {
+                shader = generic_instance_cache[generic_tag_cache[generic_tag_cache_index].instance_index].shader_fogged;
+            }
+            else {
+                shader = generic_instance_cache[generic_tag_cache[generic_tag_cache_index].instance_index].shader;
+            }
+        }
+        generic_tag_cache_index++;
+
+        return shader;
+    }
+
     void shader_transparent_generic_create_for_new_map() noexcept {
+        // Don't compile shaders if we don't support at least ps_2_0
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
+            return;
+        }
+
         // Wipe the tag cache.
         memset(generic_tag_cache, 0, sizeof(generic_tag_cache));
         generic_tag_cache_index = 0;
@@ -485,12 +610,22 @@ namespace Chimera {
                 continue;
             }
             else {
-                shader_transparent_generic_create(reinterpret_cast<ShaderTransparentGeneric *>(tag.data), true);
+                if(d3d9_device_caps->PixelShaderVersion < 0xffff0300) {
+                    shader_transparent_generic_create_ps_2_0(reinterpret_cast<ShaderTransparentGeneric *>(tag.data), true, true);
+                }
+                else {
+                    shader_transparent_generic_create(reinterpret_cast<ShaderTransparentGeneric *>(tag.data), true);
+                }
             }
         }
     }
 
     void shader_transparent_generic_preload_shaders() noexcept {
+        // The precompiled blobs are ps_3_0.
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0300) {
+            return;
+        }
+
         // Load precompiled shaders for stock tagset.
         preload_transparent_generic_blobs();
         for(int i = 0; i < NUMBER_OF_STOCK_TRANSPARENT_GENERIC_SHADER_BLOBS; i++) {
@@ -507,8 +642,8 @@ namespace Chimera {
 
     // The main thingy.
     extern "C" void rasterizer_shader_transparent_generic_draw(TransparentGeometryGroup *group, bool is_dirty) noexcept {
-        // We can't draw generic if the d3d9 device doesn't support ps_3_0 and vs_3_0
-        if(d3d9_device_caps->PixelShaderVersion < 0xffff0300 || d3d9_device_caps->VertexShaderVersion < 0xfffe0300) {
+        // We can't draw generic if the d3d9 device doesn't support at least ps_2_0
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
             return;
         }
 
@@ -656,8 +791,8 @@ namespace Chimera {
             IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, vsh_constants_texanim, 8);
         }
 
-
-        IDirect3DPixelShader9 *shader = shader_transparent_generic_create(shader_data, false);
+        // This is for the ps_2_0 pixel shader permutations. Unused if we have ps_3_0 support.
+        bool is_fogged = false;
 
         if(shader_data->generic.stages.count > 0 || shader_data->generic.maps.count > 0) {
             float ps_constants_buffer[8*4 + 8*4 + 4] = {0};
@@ -683,6 +818,7 @@ namespace Chimera {
                     stage_color0[fog_stage * 4 + 3] = global_window_parameters->fog.planar_maximum_density * planar_eye_density;
 
                     fog_config[1] = 1.0f;
+                    is_fogged = true;
                 }
                 else {
                     float vsh_constants_texscale[3 * 4] = {0};
@@ -746,6 +882,8 @@ namespace Chimera {
             IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 16, fog_config, 1);
         }
 
+        IDirect3DPixelShader9 *shader = d3d9_device_caps->PixelShaderVersion < 0xffff0300 ? shader_transparent_generic_create_ps_2_0(shader_data, false, is_fogged) 
+                                                                                            : shader_transparent_generic_create(shader_data, false);
         IDirect3DDevice9_SetPixelShader(*global_d3d9_device, shader);
         rasterizer_transparent_geometry_group_draw_vertices(group, FALSE);
         IDirect3DDevice9_SetRenderState(*global_d3d9_device, D3DRS_BLENDOP, D3DBLENDOP_ADD);

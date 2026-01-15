@@ -43,9 +43,14 @@ extern const size_t ce_effects_collection_sze;
 extern unsigned char disabled_shader[];
 extern const size_t disabled_shader_size;
 
+extern unsigned char disabled_shader_1_1[];
+extern const size_t disabled_shader_1_1_size;
+
 extern unsigned char hud_meters[];
 extern const size_t hud_meters_size;
 
 extern unsigned char shader_transparent_generic_source[];
 extern const size_t shader_transparent_generic_source_size;
 
+extern unsigned char shader_transparent_generic_2_0_source[];
+extern const size_t shader_transparent_generic_2_0_source_size;

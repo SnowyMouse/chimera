@@ -17,6 +17,7 @@ namespace Chimera {
 
     // Use this if the generic shader fails to compile instead of crashing out.
     IDirect3DPixelShader9 *disabled_pixel_shader = nullptr;
+    IDirect3DPixelShader9 *disabled_pixel_shader_1_1 = nullptr;
     IDirect3DPixelShader9 *hud_meter_ps = nullptr;
 
     void rasterizer_set_render_state(D3DRENDERSTATETYPE state, DWORD value) noexcept {
@@ -30,7 +31,11 @@ namespace Chimera {
     }
 
     void rasterizer_create_pixel_shaders() noexcept {
-        // Ensure ps2.0 support.
+        if(!disabled_pixel_shader_1_1) {
+            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(disabled_shader_1_1), &disabled_pixel_shader_1_1);
+        }
+
+        // Ensure ps2.0 support for the rest.
         if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
             return;
         }
@@ -45,6 +50,9 @@ namespace Chimera {
     }
 
     void rasterizer_release_pixel_shaders() noexcept {
+        if(disabled_pixel_shader_1_1) {
+            IDirect3DPixelShader9_Release(disabled_pixel_shader_1_1);
+        }    
         if(disabled_pixel_shader) {
             IDirect3DPixelShader9_Release(disabled_pixel_shader);
         }
@@ -59,7 +67,7 @@ namespace Chimera {
         HRESULT result = D3DCompile(source, strlen(source), NULL, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, flags, 0, compiled_shader, &error_messages);
         if(FAILED(result)) {
             if(error_messages != NULL) {
-                console_output_raw(ConsoleColor::body_color(), "Error compiling pixel shader");
+                console_error("Pixel shader failed to compile");
                 error_messages->Release();
             }
             else {

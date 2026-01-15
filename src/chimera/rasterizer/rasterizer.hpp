@@ -19,6 +19,7 @@ namespace Chimera {
     extern D3DCAPS9 *d3d9_device_caps;
     extern bool chimera_rasterizer_enabled;
 
+    extern IDirect3DPixelShader9 *disabled_pixel_shader_1_1;
     extern IDirect3DPixelShader9 *disabled_pixel_shader;
     extern IDirect3DPixelShader9 *hud_meter_ps;
 

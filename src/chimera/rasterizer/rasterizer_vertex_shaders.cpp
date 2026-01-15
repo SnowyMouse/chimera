@@ -22,8 +22,8 @@ namespace Chimera {
     IDirect3DVertexShader9 *rasterizer_get_vertex_shader(std::uint16_t index) noexcept {
         throw_error(index < NUM_OF_VERTEX_SHADERS, "vertex shader index out of bounds");
 
-        // These are generic vertex shaders. We need to pass the 3_0 ones if we're drawing generic.
-        if(index >= VSH_TRANSPARENT_GENERIC && index <= VSH_TRANSPARENT_GENERIC_VIEWER_CENTERED_M) {
+        // These are generic vertex shaders. We need to pass the 3_0 ones if we're drawing generic with ps_3_0.
+        if(index >= VSH_TRANSPARENT_GENERIC && index <= VSH_TRANSPARENT_GENERIC_VIEWER_CENTERED_M && d3d9_device_caps->PixelShaderVersion >= 0xffff0300 && d3d9_device_caps->VertexShaderVersion >= 0xfffe0300) {
             // Make sure they've been created
             rasterizer_create_vertex_shaders_3_0();
             if(vsh_initialized) {

@@ -23,6 +23,8 @@ namespace Chimera {
     struct GenericInstance {
         char instance_hash[32];
         IDirect3DPixelShader9 *shader;
+        IDirect3DPixelShader9 *shader_fogged;
+        IDirect3DPixelShader9 *shader_nofog;
     };
 
     extern std::uint32_t generic_tag_cache_index;
