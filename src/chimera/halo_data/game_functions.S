@@ -110,3 +110,19 @@ _rasterizer_draw_dynamic_triangles_static_vertices2:
     pop edi
     pop eax
     ret
+
+.globl _render_camera_build_frustum
+_render_camera_build_frustum:
+    push eax
+    push ecx
+    push esi
+    push [esp + 28]
+    mov esi, [esp + 28]
+    mov eax, [esp + 24]
+    mov ecx, [esp + 20]
+    call dword ptr [_render_camera_build_frustum_func]
+    add esp, 4
+    pop esi
+    pop ecx
+    pop eax
+    ret

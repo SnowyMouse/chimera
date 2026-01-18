@@ -149,6 +149,11 @@ namespace Chimera {
                             bytes.insert(bytes.end(), at, at + 7);
                             at += 7;
                         }
+                        else if(op2 == 0x05) {
+                            offsets.push_back(at - at_start);
+                            bytes.insert(bytes.end(), at, at + 9);
+                            at += 9;
+                        }
                         break;
                     }
                     // sub dword ptr [reg+op4], reg
@@ -367,7 +372,7 @@ namespace Chimera {
                         at += 3;
                         break;
                     }
-                    else if(a == 0x93 || a == 0x0D || a == 0x2D || a == 0x1D || a == 0x83 || a == 0x89 || a == 0x92) {
+                    else if(a == 0x93 || a == 0x0D || a == 0x2D || a == 0x1D || a == 0x83 || a == 0x89 || a == 0x92 || a == 0x15) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
                         at += 6;

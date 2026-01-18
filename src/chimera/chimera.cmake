@@ -118,7 +118,8 @@ add_library(chimera STATIC
     src/chimera/fix/floor_decal_memery.cpp
     src/chimera/fix/floor_decal_memery.S
     src/chimera/fix/force_crash.cpp
-    src/chimera/fix/fp_animation.cpp
+    src/chimera/fix/fp_model.cpp
+    src/chimera/fix/fp_model.S
     src/chimera/fix/fp_reverb.cpp
     src/chimera/fix/fp_reverb.S
     src/chimera/fix/fov_fix.cpp

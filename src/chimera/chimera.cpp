@@ -89,7 +89,7 @@
 #include "fix/water_fix.hpp"
 #include "fix/internal_shaders.hpp"
 #include "fix/xbox_channel_order.hpp"
-#include "fix/fp_animation.hpp"
+#include "fix/fp_model.hpp"
 #include "fix/alternate_bump_attenuation.hpp"
 #include "fix/specular_memes.hpp"
 #include "fix/glass_fix.hpp"
@@ -272,7 +272,7 @@ namespace Chimera {
                 set_up_auto_center_fix();
 
                 // Fix this I guess
-                set_up_fp_animation_fix();
+                set_up_fp_model_fix();
 
                 // No interpolation in a 2003 PC game? Seriously, Gearbox?
                 set_up_interpolation();
@@ -659,6 +659,7 @@ namespace Chimera {
                 chimera->execute_command("chimera_uncap_cinematic true");
                 chimera->execute_command("chimera_af true");
                 chimera->execute_command("chimera_model_detail true");
+                chimera->execute_command("chimera_lock_fp_model_fov true");
             }
 
             // Also set these fixes

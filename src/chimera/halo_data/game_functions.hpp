@@ -20,6 +20,7 @@ namespace Chimera {
         double periodic_function_evaluate(double period, WaveFunction function) noexcept;
         void rasterizer_set_frustum_z(float z_near, float z_far) noexcept;
         void rasterizer_draw_dynamic_triangles_static_vertices2(std::int32_t dynamic_triangle_buffer_index, std::int32_t first_triangle_index, std::int32_t triangle_count, VertexBuffer *vertex_buffer0, VertexBuffer *vertex_buffer1) noexcept;
+        void render_camera_build_frustum(const RenderCamera *camera, const Bounds2D *frustum_bounds, RenderFrustum *frustum, bool build_projection) noexcept;
     }
 
     /**

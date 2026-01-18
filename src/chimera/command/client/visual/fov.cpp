@@ -10,6 +10,7 @@
 #include "../../../chimera.hpp"
 #include "../../../signature/signature.hpp"
 #include "../../../signature/hook.hpp"
+#include "../../../fix/fp_model.hpp"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -159,5 +160,23 @@ namespace Chimera {
 
     bool fov_cinematic_command(int argc, const char **args) noexcept {
         return fov_command_action(argc, args, setting_cinematic, vertical_cinematic);
+    }
+
+    bool fov_fp_command(int argc, const char **argv) {
+        static bool enabled = false;
+        if(argc) {
+            bool new_enabled = STR_TO_BOOL(argv[0]);
+            if(new_enabled != enabled) {
+                if(!new_enabled) {
+                    lock_fp_model_fov = false;
+                }
+                else {
+                    lock_fp_model_fov = true;
+                }
+                enabled = new_enabled;
+            }
+        }
+        console_output(BOOL_TO_STR(enabled));
+        return true;
     }
 }
