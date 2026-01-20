@@ -141,6 +141,60 @@ namespace Chimera {
     };
     static_assert(sizeof(_shader) == 0x28);
 
+
+    /**
+    * shader_effect
+    */
+    enum ShaderEffectFlags
+    {
+        SHADER_EFFECT_FLAGS_SORT_BIAS_BIT,
+        SHADER_EFFECT_FLAGS_USES_NONLINEAR_TINT_BIT,
+        SHADER_EFFECT_FLAGS_FLAGS_DONT_OVERDRAW_FIRST_PERSON_WEAPON_BIT,
+        NUMBER_OF_SHADER_EFFECT_FLAGS
+    };
+
+    enum ShaderEffectParticleAnchor {
+        SHADER_EFFECT_PARTICLE_ANCHOR_WITH_PRIMARY,
+        SHADER_EFFECT_PARTICLE_ANCHOR_SCREEN_SPACE,
+        SHADER_EFFECT_PARTICLE_ANCHOR_ZSPRITE,
+        NUMBER_OF_SHADER_EFFECT_SECONDARY_MAP_ANCHORS
+    };
+
+    enum ShaderEffectMapFlags
+    {
+        SHADER_EFFECT_MAP_FLAGS_POINT_SAMPLED_BIT,
+        SHADER_EFFECT_MAP_U_CLAMP_BIT,
+        SHADER_EFFECT_MAP_V_CLAMP_BIT,
+        NUMBER_OF_SHADER_EFFECT_MAP_FLAGS
+    };
+
+    struct _shader_effect {
+        std::uint16_t flags;
+
+        FramebufferBlendFunction framebuffer_blend_function;
+        FramebufferFadeMode framebuffer_fade_mode;
+
+        std::uint16_t primary_map_flags;
+        PAD(0x1C);
+
+        TagReference secondary_map;
+        short secondary_map_anchor;
+        std::uint16_t secondary_map_flags;
+        ShaderTextureAnimation secondary_map_animation;
+
+        float secondary_map_radius;
+        float zsprite_radius_scale;
+        PAD(0x14);
+    };
+    static_assert(sizeof(_shader_effect) == 0x8C);
+
+    struct ShaderEffect {
+        _shader shader;
+        _shader_effect effect;
+    };
+    static_assert(sizeof(ShaderEffect) == 0xB4);
+
+
     /**
     * shader_environment
     */
@@ -308,6 +362,7 @@ namespace Chimera {
     };
     static_assert(sizeof(ShaderEnvironment) == 0x344);
 
+
     /**
     * shader_model
     */
@@ -401,6 +456,7 @@ namespace Chimera {
         _shader_model model;
     };
     static_assert(sizeof(ShaderModel) == 0x1B8);
+
 
     /**
     * shader_transparent_generic

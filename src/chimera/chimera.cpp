@@ -102,6 +102,7 @@
 #include "halo_data/game_variables.hpp"
 #include "fix/hud_meters.hpp"
 #include "fix/gametype_indicator_memes.hpp"
+#include "fix/effect_shader_fix.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -208,6 +209,7 @@ namespace Chimera {
                 set_up_xbox_channel_order_support();
                 set_up_alternate_bump_attenuation_support();
                 set_up_hud_meters_fix();
+                set_up_effect_shader_fix();
 
                 // The games screwed up glass is screwed up.
                 set_up_glass_fix();

@@ -185,6 +185,8 @@ add_library(chimera STATIC
     src/chimera/fix/xbox_channel_order.cpp
     src/chimera/fix/xbox_channel_order.S
     src/chimera/fix/biped_ui_spawn.cpp
+    src/chimera/fix/effect_shader_fix.cpp
+    src/chimera/fix/effect_shader_fix.S
     src/chimera/halo_data/antenna.cpp
     src/chimera/halo_data/bitmaps.cpp
     src/chimera/halo_data/camera.cpp
