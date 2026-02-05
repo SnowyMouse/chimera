@@ -72,7 +72,11 @@ if __name__ == '__main__':
         else:
             fix_config.write(" false, ")
         if "disable_bitmap_hud_scale_flags" in config_dict:
-            fix_config.write(" " + str(config_dict["disable_bitmap_hud_scale_flags"]).lower() + "}, ")
+            fix_config.write(" " + str(config_dict["disable_bitmap_hud_scale_flags"]).lower() + ", ")
+        else:
+            fix_config.write(" false, ")
+        if "old_widescreen_fix" in config_dict:
+            fix_config.write(" " + str(config_dict["old_widescreen_fix"]).lower() + "}, ")
         else:
             fix_config.write(" false }, ")
 

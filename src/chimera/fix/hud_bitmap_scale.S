@@ -134,3 +134,85 @@ _hud_overlay_element_child_anchor_asm:
     call _hud_overlay_element_use_child_anchors
     add esp, 8
     ret
+
+.global _hud_calculate_point_for_scaled_canvas_asm
+_hud_calculate_point_for_scaled_canvas_asm:
+    push [esp + 0x40]
+    push edi
+    sub esp, 4
+    fst dword ptr [esp]
+    call _hud_calculate_point_for_scaled_canvas
+    add esp, 12
+    ret
+
+.global _hud_set_point_values_for_scaled_canvas_asm
+_hud_set_point_values_for_scaled_canvas_asm:
+    fstp dword ptr [esp + 0x10]
+    push eax
+    mov eax, dword ptr [_point_temp_result_x]
+    mov [esp + 0x10], eax
+    mov eax, dword ptr [_point_temp_result_y]
+    mov [esp + 0x14], eax
+    pop eax
+    test ecx, ecx
+    jmp dword ptr [_original_set_point_instr]
+
+.global _hud_offset_nav_numbers_for_safe_zones
+_hud_offset_nav_numbers_for_safe_zones:
+    sub edx, dword ptr [_safe_zone_x]
+    sub ecx, dword ptr [_safe_zone_y]
+    ret
+
+.global _hud_offset_top_damage_indicator
+_hud_offset_top_damage_indicator:
+    add edx, dword ptr [_safe_zone_y]
+    ret
+
+.global _hud_offset_left_damage_indicator
+_hud_offset_left_damage_indicator:
+    add eax, dword ptr [_safe_zone_x]
+    ret
+
+.global _hud_offset_bottom_damage_indicator
+_hud_offset_bottom_damage_indicator:
+    sub edx, dword ptr [_safe_zone_y]
+    ret
+
+.global _hud_offset_right_damage_indicator
+_hud_offset_right_damage_indicator:
+    sub ecx, dword ptr [_safe_zone_x]
+    add ecx, dword ptr [_hud_widescreen_right_edge_offset]
+    ret
+
+.global _hud_offset_top_damage_indicator_demo
+_hud_offset_top_damage_indicator_demo:
+    add eax, dword ptr [_safe_zone_y]
+    ret
+
+.global _hud_offset_left_damage_indicator_demo
+_hud_offset_left_damage_indicator_demo:
+    add ecx, dword ptr [_safe_zone_x]
+    ret
+
+.global _hud_offset_bottom_damage_indicator_demo
+_hud_offset_bottom_damage_indicator_demo:
+    sub eax, dword ptr [_safe_zone_y]
+    ret
+
+.global _hud_offset_right_damage_indicator_demo
+_hud_offset_right_damage_indicator_demo:
+    sub edx, dword ptr [_safe_zone_x]
+    add edx, dword ptr [_hud_widescreen_right_edge_offset]
+    ret
+
+.global _hud_offset_gametype_indicator
+_hud_offset_gametype_indicator:
+    mov bx, word ptr [eax]
+    sub bx, word ptr [_safe_zone_x]
+    add bx, word ptr [_hud_widescreen_right_edge_offset]
+    mov word ptr [eax], bx
+
+    mov bx, word ptr [eax + 2]
+    add bx, word ptr [_safe_zone_y]
+    mov word ptr [eax + 2], bx
+    ret

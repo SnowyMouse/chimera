@@ -22,6 +22,12 @@ namespace Chimera {
      * @return true if the widescreen fix is enabled
      */
     bool widescreen_fix_enabled() noexcept;
+
+    /**
+     * Get the anchor type for the widescreen fix
+     * @return the anchor type.
+     */
+    WidescreenFixSetting get_widescreen_fix() noexcept;
 }
 
 #endif

@@ -18,6 +18,8 @@
 #include "../halo_data/resolution.hpp"
 #include "../event/map_load.hpp"
 #include "widescreen_fix.hpp"
+#include "hud_bitmap_scale.hpp"
+#include "map_hacks/map_hacks.hpp"
 
 extern "C" {
     void widescreen_element_reposition_hud() noexcept;
@@ -152,36 +154,50 @@ namespace Chimera {
         }
 
         float increase_x = widescreen_width_480p - 640.000f;
-        float increase_y = 0.0f;
 
-        float min_x = element.corners[CORNER_TOP_LEFT].x;
-        float max_x = element.corners[CORNER_TOP_RIGHT].x;
-        float min_y = element.corners[CORNER_TOP_LEFT].y;
-        float max_y = element.corners[CORNER_BOTTOM_LEFT].y;
+        if(global_fix_flags.old_widescreen_fix) {
+            float min_x = element.corners[CORNER_TOP_LEFT].x;
+            float max_x = element.corners[CORNER_TOP_RIGHT].x;
+            float min_y = element.corners[CORNER_TOP_LEFT].y;
+            float max_y = element.corners[CORNER_BOTTOM_LEFT].y;
 
-        float center_x = (min_x + max_x) / 2.0f;
-        float center_y = (min_y + max_y) / 2.0f;
+            float center_x = (min_x + max_x) / 2.0f;
+            float center_y = (min_y + max_y) / 2.0f;
 
-        bool inner_center = std::fabs(320.0f - center_x) < 210.0 && std::fabs(240.0f - center_y) < 170.0;
-        bool centered_x = inner_center || std::fabs(320.0f - center_x) < 100.0;
-        //bool centered_y = inner_center || std::fabs(240.0f - center_y) < 100.0;
+            bool inner_center = std::fabs(320.0f - center_x) < 210.0 && std::fabs(240.0f - center_y) < 170.0;
+            bool centered_x = inner_center || std::fabs(320.0f - center_x) < 100.0;
 
-        // Center centered elements
-        if(setting == WidescreenFixSetting::WIDESCREEN_16_9_HUD && aspect_ratio > 16.f / 9.f) {
-            increase_x /= 2.0f;
-            float offset = (((16.f / 9.f) * 480.f) - 640.f) / 2;
-            if(!centered_x && center_x < 320.0f) {
-                increase_x -= offset;
+            // Center centered elements
+            if(setting == WidescreenFixSetting::WIDESCREEN_16_9_HUD && aspect_ratio > 16.f / 9.f) {
+                increase_x /= 2.0f;
+                float offset = (((16.f / 9.f) * 480.f) - 640.f) / 2;
+                if(!centered_x && center_x < 320.0f) {
+                    increase_x -= offset;
+                }
+                else if(!centered_x && center_x > 320.0f) {
+                    increase_x += offset;
+                }
             }
-            else if(!centered_x && center_x > 320.0f) {
-                increase_x += offset;
+            else {
+                if(centered_x || setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
+                    increase_x /= 2.0f;
+                }
+                else if(center_x < 320.0f) {
+                    increase_x = 0.0f;
+                }
             }
         }
         else {
-            if(centered_x || setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
+            // Just center the canvas if using a centered HUD option.
+            if(setting == WidescreenFixSetting::WIDESCREEN_16_9_HUD && aspect_ratio > 16.f / 9.f) {
+                increase_x /= 2.0f;
+                float offset = (((16.f / 9.f) * 480.f) - 640.f) / 2;
+                increase_x -= offset;
+            }
+            else if(setting == WidescreenFixSetting::WIDESCREEN_CENTER_HUD) {
                 increase_x /= 2.0f;
             }
-            else if(center_x < 320.0f) {
+            else {
                 increase_x = 0.0f;
             }
         }
@@ -191,11 +207,6 @@ namespace Chimera {
         element.corners[1].x += increase_x;
         element.corners[2].x += increase_x;
         element.corners[3].x += increase_x;
-
-        element.corners[0].y += increase_y;
-        element.corners[1].y += increase_y;
-        element.corners[2].y += increase_y;
-        element.corners[3].y += increase_y;
     }
 
     extern "C" void upscale_hud_element(ElementData &element) noexcept {
@@ -329,6 +340,10 @@ namespace Chimera {
     static bool f1 = false;
 
     bool widescreen_fix_enabled() noexcept {
+        return setting;
+    }
+
+    WidescreenFixSetting get_widescreen_fix() noexcept {
         return setting;
     }
 

@@ -9,17 +9,17 @@
 
 namespace Chimera {
 
-    // Not all of these config option are currently valid.
     struct ChimeraFixes {
         bool gearbox_chicago_multiply; // Use gearbox shader_transparent_chicago multiply behaviour
         bool gearbox_meters; // Use the gearbox fixed function meters instead of the Xbox shader.
-        bool gearbox_multitexture_blend_modes; // Use gearbox order multitexture blend functions
-        bool alternate_bump_attenuation; // Force enable the alternate bump attenuation in shader_environment_lightmap
-        bool gearbox_bump_attenuation; // Force the gearbox bump attenuation (ie none) in shader_environment_lightmap
-        bool invert_detail_after_reflection; // Flips the flag in shader model tags
-        bool embedded_lua; // Doesn't do anything yet
+        bool gearbox_multitexture_blend_modes; // Use gearbox order multitexture blend functions.
+        bool alternate_bump_attenuation; // Force enable the alternate bump attenuation in shader_environment_lightmap.
+        bool gearbox_bump_attenuation; // Force the gearbox bump attenuation (ie none) in shader_environment_lightmap.
+        bool invert_detail_after_reflection; // Flips the flag in shader model tags.
+        bool embedded_lua; // Load embedded lua scripts.
         bool hud_number_scale; // Hacks the tag to scale down oversized HUD counter numbers.
-        bool disable_bitmap_hud_scale_flags; // Clears HUD scale flags from internal bitmap tags
+        bool disable_bitmap_hud_scale_flags; // Clears HUD scale flags from internal bitmap tags.
+        bool old_widescreen_fix; // Uses the old chimera widescreen fix method. For older maps that position central elements from corner anchors.
     };
 
     struct MapFixConfig {

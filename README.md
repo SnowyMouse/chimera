@@ -74,6 +74,7 @@ These are features that are always on.
 - [Contrail fix](#contrail-fix)
 - [Motion sensor fix](#motion-sensor-fix)
 - [Auto center fix](#auto-center-fix)
+- [Shader fixes](#shader-fixes)
 - [Fog fix](#fog-fix)
 - [Model detail fix](#model-detail-fix)
 - [HUD numbers fix](#hud-numbers-fix)
@@ -203,13 +204,18 @@ The Keystone chat is crashy and broken. Chimera adds a replacement chat.
 
 #### NVIDIA camo fix
 Chimera fixes a bug where, if the GPU is an NVIDIA graphics card, it uses alpha
-blended camo instead of the liquid camo shader.
+blended camo instead of the liquid camo shader. This is only applicable to Halo
+Trial.
 
 #### Contrail fix
 Chimera fixes a bug where contrails are bugged at high frame rates.
 
 #### Motion sensor fix
 Chimera fixes a bug where the motion sensor fade is incorrect at >30 FPS
+
+#### Shader fixes
+Chimera fixes many gearbox shader regression to restore Xbox accurate rendering.
+This includes missing shader types such as shader_transparent_generic.
 
 #### Fog fix
 Fog in maps such as Assault on the Control Room's sky fog now works as intended.
@@ -436,10 +442,12 @@ the chimera folder created by Chimera.
 - [FoV](#fov)
 - [FP reverb](#fp-reverb)
 - [Language](#language)
+- [Lock FP model FoV](#lock-fp-model-fov)
 - [Model detail](#model-detail)
 - [Mouse sensitivity](#mouse-sensitivity)
 - [Player info](#player-info)
 - [Player list](#player-list)
+- [Safe zones](#safe-zones)
 - [Send chat message](#send-chat-message)
 - [Set color](#set-color)
 - [Set name](#set-name)
@@ -689,6 +697,12 @@ Spanish.
 
 **Usage:** `chimera_language [en/es]`
 
+#### Lock FP model FoV
+Prevents the game from scaling the field of view of the first person view model
+with increasing/decreasing camera FoV.
+
+**Usage:** `chimera_lock_fp_model_fov [true/false]`
+
 #### Model detail
 Force highest LOD level for all models. The exception being the cryotube model
 which will always scale by 480p regardless of this to prevent the afformentioned
@@ -724,6 +738,12 @@ Show player info for the given player.
 List player indices.
 
 **Usage:** `chimera_player_list`
+
+#### Safe zones
+Sets safe zone sizes for HUD margins. Values are clamped between stock PC
+values (8, 8) and stock Xbox values (48, 36).
+
+**Usage:** `chimera_safe_zones [off | <horizontal> <vertical>]`
 
 #### Send chat message
 Send a chat message. Channel 0 is "all", channel 1 is "team", and channel 2 is
