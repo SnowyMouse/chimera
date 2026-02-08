@@ -73,8 +73,8 @@ namespace Chimera {
 
     static std::uint16_t child_anchor = 0;
 
-    static float window_width = HUD_BASE_WIDTH - HUD_MARGIN;
-    static float window_height = HUD_BASE_HEIGHT - HUD_MARGIN;
+    static float window_width = HUD_BASE_WIDTH - HUD_MARGIN * 2.0f;
+    static float window_height = HUD_BASE_HEIGHT - HUD_MARGIN * 2.0f;
 
     static float viewport_width = HUD_BASE_WIDTH;
     static float viewport_height = HUD_BASE_HEIGHT;
@@ -91,8 +91,8 @@ namespace Chimera {
     void update_safe_zones(std::uint32_t x, std::uint32_t y) noexcept {
         safe_zone_x = x - HUD_MARGIN;
         safe_zone_y = y - HUD_MARGIN;
-        window_width = HUD_BASE_WIDTH - (safe_zone_x - HUD_MARGIN) * 2.0f;
-        window_height = HUD_BASE_HEIGHT - (safe_zone_y - HUD_MARGIN) * 2.0f;
+        window_width = HUD_BASE_WIDTH - safe_zone_x * 2.0f;
+        window_height = HUD_BASE_HEIGHT - safe_zone_y * 2.0f;
     }
 
     void update_viewport_bounds() noexcept {
