@@ -38,6 +38,12 @@ namespace Chimera {
         return true;
     }
 
+    bool map_config_old_widescreen_fix(int, const char **) {
+        global_fix_flags.old_widescreen_fix = global_fix_flags.old_widescreen_fix ? false : true;
+        console_output(BOOL_TO_STR(global_fix_flags.old_widescreen_fix));
+        return true;
+    }
+
     bool map_config_detail_after_reflection(int, const char **) {
         global_fix_flags.invert_detail_after_reflection = global_fix_flags.invert_detail_after_reflection ? false : true;
         auto &tag_data_header = get_tag_data_header();
