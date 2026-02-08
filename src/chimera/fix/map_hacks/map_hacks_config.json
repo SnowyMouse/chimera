@@ -879,6 +879,30 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "lumoria_a",
+            "tags_checksum": 1176114997,
+            "hud_number_scale": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "lumoria_b",
+            "tags_checksum": 101410764,
+            "hud_number_scale": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "lumoria_c",
+            "tags_checksum": 4147310399,
+            "hud_number_scale": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "lumoria_d",
+            "tags_checksum": 2172917636,
+            "hud_number_scale": true,
+            "old_widescreen_fix": true
+        },
+        {
             "map_name": "medical block",
             "tags_checksum": 2390234435,
             "gearbox_meters": true
