@@ -3,18 +3,21 @@
         {
             "map_name": "[h2]_ascension",
             "tags_checksum": 323624966,
-            "gearbox_meters": true
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_beavercreek",
             "tags_checksum": 332305787,
-            "gearbox_meters": true
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_coagulation",
             "tags_checksum": 2371572374,
             "gearbox_meters": true,
-            "gearbox_bump_attenuation": true
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_ivory_tower",
@@ -31,12 +34,14 @@
         {
             "map_name": "[h2]_new_mombassa",
             "tags_checksum": 1408726905,
-            "gearbox_meters": true
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_sanctuary",
             "tags_checksum": 3317449520,
-            "gearbox_meters": true
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_turf",
@@ -48,12 +53,14 @@
             "map_name": "[h2]_warlock",
             "tags_checksum": 2363319160,
             "gearbox_meters": true,
-            "gearbox_bump_attenuation": true
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h2]_zanzibar",
             "tags_checksum": 146300553,
-            "gearbox_meters": true
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "[h3] core",
@@ -1233,9 +1240,20 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "z_coagulation_h2_pb2",
+            "tags_checksum": 1990525991,
+            "gearbox_bump_attenuation": true,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "z_sanctuary_h2_pb2",
             "tags_checksum": 3363242221,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "zanzibar",
+            "tags_checksum": 3442460181,
+            "old_widescreen_fix": true
         }
     ]
 }
