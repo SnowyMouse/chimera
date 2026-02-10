@@ -86,7 +86,7 @@ namespace Chimera {
                 s2->static_element.placement.offset.x = 176;
                 s1->static_element.placement.offset.y = s2->static_element.placement.offset.y = 9;
                 s1->header.child_anchor = s2->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
-                n0->number_element.placement.offset.x = n1->number_element.placement.offset.x = 159;
+                n0->number_element.placement.offset.x = n1->number_element.placement.offset.x = 160;
                 n0->number_element.placement.offset.y = 151;
                 n1->number_element.placement.offset.y = 166;
                 n0->header.child_anchor = n1->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
