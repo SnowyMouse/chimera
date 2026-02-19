@@ -10,27 +10,34 @@
 #include "../../../output/output.hpp"
 
 namespace Chimera {
-    static LARGE_INTEGER last_frame;
+    static LARGE_INTEGER pc_freq;
     static LARGE_INTEGER current_frame;
-    static double pc_freq;
-    static double frame_time_target;
+    static LARGE_INTEGER last_frame;
+    static long long frame_time_ticks;
     static bool limiter_enabled = false;
 
-    static void on_frame() {
+    void on_frame() noexcept {
         if(limiter_enabled) {
             bool slept_this_frame = false;
             QueryPerformanceCounter(&current_frame);
-            double time_since_last_frame = (current_frame.QuadPart - last_frame.QuadPart) / pc_freq;
+            long long time_since_last_frame = current_frame.QuadPart - last_frame.QuadPart;
+            // I suppose this could technically happen...
+            if(time_since_last_frame < 0) {
+                return;
+            }
 
-            while(time_since_last_frame < frame_time_target) {
+            while(time_since_last_frame < frame_time_ticks) {
                 // Sleep for a chunk of the remaining time slice...
-                if(time_since_last_frame < (frame_time_target / 2) && !slept_this_frame) {
-                    Sleep(static_cast<long>((time_since_last_frame * 1000) / 2));
+                if(time_since_last_frame < (frame_time_ticks / 2) && !slept_this_frame) {
+                    Sleep(((time_since_last_frame * 1000) / pc_freq.QuadPart) / 2);
                     slept_this_frame = true;
+                }
+                else if(time_since_last_frame < frame_time_ticks * 0.75) {
+                    Sleep(0);
                 }
                 // And then just spin the while loop for the rest.
                 QueryPerformanceCounter(&current_frame);
-                time_since_last_frame = (current_frame.QuadPart - last_frame.QuadPart) / pc_freq;
+                time_since_last_frame = current_frame.QuadPart - last_frame.QuadPart;
             }
             last_frame.QuadPart = current_frame.QuadPart;
         }
@@ -39,6 +46,7 @@ namespace Chimera {
     bool throttle_fps_command(int argument_count, const char **arguments) noexcept {
         static bool enabled = false;
         static bool hook_enabled = false;
+        static float frame_time_target = 0;
 
         if(argument_count) {
             float new_fps = std::strtof(arguments[0], nullptr);
@@ -54,15 +62,16 @@ namespace Chimera {
                     new_fps = 300.0f;
                 }
                 enabled = true;
-                frame_time_target = 1.0f / new_fps;
                 QueryPerformanceFrequency(&current_frame);
-                pc_freq = static_cast<double>(current_frame.QuadPart);
+                pc_freq.QuadPart = current_frame.QuadPart;
+                frame_time_target = 1.0f / new_fps;
+                frame_time_ticks = pc_freq.QuadPart / static_cast<long>(new_fps);
                 QueryPerformanceCounter(&current_frame);
                 last_frame.QuadPart = 0;
 
                 if(!hook_enabled) {
                     static Hook hook;
-                    write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data() + 3, hook, reinterpret_cast<const void*>(on_frame), nullptr);
+                    write_jmp_call(get_chimera().get_signature("d3d9_present_frame_sig").data(), hook, reinterpret_cast<const void*>(on_frame), nullptr);
                     hook_enabled = true;
                 }
                 limiter_enabled = true;
