@@ -317,6 +317,12 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "[halo2]headlong",
+            "tags_checksum": 338899267,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "[hsp]the-pit",
             "tags_checksum": 1632131053,
             "gearbox_meters": true
@@ -678,6 +684,11 @@
             "gearbox_multitexture_blend_modes": true
         },
         {
+            "map_name": "gn_mech_war_53",
+            "tags_checksum": 1412273075,
+            "gearbox_multitexture_blend_modes": true
+        },
+        {
             "map_name": "h1x_beavercreek_v3",
             "tags_checksum": 3009870144,
             "gearbox_meters": true,
@@ -884,6 +895,13 @@
             "map_name": "kmap1,0",
             "tags_checksum": 736075359,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "last_voyage",
+            "tags_checksum": 176770788,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
         },
         {
             "map_name": "lumoria_a",
@@ -1207,6 +1225,18 @@
             "map_name": "the_land_of_hyrule_v0.2.1",
             "tags_checksum": 1852711120,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "treason",
+            "tags_checksum": 3995717220,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "trenchfoot-beta07",
+            "tags_checksum": 810622759,
+            "gearbox_multitexture_blend_modes": true
         },
         {
             "map_name": "trenchfoot-truce-beta04",
