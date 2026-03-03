@@ -390,6 +390,7 @@
             "tags_checksum": 2234443607,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true,
             "embedded_lua": true
         },
         {
