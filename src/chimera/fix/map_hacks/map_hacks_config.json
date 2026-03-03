@@ -1,6 +1,11 @@
 {
     "per_map_config": [
         {
+            "map_name": "[cex]ice_land",
+            "tags_checksum": 4053519473,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "[h2]_ascension",
             "tags_checksum": 323624966,
             "gearbox_meters": true,
@@ -413,6 +418,12 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "blood_creek_campus_pb2",
+            "tags_checksum": 1839249948,
+            "gearbox_meters": true,
+            "old_widescreen_fix": true
+        },
+        {
             "map_name": "chronopolis_c3_public_beta0.2",
             "tags_checksum": 2577351432,
             "gearbox_bump_attenuation": true
@@ -552,6 +563,12 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "courtyard",
+            "tags_checksum": 1941202580,
+            "gearbox_meters": true,
             "hud_number_scale": true
         },
         {
@@ -966,6 +983,11 @@
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "disable_bitmap_hud_scale_flags": true
+        },
+        {
+            "map_name": "off_groundv1",
+            "tags_checksum": 1177594827,
+            "gearbox_meters": true
         },
         {
             "map_name": "paradis_perdu",
