@@ -373,6 +373,11 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "asylum_v3",
+            "tags_checksum": 3711995939,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "atruck",
             "tags_checksum": 552595708,
             "gearbox_meters": true,
