@@ -1293,6 +1293,11 @@
             "disable_bitmap_hud_scale_flags": true
         },
         {
+            "map_name": "twist_beta",
+            "tags_checksum": 4136381794,
+            "alternate_bump_attenuation": true
+        },
+        {
             "map_name": "windfall_island_v.2",
             "tags_checksum": 3505626269,
             "gearbox_bump_attenuation": true
