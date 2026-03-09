@@ -1295,7 +1295,8 @@
         {
             "map_name": "twist_beta",
             "tags_checksum": 4136381794,
-            "alternate_bump_attenuation": true
+            "gearbox_bump_attenuation": true,
+            "gearbox_shader_environment_types": true
         },
         {
             "map_name": "windfall_island_v.2",

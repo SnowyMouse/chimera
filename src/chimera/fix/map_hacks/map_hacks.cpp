@@ -15,16 +15,7 @@ namespace Chimera {
 
     void set_fix_config_for_new_map() noexcept {
         // Reset flags
-        global_fix_flags.gearbox_chicago_multiply = false;
-        global_fix_flags.gearbox_meters = false;
-        global_fix_flags.gearbox_multitexture_blend_modes = false;
-        global_fix_flags.alternate_bump_attenuation = false;
-        global_fix_flags.gearbox_bump_attenuation = false;
-        global_fix_flags.invert_detail_after_reflection = false;
-        global_fix_flags.embedded_lua = false;
-        global_fix_flags.hud_number_scale = false;
-        global_fix_flags.disable_bitmap_hud_scale_flags = false;
-        global_fix_flags.old_widescreen_fix = false;
+        global_fix_flags = {};
 
         auto &map_header = get_map_header();
 
@@ -84,52 +75,14 @@ namespace Chimera {
             }
 
             // Map checks out, apply the memes.
-            if(chimera_fix_blacklist[i].config.gearbox_chicago_multiply) {
-                global_fix_flags.gearbox_chicago_multiply = true;
-            }
-            if(chimera_fix_blacklist[i].config.gearbox_meters) {
-                global_fix_flags.gearbox_meters = true;
-            }
-            if(chimera_fix_blacklist[i].config.gearbox_multitexture_blend_modes) {
-                global_fix_flags.gearbox_multitexture_blend_modes = true;
-            }
-            if(chimera_fix_blacklist[i].config.alternate_bump_attenuation) {
-                global_fix_flags.alternate_bump_attenuation = true;
-            }
-            if(chimera_fix_blacklist[i].config.gearbox_bump_attenuation) {
-                global_fix_flags.gearbox_bump_attenuation = true;
-            }
-            if(chimera_fix_blacklist[i].config.invert_detail_after_reflection) {
-                global_fix_flags.invert_detail_after_reflection = true;
-            }
-            if(chimera_fix_blacklist[i].config.embedded_lua) {
-                global_fix_flags.embedded_lua = true;
-            }
-            if(chimera_fix_blacklist[i].config.hud_number_scale) {
-                global_fix_flags.hud_number_scale = true;
-            }
-            if(chimera_fix_blacklist[i].config.disable_bitmap_hud_scale_flags) {
-                global_fix_flags.disable_bitmap_hud_scale_flags = true;
-            }
-            if(chimera_fix_blacklist[i].config.old_widescreen_fix) {
-                global_fix_flags.old_widescreen_fix = true;
-            }
+            global_fix_flags = chimera_fix_blacklist[i].config;
             break;
         }
     }
 
     void set_up_map_config_control() noexcept {
         // Init flags struct.
-        global_fix_flags.gearbox_chicago_multiply = false;
-        global_fix_flags.gearbox_meters = false;
-        global_fix_flags.gearbox_multitexture_blend_modes = false;
-        global_fix_flags.alternate_bump_attenuation = false;
-        global_fix_flags.gearbox_bump_attenuation = false;
-        global_fix_flags.invert_detail_after_reflection = false;
-        global_fix_flags.embedded_lua = false;
-        global_fix_flags.hud_number_scale = false;
-        global_fix_flags.disable_bitmap_hud_scale_flags = false;
-        global_fix_flags.old_widescreen_fix = false;
+        global_fix_flags = {};
 
         // This is really only applicable to custom edition
         if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {

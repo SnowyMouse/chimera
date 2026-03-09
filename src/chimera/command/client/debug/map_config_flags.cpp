@@ -61,6 +61,7 @@ namespace Chimera {
         return true;
     }
 
+    // These can not be undone
     bool map_config_bitmap_hud_scale_flags(int, const char **) {
         if(!global_fix_flags.disable_bitmap_hud_scale_flags) {
             global_fix_flags.disable_bitmap_hud_scale_flags = true;
@@ -73,6 +74,27 @@ namespace Chimera {
                     // Clear HUD scale flags.
                     SET_FLAG(tag_data->flags, BITMAP_FLAGS_HALF_HUD_SCALE_BIT, false);
                     SET_FLAG(tag_data->flags, BITMAP_FLAGS_FORCE_HUD_USE_HIGHRES_SCALE_BIT, false);
+                }
+            }
+        }
+
+        console_output("true");
+        return true;
+    }
+
+    bool map_config_gearbox_shader_environment(int, const char **) {
+        if(!global_fix_flags.gearbox_shader_environment_types) {
+            global_fix_flags.gearbox_shader_environment_types = true;
+            auto &tag_data_header = get_tag_data_header();
+            for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
+                auto &tag = tag_data_header.tag_array[i];
+                if(tag.data && tag.primary_class == TAG_CLASS_SHADER_ENVIRONMENT) {
+                    auto tag_data = reinterpret_cast<ShaderEnvironment *>(tag.data);
+
+                    // On gearbox "normal" was treated as "blended"
+                    if(tag_data->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
+                        tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED;
+                    }
                 }
             }
         }

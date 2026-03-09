@@ -197,6 +197,7 @@ namespace Chimera {
         ADD_COMMAND("chimera_debug_gearbox_multitexture_blending", "chimera_category_debug", "client_custom_edition", map_config_gearbox_multitexture, false, 0, 0);
         ADD_COMMAND("chimera_debug_gearbox_bump_attenuation", "chimera_category_debug", "client_custom_edition", map_config_gearbox_bump_attenuation, false, 0, 0);
         ADD_COMMAND("chimera_debug_gearbox_chicago_multiply", "chimera_category_debug", "client_custom_edition", map_config_gearbox_chicago_multiply, false, 0, 0);
+        ADD_COMMAND("chimera_debug_gearbox_shader_environment_types", "chimera_category_debug", "client_custom_edition", map_config_gearbox_shader_environment, false, 0, 0);
         ADD_COMMAND("chimera_debug_invert_detail_after_reflection", "chimera_category_debug", "client_custom_edition", map_config_detail_after_reflection, false, 0, 0);
         ADD_COMMAND("chimera_debug_old_widescreen_fix", "chimera_category_debug", "client_custom_edition", map_config_old_widescreen_fix, false, 0, 0);
 

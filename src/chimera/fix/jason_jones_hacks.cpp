@@ -94,6 +94,17 @@ namespace Chimera {
         }
     }
 
+    static void jason_jones_shader_environment_type(ShaderEnvironment *tag_data) noexcept {
+        if(!global_fix_flags.gearbox_shader_environment_types) {
+            return;
+        }
+
+        // On gearbox "normal" was treated as "blended"
+        if(tag_data->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
+            tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED;
+        }
+    }
+
     // FIXME: This will dereference the bumpmap in shader_environment tags if they are p8 bump format.
     // This should be removed if software decoding for p8 bump is ever implemented.
     static void jason_jones_p8_bumps(ShaderEnvironment *tag_data) noexcept {
@@ -154,6 +165,7 @@ namespace Chimera {
                     jason_jones_unintended_hud_scale(reinterpret_cast<Bitmap *>(tag.data));
                     break;
                 case TAG_CLASS_SHADER_ENVIRONMENT:
+                    jason_jones_shader_environment_type(reinterpret_cast<ShaderEnvironment *>(tag.data));
                     jason_jones_p8_bumps(reinterpret_cast<ShaderEnvironment *>(tag.data));
                     break;
                 case TAG_CLASS_SHADER_MODEL:
