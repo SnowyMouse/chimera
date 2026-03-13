@@ -17,7 +17,7 @@ if(${CHIMERA_WINXP})
 		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.gz")
 		set(LOCAL_CURL_URL_HASH e8e74cdeefe5fb78b3ae6e90cd542babf788fa9480029cfcee6fd9ced42b7910)
 	else()
-		# curl 8.18.0 will only work with the UCRT C runtime and is the last version to support Windows XP at all.
+		# curl 8.18.0 will only work on Windows XP with the UCRT C runtime and is the last version to support XP at all.
 		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz")
 		set(LOCAL_CURL_URL_HASH e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f)
 	endif()

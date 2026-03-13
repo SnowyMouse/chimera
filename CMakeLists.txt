@@ -22,7 +22,7 @@ find_package(Python3 REQUIRED)
 find_package(Git)
 
 # Windows XP
-option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
+option(CHIMERA_WINXP "Enable support for Windows XP" OFF)
 
 # Signal UCRT features can be used when building for Windows XP. There is no reliable way to detect this currently
 option(CHIMERA_WINXP_UCRT "Enable UCRT features for Windows XP builds (Requires mingw built to use the UCRT runtime)" OFF)
