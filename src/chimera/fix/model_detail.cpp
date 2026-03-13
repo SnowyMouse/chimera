@@ -8,7 +8,7 @@
 #include "../event/frame.hpp"
 
 extern "C" {
-    float lod_fix_scale = 1.0F;
+    float lod_fix_scale = 1.0f;
     void model_detail_fix() noexcept;
     const void *model_detail_fix_original_instr = nullptr;
     std::byte *model_detail_set_lod_skip = nullptr;
@@ -22,7 +22,7 @@ namespace Chimera {
         static std::uint16_t height = 0;
         auto resolution = get_resolution();
         if(resolution.height != height) {
-            lod_fix_scale = static_cast<float>(resolution.height) / 480.0F;
+            lod_fix_scale = static_cast<float>(resolution.height) / 480.0f;
         }
     }
 

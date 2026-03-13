@@ -17,9 +17,9 @@ _model_detail_fix:
     pop eax
     je set_scaled_lod_bias
 
-    ;# Check for forced max lod. Otherwise use default resolution dependent scale
+    ;# Check for forced max lod. Otherwise scale LOD by 480p
     cmp byte ptr [_force_max_lod_level], 0
-    je default_scaling
+    je set_scaled_lod_bias
 
     jmp dword ptr [_model_detail_set_lod_skip]
 
@@ -28,6 +28,4 @@ _model_detail_fix:
     fld dword ptr [ebp+0x08]
     fdiv dword ptr [_lod_fix_scale]
     fstp dword ptr [ebp+0x08]
-
-    default_scaling:
     jmp dword ptr [_model_detail_fix_original_instr]
