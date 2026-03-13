@@ -23,6 +23,10 @@ find_package(Git)
 
 # Windows XP
 option(CHIMERA_WINXP "Enable support for Windows XP (increases binary size)" OFF)
+
+# Signal UCRT features can be used when building for Windows XP. There is no reliable way to detect this currently
+option(CHIMERA_WINXP_UCRT "Enable UCRT features for Windows XP builds (Requires mingw built to use the UCRT runtime)" OFF)
+
 if(${CHIMERA_WINXP})
     # Windows Server 2003 with SP1, Windows XP with SP2
     set(CHIMERA_TARGET_WINDOWS_VERSION 0x0502)

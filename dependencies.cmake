@@ -8,17 +8,22 @@ endif()
 include(ExternalProject)
 
 # This was once OFF by default, but newer CMake versions changed this to ON.
-# As long as the hashes are the same it does not matter. Needed for some MinGW-w64 releases.
+# As long as the hashes are the same it should be fine. Needed for some MinGW-w64 releases, mainly winlibs.
 set(CMAKE_TLS_VERIFY OFF)
 
-# curl versions past 8.17.0 dropped support for Windows XP using the older MSVCRT C runtime.
-# 8.18.0 will work with UCRT and is assumed to be the last version to support Windows XP at all.
 if(${CHIMERA_WINXP})
-    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.gz")
-    set(LOCAL_CURL_URL_HASH e8e74cdeefe5fb78b3ae6e90cd542babf788fa9480029cfcee6fd9ced42b7910)
+	if(NOT ${CHIMERA_WINXP_UCRT})
+		# curl 8.17.0 is the last version to support Windows XP using the older MSVCRT C runtime.
+		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.gz")
+		set(LOCAL_CURL_URL_HASH e8e74cdeefe5fb78b3ae6e90cd542babf788fa9480029cfcee6fd9ced42b7910)
+	else()
+		# curl 8.18.0 will only work with the UCRT C runtime and is the last version to support Windows XP at all.
+		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz")
+		set(LOCAL_CURL_URL_HASH e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f)
+	endif()
 else()
-    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz")
-    set(LOCAL_CURL_URL_HASH e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f)
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_19_0/curl-8.19.0.tar.gz")
+    set(LOCAL_CURL_URL_HASH 2a2c11db4c122691aa23b4363befda1bfd801770bfebf41e1d21cee4f2ab0f71)
 endif()
 
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
