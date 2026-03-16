@@ -105,32 +105,6 @@ namespace Chimera {
         }
     }
 
-    // FIXME: This will dereference the bumpmap in shader_environment tags if they are p8 bump format.
-    // This should be removed if software decoding for p8 bump is ever implemented.
-    static void jason_jones_p8_bumps(ShaderEnvironment *tag_data) noexcept {
-        if(tag_data->environment.diffuse.bump_map.tag_id.is_null()) {
-            return;
-        }
-
-        auto *bitmap_group = get_bitmap_tag(tag_data->environment.diffuse.bump_map.tag_id);
-        if(!bitmap_group) {
-            return;
-        }
-
-        bool valid = true;
-        for(std::uint32_t i = 0; i < bitmap_group->bitmap_data.count; i++) {
-            auto *bitmap = GET_TAG_BLOCK_ELEMENT(BitmapData, &bitmap_group->bitmap_data, i);
-            if(bitmap->format == BITMAP_DATA_FORMAT_P8_BUMP) {
-                valid = false;
-                break;
-            }
-        }
-
-        if(!valid) {
-            tag_data->environment.diffuse.bump_map.tag_id = TagID::null_id();
-        }
-    }
-
     static void jason_jones_detail_after_reflection(ShaderModel *tag_data) noexcept {
         if(!global_fix_flags.invert_detail_after_reflection) {
             return;
@@ -166,7 +140,6 @@ namespace Chimera {
                     break;
                 case TAG_CLASS_SHADER_ENVIRONMENT:
                     jason_jones_shader_environment_type(reinterpret_cast<ShaderEnvironment *>(tag.data));
-                    jason_jones_p8_bumps(reinterpret_cast<ShaderEnvironment *>(tag.data));
                     break;
                 case TAG_CLASS_SHADER_MODEL:
                     jason_jones_detail_after_reflection(reinterpret_cast<ShaderModel *>(tag.data));

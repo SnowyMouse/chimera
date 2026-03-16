@@ -7,6 +7,7 @@
 #include "type.hpp"
 #include "tag.hpp"
 #include "pad.hpp"
+#include "table.hpp"
 #include "../math_trig/math_trig.hpp"
 
 namespace Chimera {
@@ -174,12 +175,39 @@ namespace Chimera {
     };
     static_assert(sizeof(Bitmap) == 0x6C);
 
+    struct TextureDatum {
+        std::uint16_t id;
+        std::int16_t request_index;
+        bool available;
+        bool postprocessed;
+        PAD(0x2);
+        BitmapData *bitmap;
+        PAD(0x4);
+    };
+    static_assert(sizeof(TextureDatum) == 0x10);
+
+    struct TextureTable : GenericTable<TextureDatum> {
+        /**
+         * Get the texture table.
+         * @return Return a reference to the texture table.
+         */
+        static TextureTable &get_texture_table() noexcept;
+    };
+
+
     /**
      * Get bitmap tag data
      * @param  tag_id id of the tag
      * @return pointer to the tag data if found, nullptr if not
      */
     Bitmap *get_bitmap_tag(TagID tag_id) noexcept;
+
+    /**
+     * Convert unsupported bitmap pixel data to a supported format.
+     * @param  bitmap Bitmap data block to convert.
+     * @return pointer to the converted raw pixel data.
+     */
+    void *bitmap_covert_format(BitmapData *bitmap) noexcept;
 
 }
 
