@@ -429,6 +429,11 @@
             "old_widescreen_fix": true
         },
         {
+            "map_name": "bridge_crossing",
+            "tags_checksum": 2298268900,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "chronopolis_c3_public_beta0.2",
             "tags_checksum": 2577351432,
             "gearbox_bump_attenuation": true

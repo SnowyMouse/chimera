@@ -75,6 +75,7 @@ These are features that are always on.
 - [Motion sensor fix](#motion-sensor-fix)
 - [Auto center fix](#auto-center-fix)
 - [Shader fixes](#shader-fixes)
+- [Texture formats fix](#texture-formats-fix)
 - [Fog fix](#fog-fix)
 - [Model detail fix](#model-detail-fix)
 - [HUD numbers fix](#hud-numbers-fix)
@@ -85,7 +86,7 @@ These are features that are always on.
 - [Sane default Halo settings](#sane-default-halo-settings)
 - [Removed update check](#removed-update-check)
 - [Removed Watson](#removed-watson)
-- [Multi-team vehicle fix](#multi-team-vehicle-fix)
+- [Multi-team vehicles fix](#multi-team-vehicles-fix)
 - [Map downloading](#map-downloading)
 - [Lua scripting](#lua-scripting)
 
@@ -216,6 +217,10 @@ Chimera fixes a bug where the motion sensor fade is incorrect at >30 FPS
 #### Shader fixes
 Chimera fixes many gearbox shader regression to restore Xbox accurate rendering.
 This includes missing shader types such as shader_transparent_generic.
+
+#### Texture formats fix
+Chimera restores support for the monochrome and p8-bump texture formats used
+in the Xbox version.
 
 #### Fog fix
 Fog in maps such as Assault on the Control Room's sky fog now works as intended.
@@ -856,11 +861,12 @@ on questions I have received or questions I *might* receive that I feel are
 worth answering in a readme.
 
 - [Will Chimera run on my system?]
-- [Can I use Chimera under a license besides GNU GPL version 3?]
+- [Can I distribute Chimera under a license besides GNU GPL version 3?]
 - [Why are my custom fonts not working?]
 - [Why does Halo's gamma setting not work when Chimera is installed?]
 - [Why is there no auto updater built into Chimera?]
 - [Why do I get an error when joining Custom Edition servers with modded maps?]
+- [Do I need to install CEnshine to fix shader issues when using Chimera?]
 
 ### Will Chimera run on my system?
 Short answer: If your PC uses Windows 7 or later, it'll work. Note
@@ -892,7 +898,7 @@ The newest of the above recommendations is the AMD CPU (FX 6100) which was
 released in the year 2011 - over seven years ago at the time of writing this
 sentence.
 
-### Can I use Chimera under a license besides GNU GPL version 3?
+### Can I distribute Chimera under a license besides GNU GPL version 3?
 Probably not. You would first need to ask *all* of the developers of Chimera for
 permission.
 
@@ -1029,12 +1035,18 @@ this check.
 If you *want* to join a server using a modified Halo Custom Edition map on a
 Halo Custom Edition server, then you should forge the CRC32.
 
+### Do I need to install CEnshine to fix shader issues when using Chimera?
+[CEnshine](https://github.com/Sledmine/censhine) is no longer required as
+Chimera has more updated shader fixes integrated directly into it. The shader
+binaries in the `shaders` folder should be kept as the original stock versions.
+
 [Will Chimera run on my system?]: #will-chimera-run-on-my-system
-[Can I use Chimera under a license besides GNU GPL version 3?]: #can-i-use-chimera-under-a-license-besides-gnu-gpl-version-3
+[Can I distribute Chimera under a license besides GNU GPL version 3?]: #can-i-distribute-chimera-under-a-license-besides-gnu-gpl-version-3
 [Why are my custom fonts not working?]: #why-are-my-custom-fonts-not-working
 [Why does Halo's gamma setting not work when Chimera is installed?]: #why-does-halos-gamma-setting-not-work-when-chimera-is-installed
 [Why is there no auto updater built into Chimera?]: #why-is-there-no-auto-updater-built-into-chimera
 [Why do I get an error when joining Custom Edition servers with modded maps?]: #why-do-i-get-an-error-when-joining-custom-edition-servers-with-modded-maps
+[Do I need to install CEnshine to fix shader issues when using Chimera?]: #do-i-need-to-install-censhine-to-fix-shader-issues-when-using-chimera
 
 ## Compilation Guide
 To compile Chimera we use the 32-bit MinGW-w64 toolchain.
