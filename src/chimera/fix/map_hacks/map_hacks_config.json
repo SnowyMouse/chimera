@@ -421,7 +421,8 @@
             "tags_checksum": 1643072039,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
-            "hud_number_scale": true
+            "hud_number_scale": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "blood_creek_campus_pb2",
