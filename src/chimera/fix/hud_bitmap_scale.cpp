@@ -198,7 +198,7 @@ namespace Chimera {
 
         if(absolute_placement->anchor < HUD_ANCHOR_CENTER) {
             point_temp_result_x = ((absolute_placement->anchor & 1) ? -1 : 1) * placement->offset.x * highres_scale * scale + ((absolute_placement->anchor & 1) ? (viewport_width - padding_x) : padding_x);
-            point_temp_result_y = ((absolute_placement->anchor & 2) ? -1 : 1) * placement->offset.y * highres_scale * scale + ((absolute_placement->anchor & 2) ? (viewport_height - padding_y) : padding_y);
+            point_temp_result_y = ((absolute_placement->anchor & 2) ? -1 : 1) * placement->offset.y * highres_scale * scale + ((absolute_placement->anchor & 2) ? (viewport_height - (global_fix_flags.old_widescreen_fix ? 0.0f : padding_y)) : padding_y);
         }
         else {
             point_temp_result_x = placement->offset.x * highres_scale * scale + (viewport_width / 2.0f);
