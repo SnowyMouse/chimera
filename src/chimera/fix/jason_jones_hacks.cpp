@@ -59,12 +59,10 @@ namespace Chimera {
     }
 
     static void jason_jones_sniper_ticks(WeaponHUDInterface *tag_data) noexcept {
-        // 3 static elements and 2 number elements? Probably stock sniper interface tag.
-        if(tag_data->statics.count == 3 && tag_data->numbers.count == 2 && tag_data->absolute_placement.anchor == HUD_ANCHOR_TOP_LEFT) {
+        // 3 static elements? Probably stock sniper interface tag.
+        if(tag_data->statics.count == 3 && tag_data->absolute_placement.anchor == HUD_ANCHOR_TOP_LEFT) {
             auto *s1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 1);
             auto *s2 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceStaticElement, &tag_data->statics, 2);
-            auto *n0 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceNumberElement, &tag_data->numbers, 0);
-            auto *n1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceNumberElement, &tag_data->numbers, 1);
 
             // Make sure it's the thing we want to bullshit.
             if(s1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
@@ -74,18 +72,28 @@ namespace Chimera {
                 s1->static_element.placement.offset.x == 92 &&
                 s1->static_element.placement.offset.y == 85 &&
                 s2->static_element.placement.offset.x == 445 &&
-                s2->static_element.placement.offset.y == 85 &&
-                n0->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
+                s2->static_element.placement.offset.y == 85
+            ) {
+                s1->static_element.placement.offset.x = -176;
+                s2->static_element.placement.offset.x = 176;
+                s1->static_element.placement.offset.y = s2->static_element.placement.offset.y = 9;
+                s1->header.child_anchor = s2->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
+            }
+        }
+
+        // Do the same thing for the numbers. We do this separately because some edited tags
+        // may have removed the numbers or the ticks but not both, and we want to fix those too.
+        if(tag_data->numbers.count == 2 && tag_data->absolute_placement.anchor == HUD_ANCHOR_TOP_LEFT) {
+            auto *n0 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceNumberElement, &tag_data->numbers, 0);
+            auto *n1 = GET_TAG_BLOCK_ELEMENT(WeaponHUDInterfaceNumberElement, &tag_data->numbers, 1);
+
+            if(n0->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 n1->header.child_anchor == HUD_CHILD_ANCHOR_FROM_PARENT &&
                 n0->number_element.placement.offset.x == 440 &&
                 n0->number_element.placement.offset.y == 377 &&
                 n1->number_element.placement.offset.x == 440 &&
                 n1->number_element.placement.offset.y == 392
             ) {
-                s1->static_element.placement.offset.x = -176;
-                s2->static_element.placement.offset.x = 176;
-                s1->static_element.placement.offset.y = s2->static_element.placement.offset.y = 9;
-                s1->header.child_anchor = s2->header.child_anchor = HUD_CHILD_ANCHOR_CENTER;
                 n0->number_element.placement.offset.x = n1->number_element.placement.offset.x = 160;
                 n0->number_element.placement.offset.y = 151;
                 n1->number_element.placement.offset.y = 166;
