@@ -689,6 +689,81 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "dmt-drug-bust",
+            "tags_checksum": 902893642,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-goldeneye_stack-beta",
+            "tags_checksum": 508359448,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_blowcity",
+            "tags_checksum": 833548366,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_blowcity_night",
+            "tags_checksum": 1904769924,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_crossfire",
+            "tags_checksum": 3532848809,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_crossfire_v2",
+            "tags_checksum": 3095222880,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_docks",
+            "tags_checksum": 206708221,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_dustinteriors",
+            "tags_checksum": 3136162502,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_hideout_fix",
+            "tags_checksum": 1546368567,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_noregret",
+            "tags_checksum": 2067204593,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_outpost",
+            "tags_checksum": 1241953605,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt-od_waterworks",
+            "tags_checksum": 610229076,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "dmt_racing",
+            "tags_checksum": 3778341560,
+            "old_widescreen_fix": true
+        },
+        {
             "map_name": "dualing_keeps",
             "tags_checksum": 1269502609,
             "gearbox_bump_attenuation": true
