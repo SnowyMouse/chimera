@@ -420,6 +420,7 @@
             "map_name": "blood_covenantv3",
             "tags_checksum": 1643072039,
             "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
             "hud_number_scale": true
         },
         {
@@ -712,8 +713,8 @@
             "gearbox_multitexture_blend_modes": true
         },
         {
-            "map_name": "gn_mech_war_53",
-            "tags_checksum": 1412273075,
+            "map_name": "gn_mech_war_54",
+            "tags_checksum": 270256627,
             "gearbox_multitexture_blend_modes": true
         },
         {
@@ -906,6 +907,11 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "imposing",
+            "tags_checksum": 2685402072,
+            "invert_detail_after_reflection": true
+        },
+        {
             "map_name": "kgm_bosque_perdido",
             "tags_checksum": 1204364326,
             "gearbox_meters": true,
@@ -1008,6 +1014,13 @@
             "map_name": "pit_v2",
             "tags_checksum": 3713543725,
             "gearbox_meters": true
+        },
+        {
+            "map_name": "precipice_h1_spirit",
+            "tags_checksum": 1083752312,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "disable_bitmap_hud_scale_flags": true
         },
         {
             "map_name": "preservation_site",
@@ -1267,8 +1280,8 @@
             "hud_number_scale": true
         },
         {
-            "map_name": "trenchfoot-beta07",
-            "tags_checksum": 810622759,
+            "map_name": "trenchfoot-beta08",
+            "tags_checksum": 3079200966,
             "gearbox_multitexture_blend_modes": true
         },
         {
