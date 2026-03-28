@@ -784,6 +784,17 @@
             "disable_bitmap_hud_scale_flags": true
         },
         {
+            "map_name": "gamenight-crossfire-beta41",
+            "tags_checksum": 408944413,
+            "gearbox_bump_attenuation": true,
+            "old_widescreen_fix": true
+        },
+        {
+            "map_name": "gn-counterattack-05",
+            "tags_checksum": 1067892886,
+            "old_widescreen_fix": true
+        },
+        {
             "map_name": "gn_mech_war_52f_reconmix",
             "tags_checksum": 1312108579,
             "gearbox_multitexture_blend_modes": true
