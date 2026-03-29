@@ -107,9 +107,9 @@ namespace Chimera {
             return;
         }
 
-        // On gearbox "normal" was treated as "blended"
+        // On gearbox "normal" was rendered as "blended base specular"
         if(tag_data->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
-            tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED;
+            tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED_BASE_SPECULAR_MASK;
         }
     }
 

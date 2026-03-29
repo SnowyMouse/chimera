@@ -349,6 +349,7 @@
             "tags_checksum": 1157278415,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
+            "gearbox_shader_environment_types": true,
             "hud_number_scale": true
         },
         {
