@@ -87,8 +87,6 @@ add_library(chimera STATIC
     src/chimera/map_loading/fast_load.S
     src/chimera/map_loading/laa.cpp
     src/chimera/fix/abolish_safe_mode.cpp
-    src/chimera/fix/alternate_bump_attenuation.cpp
-    src/chimera/fix/alternate_bump_attenuation.S
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/af.cpp
@@ -162,8 +160,8 @@ add_library(chimera STATIC
     src/chimera/fix/scoreboard_fade_fix.S
     src/chimera/fix/screen_effect_fix.cpp
     src/chimera/fix/screen_effect_fix.S
-    src/chimera/fix/specular_memes.cpp
-    src/chimera/fix/specular_memes.S
+    src/chimera/fix/shader_environment_fix.cpp
+    src/chimera/fix/shader_environment_fix.S
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/timer_offset.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp

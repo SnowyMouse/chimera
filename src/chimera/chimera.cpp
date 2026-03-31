@@ -90,8 +90,7 @@
 #include "fix/internal_shaders.hpp"
 #include "fix/xbox_channel_order.hpp"
 #include "fix/fp_model.hpp"
-#include "fix/alternate_bump_attenuation.hpp"
-#include "fix/specular_memes.hpp"
+#include "fix/shader_environment_fix.hpp"
 #include "fix/glass_fix.hpp"
 #include "fix/hud_bitmap_scale.hpp"
 #include "fix/jason_jones_hacks.hpp"
@@ -207,7 +206,6 @@ namespace Chimera {
                 // This seemed like a good idea at the time...
                 set_up_water_fix();
                 set_up_xbox_channel_order_support();
-                set_up_alternate_bump_attenuation_support();
                 set_up_hud_meters_fix();
                 set_up_effect_shader_fix();
 
@@ -217,8 +215,8 @@ namespace Chimera {
                 // Fix the borked shader code.
                 set_up_internal_shaders();
 
-                // Gearbox relying on undefined texture sampling behaviour? I'm shocked!
-                set_up_specular_light_fix();
+                // Meme up shader_environment a bit.
+                set_up_shader_environment_fix();
 
                 // Because it's not 2003.
                 set_up_model_af();
