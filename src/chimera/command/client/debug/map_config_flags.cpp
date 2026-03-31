@@ -83,23 +83,8 @@ namespace Chimera {
     }
 
     bool map_config_gearbox_shader_environment(int, const char **) {
-        if(!global_fix_flags.gearbox_shader_environment_types) {
-            global_fix_flags.gearbox_shader_environment_types = true;
-            auto &tag_data_header = get_tag_data_header();
-            for(std::uint32_t i = 0; i < tag_data_header.tag_count; i++) {
-                auto &tag = tag_data_header.tag_array[i];
-                if(tag.data && tag.primary_class == TAG_CLASS_SHADER_ENVIRONMENT) {
-                    auto tag_data = reinterpret_cast<ShaderEnvironment *>(tag.data);
-
-                    // On gearbox "normal" was treated as "blended"
-                    if(tag_data->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
-                        tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED;
-                    }
-                }
-            }
-        }
-
-        console_output("true");
+        global_fix_flags.gearbox_shader_environment_types = global_fix_flags.gearbox_shader_environment_types ? false : true;
+        console_output(BOOL_TO_STR(global_fix_flags.gearbox_shader_environment_types));
         return true;
     }
 

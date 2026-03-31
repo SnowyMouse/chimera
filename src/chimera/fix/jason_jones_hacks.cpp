@@ -102,17 +102,6 @@ namespace Chimera {
         }
     }
 
-    static void jason_jones_shader_environment_type(ShaderEnvironment *tag_data) noexcept {
-        if(!global_fix_flags.gearbox_shader_environment_types) {
-            return;
-        }
-
-        // On gearbox "normal" was rendered as "blended base specular"
-        if(tag_data->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
-            tag_data->environment.type = SHADER_ENVIRONMENT_TYPE_BLENDED_BASE_SPECULAR_MASK;
-        }
-    }
-
     static void jason_jones_detail_after_reflection(ShaderModel *tag_data) noexcept {
         if(!global_fix_flags.invert_detail_after_reflection) {
             return;
@@ -145,9 +134,6 @@ namespace Chimera {
             switch(tag.primary_class) {
                 case TAG_CLASS_BITMAP:
                     jason_jones_unintended_hud_scale(reinterpret_cast<Bitmap *>(tag.data));
-                    break;
-                case TAG_CLASS_SHADER_ENVIRONMENT:
-                    jason_jones_shader_environment_type(reinterpret_cast<ShaderEnvironment *>(tag.data));
                     break;
                 case TAG_CLASS_SHADER_MODEL:
                     jason_jones_detail_after_reflection(reinterpret_cast<ShaderModel *>(tag.data));

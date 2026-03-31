@@ -8,6 +8,7 @@
 #include "../event/game_loop.hpp"
 #include "../rasterizer/rasterizer.hpp"
 #include "../halo_data/shader_defs.hpp"
+#include "../halo_data/game_engine.hpp"
 
 
 namespace Chimera {
@@ -69,6 +70,14 @@ namespace Chimera {
         IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 6, gearbox_attenuation, 1);
     }
 
+    void environment_texture_hack() noexcept {
+        float ps_constant[4] ={ 0.0f };
+        if(global_fix_flags.gearbox_shader_environment_types) {
+            ps_constant[0] = 1.0f;
+        }
+        IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, ps_constant, 1);
+    }
+
     void set_up_shader_environment_fix() noexcept {
         // Fix specular_light texture/sampler mismatch
         add_game_start_event(meme_the_speular_light_draw);
@@ -91,13 +100,23 @@ namespace Chimera {
         // Set up alternate bump attenuation support
         if(get_chimera().feature_present("client_retail_demo")) {
             auto *set_psh_constants = get_chimera().get_signature("set_alternate_bump_const_retail").data();
-            static Hook hook;
-            write_jmp_call(set_psh_constants, hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_retail_asm), nullptr);
+            static Hook lightmap_hook;
+            write_jmp_call(set_psh_constants, lightmap_hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_retail_asm), nullptr);
         }
         else if(get_chimera().feature_present("client_custom_edition")) {
             auto *set_psh_constants = get_chimera().get_signature("set_alternate_bump_const_custom").data();
-            static Hook hook;
-            write_jmp_call(set_psh_constants, hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_custom_asm), nullptr);
+            static Hook lightmap_hook;
+            write_jmp_call(set_psh_constants, lightmap_hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_custom_asm), nullptr);
         }
+
+        static Hook env_tex_hook;
+        std::byte *env_tex_draw = nullptr;
+        if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+            env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_sig").data();
+        }
+        else {
+            env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_retail_sig").data();
+        }
+        write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_hack), nullptr);
     }
 }

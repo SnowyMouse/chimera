@@ -20,7 +20,7 @@ namespace Chimera {
         bool hud_number_scale; // Hacks the tag to scale down oversized HUD counter numbers.
         bool disable_bitmap_hud_scale_flags; // Clears HUD scale flags from internal bitmap tags.
         bool old_widescreen_fix; // Uses the old chimera widescreen fix method. For older maps that position central elements from corner anchors.
-        bool gearbox_shader_environment_types; // shader_environment tags of type normal are set to blended.
+        bool gearbox_shader_environment_types; // shader_environment tags of type normal use base map alpha when interpolating between primary and secondary detail maps.
     };
 
     struct MapFixConfig {
