@@ -350,6 +350,7 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "gearbox_shader_environment_types": true,
+            "alternate_bump_attenuation": true,
             "hud_number_scale": true
         },
         {
