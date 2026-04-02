@@ -24,6 +24,8 @@ namespace Chimera {
         void set_psh_constant_for_alternate_bump_retail_asm() noexcept;
         void set_psh_constant_for_alternate_bump_custom_asm() noexcept;
 
+        void environment_texture_alternate_normal_custom_asm() noexcept;
+        void environment_texture_alternate_normal_retail_asm() noexcept;
     }
 
     void meme_the_speular_light_draw() noexcept {
@@ -70,12 +72,14 @@ namespace Chimera {
         IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 6, gearbox_attenuation, 1);
     }
 
-    void environment_texture_hack() noexcept {
-        float ps_constant[4] ={ 0.0f };
-        if(global_fix_flags.gearbox_shader_environment_types) {
-            ps_constant[0] = 1.0f;
+    extern "C" void set_psh_constants_for_alternate_normal(ShaderEnvironment *shader) noexcept {
+        if(shader->environment.type == SHADER_ENVIRONMENT_TYPE_NORMAL) {
+            float ps_constant[4] = {0};
+            if(global_fix_flags.gearbox_shader_environment_types || TEST_FLAG(shader->environment.flags, SHADER_ENVIRONMENT_FLAGS_USE_ALTERNATE_NORMAL_TYPE_BLENDING)) {
+                ps_constant[0] = 1.0f;
+            }
+            IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, ps_constant, 1);
         }
-        IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, ps_constant, 1);
     }
 
     void set_up_shader_environment_fix() noexcept {
@@ -113,10 +117,12 @@ namespace Chimera {
         std::byte *env_tex_draw = nullptr;
         if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
             env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_sig").data();
+            write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_alternate_normal_custom_asm), nullptr);
+
         }
         else {
             env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_retail_sig").data();
+            write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_alternate_normal_retail_asm), nullptr);
         }
-        write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_hack), nullptr);
     }
 }
