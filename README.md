@@ -471,7 +471,6 @@ the chimera folder created by Chimera.
 - [Uncap cinematic](#uncap-cinematic)
 - [Unblock all extra weapons](#unblock-all-extra-weapons)
 - [Widescreen fix](#widescreen-fix)
-- [Alternate bump attenuation](#alternate-bump-attenuation)
 
 #### Aim assist
 Halo's aim assist was broken in the PC release. Chimera fixes it. It only works
@@ -846,14 +845,6 @@ screen, setting 2 restricts the HUD to the center 4:3 area of the screen, while
 setting 3 restricts the HUD to the center 16:9 area of the screen.
 
 **Usage:** `chimera_widescreen_fix [0/1/2/3]`
-
-#### Alternate bump attenuation
-Force enables the alternate bump attenuation method for envrionemntal bumpmapping.
-With this disabled, chimera will only apply the alternate bump attenuation method
-to shader_environment tags with the appropriate flag set and otherwise use the
-standard "classic" method.
-
-**Usage:** `chimera_force_alternate_bump_attenuation [true/false]`
 
 ## FAQ
 Below is a list of frequently asked questions. These questions are either based
