@@ -126,3 +126,12 @@ _render_camera_build_frustum:
     pop ecx
     pop eax
     ret
+
+.globl _rasterizer_set_texture_direct
+_rasterizer_set_texture_direct:
+    mov eax, [esp + 12]
+    push [esp + 8]
+    push [esp + 8]
+    call dword ptr [_rasterizer_set_texture_direct_func]
+    add esp, 8
+    ret

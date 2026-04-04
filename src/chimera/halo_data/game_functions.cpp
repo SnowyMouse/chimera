@@ -19,6 +19,7 @@ namespace Chimera {
         void *rasterizer_set_frustum_z_func = nullptr;
         void *rasterizer_draw_dynamic_triangles_static_vertices2_func = nullptr;
         void *render_camera_build_frustum_func = nullptr;
+        void *rasterizer_set_texture_direct_func = nullptr;
     }
 
     void set_up_function_hooks() noexcept {
@@ -34,6 +35,7 @@ namespace Chimera {
             rasterizer_set_frustum_z_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_set_frustum_z_func").data());
             rasterizer_draw_dynamic_triangles_static_vertices2_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_draw_dynamic_triangles_static_vertices2_sig").data());
             render_camera_build_frustum_func = reinterpret_cast<void *>(get_chimera().get_signature("render_camera_build_frustum_sig").data());
+            rasterizer_set_texture_direct_func = reinterpret_cast<void *>(get_chimera().get_signature("rasterizer_set_texture_direct_sig").data());
 
             functions_hooks_enabled = true;
         }

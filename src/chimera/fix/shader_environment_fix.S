@@ -118,3 +118,35 @@ _environment_texture_alternate_normal_retail_asm:
     call _set_psh_constants_for_alternate_normal
     add esp, 4
     ret
+
+.global _environment_reflection_mirror_set_constants_custom_asm
+_environment_reflection_mirror_set_constants_custom_asm:
+    push ecx
+    push edi
+    call _set_constants_for_reflection_mirror
+    add esp, 8
+    ret
+
+.global _environment_reflection_mirror_set_constants_retail_asm
+_environment_reflection_mirror_set_constants_retail_asm:
+    push esi
+    push ebx
+    call _set_constants_for_reflection_mirror
+    add esp, 8
+    ret
+
+.global _environment_reflection_set_constants_custom_asm
+_environment_reflection_set_constants_custom_asm:
+    push edx
+    push esi
+    call _set_constants_for_environment_reflection
+    add esp, 8
+    ret
+
+.global _environment_reflection_set_constants_retail_asm
+_environment_reflection_set_constants_retail_asm:
+    push esi
+    push ebp
+    call _set_constants_for_environment_reflection
+    add esp, 8
+    ret

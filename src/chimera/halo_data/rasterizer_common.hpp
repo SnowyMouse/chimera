@@ -40,6 +40,39 @@ namespace Chimera {
         NUMBER_OF_RASTERIZER_LOCKS
     };
 
+    struct RasterizerGlobalData {
+        TagReference distance_attenuation;
+        TagReference vector_normalization;
+        TagReference atmospheric_fog_density;
+        TagReference planar_fog_density;
+        TagReference linear_corner_fade;
+        TagReference active_camouflage_distortion;
+        TagReference glow;
+
+        PAD(0x3C);
+
+        TagReference default_2d;
+        TagReference default_3d;
+        TagReference default_cube_map;
+        TagReference test[4];
+        TagReference video_scanline_map;
+        TagReference video_noise_map;
+
+        PAD(0x34);
+
+        std::uint16_t active_camouflage_flags;
+        PAD(0x2);
+        float active_camouflage_refraction_amount;
+        float active_camouflage_distance_falloff;
+        ColorRGB active_camouflage_tint_color;
+        float active_camouflage_hyper_stealth_refraction_amount;
+        float active_camouflage_hyper_stealth_distance_falloff;
+        ColorRGB active_camouflage_hyper_stealth_tint_color;
+        
+        TagReference distance_attenuation_2d;
+    };
+    static_assert(sizeof(RasterizerGlobalData) == 0x1AC);
+
     struct RasterizerGlobals {
         bool initialized;
         std::int16_t lock_index;

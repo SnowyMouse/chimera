@@ -9,6 +9,8 @@
 #include "../rasterizer/rasterizer.hpp"
 #include "../halo_data/shader_defs.hpp"
 #include "../halo_data/game_engine.hpp"
+#include "../halo_data/game_functions.hpp"
+#include "../halo_data/game_variables.hpp"
 
 
 namespace Chimera {
@@ -26,6 +28,12 @@ namespace Chimera {
 
         void environment_texture_alternate_normal_custom_asm() noexcept;
         void environment_texture_alternate_normal_retail_asm() noexcept;
+
+        void environment_reflection_mirror_set_constants_retail_asm() noexcept;
+        void environment_reflection_mirror_set_constants_custom_asm() noexcept;
+
+        void environment_reflection_set_constants_retail_asm() noexcept;
+        void environment_reflection_set_constants_custom_asm() noexcept;
     }
 
     void meme_the_speular_light_draw() noexcept {
@@ -82,6 +90,20 @@ namespace Chimera {
         }
     }
 
+    extern "C" void set_constants_for_reflection_mirror(ShaderEnvironment *shader, float *c_eye_forward) noexcept {
+        // These always should be set here, Why gearbox didn't is a mystery...
+        rasterizer_set_texture_direct(1, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
+        rasterizer_set_texture_direct(2, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
+
+        // Shader constant for signaling bump map == NONE
+        c_eye_forward[3] = shader->environment.diffuse.bump_map.tag_id.is_null() ? 1.0f : 0.0f;
+    }
+
+    extern "C" void set_constants_for_environment_reflection(ShaderEnvironment *shader, float *c_eye_forward) noexcept {
+        // Shader constant for signaling bump map == NONE
+        c_eye_forward[3] = shader->environment.diffuse.bump_map.tag_id.is_null() ? 1.0f : 0.0f;
+    }
+
     void set_up_shader_environment_fix() noexcept {
         // Fix specular_light texture/sampler mismatch
         add_game_start_event(meme_the_speular_light_draw);
@@ -102,27 +124,39 @@ namespace Chimera {
         }
 
         // Set up alternate bump attenuation support
+        static Hook lightmap_hook;
         if(get_chimera().feature_present("client_retail_demo")) {
             auto *set_psh_constants = get_chimera().get_signature("set_alternate_bump_const_retail").data();
-            static Hook lightmap_hook;
             write_jmp_call(set_psh_constants, lightmap_hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_retail_asm), nullptr);
         }
         else if(get_chimera().feature_present("client_custom_edition")) {
             auto *set_psh_constants = get_chimera().get_signature("set_alternate_bump_const_custom").data();
-            static Hook lightmap_hook;
             write_jmp_call(set_psh_constants, lightmap_hook, reinterpret_cast<const void *>(set_psh_constant_for_alternate_bump_custom_asm), nullptr);
         }
 
+        // Set up alternate normal diffuse blending support.
         static Hook env_tex_hook;
         std::byte *env_tex_draw = nullptr;
-        if(game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION) {
+        if(get_chimera().feature_present("client_custom_edition")) {
             env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_sig").data();
             write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_alternate_normal_custom_asm), nullptr);
 
         }
-        else {
+        else if(get_chimera().feature_present("client_retail_demo")) {
             env_tex_draw = get_chimera().get_signature("rasterizer_environmnet_texture_draw_retail_sig").data();
             write_jmp_call(env_tex_draw, env_tex_hook, reinterpret_cast<const void *>(environment_texture_alternate_normal_retail_asm), nullptr);
         }
+
+        // Fix environment_reflection bullshit.
+        static Hook mirror_hook, reflection_hook;
+        if(get_chimera().feature_present("client_custom_edition")) {
+            write_jmp_call(get_chimera().get_signature("reflection_mirror_const_custom_sig").data(), mirror_hook, reinterpret_cast<const void *>(environment_reflection_mirror_set_constants_custom_asm), nullptr);
+            write_jmp_call(get_chimera().get_signature("reflection_const_custom_sig").data(), reflection_hook, reinterpret_cast<const void *>(environment_reflection_set_constants_custom_asm), nullptr);
+        }
+        else if(get_chimera().feature_present("client_retail_demo")) {
+            write_jmp_call(get_chimera().get_signature("reflection_mirror_const_retail_sig").data(), mirror_hook, reinterpret_cast<const void *>(environment_reflection_mirror_set_constants_retail_asm), nullptr);
+            write_jmp_call(get_chimera().get_signature("reflection_const_retail_sig").data(), reflection_hook, reinterpret_cast<const void *>(environment_reflection_set_constants_retail_asm), nullptr);
+        }
+
     }
 }

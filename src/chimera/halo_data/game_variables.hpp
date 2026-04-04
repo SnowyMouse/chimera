@@ -5,6 +5,7 @@
 
 #include "shader_defs.hpp"
 #include "rasterizer_common.hpp"
+#include "globals.hpp"
 
 namespace Chimera {
     extern DynamicVertices *dynamic_vertices;
@@ -16,6 +17,7 @@ namespace Chimera {
     extern RasterizerGlobals *rasterizer_globals;
     extern RasterizerWindowParameters *global_window_parameters;
     extern bool *fog_enabled;
+    extern RasterizerGlobalData **global_rasterizer_data;
 
     /**
     * Set up pointers to game global variables.
