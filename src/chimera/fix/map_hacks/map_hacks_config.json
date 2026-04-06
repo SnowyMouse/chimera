@@ -491,13 +491,15 @@
             "map_name": "cmt_g3_augur",
             "tags_checksum": 1934072626,
             "gearbox_meters": true,
-            "invert_detail_after_reflection": true
+            "invert_detail_after_reflection": true,
+            "block_multitexture_overlays": true
         },
         {
             "map_name": "cmt_g3_mousetrap",
             "tags_checksum": 2359930239,
             "gearbox_meters": true,
-            "invert_detail_after_reflection": true
+            "invert_detail_after_reflection": true,
+            "block_multitexture_overlays": true
         },
         {
             "map_name": "cmt_g3_ruins",
@@ -505,7 +507,8 @@
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
             "gearbox_shader_environment_types": true,
-            "invert_detail_after_reflection": true
+            "invert_detail_after_reflection": true,
+            "block_multitexture_overlays": true
         },
         {
             "map_name": "cmt_g3_vestigial",
@@ -514,7 +517,7 @@
             "gearbox_bump_attenuation": true,
             "gearbox_shader_environment_types": true,
             "invert_detail_after_reflection": true,
-            "old_widescreen_fix": true
+            "block_multitexture_overlays": true
         },
         {
             "map_name": "cmt_icy_swamps",
@@ -545,7 +548,8 @@
             "tags_checksum": 1267427580,
             "gearbox_meters": true,
             "gearbox_bump_attenuation": true,
-            "invert_detail_after_reflection": true
+            "invert_detail_after_reflection": true,
+            "old_widescreen_fix": true
         },
         {
             "map_name": "cmt_snow_grove",
@@ -1444,7 +1448,7 @@
         {
             "map_name": "zanzibar",
             "tags_checksum": 3442460181,
-            "old_widescreen_fix": true
+            "block_multitexture_overlays": true
         }
     ]
 }
