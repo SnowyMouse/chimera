@@ -155,7 +155,8 @@ namespace Chimera {
                 global_fix_flags.hud_number_scale ||
                 global_fix_flags.disable_bitmap_hud_scale_flags ||
                 global_fix_flags.old_widescreen_fix ||
-                global_fix_flags.gearbox_shader_environment_types
+                global_fix_flags.gearbox_shader_environment_types ||
+                global_fix_flags.block_multitexture_overlays
             ) {
                 console_output(header_color, "%s", "Map config settings:");
                 if(global_fix_flags.gearbox_chicago_multiply) {
@@ -190,6 +191,9 @@ namespace Chimera {
                 }
                 if(global_fix_flags.gearbox_shader_environment_types) {
                     OUTPUT_WITH_COLOR("gearbox_shader_environment_types");
+                }
+                if(global_fix_flags.block_multitexture_overlays) {
+                    OUTPUT_WITH_COLOR("block_multitexture_overlays");
                 }
             }
         }

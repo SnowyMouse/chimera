@@ -88,4 +88,9 @@ namespace Chimera {
         return true;
     }
 
+    bool map_config_block_multitexture_overlays(int, const char **) {
+        global_fix_flags.block_multitexture_overlays = global_fix_flags.block_multitexture_overlays ? false : true;
+        console_output(BOOL_TO_STR(global_fix_flags.block_multitexture_overlays));
+        return true;
+    }
 }

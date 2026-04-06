@@ -290,6 +290,32 @@ namespace Chimera {
     };
     static_assert(sizeof(RasterizerMeterParams) == 0x1C);
 
+    struct RasterizerScreenGeometryParams {
+        RasterizerMeterParams *meter_parameters;
+        Vector2D *offset;
+        bool map_anchor_screen[3];
+        PAD(0x1);
+
+        BitmapData *map[3];
+        bool map_wrapped[3];
+        PAD(0x1);
+        Point2D *map_offset[3];
+        Vector2D map_scale[3];
+        Vector2D map_texture_scale[3];
+        ColorRGB *map_tint[3];
+        ColorARGB plasma_fade;
+        bool doing_plasma_effect;
+        PAD(0x3);
+        float *map_fade[3];
+        short map0_to_1_blend_function;
+        short map1_to_2_blend_function;
+        short framebuffer_blend_function;
+        
+        bool point_sampled;
+        PAD(0x1);
+    };
+    static_assert(sizeof(RasterizerScreenGeometryParams) == 0x8C);
+
     struct RasterizerScreenEffectParams {
         short convolution_extra_passes;
         short convolution_type;

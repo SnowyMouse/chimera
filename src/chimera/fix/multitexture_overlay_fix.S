@@ -5,37 +5,21 @@
 .text
 .globl _multitexture_check_for_map_ce_asm
 _multitexture_check_for_map_ce_asm:
-    cmp bx, 0x2
-    je fix_psh_params_custom
-    jmp dword ptr [_original_multitexture_draw_ins]
-
-    fix_psh_params_custom:
-    pushfd
-    pushad
-    lea edx, [esp + 0x11c]
+    lea edx, [esp + 0x120]
     push edx
+    push esi
     call _adjust_pixel_shader_const
-    add esp, 4
-    popad
-    popfd
-    jmp dword ptr [_original_multitexture_draw_ins]
+    add esp, 8
+    ret
 
 .globl _multitexture_check_for_map_retail_asm
 _multitexture_check_for_map_retail_asm:
-    cmp bp, 0x2
-    je fix_psh_params_retail
-    jmp dword ptr [_original_multitexture_draw_ins]
-
-    fix_psh_params_retail:
-    pushfd
-    pushad
-    lea edx, [esp + 0x120]
+    lea edx, [esp + 0x124]
     push edx
+    push esi
     call _adjust_pixel_shader_const
-    add esp, 4
-    popad
-    popfd
-    jmp dword ptr [_original_multitexture_draw_ins]
+    add esp, 8
+    ret
 
 .global _set_multiexture_shader_index_ce_asm
 _set_multiexture_shader_index_ce_asm:

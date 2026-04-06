@@ -80,7 +80,11 @@ if __name__ == '__main__':
         else:
             fix_config.write("false, ")
         if "gearbox_shader_environment_types" in config_dict:
-            fix_config.write(str(config_dict["gearbox_shader_environment_types"]).lower() + "},")
+            fix_config.write(str(config_dict["gearbox_shader_environment_types"]).lower() + ", ")
+        else:
+            fix_config.write("false, ")
+        if "block_multitexture_overlays" in config_dict:
+            fix_config.write(str(config_dict["block_multitexture_overlays"]).lower() + "},")
         else:
             fix_config.write("false },")
 
