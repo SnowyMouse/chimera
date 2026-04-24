@@ -1025,6 +1025,11 @@
             "invert_detail_after_reflection": true
         },
         {
+            "map_name": "incoming",
+            "tags_checksum": 950904966,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "kgm_bosque_perdido",
             "tags_checksum": 1204364326,
             "gearbox_meters": true,
