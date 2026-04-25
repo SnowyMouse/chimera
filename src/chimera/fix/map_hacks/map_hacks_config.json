@@ -388,6 +388,13 @@
             "embedded_lua": true
         },
         {
+            "map_name": "aqueduct",
+            "tags_checksum": 1464597104,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "battlecraft_hd",
             "tags_checksum": 3710647297,
             "gearbox_meters": true
@@ -416,6 +423,13 @@
             "tags_checksum": 2768256190,
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "bleed_it_out",
+            "tags_checksum": 4132526008,
+            "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "hud_number_scale": true
         },
@@ -716,6 +730,11 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "desolate_keep",
+            "tags_checksum": 461699734,
+			"gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "dmt-drug-bust",
             "tags_checksum": 902893642,
             "gearbox_bump_attenuation": true,
@@ -816,18 +835,13 @@
             "old_widescreen_fix": true
         },
         {
-            "map_name": "gn-counterattack-05",
-            "tags_checksum": 1067892886,
+            "map_name": "gn-counterattack-06",
+            "tags_checksum": 429398417,
             "old_widescreen_fix": true
         },
         {
             "map_name": "gn_mech_war_52f_reconmix",
             "tags_checksum": 1312108579,
-            "gearbox_multitexture_blend_modes": true
-        },
-        {
-            "map_name": "gn_mech_war_54",
-            "tags_checksum": 270256627,
             "gearbox_multitexture_blend_modes": true
         },
         {
@@ -922,8 +936,19 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "h2_zanzibar",
+            "tags_checksum": 762373685,
+            "block_multitexture_overlays": true
+        },
+        {
             "map_name": "h3 foundry",
             "tags_checksum": 3492375562,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
+            "map_name": "halo_deep_ocean",
+            "tags_checksum": 2424911894,
             "gearbox_meters": true,
             "hud_number_scale": true
         },
@@ -1020,6 +1045,13 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "impasse",
+            "tags_checksum": 2665845787,
+            "gearbox_meters": true,
+            "gearbox_chicago_multiply": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "imposing",
             "tags_checksum": 2685402072,
             "invert_detail_after_reflection": true
@@ -1027,6 +1059,12 @@
         {
             "map_name": "incoming",
             "tags_checksum": 950904966,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "insomnia_map",
+            "tags_checksum": 2457291247,
+            "gearbox_meters": true,
             "gearbox_bump_attenuation": true
         },
         {
@@ -1050,7 +1088,7 @@
         },
         {
             "map_name": "last_voyage",
-            "tags_checksum": 176770788,
+            "tags_checksum": 2792404736,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "hud_number_scale": true
@@ -1371,6 +1409,11 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "tactics",
+            "tags_checksum": 3560533822,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "the_abyss_3",
             "tags_checksum": 2165132826,
             "gearbox_meters": true
@@ -1391,15 +1434,20 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "tower",
+            "tags_checksum": 1825181965,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "treason",
-            "tags_checksum": 3995717220,
+            "tags_checksum": 3965726697,
             "gearbox_meters": true,
             "gearbox_chicago_multiply": true,
             "hud_number_scale": true
         },
         {
-            "map_name": "trenchfoot-beta08",
-            "tags_checksum": 3079200966,
+            "map_name": "trenchfoot-beta09",
+            "tags_checksum": 335393819,
             "gearbox_multitexture_blend_modes": true
         },
         {
@@ -1454,6 +1502,11 @@
             "map_name": "zanzibar",
             "tags_checksum": 3442460181,
             "block_multitexture_overlays": true
+        },
+        {
+            "map_name": "zendicon",
+            "tags_checksum": 831245124,
+            "gearbox_bump_attenuation": true
         }
     ]
 }
