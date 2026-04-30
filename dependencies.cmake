@@ -14,16 +14,17 @@ set(CMAKE_TLS_VERIFY OFF)
 if(${CHIMERA_WINXP})
 	if(NOT ${CHIMERA_WINXP_UCRT})
 		# curl 8.17.0 is the last version to support Windows XP using the older MSVCRT C runtime.
-		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.gz")
-		set(LOCAL_CURL_URL_HASH e8e74cdeefe5fb78b3ae6e90cd542babf788fa9480029cfcee6fd9ced42b7910)
+		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_17_0/curl-8.17.0.tar.xz")
+		set(LOCAL_CURL_URL_HASH 955f6e729ad6b3566260e8fef68620e76ba3c31acf0a18524416a185acf77992)
 	else()
 		# curl 8.18.0 will only work on Windows XP with the UCRT C runtime and is the last version to support XP at all.
-		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.gz")
-		set(LOCAL_CURL_URL_HASH e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f)
+		set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_18_0/curl-8.18.0.tar.xz")
+		set(LOCAL_CURL_URL_HASH 40df79166e74aa20149365e11ee4c798a46ad57c34e4f68fd13100e2c9a91946)
 	endif()
 else()
-    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_19_0/curl-8.19.0.tar.gz")
-    set(LOCAL_CURL_URL_HASH 2a2c11db4c122691aa23b4363befda1bfd801770bfebf41e1d21cee4f2ab0f71)
+	# use latest version
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_20_0/curl-8.20.0.tar.xz")
+    set(LOCAL_CURL_URL_HASH 63fe2dc148ba0ceae89922ef838f7e5c946272c2e78b7c59fab4b79d3ce2b896)
 endif()
 
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
