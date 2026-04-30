@@ -2,6 +2,12 @@
 
 #include "version.hpp"
 
+#ifdef CHIMERA_WINXP
+#define CHIMERA_PRODUCT_NAME "Chimera (Windows XP support)"
+#else
+#define CHIMERA_PRODUCT_NAME "Chimera"
+#endif
+
 1 VERSIONINFO
 FILEVERSION      CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,CHIMERA_VERSION_PATCH,CHIMERA_GIT_COMMIT_COUNT
 PRODUCTVERSION   CHIMERA_VERSION_MAJOR,CHIMERA_VERSION_MINOR,CHIMERA_VERSION_PATCH,CHIMERA_GIT_COMMIT_COUNT
@@ -12,11 +18,11 @@ BEGIN
         BEGIN
             VALUE "Comments",         "It's still not finished"
             VALUE "CompanyName",      "Snowy ^.^"
-            VALUE "FileDescription",  "The Halo PC update that never was."
+            VALUE "FileDescription",  "The Halo PC update that never was"
             VALUE "FileVersion",      CHIMERA_VERSION_STRING
             VALUE "InternalName",     "chimera"
             VALUE "OriginalFilename", "strings.dll"
-            VALUE "ProductName",      "Chimera"
+            VALUE "ProductName",      CHIMERA_PRODUCT_NAME
             VALUE "ProductVersion",   CHIMERA_VERSION_STRING
             VALUE "LegalCopyright",   "'16'17'18 Snowy"
         END
