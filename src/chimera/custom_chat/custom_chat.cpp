@@ -621,7 +621,6 @@ namespace Chimera {
         static const unsigned int CONT = 0b10000000;
         static const unsigned int ZWJ[] = {0b11100010, 0b10000000, 0b10001101};
 
-        unsigned int idx = 0;
         unsigned int zwjidx = 0;
         bool zwjing = false;
         for (unsigned int i = 0; i < num_bytes; i++){
@@ -631,7 +630,6 @@ namespace Chimera {
                 zwjidx++;
                 if (zwjidx == sizeof(ZWJ)/sizeof(ZWJ[0])){
                     zwjidx = 0;
-                    idx--; // remove the starting index of the ZWJ character
                     zwjing = true;
                 }
             }

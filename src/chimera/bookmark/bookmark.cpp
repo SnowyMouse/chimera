@@ -277,7 +277,6 @@ namespace Chimera {
             console_output(localize("chimera_bookmark_list_header"));
         }
         std::size_t q = 0;
-        std::size_t success = 0;
 
         for(auto &p : finished_packets) {
             q++;
@@ -312,8 +311,6 @@ namespace Chimera {
                     else {
                         red = 0.7F;
                     }
-
-                    success++;
 
                     // Sometimes the game variant isn't set to anything (default gametype I think?). In this case, use the gametype.
                     const char *gametype = p.get_data_for_key("gamevariant");
