@@ -1404,6 +1404,13 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "skedar v2",
+            "tags_checksum": 1046716636,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "sledding02",
             "tags_checksum": 3619982776,
             "gearbox_meters": true
