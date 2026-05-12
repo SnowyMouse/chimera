@@ -87,6 +87,7 @@ add_library(chimera STATIC
     src/chimera/map_loading/fast_load.S
     src/chimera/map_loading/laa.cpp
     src/chimera/fix/abolish_safe_mode.cpp
+    src/chimera/fix/abolish_safe_mode.S
     src/chimera/fix/aim_assist.cpp
     src/chimera/fix/aim_assist.S
     src/chimera/fix/af.cpp
