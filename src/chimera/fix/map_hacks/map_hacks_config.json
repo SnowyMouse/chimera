@@ -427,6 +427,11 @@
             "hud_number_scale": true
         },
         {
+            "map_name": "blackisland",
+            "tags_checksum": 488540852,
+            "gearbox_meters": true
+        },
+        {
             "map_name": "bleed_it_out",
             "tags_checksum": 4132526008,
             "gearbox_meters": true,
@@ -820,6 +825,11 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "fragment_v2",
+            "tags_checksum": 751722008,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "frogfoot v1.1",
             "tags_checksum": 4231359426,
             "gearbox_meters": true,
@@ -1128,6 +1138,11 @@
             "gearbox_meters": true,
             "gearbox_multitexture_blend_modes": true,
             "hud_number_scale": true
+        },
+        {
+            "map_name": "mongoose_point",
+            "tags_checksum": 3631700026,
+            "gearbox_bump_attenuation": true
         },
         {
             "map_name": "mystic",
