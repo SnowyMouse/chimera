@@ -92,7 +92,7 @@ namespace Chimera {
                 // oxr <value>
                 case 0x33: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0xDB || op1 == 0xF6) {
+                    if(op1 == 0xDB || op1 == 0xF6 || op1 == 0xC9) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 2);
                         at += 2;
@@ -309,6 +309,13 @@ namespace Chimera {
                         break;
                     }
 
+                    if(a == 0x7D) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 3);
+                        at += 3;
+                        break;
+                    }
+
                     if(a == 0x15 || a == 0x3D) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 6);
@@ -344,7 +351,7 @@ namespace Chimera {
                 // mov bl, [eax+esi]
                 case 0x8A: {
                     auto a = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(a == 0x1C || a == 0x48 || a == 0x14) {
+                    if(a == 0x1C || a == 0x46 || a == 0x48 || a == 0x14) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;
@@ -481,6 +488,12 @@ namespace Chimera {
                         at += 8;
                         break;
                     }
+                    else if(a == 0x45) {
+                        offsets.push_back(at - at_start);
+                        bytes.insert(bytes.end(), at, at + 7);
+                        at += 7;
+                        break;
+                    }
                     std::terminate();
                 }
 
@@ -561,7 +574,7 @@ namespace Chimera {
                 // call dword ptr[x]
                 case 0xFF: {
                     auto op1 = *reinterpret_cast<const std::uint8_t *>(at + 1);
-                    if(op1 == 0x51 || op1 == 0x52) {
+                    if(op1 == 0x51 || op1 == 0x52 || op1 == 0x56 || op1 == 0x57) {
                         offsets.push_back(at - at_start);
                         bytes.insert(bytes.end(), at, at + 3);
                         at += 3;

@@ -3,6 +3,7 @@
 #include "video_mode.hpp"
 #include "../chimera.hpp"
 #include "../config/ini.hpp"
+#include "../halo_data/game_variables.hpp"
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../event/frame.hpp"
@@ -11,10 +12,60 @@
 
 namespace Chimera {
     static bool vsync = false;
+
     extern "C" {
-        void on_set_video_mode_initially() noexcept;
         void on_windowed_check_force_windowed() noexcept;
+        void on_set_present_params_asm() noexcept;
         std::uint32_t force_windowed_mode = 0;
+    }
+
+    static void set_borderless_window() noexcept {
+        HWND window;
+        HMONITOR monitor;
+        MONITORINFO monitor_info;
+
+        if(get_chimera().get_ini()->get_value_bool("video_mode.borderless").value_or(false)) {
+            // Get our window
+            window = GetActiveWindow();
+            if(!window) {
+                goto cleanup;
+            }
+
+            // If the window isn't the foreground window, wait until it is before doing the thing.
+            if(window != GetForegroundWindow()) {
+                return;
+            }
+
+            // Query monitor information
+            monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+            monitor_info.cbSize = sizeof(monitor_info);
+            if(!GetMonitorInfo(monitor, &monitor_info)) {
+                goto cleanup;
+            }
+
+            // Work our magic!
+            ShowWindow(window, SW_HIDE);
+            SetWindowLong(window, GWL_STYLE, 0);
+            SetWindowPos(window, NULL, 0, 0, monitor_info.rcMonitor.right, monitor_info.rcMonitor.bottom, 0);
+        }
+
+        cleanup:
+        remove_preframe_event(set_borderless_window);
+    }
+
+    extern "C" void now_set_borderless_windowed_mode() noexcept {
+        add_preframe_event(set_borderless_window);
+    }
+
+    extern "C" void override_d3d_present_parameters(D3DPRESENT_PARAMETERS *params) noexcept {
+        auto *ini = get_chimera().get_ini();
+        auto refresh_rate = ini->get_value_long("video_mode.refresh_rate").value_or(0);
+        params->FullScreen_RefreshRateInHz = params->Windowed ? 0 : refresh_rate;
+        params->PresentationInterval = vsync ? D3DPRESENT_DONOTWAIT : 0x80000000;
+
+        if(params->Windowed) {
+            add_preframe_event(set_borderless_window);
+        }
     }
 
     void set_up_video_mode() noexcept {
@@ -25,6 +76,14 @@ namespace Chimera {
         if(!pc && !demo) {
             return;
         }
+
+        // This is from HAC2 so the in-game resolution picker doesn't limit values.
+        SigByte bypass_res_limit[] = { 0xEB, 0x54 };
+        SigByte bypass_fullscreen_width_limit[] = { 0x77, 0x06 };
+        SigByte bypass_fullscreen_height_limit[] = { 0x76, 0x25 };
+        write_code_s(chimera.get_signature("resolution_limit_sig").data(), bypass_res_limit);
+        write_code_s(chimera.get_signature("resolution_width_limit_sig").data(), bypass_fullscreen_width_limit);
+        write_code_s(chimera.get_signature("resolution_height_limit_sig").data(), bypass_fullscreen_height_limit);
 
         std::uint32_t default_width = 800;
         std::uint32_t default_height = 600;
@@ -85,58 +144,15 @@ namespace Chimera {
         // Disable Halo's loading of the profile data
         overwrite(chimera.get_signature("load_profile_resolution_sig").data(), static_cast<std::uint8_t>(0xEB));
 
-        // And lastly, intercept Halo setting resolution
-        static Hook set_hook;
-        write_jmp_call(chimera.get_signature("default_resolution_set_sig").data(), set_hook, reinterpret_cast<const void *>(on_set_video_mode_initially));
-
         // Also, windowed mode
-        static Hook hook;
+        static Hook window_hook, present_hook_1, present_hook_2;
         auto *windowed_sig = chimera.get_signature("windowed_sig").data();
-        write_jmp_call(windowed_sig, hook, reinterpret_cast<const void *>(on_windowed_check_force_windowed), nullptr, false);
+        auto *present_sig_1 = chimera.get_signature("presentation_interval_1_sig").data() + 2;
+        auto *present_sig_2 = chimera.get_signature("presentation_interval_2_sig").data();
+
+        write_jmp_call(windowed_sig, window_hook, reinterpret_cast<const void *>(on_windowed_check_force_windowed), nullptr, false);
+        write_jmp_call(present_sig_1, present_hook_1, nullptr, reinterpret_cast<const void *>(on_set_present_params_asm));
+        write_jmp_call(present_sig_2, present_hook_2, nullptr, reinterpret_cast<const void *>(on_set_present_params_asm));
         force_windowed_mode = ini->get_value_bool("video_mode.windowed").value_or(false);
-    }
-
-    static void set_borderless_window() noexcept {
-        HWND window;
-        HMONITOR monitor;
-        MONITORINFO monitor_info;
-
-        // Get our window
-        window = GetActiveWindow();
-        if(!window) {
-            goto cleanup;
-        }
-
-        // If the window isn't the foreground window, wait until it is before doing the thing.
-        if(window != GetForegroundWindow()) {
-            return;
-        }
-
-        // Query monitor information
-        monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
-        monitor_info.cbSize = sizeof(monitor_info);
-	    if(!GetMonitorInfo(monitor, &monitor_info)) {
-            goto cleanup;
-        }
-
-        // Work our magic!
-        ShowWindow(window, SW_HIDE);
-        SetWindowLong(window, GWL_STYLE, 0);
-        SetWindowPos(window, NULL, 0, 0, monitor_info.rcMonitor.right, monitor_info.rcMonitor.bottom, 0);
-
-        cleanup:
-        remove_preframe_event(set_borderless_window);
-    }
-
-    extern "C" void now_set_borderless_windowed_mode() noexcept {
-        if(get_chimera().get_ini()->get_value_bool("video_mode.borderless").value_or(false)) {
-            add_preframe_event(set_borderless_window);
-        }
-    }
-
-    extern "C" void set_vsync_setting_initially(std::byte *data) noexcept {
-        if(!vsync) {
-            *reinterpret_cast<std::uint32_t *>(data + 0x34) = 0x80000000;
-        }
     }
 }

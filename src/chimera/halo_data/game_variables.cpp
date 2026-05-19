@@ -17,6 +17,7 @@ namespace Chimera {
     RasterizerWindowParameters *global_window_parameters;
     bool *fog_enabled;
     RasterizerGlobalData **global_rasterizer_data;
+    D3DPRESENT_PARAMETERS *d3d_present_parameters;
 
     void set_up_game_variables() noexcept {
         static bool game_variables_enabled = false;
@@ -30,6 +31,7 @@ namespace Chimera {
             global_window_parameters = reinterpret_cast<RasterizerWindowParameters*>(*reinterpret_cast<std::byte**>(get_chimera().get_signature("global_window_parameters_sig").data() + 3));
             fog_enabled = reinterpret_cast<bool*>(*reinterpret_cast<std::byte**>(get_chimera().get_signature("fog_enabled_sig").data() + 6));
             global_rasterizer_data = reinterpret_cast<RasterizerGlobalData**>(*reinterpret_cast<std::byte**>(get_chimera().get_signature("global_rasterizer_data_sig").data() + 1));
+            d3d_present_parameters = reinterpret_cast<D3DPRESENT_PARAMETERS*>(*reinterpret_cast<std::byte**>(get_chimera().get_signature("d3d_present_params_sig").data() + 6));
 
             game_variables_enabled = true;
         }

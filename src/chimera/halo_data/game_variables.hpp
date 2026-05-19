@@ -18,6 +18,7 @@ namespace Chimera {
     extern RasterizerWindowParameters *global_window_parameters;
     extern bool *fog_enabled;
     extern RasterizerGlobalData **global_rasterizer_data;
+    extern D3DPRESENT_PARAMETERS *d3d_present_parameters;
 
     /**
     * Set up pointers to game global variables.
