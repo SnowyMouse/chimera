@@ -125,6 +125,11 @@ namespace Chimera {
 
             // Hack to work around D3DX bullshit. D3DX doesn't set shader constants for nomask, so just jmp to masked instead...
             write_function_override(screen_effect_set_ps_nomask, screen_effect_nomask, reinterpret_cast<const void *>(screen_effect_get_ps_nomask_retail_asm), &original_screen_effect_retail_nomask);
+        
+            // Meme hack to fix screen_effect unmasked convolution techniques not working properly on retai/demo.
+            // Because gearbox can't program I guess...
+            const SigByte gearbox_pls[] = { 0x75, 0xD9, 0x90, 0x90, 0x90, 0x90 };
+            write_code_s(get_chimera().get_signature("screen_effect_set_render_targets").data(), gearbox_pls);
         }
 
         // Prevent game from initializing the secondary render target at 50% scale.
