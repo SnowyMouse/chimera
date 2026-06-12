@@ -117,25 +117,27 @@ namespace Chimera {
         }
     }
 
-    /**
-     * Convert a string encoded in UTF-8 to one encoded using the system's 8-bit encoding (ANSI)
-     * @param str  UTF-8-encoded string
-     * @param dflt default character to use if the conversion to ANSI fails
-     * @return     false if the input string could not be decoded as UTF-8, true otherwise.
-     */
-    static bool utf8_to_ansi(std::string& str, char dflt){
-        std::wstring wstr;
-        try {
-            wstr = std::wstring_convert<std::codecvt_utf8<wchar_t>>{}.from_bytes(str.data());
+    static std::pair<bool, bool> utf8_to_ansi(std::string& str) {
+        // Covert UTF-8 to wide
+        auto wcount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), str.length(), nullptr, 0);
+        if(wcount == 0) {
+            DWORD error = GetLastError();
+            if(error == ERROR_NO_UNICODE_TRANSLATION) {
+                return { false, false };
+            }
         }
-        catch (std::range_error&){
-            return false;
-        }
-        std::string tmp(wstr.size(), '0');
 
-        std::use_facet<std::ctype<wchar_t>>(locale).narrow(wstr.data(), wstr.data() + wstr.size(), dflt, &tmp[0]);
+        std::wstring wstr(wcount, 0);
+        MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), wstr.data(), wcount);
+
+        // Convert wide to the ANSI code page
+        auto count = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.length(), nullptr, 0, nullptr, nullptr);
+        std::string tmp(count, 0);
+        BOOL defaulted;
+        WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, tmp.data(), count, nullptr, &defaulted);
         str.swap(tmp);
-        return true;
+
+        return { true, defaulted };
     }
 
     // Returns false on error, a key/value pair, or true to do nothing
@@ -209,15 +211,16 @@ namespace Chimera {
 
             // Get the value and decode it
             value = std::string(data + equals_offset + 1, line_length - equals_offset - 1);
-            // Use ACK (0x06) for replacing invalid chars since it will be rendered as a box character in the error message
-            if (!utf8_to_ansi(value, '\x06')){
+            auto [decoded, defaulted] = utf8_to_ansi(value);
+            if(!decoded) {
                 show_error_box("INI error", (std::string() + "Failed to decode value of '" + key + "' in chimera.ini.\n\nMake sure the file is encoded using UTF-8.").data());
                 std::exit(136);
             }
-            else if (value.find('\x06') != std::string::npos){
+            if(defaulted){
                 show_error_box("INI error", (std::string() + "Invalid character in the value of '" + key + "' in chimera.ini:\n\n" + value + "\n\nOnly characters your system can encode in ANSI are valid.").data());
                 std::exit(136);
             }
+
             return std::pair(key, value);
         }
 
