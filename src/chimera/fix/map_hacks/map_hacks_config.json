@@ -438,6 +438,12 @@
             "gearbox_meters": true
         },
         {
+            "map_name": "bleakness",
+            "tags_checksum": 1127567930,
+            "gearbox_meters": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "bleed_it_out",
             "tags_checksum": 4132526008,
             "gearbox_meters": true,
@@ -464,8 +470,18 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "carljohnsons",
+            "tags_checksum": 3247911651,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "chronopolis_c3_public_beta0.2",
             "tags_checksum": 2577351432,
+            "gearbox_bump_attenuation": true
+        },
+        {
+            "map_name": "chronopolis_c3_public_beta0.7",
+            "tags_checksum": 2037259459,
             "gearbox_bump_attenuation": true
         },
         {
