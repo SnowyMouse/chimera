@@ -95,7 +95,7 @@ namespace Chimera {
             }
 
             // Skip if the tags do not match
-            auto &tag_id = object->tag_id;
+            auto &tag_id = object->definition_index;
             if(tag_id != current_tick_object.tag_id || previous_tick_object.tag_id != tag_id) {
                 continue;
             }
@@ -106,7 +106,7 @@ namespace Chimera {
             }
 
             // Copy previous tick positions to object table to fudge contrails
-            object->center_position = previous_tick_object.center;
+            object->object.bounding_sphere_center = previous_tick_object.center;
             std::copy(previous_tick_object.nodes, previous_tick_object.nodes + previous_tick_object.node_count, object->nodes());
         }
     }
@@ -148,14 +148,14 @@ namespace Chimera {
             }
 
             // Get the number of model nodes.
-            current_tick_object.tag_id = object->tag_id;
+            current_tick_object.tag_id = object->definition_index;
             auto *object_tag = get_tag(current_tick_object.tag_id.index.index);
             if(!object_tag) {
                 continue;
             }
 
             // Get the model tag to get the node count
-            if(object->type == ObjectType::OBJECT_TYPE_PROJECTILE) {
+            if(object->object.type == ObjectType::OBJECT_TYPE_PROJECTILE) {
                 current_tick_object.node_count = 1;
             }
             else {
@@ -173,7 +173,7 @@ namespace Chimera {
 
             // Copy nodes from Halo's data
             std::copy(nodes, nodes + current_tick_object.node_count, current_tick_object.nodes);
-            current_tick_object.center = object->center_position;
+            current_tick_object.center = object->object.bounding_sphere_center;
         }
     }
 
@@ -201,7 +201,7 @@ namespace Chimera {
                 continue;
             }
 
-            object->center_position = current_tick_object.center;
+            object->object.bounding_sphere_center = current_tick_object.center;
             std::copy(current_tick_object.nodes, current_tick_object.nodes + current_tick_object.node_count, object->nodes());
         }
     }

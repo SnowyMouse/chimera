@@ -68,8 +68,8 @@ namespace Chimera {
             auto &object_id = player->object_id;
             auto *object = otable.get_dynamic_object(object_id);
             if(object) {
-                auto *parent = reinterpret_cast<UnitDynamicObject *>(otable.get_dynamic_object(object->parent));
-                if(parent && (parent->type == ObjectType::OBJECT_TYPE_BIPED || parent->type == ObjectType::OBJECT_TYPE_VEHICLE) && parent->gunner == object_id) {
+                auto *parent = reinterpret_cast<UnitDynamicObject *>(otable.get_dynamic_object(object->object.parent_object_index));
+                if(parent && (parent->object.type == ObjectType::OBJECT_TYPE_BIPED || parent->object.type == ObjectType::OBJECT_TYPE_VEHICLE) && parent->unit.gunner_object_index == object_id) {
                     return parent;
                 }
             }
@@ -86,9 +86,9 @@ namespace Chimera {
         if(player) {
             auto &object_id = player->object_id;
             auto *object = reinterpret_cast<UnitDynamicObject *>(otable.get_dynamic_object(object_id));
-            if(object && object->type == ObjectType::OBJECT_TYPE_BIPED) {
-                if(object->weapon_slot < 4) {
-                    return object->weapons[object->weapon_slot].whole_id;
+            if(object && object->object.type == ObjectType::OBJECT_TYPE_BIPED) {
+                if(object->unit.current_weapon_index < 4) {
+                    return object->unit.weapon_object_indices[object->unit.current_weapon_index].whole_id;
                 }
                 else {
                     return 0xFFFFFFFF;
@@ -205,10 +205,10 @@ namespace Chimera {
         }
 
         float *xyz = reinterpret_cast<float *>(get_player_data() + 0x1C);
-        float pitch = std::asin(object->aim.z);
+        float pitch = std::asin(object->unit.aiming_vector.z);
         float cos_pitch = std::cos(pitch);
-        auto yaw = static_cast<float>(HALO_PI / 2.0 - std::asin(object->aim.x / cos_pitch));
-        if(object->aim.y < 0.0F) {
+        auto yaw = static_cast<float>(HALO_PI / 2.0 - std::asin(object->unit.aiming_vector.x / cos_pitch));
+        if(object->unit.aiming_vector.y < 0.0F) {
             yaw *= -1.0F;
         }
 

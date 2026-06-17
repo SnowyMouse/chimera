@@ -36,7 +36,7 @@ namespace Chimera {
         // Also, if this object is NOT our body, check if it's our weapon
         if(object_id != player->object_id.whole_id) {
             bool is_us = false;
-            for(auto &w : player_object->weapons) {
+            for(auto &w : player_object->unit.weapon_object_indices) {
                 if(w.whole_id == object_id) {
                     is_us = true;
                     break;

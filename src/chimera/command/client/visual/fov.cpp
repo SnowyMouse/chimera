@@ -75,10 +75,10 @@ namespace Chimera {
             auto &object_table = ObjectTable::get_object_table();
             auto *player_object = reinterpret_cast<UnitDynamicObject *>(object_table.get_dynamic_object(player->object_id));
             if(player_object) {
-                auto *player_object_tag = get_tag(player_object->tag_id);
+                auto *player_object_tag = get_tag(player_object->definition_index);
                 float unit_field_of_view = *reinterpret_cast<float *>(player_object_tag->data + 0x17C + 0x24); // unit camera_field_of_view
                 // The game does this somewhere so we have to too.
-                if(unit_field_of_view > MAX_UNIT_FOV && player_object->zoom_level == 255) {
+                if(unit_field_of_view > MAX_UNIT_FOV && player_object->unit.current_zoom_level == 255) {
                     unit_field_of_view = MAX_UNIT_FOV;
                 }
                 fov_multiplier = camera.fov / unit_field_of_view;

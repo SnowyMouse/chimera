@@ -76,20 +76,20 @@ namespace Chimera {
         }
 
         OUTPUT_WITH_COLOR("    %s Object ID: %08X (Address: 0x%08X)", name, object_id.whole_id, reinterpret_cast<std::uintptr_t>(object));
-        auto *tag = get_tag(object->tag_id);
+        auto *tag = get_tag(object->definition_index);
         if(tag) {
-            OUTPUT_WITH_COLOR("    %s Object Tag ID: %08X (Path: %s)", name, object->tag_id, map_is_protected() ? localize("chimera_tag_map_is_protected") : tag->path);
+            OUTPUT_WITH_COLOR("    %s Object Tag ID: %08X (Path: %s)", name, object->definition_index, map_is_protected() ? localize("chimera_tag_map_is_protected") : tag->path);
         }
-        if(object->base_shield) {
-            OUTPUT_WITH_COLOR("    %s Object Shield: %.02f%% (%.02f / %.02f hitpoints)", name, object->shield * 100.0F, object->base_shield * object->shield, object->base_shield);
+        if(object->object.maximum_shield_vitality) {
+            OUTPUT_WITH_COLOR("    %s Object Shield: %.02f%% (%.02f / %.02f hitpoints)", name, object->object.shield_vitality * 100.0F, object->object.maximum_shield_vitality * object->object.shield_vitality, object->object.maximum_shield_vitality);
         }
-        if(object->base_health) {
-            OUTPUT_WITH_COLOR("    %s Object Health: %.02f%% (%.02f / %.02f hitpoints)", name, object->health * 100.0F, object->base_health * object->health, object->base_health);
+        if(object->object.maximum_body_vitality) {
+            OUTPUT_WITH_COLOR("    %s Object Health: %.02f%% (%.02f / %.02f hitpoints)", name, object->object.body_vitality * 100.0F, object->object.maximum_body_vitality * object->object.body_vitality, object->object.maximum_body_vitality);
         }
-        OUTPUT_WITH_COLOR("    %s Object Coords (Rel.): %.05f, %.05f, %.05f", name, object->position.x, object->position.y, object->position.z);
-        OUTPUT_WITH_COLOR("    %s Object Coords (Script): %.05f, %.05f, %.05f", name, object->center_position.x, object->center_position.y, object->center_position.z);
+        OUTPUT_WITH_COLOR("    %s Object Coords: %.05f, %.05f, %.05f", name, object->object.position.x, object->object.position.y, object->object.position.z);
+        OUTPUT_WITH_COLOR("    %s Object Bounding Sphere: %.05f, %.05f, %.05f, %.05f", name, object->object.bounding_sphere_center.x, object->object.bounding_sphere_center.y, object->object.bounding_sphere_center.z, object->object.bounding_sphere_radius);
 
-        print_object_info(object->parent, "Parent", depth);
-        print_object_info(object->weapon, "Weapon", depth);
+        print_object_info(object->object.parent_object_index, "Parent", depth);
+        print_object_info(object->object.first_child_object_index, "Weapon", depth);
     }
 }

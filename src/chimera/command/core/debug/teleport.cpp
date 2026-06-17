@@ -58,9 +58,9 @@ namespace Chimera {
                 return false;
             }
 
-            x = object->center_position.x;
-            y = object->center_position.y;
-            z = object->center_position.z;
+            x = object->object.bounding_sphere_center.x;
+            y = object->object.bounding_sphere_center.y;
+            z = object->object.bounding_sphere_center.z;
         }
 
         else {
@@ -101,7 +101,7 @@ namespace Chimera {
 
         // Get the parent
         while(true) {
-            auto *parent_object = object_table.get_dynamic_object(player_object->parent);
+            auto *parent_object = object_table.get_dynamic_object(player_object->object.parent_object_index);
             if(parent_object) {
                 player_object = parent_object;
             }
@@ -110,9 +110,9 @@ namespace Chimera {
             }
         }
 
-        player_object->position.x = x;
-        player_object->position.y = y;
-        player_object->position.z = z;
+        player_object->object.position.x = x;
+        player_object->object.position.y = y;
+        player_object->object.position.z = z;
 
         if(server_type() == ServerType::SERVER_NONE) {
             console_output(localize("chimera_teleport_success_sp"), x, y, z);

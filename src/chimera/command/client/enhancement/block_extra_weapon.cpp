@@ -39,12 +39,12 @@ namespace Chimera {
 
     static std::size_t get_weapon_count(const UnitDynamicObject *o) {
         std::size_t rv = 0;
-        for(auto &w : o->weapons) {
+        for(auto &w : o->unit.weapon_object_indices) {
             if(w.is_null()) {
                 continue;
             }
             auto *wo = ObjectTable::get_object_table().get_dynamic_object(w);
-            if(!wo || is_blocked(wo->tag_id)) {
+            if(!wo || is_blocked(wo->definition_index)) {
                 continue;
             }
             rv++;
@@ -65,7 +65,7 @@ namespace Chimera {
         // Cycle through until we have a weapon we didn't block (or we cycled twice)
         bool looped_once = false;
         bool blocked_once = false;
-        std::uint8_t slot = current_slot == 0xFFFFFFFF ? unit->weapon_slot : static_cast<std::uint8_t>(current_slot);
+        std::uint8_t slot = current_slot == 0xFFFFFFFF ? unit->unit.current_weapon_index : static_cast<std::uint8_t>(current_slot);
 
         while(true) {
             // If we're >= 4, stop if we didn't check a weapon previously, or loop over if we did (and stop if we already looped over)
@@ -78,20 +78,20 @@ namespace Chimera {
             }
 
             // If the weapon is invalid and we haven't yet checked a weapon, stop
-            if(unit->weapons[slot].is_null()) {
+            if(unit->unit.weapon_object_indices[slot].is_null()) {
                 if(!blocked_once) {
                     return 0xFFFFFFFF;
                 }
             }
             else {
-                auto *weapon = ObjectTable::get_object_table().get_dynamic_object(unit->weapons[slot]);
+                auto *weapon = ObjectTable::get_object_table().get_dynamic_object(unit->unit.weapon_object_indices[slot]);
                 if(!weapon) {
                     if(!blocked_once) {
                         return 0xFFFFFFFF;
                     }
                 }
                 else {
-                    if(is_blocked(weapon->tag_id)) {
+                    if(is_blocked(weapon->definition_index)) {
                         blocked_once = true;
                     }
                     else if(!blocked_once) {
@@ -151,24 +151,24 @@ namespace Chimera {
             return false;
         }
 
-        if(unit->weapon_slot >= 4 || unit->weapons[unit->weapon_slot].is_null()) {
+        if(unit->unit.current_weapon_index >= 4 || unit->unit.weapon_object_indices[unit->unit.current_weapon_index].is_null()) {
             console_error(localize("chimera_block_extra_weapon_error_cannot_get_weapon"));
             return false;
         }
 
-        auto *weapon = ObjectTable::get_object_table().get_dynamic_object(unit->weapons[unit->weapon_slot]);
+        auto *weapon = ObjectTable::get_object_table().get_dynamic_object(unit->unit.weapon_object_indices[unit->unit.current_weapon_index]);
         if(!weapon) {
             console_error(localize("chimera_block_extra_weapon_error_cannot_get_weapon"));
             return false;
         }
 
-        if(is_blocked(weapon->tag_id)) {
+        if(is_blocked(weapon->definition_index)) {
             console_error(localize("chimera_block_extra_weapon_error_weapon_already_blocked"));
             return false;
         }
 
-        blocked_ids.emplace_back(weapon->tag_id.index.index);
-        console_output(localize("chimera_block_extra_weapon_blocked"), map_is_protected() ? localize("chimera_tag_map_is_protected") : get_tag(weapon->tag_id)->path);
+        blocked_ids.emplace_back(weapon->definition_index.index.index);
+        console_output(localize("chimera_block_extra_weapon_blocked"), map_is_protected() ? localize("chimera_tag_map_is_protected") : get_tag(weapon->definition_index)->path);
         set_up_hook();
 
         return true;

@@ -119,13 +119,13 @@ namespace Chimera {
                     if(is_decal) {
                         auto *object = ObjectTable::get_object_table().get_dynamic_object(group->object_index);
                         if(object) {
-                            switch(object->type) {
+                            switch(object->object.type) {
                                 case OBJECT_TYPE_BIPED:
                                     rasterizer_set_frustum_z(z_near, *z_far);
                                     reset_frustum = true;
                                     break;
 
-                                case OBJECT_TYPE_SCENERY:                                
+                                case OBJECT_TYPE_SCENERY:
                                 case OBJECT_TYPE_VEHICLE:
                                     // Uh huh
                                     rasterizer_set_frustum_z(z_near_veh, *z_far);
@@ -215,7 +215,7 @@ namespace Chimera {
         // Game defaults this to -2 on ATI/AMD cards only. Set to -2 globally.
         overwrite(default_transparent_decal_slope, -2.0f);
 
-        // Reduces other decals (ie blood splatters, grenade explosions marks etc) with a low slope z-fighting 
+        // Reduces other decals (ie blood splatters, grenade explosions marks etc) with a low slope z-fighting
         // with bsp geo. Game sets this to -2 on ATI/AMD cards only by default.
         overwrite(default_decal_slope, -2.0f);
     }

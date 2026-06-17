@@ -852,8 +852,8 @@ namespace Chimera {
 
                 std::size_t node_count;
 
-                if(object->type != ObjectType::OBJECT_TYPE_PROJECTILE) {
-                    auto *tag_data = get_tag(object->tag_id)->data;
+                if(object->object.type != ObjectType::OBJECT_TYPE_PROJECTILE) {
+                    auto *tag_data = get_tag(object->definition_index)->data;
                     auto *model_tag = get_tag(*reinterpret_cast<TagID *>(tag_data + 0x28 + 0xC));
                     if(!model_tag) {
                         continue;

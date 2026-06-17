@@ -50,14 +50,16 @@ namespace Chimera {
             auto *object = object_table.get_dynamic_object(player->object_id);
             if(object) {
                 std::snprintf(rotation, sizeof(center), "Rotation: %.10f, %.10f", *camx , *camy);
-                std::snprintf(center, sizeof(center), "Center: %.05f, %.05f, %.05f", object->center_position.x, object->center_position.y, object->center_position.z);
+                std::snprintf(center, sizeof(center), "Bounding Sphere: %.05f, %.05f, %.05f, %.05f",
+                    object->object.bounding_sphere_center.x, object->object.bounding_sphere_center.y, object->object.bounding_sphere_center.z, object->object.bounding_sphere_radius);
 
-                auto *vehicle_object = object_table.get_dynamic_object(object->parent);
+                auto *vehicle_object = object_table.get_dynamic_object(object->object.parent_object_index);
                 if(vehicle_object) {
-                    std::snprintf(relative, sizeof(relative), "Absolute (Parent): %.05f, %.05f, %.05f", vehicle_object->position.x, vehicle_object->position.y, vehicle_object->position.z);
+                    std::snprintf(relative, sizeof(relative), "Absolute (Parent): %.05f, %.05f, %.05f",
+                        vehicle_object->object.position.x, vehicle_object->object.position.y, vehicle_object->object.position.z);
                 }
                 else {
-                    std::snprintf(relative, sizeof(relative), "Absolute: %.05f, %.05f, %.05f", object->position.x, object->position.y, object->position.z);
+                    std::snprintf(relative, sizeof(relative), "Absolute: %.05f, %.05f, %.05f", object->object.position.x, object->object.position.y, object->object.position.z);
                 }
             }
         }

@@ -21,22 +21,22 @@ namespace Chimera {
                 }
 
                 // Next, is it a weapon?
-                if(object->type != ObjectType::OBJECT_TYPE_WEAPON) {
+                if(object->object.type != ObjectType::OBJECT_TYPE_WEAPON) {
                     continue;
                 }
 
                 // Next, is this owned by anything?
-                if(!object->parent.is_null()) {
+                if(!object->object.parent_object_index.is_null()) {
                     continue;
                 }
 
                 // Is the object disabled?
-                if(object->no_collision) {
+                if(TEST_FLAG(object->object.flags, OBJECT_DATA_FLAGS_INVISIBLE_BIT)) {
                     continue;
                 }
 
                 // Is the object in motion
-                if(distance_squared(object->velocity, Point3D {}) > 0.00001F) {
+                if(!TEST_FLAG(object->object.flags, OBJECT_DATA_FLAGS_AT_REST_BIT)) {
                     continue;
                 }
 
@@ -44,14 +44,14 @@ namespace Chimera {
                 auto *weapon = reinterpret_cast<WeaponDynamicObject *>(object);
 
                 // Next, is it empty?
-                bool empty_battery = weapon->age >= 1.0;
+                bool empty_battery = weapon->weapon.age >= 1.0;
                 bool empty_ammo = true;
-                for(auto &mag : weapon->magazines) {
-                    empty_ammo = empty_ammo && !mag.ammo && !mag.loaded_ammo;
+                for(auto &mag : weapon->weapon.magazines) {
+                    empty_ammo = empty_ammo && !mag.rounds_total && !mag.rounds_loaded;
                 }
 
                 // Next, let's check the tag data
-                auto *tag = get_tag(object->tag_id);
+                auto *tag = get_tag(object->definition_index);
 
                 // Is it a flag or oddball?
                 if(*reinterpret_cast<std::uint32_t *>(tag->data) & (1 << 3)) {

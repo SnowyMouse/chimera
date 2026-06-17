@@ -105,7 +105,7 @@ namespace Chimera {
         }
 
         // Skip if the tags do not match
-        auto &tag_id = object->tag_id;
+        auto &tag_id = object->definition_index;
         if(tag_id != current_tick_object.tag_id || previous_tick_object.tag_id != tag_id) {
             return;
         }
@@ -129,7 +129,7 @@ namespace Chimera {
         }
 
         // Interpolate the center thingymajigabobit.
-        interpolate_point(previous_tick_object.center, current_tick_object.center, object->center_position, interpolation_tick_progress);
+        interpolate_point(previous_tick_object.center, current_tick_object.center, object->object.bounding_sphere_center, interpolation_tick_progress);
 
         auto *nodes = object->nodes();
 
@@ -183,8 +183,8 @@ namespace Chimera {
             }
 
             // Check if the object isn't visible.
-            bool is_weapon = object->type == ObjectType::OBJECT_TYPE_WEAPON;
-            if(object->no_collision && is_weapon) {
+            bool is_weapon = object->object.type == ObjectType::OBJECT_TYPE_WEAPON;
+            if(is_weapon && TEST_FLAG(object->object.flags, OBJECT_DATA_FLAGS_INVISIBLE_BIT)) {
                 continue;
             }
 
@@ -195,14 +195,14 @@ namespace Chimera {
             }
 
             // Get the number of model nodes.
-            current_tick_object.tag_id = object->tag_id;
+            current_tick_object.tag_id = object->definition_index;
             auto *object_tag = get_tag(current_tick_object.tag_id.index.index);
             if(!object_tag) {
                 continue;
             }
 
             // Get the model tag to get the node count
-            if(object->type == ObjectType::OBJECT_TYPE_PROJECTILE) {
+            if(object->object.type == ObjectType::OBJECT_TYPE_PROJECTILE) {
                 current_tick_object.node_count = 1;
             }
             else {
@@ -218,25 +218,25 @@ namespace Chimera {
 
             // Copy nodes from Halo's data
             std::copy(nodes, nodes + current_tick_object.node_count, current_tick_object.nodes);
-            current_tick_object.center = object->center_position;
+            current_tick_object.center = object->object.bounding_sphere_center;
 
             // Bipeds get a max speed of 2.5 per tick before they aren't interpolated. Other objects get 7.5 world units.
             static const float MAX_INTERPOLATION_DISTANCES[] = { 7.5*7.5, 2.5*2.5 };
 
             // Let's check if the distance between the two points is too great (such as if the object was teleported).
-            current_tick_object.interpolate = distance_squared(current_tick_object.center, previous_tick[i].center) < MAX_INTERPOLATION_DISTANCES[object->type == OBJECT_TYPE_BIPED];
+            current_tick_object.interpolate = distance_squared(current_tick_object.center, previous_tick[i].center) < MAX_INTERPOLATION_DISTANCES[object->object.type == OBJECT_TYPE_BIPED];
 
             // Bodge the damn beam emitters
-            if(object->type == OBJECT_TYPE_DEVICE_MACHINE) {
-                current_tick_object.device_position = reinterpret_cast<DeviceMachineDynamicObject *>(object)->device_position;
+            if(object->object.type == OBJECT_TYPE_DEVICE_MACHINE) {
+                current_tick_object.device_position = reinterpret_cast<MachineDynamicObject *>(object)->device.position;
                 if(current_tick_object.interpolate) {
                     current_tick_object.interpolate = !(current_tick_object.device_position < 0.002 && previous_tick[i].device_position > 0.9);
                 }
             }
 
             // If this object is a child object, add the parent to the parent array.
-            if(!object->parent.is_null()) {
-                parent_object_array[i] = object->parent;
+            if(!object->object.parent_object_index.is_null()) {
+                parent_object_array[i] = object->object.parent_object_index;
             }
         }
 
@@ -274,7 +274,7 @@ namespace Chimera {
                 continue;
             }
 
-            object->center_position = current_tick_object.center;
+            object->object.bounding_sphere_center = current_tick_object.center;
             std::copy(current_tick_object.nodes, current_tick_object.nodes + current_tick_object.node_count, object->nodes());
         }
     }

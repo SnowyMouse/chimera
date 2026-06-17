@@ -34,11 +34,12 @@ extern "C" std::uint32_t auto_uncrouch_cpp() {
         if(player) {
             auto &object_table = ObjectTable::get_object_table();
             auto *object = object_table.get_dynamic_object(player->object_id);
-            if(object && object->on_ground) {
+            if(object && TEST_FLAG(object->object.flags, OBJECT_DATA_FLAGS_ON_GROUND_BIT)) {
                 return 1;
             }
         }
     }
+
     return 0;
 }
 

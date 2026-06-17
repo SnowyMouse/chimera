@@ -42,16 +42,16 @@ namespace Chimera {
         }
         auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
         if(object) {
-            set_halo_descoping(object->shield > shield && object->shield > 1.0); // enable regular descoping if overshield is charging
+            set_halo_descoping(object->object.shield_vitality > shield && object->object.shield_vitality > 1.0); // enable regular descoping if overshield is charging
 
-            if(object->health < health || (object->shield < shield && (shield - object->shield) > 0.01)) {
+            if(object->object.body_vitality < health || (object->object.shield_vitality < shield && (shield - object->object.shield_vitality) > 0.01)) {
                 if(descope_fix_enabled) {
                     do_descope(player->object_id);
                 }
             }
 
-            health = object->health;
-            shield = object->shield;
+            health = object->object.body_vitality;
+            shield = object->object.shield_vitality;
         }
     }
 
