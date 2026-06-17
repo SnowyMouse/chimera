@@ -679,7 +679,7 @@ namespace Chimera {
         NUMBER_OF_ITEM_DATUM_FLAGS
     };
 
-    struct _item_datum {
+    struct ItemDatum {
         std::uint32_t flags;
         std::int16_t detonation_ticks;
         std::int16_t rested_surface_index;
@@ -693,10 +693,10 @@ namespace Chimera {
         float rotation_sine;
         float rotation_cosine;
     };
-    static_assert(sizeof(_item_datum) == 0x38);
+    static_assert(sizeof(ItemDatum) == 0x38);
 
     struct ItemDynamicObject : BaseDynamicObject {
-        _item_datum item;
+        ItemDatum item;
     };
 
     enum WeaponMagazineState : std::int16_t {
@@ -822,6 +822,13 @@ namespace Chimera {
     };
     static_assert(sizeof(WeaponDynamicObject) == 0x340);
 
+    enum DeviceDatumFlags {
+        DEVICE_DATUM_FLAGS_POSITION_REVERSED_BIT,
+        DEVICE_DATUM_FLAGS_NOT_USABLE_BIT,
+        DEVICE_DATUM_FLAGS_ANIMATION_CHANGED_BIT,
+        NUMBER_OF_DEVICE_DATUM_FLAGS
+    };
+
     struct DeviceDatum {
         std::uint32_t flags;
         std::int16_t power_group_index;
@@ -838,6 +845,31 @@ namespace Chimera {
         DeviceDatum device;
     };
     static_assert(sizeof(DeviceDynamicObject) == 0x214);
+
+    enum ControlDatumFlags {
+        CONTROL_DATUM_FLAGS_USABLE_FROM_BOTH_SIDES_BIT,
+        NUMBER_OF_CONTROL_DATUM_FLAGS
+    };
+
+    struct ControlDatum {
+        std::uint32_t flags;
+        std::int16_t hud_override_index;
+        std::uint16_t pad;
+    };
+    static_assert(sizeof(ControlDatum) == 0x8);
+
+    struct ControlDynamicObject : DeviceDynamicObject {
+        ControlDatum control;
+    };
+    static_assert(sizeof(ControlDynamicObject) == 0x21C);
+
+    enum MachineDatumFlags {
+        MACHINE_DATUM_FLAGS_DOES_NOT_OPERATE_AUTOMATICALLY_BIT,
+        MACHINE_DATUM_FLAGS_ONE_SIDED_BIT,
+        MACHINE_DATUM_FLAGS_NEVER_APPEARS_LOCKED_BIT,
+        MACHINE_DATUM_FLAGS_OPENED_BY_MELEE_ATTACK_BIT,
+        NUMBER_OF_MACHINE_DATUM_FLAGS
+    };
 
     struct MachineDatum {
         std::uint32_t flags;
