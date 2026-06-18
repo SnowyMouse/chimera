@@ -7,6 +7,7 @@
 #include "../event/tick.hpp"
 #include "../halo_data/object.hpp"
 #include "../halo_data/player.hpp"
+#include "../halo_data/multiplayer.hpp"
 #include "../chimera.hpp"
 
 namespace Chimera {
@@ -36,6 +37,15 @@ namespace Chimera {
         // More like disable descoping and do it when the player loses health or shield
         static float old_health = 0;
         static float old_shield = 0;
+
+        // let halo handle it if not in a server
+        if(server_type() == ServerType::SERVER_NONE) {
+            if(descope_fix_enabled) {
+                set_halo_descoping(true);
+            }
+            return;
+        }
+
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(!player) {
             return;
