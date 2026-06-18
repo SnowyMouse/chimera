@@ -34,24 +34,27 @@ namespace Chimera {
 
     static void fix_descoping() noexcept {
         // More like disable descoping and do it when the player loses health or shield
-        static float health = 0;
-        static float shield = 0;
+        static float old_health = 0;
+        static float old_shield = 0;
         auto *player = PlayerTable::get_player_table().get_client_player();
         if(!player) {
             return;
         }
         auto *object = ObjectTable::get_object_table().get_dynamic_object(player->object_id);
         if(object) {
-            set_halo_descoping(object->object.shield_vitality > shield && object->object.shield_vitality > 1.0); // enable regular descoping if overshield is charging
+            // enable regular descoping if overshield is charging
+            set_halo_descoping(TEST_FLAG(object->object.damage_flags, OBJECT_DAMAGE_FLAGS_SHIELD_OVER_CHARGING_BIT));
 
-            if(object->object.body_vitality < health || (object->object.shield_vitality < shield && (shield - object->object.shield_vitality) > 0.01)) {
-                if(descope_fix_enabled) {
+            if(descope_fix_enabled) {
+                constexpr float os_deplete_amount = 0.0008f; // actually 2.0f / (1.5f * 60.0f * 30.0f) == 0.00074 but we take a bit more for FP math memes
+                float shield = old_shield > 1.0f ? FLOOR(old_shield - os_deplete_amount, 1.0f) : old_shield;
+                if(object->object.body_vitality < old_health || object->object.shield_vitality < shield) {
                     do_descope(player->object_id);
                 }
             }
 
-            health = object->object.body_vitality;
-            shield = object->object.shield_vitality;
+            old_health = object->object.body_vitality;
+            old_shield = object->object.shield_vitality;
         }
     }
 
