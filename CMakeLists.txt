@@ -9,8 +9,8 @@ project(Chimera
     LANGUAGES C CXX
 )
 
-# Require C++17
-set(CMAKE_CXX_STANDARD 17)
+# Require C++23
+set(CMAKE_CXX_STANDARD 23)
 
 # We're using C++ & C
 enable_language(CXX C)
