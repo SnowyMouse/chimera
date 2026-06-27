@@ -37,12 +37,26 @@ namespace Chimera {
             active = true;
         }
         else if(argc == 1) {
-            // Undo the thing.
-            mouse_horiz_1_sig.rollback();
-            mouse_horiz_2_sig.rollback();
-            mouse_vert_1_sig.rollback();
-            mouse_vert_2_sig.rollback();
-            active = false;
+            if(std::atoi(argv[0]) == 0) {
+                // Undo the thing.
+                mouse_horiz_1_sig.rollback();
+                mouse_horiz_2_sig.rollback();
+                mouse_vert_1_sig.rollback();
+                mouse_vert_2_sig.rollback();
+                active = false;
+            }
+            else {
+                horiz = strtof(argv[0], nullptr) - OFFSET;
+                vert = horiz;
+
+                // Overwrite with the new values.
+                overwrite(mouse_horiz_1_sig.data() + 2, &horiz);
+                overwrite(mouse_horiz_2_sig.data() + 1, &horiz);
+                overwrite(mouse_vert_1_sig.data() + 2, &vert);
+                overwrite(mouse_vert_2_sig.data() + 2, &vert);
+
+                active = true;
+            }
         }
         if(active) {
             // Display the offset values.
