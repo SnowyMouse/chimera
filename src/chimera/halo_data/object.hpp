@@ -114,6 +114,13 @@ namespace Chimera {
         NUMBER_OF_OBJECT_CHANGE_COLORS
     };
 
+    enum NetworkedDatumRole : std::uint32_t {
+        NETWORKED_DATUM_MASTER,
+        NETWORKED_DATUM_PUPPET,
+        NETWORKED_DATUM_PUPPET_CONTROLLED_BY_LOCAL_PLAYER,
+        NETWORKED_DATUM_AUTONOMOUS
+    };
+
     enum ObjectDataFlags {
         OBJECT_DATA_FLAGS_INVISIBLE_BIT,
         OBJECT_DATA_FLAGS_ON_GROUND_BIT,
@@ -187,19 +194,6 @@ namespace Chimera {
     /** As of Halo 1.10, 64 nodes is the maximum count. */
     #define MAX_NODES 64
 
-    struct BaseObjectNetwork {
-        bool valid_position;
-        Vector3D position;
-        bool valid_forward_and_up;
-        Vector3D forward;
-        Vector3D up;
-        bool valid_angular_velocity;
-        Vector3D angular_velocity;
-        bool valid_timestamp;
-        TickCount timestamp;
-    };
-    static_assert(sizeof(BaseObjectNetwork) == 0x44);
-
     struct AnimationState {
         std::int16_t index;
         std::int16_t frame_index;
@@ -221,12 +215,34 @@ namespace Chimera {
     static_assert(sizeof(ObjectHeaderBlockReference) == 0x4);
 
     struct ObjectDatum {
-        std::uint32_t network_role;
-        std::uint32_t unknown_flags;
-        TickCount existence_time;
+        NetworkedDatumRole datum_role;
+        bool network_at_rest;
+        bool was_network_at_rest;
+        PAD(2);
+
+        /** Only a valid Tag ID on campaign, on multiplayer it's an unknown counter */
+        TagID actor_variant_definition;
+
         std::uint32_t flags;
         std::int32_t magic_number;
-        BaseObjectNetwork network;
+
+        bool is_server_position_valid;
+        PAD(3);
+        Point3D last_server_position;
+
+        bool is_server_orientation_valid;
+        PAD(3);
+        Vector3D last_server_forward;
+        Vector3D last_server_up;
+
+        bool is_server_translational_velocity_valid;
+        PAD(3);
+        Vector3D last_server_translational_velocity;
+
+        bool is_update_timestamp_valid;
+        PAD(3);
+        TickCount last_update_timestamp;
+
         Point3D position;
 
         /** Velocity in world units per tick */
@@ -285,7 +301,7 @@ namespace Chimera {
         std::uint16_t shield_stun_ticks;
 
         std::uint16_t damage_flags;
-        std::uint32_t unused_for_bernie;
+        std::uint32_t scenery_idx;
         std::int32_t first_cluster_reference_index;
         ObjectID next_garbage_object_index;
         ObjectID next_object_index;
@@ -297,7 +313,8 @@ namespace Chimera {
         ObjectID parent_object_index;
 
         std::int8_t parent_node_index;
-        std::uint8_t pad[2];
+        std::uint8_t pad[1];
+        bool force_shield_update;
         std::uint8_t functions_active_flags;
         float incoming_function_values[NUMBER_OF_INCOMING_OBJECT_FUNCTIONS];
         float outgoing_function_values[NUMBER_OF_OUTGOING_OBJECT_FUNCTIONS];
