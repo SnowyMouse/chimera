@@ -25,4 +25,3 @@ BEGIN
 END
 
 IDI_ICON1 ICON "../icon/chimera.ico"
-1 24 "chimera-compress.manifest"

@@ -14,6 +14,9 @@ set(CMAKE_CXX_STANDARD 23)
 option(BUILD_STATIC_ZSTD "Build and use static Zstandard as part of this project" OFF)
 
 if(BUILD_STATIC_ZSTD)
+    # Needed for the winlibs build of CMake
+    set(CMAKE_TLS_VERIFY OFF)
+
     include(ExternalProject)
 
     set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
@@ -58,10 +61,6 @@ if(WIN32)
     target_sources(chimera-compress
         PRIVATE version.rc
     )
-endif()
-
-if(MSVC)
-    set_target_properties(chimera-compress PROPERTIES LINK_FLAGS "/MANIFEST:NO")
 endif()
 
 if(BUILD_STATIC_ZSTD)
