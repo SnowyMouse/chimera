@@ -11,6 +11,7 @@
 #include "../chimera.hpp"
 #include "../output/error_box.hpp"
 #include <cstring>
+#include <stdexcept>
 
 namespace Chimera {
     static std::locale locale;
@@ -118,19 +119,36 @@ namespace Chimera {
     }
 
     static std::pair<bool, bool> utf8_to_ansi(std::string& str) {
-        // Covert UTF-8 to wide
+        if(str.length() == 0) {
+            return { true, false };
+        }
+
+        // Get length and ensure input is valid UTF-8
         auto wcount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), str.length(), nullptr, 0);
         if(wcount == 0) {
             DWORD error = GetLastError();
             if(error == ERROR_NO_UNICODE_TRANSLATION) {
                 return { false, false };
             }
+            else {
+                throw std::runtime_error("could not convert from UTF-8 because of some insane memes");
+            }
         }
 
+        // Must check for these before using WideCharToMultiByte()
+        auto acp = GetACP();
+        if(acp == CP_UTF7) {
+            throw std::runtime_error("the system code page is UTF-7");
+        }
+        else if(acp == CP_UTF8) {
+            return { true, false }; // "ansi" is UTF-8 so do nothing
+        }
+
+        // Covert UTF-8 to wide
         std::wstring wstr(wcount, 0);
         MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), wstr.data(), wcount);
 
-        // Convert wide to the ANSI code page
+        // Convert wide to the system code page
         auto count = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.length(), nullptr, 0, nullptr, nullptr);
         std::string tmp(count, 0);
         BOOL defaulted;
