@@ -1,17 +1,19 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 4.0)
 
-project("chimera-compress")
+project(ChimeraCompress
+    VERSION 1.0.4
+    DESCRIPTION "Map compressor for Halo PC"
+    LANGUAGES CXX
+)
+
+# Require C++23
+set(CMAKE_CXX_STANDARD 23)
 
 option(BUILD_STATIC_ZSTD "Build and use static Zstandard as part of this project" OFF)
 
 if(BUILD_STATIC_ZSTD)
-    # Silence CMake Warning
-    if (POLICY CMP0135)
-        cmake_policy(SET CMP0135 NEW)
-    endif()
-
     include(ExternalProject)
 
     set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
@@ -35,10 +37,16 @@ if(BUILD_STATIC_ZSTD)
             -DZSTD_BUILD_SHARED=OFF
             -DZSTD_BUILD_PROGRAMS=OFF
             -DZSTD_BUILD_TESTS=OFF
+            -DZSTD_MULTITHREAD_SUPPORT=OFF
     )
 
     add_library(local_zstd STATIC IMPORTED)
-    set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/libzstd.a)
+    if(MSVC)
+        set(ZSTD_LIBNAME zstd_static.lib)
+    else()
+        set(ZSTD_LIBNAME libzstd.a)
+    endif()
+    set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/${ZSTD_LIBNAME})
     add_dependencies(local_zstd zstd)
 endif()
 
@@ -52,17 +60,24 @@ if(WIN32)
     )
 endif()
 
+if(MSVC)
+    set_target_properties(chimera-compress PROPERTIES LINK_FLAGS "/MANIFEST:NO")
+endif()
+
 if(BUILD_STATIC_ZSTD)
     add_dependencies(chimera-compress local_zstd)
     target_include_directories(chimera-compress PRIVATE ${LOCAL_ZSTD_INCLUDE_DIR})
     set(ZSTD_LIB local_zstd)
-    if(WIN32)
+    if(MINGW)
         set_target_properties(chimera-compress PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++ -static -lwinpthread")
     endif()
 else()
     set(ZSTD_LIB zstd)
 endif()
 
-set_source_files_properties(main.cpp PROPERTIES COMPILE_FLAGS "-Wno-multichar")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(chimera-compress PRIVATE -Wall -Wextra)
+    set_source_files_properties(main.cpp PROPERTIES COMPILE_FLAGS "-Wno-multichar")
+endif()
 
 target_link_libraries(chimera-compress ${ZSTD_LIB})

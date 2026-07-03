@@ -11,10 +11,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
+#include <utility>
 #include <vector>
 #include <cstring>
 
 #include <zstd.h>
+
+#define HEADER_SIZE 2048
+#define COMPRESSION_IDENTIFIER 0x861A0000
 
 static constexpr const std::uint32_t DEMO_HEAD = 'Ehed';
 static constexpr const std::uint32_t DEMO_FOOT = 'Gfot';
@@ -22,10 +26,129 @@ static constexpr const std::uint32_t DEMO_FOOT = 'Gfot';
 static constexpr const std::uint32_t HEAD = 'head';
 static constexpr const std::uint32_t FOOT = 'foot';
 
+#define COPY_HEADER_FIELDS() \
+    header.version = this->version; \
+    header.size = this->size; \
+    header.tags_offset = this->tags_offset; \
+    header.tags_size = this->tags_size; \
+    std::strncpy(header.name, this->name, 32); \
+    header.name[31] = '\0'; \
+    std::strncpy(header.build_number, this->build_number, 32); \
+    header.build_number[31] = '\0'; \
+    header.scenario_type = this->scenario_type; \
+    header.checksum = this->checksum
+
+struct CacheFileHeaderDemo;
+
+struct CacheFileHeader {
+    std::uint32_t header_signature;
+    std::uint32_t version; // was int32_t
+    std::int32_t size;
+    std::int32_t compressed_file_padding;
+    std::int32_t tags_offset;
+    std::int32_t tags_size;
+    std::int32_t index_buffer_count;
+    std::int32_t index_buffers_offset;
+    char name[32];
+    char build_number[32];
+    std::int16_t scenario_type;
+    std::uint16_t pad;
+    std::uint32_t checksum;
+    std::uint32_t flags; // added in mcc cea
+    std::uint32_t unused1[169];
+    std::uint32_t lua_script_pointer;
+    std::uint32_t lua_script_size;
+    std::uint32_t unused2[313];
+    std::uint32_t footer_signature;
+
+    void set_compression_identifier() {
+        this->version |= COMPRESSION_IDENTIFIER;
+    }
+
+    void unset_compression_identifier() {
+        this->version &= ~COMPRESSION_IDENTIFIER;
+    }
+
+    [[nodiscard]] auto base_version() const {
+        return this->version & ~COMPRESSION_IDENTIFIER;
+    }
+
+    [[nodiscard]] bool data_compressed() const {
+        return (this->version | COMPRESSION_IDENTIFIER) == this->version;
+    }
+
+    [[nodiscard]] CacheFileHeader clean() const {
+        CacheFileHeader header = {};
+        header.header_signature = HEAD;
+        header.footer_signature = FOOT;
+        COPY_HEADER_FIELDS();
+
+        // preserve these because we might want them later
+        header.flags = this->flags;
+
+        // these are bad but we can't take it back
+        header.lua_script_pointer = this->lua_script_pointer;
+        header.lua_script_size = this->lua_script_size;
+
+        return header;
+    }
+
+    [[nodiscard]] CacheFileHeaderDemo demo_header() const;
+
+    [[nodiscard]] bool valid() const {
+        return this->header_signature == HEAD && this->footer_signature == FOOT;
+    }
+};
+static_assert(sizeof(CacheFileHeader) == HEADER_SIZE);
+
+struct CacheFileHeaderDemo {
+    std::uint16_t pad;
+    std::int16_t scenario_type;
+    std::uint32_t unused1[175];
+    std::uint32_t header_signature;
+    std::int32_t tags_size;
+    char build_number[32];
+    std::uint32_t unused2[168];
+    std::uint32_t version; // was int32_t
+    char name[32];
+    std::uint32_t unused3;
+    std::uint32_t checksum;
+    std::uint32_t unused4[13];
+    std::int32_t size;
+    std::int32_t tags_offset;
+    std::uint32_t footer_signature;
+    std::uint32_t unused5[131];
+
+    [[nodiscard]] bool valid() const {
+        return this->header_signature == DEMO_HEAD && this->footer_signature == DEMO_FOOT;
+    }
+
+    [[nodiscard]] CacheFileHeader full_header() const {
+        CacheFileHeader header = {};
+        header.header_signature = HEAD;
+        header.footer_signature = FOOT;
+        COPY_HEADER_FIELDS();
+
+        return header;
+    }
+};
+static_assert(sizeof(CacheFileHeaderDemo) == HEADER_SIZE);
+
+CacheFileHeaderDemo CacheFileHeader::demo_header() const {
+    CacheFileHeaderDemo header = {};
+    header.header_signature = DEMO_HEAD;
+    header.footer_signature = DEMO_FOOT;
+    COPY_HEADER_FIELDS();
+    // flags and Lua data can't be copied
+
+    return header;
+}
+
 int main(int argc, const char **argv) {
     if(argc != 4 && argc != 3) {
-        std::printf("Usage: %s <compress/decompress> <map>\n", argv[0]);
-        std::printf("       %s <compress/decompress> <input-map> <output-map>\n", argv[0]);
+        std::filesystem::path exe_path = argv[0];
+        std::printf("Usage: %s <compress/decompress> <map>\n", exe_path.filename().string().c_str());
+        std::printf("       %s <compress/decompress> <input-map> <output-map>\n", exe_path.filename().string().c_str());
         return EXIT_FAILURE;
     }
 
@@ -34,7 +157,7 @@ int main(int argc, const char **argv) {
     if(std::strcmp(argv[1], "compress") == 0) {
         compress = true;
     }
-    else if(std::strcmp(argv[1], "decompress") == 0) {
+    else if((std::strcmp(argv[1], "decompress") == 0) || (std::strcmp(argv[1], "uncompress") == 0)) {
         compress = false;
     }
     else {
@@ -62,12 +185,10 @@ int main(int argc, const char **argv) {
     // Get the size
     std::fseek(input_f, 0, SEEK_END);
     std::vector<std::byte> data_to_read(std::ftell(input_f));
-    auto *data_to_read_data = data_to_read.data();
-    auto data_to_read_size = data_to_read.size();
     std::fseek(input_f, 0, SEEK_SET);
 
     // Read it
-    auto read_result = std::fread(data_to_read_data, data_to_read_size, 1, input_f);
+    auto read_result = std::fread(data_to_read.data(), data_to_read.size(), 1, input_f);
     std::fclose(input_f);
     if(read_result != 1) {
         std::fprintf(stderr, "Can't read %s\n", input_path.string().c_str());
@@ -75,111 +196,93 @@ int main(int argc, const char **argv) {
     }
 
     // Is there even a complete header?
-    if(data_to_read_size < 0x800) {
+    if(data_to_read.size() < HEADER_SIZE) {
         std::fprintf(stderr, "%s is not a cache file\n", input_path.string().c_str());
         return EXIT_FAILURE;
     }
 
-    auto head_foot_valid = *reinterpret_cast<std::uint32_t *>(data_to_read_data) == HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x7FC) == FOOT;
-    auto head_foot_valid_demo = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x2C0) == DEMO_HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5F0) == DEMO_FOOT;
-
-    // old compressed map may have this.
-    auto head_foot_valid_demo_retail_fourcc = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x2C0) == HEAD && *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5F0) == FOOT;
-
-    // Is it valid?
-    if(!head_foot_valid && !head_foot_valid_demo && !head_foot_valid_demo_retail_fourcc) {
-        std::fprintf(stderr, "%s does not appear to be a valid cache file\n", input_path.string().c_str());
+    // Can't be larger than this
+    if(std::cmp_greater(data_to_read.size(), std::numeric_limits<std::int32_t>::max())) {
+        std::fprintf(stderr, "%s is too large to be a valid cache file\n", input_path.string().c_str());
         return EXIT_FAILURE;
     }
 
-    // Get the cache version
-    std::uint32_t cache_version, uncompressed_size, tag_data_offset, tag_data_length, map_type, lua_script_data, lua_script_size, crc32;
-    const char *name, *build;
-    if(head_foot_valid) {
-        cache_version = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x4);
-        uncompressed_size = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x8);
-        tag_data_offset = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x10);
-        tag_data_length = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x14);
-        name = reinterpret_cast<const char *>(data_to_read_data + 0x20);
-        build = reinterpret_cast<const char *>(data_to_read_data + 0x40);
-        map_type = *reinterpret_cast<std::uint16_t *>(data_to_read_data + 0x60);
-        lua_script_data = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x310);
-        lua_script_size = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x314);
-        crc32 = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x64);
+    bool demo = false;
+    static CacheFileHeader header;
+    memcpy(&header, data_to_read.data(), sizeof(CacheFileHeader));
+
+    // Is it valid?
+    if(header.valid()) {
+        header = header.clean();
     }
     else {
-        cache_version = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x588);
-        uncompressed_size = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5E8);
-        tag_data_offset = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5EC);
-        tag_data_length = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x2C4);
-        name = reinterpret_cast<const char *>(data_to_read_data + 0x58C);
-        build = reinterpret_cast<const char *>(data_to_read_data + 0x2C8);
-        map_type = *reinterpret_cast<std::uint16_t *>(data_to_read_data + 0x2);
-        lua_script_data = 0; // Unsupported
-        lua_script_size = 0; // Unsupported
-        crc32 = *reinterpret_cast<std::uint32_t *>(data_to_read_data + 0x5B0);
+        // Try demo
+        auto header_demo = std::bit_cast<CacheFileHeaderDemo>(header);
+        if(!header_demo.valid()) {
+            std::fprintf(stderr, "%s does not appear to be a valid cache file\n", input_path.string().c_str());
+            return EXIT_FAILURE;
+        }
+
+        header = header_demo.full_header();
+        demo = true;
+    }
+
+    // Is it supported?
+    switch(header.base_version()) {
+        case 5:
+            std::fprintf(stderr, "%s appears to be an Xbox map and is not supported\n", input_path.string().c_str());
+            return EXIT_FAILURE;
+        case 6:
+            if(!demo) {
+                std::fprintf(stderr, "%s has cache version 6 and is not demo format, this is not supported\n", input_path.string().c_str());
+                return EXIT_FAILURE;
+            }
+            break;
+        case 7:
+        case 609:
+            if(demo) {
+                std::fprintf(stderr, "%s has cache version %u and is demo format, this is not supported\n", input_path.string().c_str(), header.base_version());
+                return EXIT_FAILURE;
+            }
+            // these are supported
+            break;
+        case 13:
+            std::fprintf(stderr, "%s appears to be an MCC CEA map and is not supported\n", input_path.string().c_str());
+            return EXIT_FAILURE;
+        default:
+            std::fprintf(stderr, "%s has an unknown version %u\n", input_path.string().c_str(), header.version);
+            return EXIT_FAILURE;
+    }
+
+    // Can we handle it?
+    if(compress == header.data_compressed()) {
+        std::fprintf(stderr, "%s %s to be compressed\n", input_path.string().c_str(), compress ? "appears" : "does not appear");
+        return EXIT_FAILURE;
+    }
+
+    // Warn about these
+    if(header.lua_script_pointer) {
+        std::fprintf(stderr, "Warning: %s appears to have embedded Lua scripts, this is deprecated\n", input_path.string().c_str());
     }
 
     // The uncompressed size in the header is bullshit
     if(compress) {
-        uncompressed_size = data_to_read.size();
+        header.size = data_to_read.size();
     }
 
-    // Are we too big?
-    if(data_to_read.size() > UINT32_MAX / 2 || uncompressed_size > UINT32_MAX / 2) {
-        std::fprintf(stderr, "%s uncompressed is too large (>= 2 GiB)\n", input_path.string().c_str());
-        return EXIT_FAILURE;
-    }
-
-    // Are we too small?
-    if(uncompressed_size <= 0x800) {
+    if(header.size <= HEADER_SIZE) {
         std::fprintf(stderr, "%s has an invalid uncompressed size and its real uncompressed size cannot be determined\n", input_path.string().c_str());
         return EXIT_FAILURE;
     }
 
-    // Can we handle it?
-    bool use_demo_header = false;
-    std::uint32_t head = HEAD;
-    std::uint32_t foot = FOOT;
-    switch(cache_version) {
-        case 6:
-            use_demo_header = true;
-            head = DEMO_HEAD;
-            foot = DEMO_FOOT;
-            [[fallthrough]];
-        case 7:
-        case 609:
-            if(!compress) {
-                std::fprintf(stderr, "%s does not appear to be compressed\n", input_path.string().c_str());
-                return EXIT_FAILURE;
-            }
-            break;
-        case 0x861A0006:
-            use_demo_header = true;
-            head = DEMO_HEAD;
-            foot = DEMO_FOOT;
-            [[fallthrough]];
-        case 0x861A0007:
-        case 0x861A0261:
-            if(compress) {
-                std::fprintf(stderr, "%s appears to be compressed\n", input_path.string().c_str());
-                return EXIT_FAILURE;
-            }
-            break;
-        default:
-            std::fprintf(stderr, "%s has an unknown version %llu\n", input_path.string().c_str(), static_cast<unsigned long long>(cache_version));
-            return EXIT_FAILURE;
-    }
-
     std::vector<std::byte> file_to_write;
-
     if(compress) {
-        file_to_write.resize(ZSTD_compressBound(uncompressed_size));
+        file_to_write.resize(ZSTD_compressBound(header.size));
 
-        std::byte *compressed_data = file_to_write.data() + 0x800;
-        std::size_t compressed_size = file_to_write.size() - 0x800;
-        const std::byte *decompressed_data = data_to_read_data + 0x800;
-        std::size_t decompressed_size = data_to_read_size - 0x800;
+        std::byte *compressed_data = file_to_write.data() + HEADER_SIZE;
+        std::size_t compressed_size = file_to_write.size() - HEADER_SIZE;
+        const std::byte *decompressed_data = data_to_read.data() + HEADER_SIZE;
+        std::size_t decompressed_size = data_to_read.size() - HEADER_SIZE;
 
         std::size_t actual_compressed_length = ZSTD_compress(compressed_data, compressed_size, decompressed_data, decompressed_size, 19);
 
@@ -188,56 +291,36 @@ int main(int argc, const char **argv) {
             return EXIT_FAILURE;
         }
 
-        std::printf("%s: Compressed %zu bytes --> %zu bytes\n", input_path.string().c_str(), decompressed_size + 0x800, actual_compressed_length + 0x800);
+        std::printf("%s: Compressed %zu bytes --> %zu bytes\n", input_path.string().c_str(), decompressed_size + HEADER_SIZE, actual_compressed_length + HEADER_SIZE);
 
-        cache_version |= 0x861A0000;
+        header.set_compression_identifier();
 
-        file_to_write.resize(actual_compressed_length + 0x800);
+        file_to_write.resize(actual_compressed_length + HEADER_SIZE);
     }
     else {
-        const std::byte *compressed_data = data_to_read_data + 0x800;
-        std::size_t compressed_size = data_to_read_size - 0x800;
+        const std::byte *compressed_data = data_to_read.data() + HEADER_SIZE;
+        std::size_t compressed_size = data_to_read.size() - HEADER_SIZE;
 
-        file_to_write.resize(uncompressed_size);
-        std::byte *decompressed_data = file_to_write.data() + 0x800;
-        std::size_t decompressed_size = file_to_write.size() - 0x800;
+        file_to_write.resize(header.size);
+        std::byte *decompressed_data = file_to_write.data() + HEADER_SIZE;
+        std::size_t decompressed_size = file_to_write.size() - HEADER_SIZE;
 
         if(ZSTD_decompress(decompressed_data, decompressed_size, compressed_data, compressed_size) != decompressed_size) {
             std::fprintf(stderr, "%s could not be decompressed\n", input_path.string().c_str());
             return EXIT_FAILURE;
         }
 
-        std::printf("%s: Decompressed %zu bytes --> %zu bytes\n", input_path.string().c_str(), compressed_size + 0x800, decompressed_size + 0x800);
+        std::printf("%s: Decompressed %zu bytes --> %zu bytes\n", input_path.string().c_str(), compressed_size + HEADER_SIZE, decompressed_size + HEADER_SIZE);
 
-        cache_version &= ~0x861A0000;
+        header.unset_compression_identifier();
     }
 
-    auto *file_to_write_data = file_to_write.data();
-    if(!use_demo_header) {
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x0) = head;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x4) = cache_version;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x8) = uncompressed_size;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x10) = tag_data_offset;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x14) = tag_data_length;
-        std::strncpy(reinterpret_cast<char *>(file_to_write_data + 0x20), name, 0x20);
-        std::strncpy(reinterpret_cast<char *>(file_to_write_data + 0x40), build, 0x20);
-        *reinterpret_cast<std::uint16_t *>(file_to_write_data + 0x60) = map_type;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x64) = crc32;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x310) = lua_script_data;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x314) = lua_script_size;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x7FC) = foot;
+    if(!demo) {
+        memcpy(file_to_write.data(), &header, sizeof(CacheFileHeader));
     }
     else {
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x2C0) = head;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x588) = cache_version;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x5E8) = uncompressed_size;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x5EC) = tag_data_offset;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x2C4) = tag_data_length;
-        std::strncpy(reinterpret_cast<char *>(file_to_write_data + 0x58C), name, 0x20);
-        std::strncpy(reinterpret_cast<char *>(file_to_write_data + 0x2C8), build, 0x20);
-        *reinterpret_cast<std::uint16_t *>(file_to_write_data + 0x2) = map_type;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x5B0) = crc32;
-        *reinterpret_cast<std::uint32_t *>(file_to_write_data + 0x5F0) = foot;
+        auto demo_header = header.demo_header();
+        memcpy(file_to_write.data(), &demo_header, sizeof(CacheFileHeader));
     }
 
     // Write it
@@ -246,6 +329,7 @@ int main(int argc, const char **argv) {
         std::fprintf(stderr, "Failed to open output %s for writing\n", output_path.string().c_str());
         return EXIT_FAILURE;
     }
+
     auto result = std::fwrite(file_to_write.data(), file_to_write.size(), 1, output_f);
     std::fclose(output_f);
     if(result != 1) {
