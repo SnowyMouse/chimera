@@ -451,8 +451,9 @@ namespace Chimera {
         if(arguments.size() != 0) {
             // Get the command name and lowercase it
             std::string command_name = arguments[0];
+            auto &c_locale = std::locale::classic();
             for(char &c : command_name) {
-                c = std::tolower(c, std::locale("C"));
+                c = std::tolower(c, c_locale);
             }
 
             // Remove the command name from the arguments

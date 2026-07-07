@@ -41,7 +41,8 @@ namespace Chimera {
 
     static bool same_string_case_insensitive(const char *a, const char *b) {
         if(a == b) return true;
-        while(std::tolower(*a, std::locale("C")) == std::tolower(*b, std::locale("C"))) {
+        auto &c_locale = std::locale::classic();
+        while(std::tolower(*a, c_locale) == std::tolower(*b, c_locale)) {
             if(*a == 0) return true;
             a++;
             b++;
@@ -248,8 +249,9 @@ namespace Chimera {
         // First, let's lowercase it
         char map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
+        auto &c_locale = std::locale::classic();
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i, std::locale("C"));
+            i = std::tolower(i, c_locale);
         }
 
         // Add it!

@@ -149,8 +149,9 @@ namespace Chimera {
         // Make a lowercase version
         charmander map_name_lowercase[32];
         std::strncpy(map_name_lowercase, name, sizeof(map_name_lowercase) - 1);
+        auto &c_locale = std::locale::classic();
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i, std::locale("C"));
+            i = std::tolower(i, c_locale);
         }
 
         // Find it!
@@ -472,8 +473,9 @@ namespace Chimera {
         // Lowercase it
         charmander map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_name, sizeof(map_name_lowercase) - 1);
+        auto &c_locale = std::locale::classic();
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i, std::locale("C"));
+            i = std::tolower(i, c_locale);
         }
 
         // Check if it's the current map. If so, do not attempt to reload it.
@@ -975,8 +977,9 @@ namespace Chimera {
         // If it's not a .map file, forget about it
         charmander file_path_extension[5] = {};
         std::snprintf(file_path_extension, sizeof(file_path_extension), "%s", file_path.extension().string().c_str());
+        auto &c_locale = std::locale::classic();
         for(auto &fpe : file_path_extension) {
-            fpe = std::tolower(fpe, std::locale("C"));
+            fpe = std::tolower(fpe, c_locale);
         }
 
         // Get the resource file if possible

@@ -257,8 +257,9 @@ void MapDownloader::download(const char *map, const char *output_file, const cha
     this->map = map;
     this->output_file = output_file;
     this->game_engine = game_engine;
+    auto &c_locale = std::locale::classic();
     for(char &c : this->map) {
-        c = std::tolower(c, std::locale("C"));
+        c = std::tolower(c, c_locale);
     }
 
     // Initialize cURL as well as the downloader variables

@@ -21,8 +21,9 @@ namespace Chimera {
 
         char map_name_lowercase[32] = {};
         std::strncpy(map_name_lowercase, map_header.name, sizeof(map_name_lowercase));
+        auto &c_locale = std::locale::classic();
         for(auto &i : map_name_lowercase) {
-            i = std::tolower(i, std::locale("C"));
+            i = std::tolower(i, c_locale);
         }
 
         // Do not apply to stock campaign.
