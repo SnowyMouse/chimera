@@ -13,7 +13,7 @@ typedef struct {
 } LoadedDLL;
 
 #ifdef CHIMERA_WINXP
-typedef BOOL (WINAPI *SetProcessDEPPolicy_fn_ptr)(DWORD);
+typedef BOOL (WINAPI *dep_fn_ptr)(DWORD);
 #endif
 
 static LoadedDLL *loaded_dlls;
@@ -66,7 +66,6 @@ static BOOL load_dlls() {
     extern void destroy_chimera();
     extern int find_signatures();
     extern void print_signature_errors();
-    extern int halo_type();
     instantiate_chimera();
     if(find_signatures() == 0) {
         print_signature_errors();
@@ -221,9 +220,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
                 SetProcessDEPPolicy(PROCESS_DEP_ENABLE);
                 #else
                 HANDLE kernel32 = GetModuleHandle("kernel32.dll");
-                SetProcessDEPPolicy_fn_ptr SetProcessDEPPolicy_fn = (SetProcessDEPPolicy_fn_ptr)GetProcAddress(kernel32, "SetProcessDEPPolicy");
-                if(SetProcessDEPPolicy_fn) {
-                    SetProcessDEPPolicy_fn(1);
+                dep_fn_ptr dep_fn = (dep_fn_ptr)(void *)GetProcAddress(kernel32, "SetProcessDEPPolicy");
+                if(dep_fn) {
+                    dep_fn(1);
                 }
                 #endif
 
