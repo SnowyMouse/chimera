@@ -216,14 +216,6 @@ namespace Chimera {
     extern "C" const char *signature_errors();
 
     /**
-     * Determine the type of Halo executable being used
-     * @return 0 if not Halo or unknown, 1 if client, 2 if server
-     */
-    int halo_type();
-
-    #define DEDICATED_SERVER (halo_type() == 2)
-
-    /**
      * Get a reference to the currently loaded Chimera mod
      * @return reference to the currently loaded Chimera mod
      */

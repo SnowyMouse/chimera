@@ -576,10 +576,6 @@ namespace Chimera {
         show_error_box("Error", error_buffer, true, !is_server);
     }
 
-    int halo_type() {
-        return chimera->feature_present("client") ? 1 : chimera->feature_present("server") ? 2 : 0;
-    }
-
     extern "C" const std::byte *address_for_signature(const char *signature) {
         return chimera->get_signature(signature).data();
     }
