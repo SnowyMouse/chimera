@@ -265,7 +265,7 @@ int main(int argc, const char **argv) {
         std::fprintf(stderr, "Warning: %s appears to have embedded Lua scripts, this is deprecated\n", input_path.string().c_str());
     }
 
-    // The uncompressed size in the header is bullshit
+    // The uncompressed size in the header is sometimes bullshit
     if(compress) {
         header.size = data_to_read.size();
     }
