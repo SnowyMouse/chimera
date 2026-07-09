@@ -102,6 +102,7 @@
 #include "fix/hud_meters.hpp"
 #include "fix/gametype_indicator_memes.hpp"
 #include "fix/effect_shader_fix.hpp"
+#include "fix/index_buffer_fix.hpp"
 
 namespace Chimera {
     static Chimera *chimera;
@@ -202,6 +203,7 @@ namespace Chimera {
                 set_up_weather_fix();
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
+                set_up_index_buffer_fix();
 
                 // This seemed like a good idea at the time...
                 set_up_water_fix();
