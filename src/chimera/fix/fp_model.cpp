@@ -22,7 +22,7 @@ namespace Chimera {
     static float on_tick_y = 0;
     static bool can_update = false;
 
-    static RenderFrustum frustum, frustum_fp;
+    RenderFrustum frustum, frustum_fp;
     static float v_fov;
     static bool frustum_adjusted_for_fp_lens_flares = false;
 

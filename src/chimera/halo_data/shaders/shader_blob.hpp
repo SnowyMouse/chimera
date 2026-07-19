@@ -54,3 +54,14 @@ extern const size_t shader_transparent_generic_source_size;
 
 extern unsigned char shader_transparent_generic_2_0_source[];
 extern const size_t shader_transparent_generic_2_0_source_size;
+
+extern unsigned char fog[];
+extern unsigned char fog_akill[];
+extern unsigned char fog_screen[];
+extern const size_t fog_size;
+extern const size_t fog_akill_size;
+extern const size_t fog_screen_size;
+
+extern unsigned char black[];
+extern const size_t black_size;
+

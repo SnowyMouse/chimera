@@ -8,6 +8,8 @@
 
 namespace Chimera {
 
+    extern DynamicVertex screen_vertices[4];
+
     /**
     * Functions for getting vertex shaders.
     */

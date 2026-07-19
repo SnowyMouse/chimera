@@ -1,0 +1,20 @@
+sampler2D S0 : register(s0);
+
+struct PS_INPUT
+{
+  float4 Pos : SV_POSITION;
+  float4 D0  : COLOR0;
+  float4 D1  : COLOR1;
+  float4 T0  : TEXCOORD0;
+};
+
+float4 fog_c : register(c0);
+
+half4 main(PS_INPUT input) : SV_TARGET
+{
+  half4 tex = tex2D(S0, input.T0.xy); // texture0: planar fog density
+  half result = 1 - lerp(fog_c.x, 1, tex.b);
+  
+  // fog_c.y == 0 -> just use linear fog (_fog_screen_no_texture_falloff_bit)
+  return lerp(1 - input.T0.x, result, fog_c.y);
+}

@@ -10,6 +10,12 @@
 
 
 namespace Chimera {
+    DynamicVertex screen_vertices[4] = {
+        -1.0f, 1.0, 0.0f, 0xffffffff, -1.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 0xffffffff, 1.0f, 1.0f,
+        1.0f, -1.0f, 0.0f, 0xffffffff, 1.0f, -1.0f,
+        -1.0f, -1.0f, 0.0f, 0xffffffff, -1.0f, -1.0f
+    };
 
     enum {
         NUMBER_OF_GENERIC_VERTEX_SHADERS = 11,

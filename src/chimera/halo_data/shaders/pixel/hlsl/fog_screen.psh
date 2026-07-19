@@ -1,0 +1,51 @@
+sampler2D TexS0 : register(s0);
+sampler2D TexS1 : register(s1);
+sampler2D TexS2 : register(s2);
+sampler2D TexS3 : register(s3);
+
+struct PS_INPUT {
+   float4 Pos : SV_POSITION;
+   float4 D0 : COLOR0;
+   float4 D1 : COLOR1;
+   float4 T0 : TEXCOORD0;
+   float4 T1 : TEXCOORD1;
+   float4 T2 : TEXCOORD2;
+   float4 T3 : TEXCOORD3;
+};
+
+float4 constant_color0[2] : register(c0);
+float4 constant_color1[2] : register(c2);
+float4 planar_color : register(c4);
+
+half4 main(PS_INPUT input) : SV_TARGET
+{
+	// INPUTS
+	half2 Tex0 = input.T0;
+	half2 Tex1 = input.T1;
+	half2 Tex2 = input.T2;
+	half2 Tex3 = input.T3;
+
+	half3 T0 = tex2D(TexS0, Tex0.xy);
+	half3 T1 = tex2D(TexS1, Tex1.xy);
+	half3 T2 = tex2D(TexS2, Tex2.xy);
+	half3 T3 = tex2D(TexS3, Tex3.xy);
+
+	half R0a;
+	T0 = dot(T0, constant_color0[0]);
+	T1 = dot(T1, constant_color1[0]);
+	R0a = (1 - T0.b)*(1 - T1.b);
+		
+	half R1a;
+	T2 = dot(T2, constant_color0[1]);
+	T3 = dot(T3, constant_color1[1]);
+	R1a = (1 - T2.b)*(1 - T3.b);
+	
+	R0a = R0a * R1a;
+	
+	half3 R0;
+	R0 = (1 - T2) * T3 + T2; // lerp(T3,1,T2)
+	R0 = (1 - T1) * R0 + T1; // lerp(R0,1,T1)
+	R0 = T0 * planar_color + (1 - T0) * R0 * planar_color; // lerp(R0, 1, T0) * planar_color
+	
+	return half4(R0, R0a);
+}

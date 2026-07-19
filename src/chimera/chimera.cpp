@@ -96,6 +96,7 @@
 #include "fix/jason_jones_hacks.hpp"
 #include "fix/pas_crash_fix.hpp"
 #include "rasterizer/rasterizer.hpp"
+#include "rasterizer/rasterizer_environment_fog.hpp"
 #include "rasterizer/shader_transparent_generic.hpp"
 #include "halo_data/game_functions.hpp"
 #include "halo_data/game_variables.hpp"
@@ -176,6 +177,7 @@ namespace Chimera {
 
                 // Well it was going to happen eventually.
                 set_up_shader_transparent_generic();
+                set_up_screen_fog();
 
                 // Fix some more bullshit
                 set_up_floor_decals_fix();

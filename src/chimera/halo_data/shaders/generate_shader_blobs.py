@@ -103,3 +103,7 @@ if __name__ == '__main__':
     generate_shader_blobs("white", sys.argv[1] + "pixel/white.cso", 3)
     generate_shader_blobs("white_1_1", sys.argv[1] + "pixel/white.cso", 3)
     generate_shader_blobs("hud_meters", sys.argv[1] + "pixel/hud_meters.cso", 3)
+    generate_shader_blobs("fog", sys.argv[1] + "pixel/fog.cso", 3)
+    generate_shader_blobs("fog_akill", sys.argv[1] + "pixel/fog_akill.cso", 3)
+    generate_shader_blobs("fog_screen", sys.argv[1] + "pixel/fog_screen.cso", 3)
+    generate_shader_blobs("black", sys.argv[1] + "pixel/black.cso", 3)

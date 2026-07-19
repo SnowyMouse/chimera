@@ -40,8 +40,20 @@ namespace Chimera {
                     case CHIMERA_PIXEL_SHADER_WHITE_1_1:
                         blob = reinterpret_cast<DWORD *>(white_1_1);
                         break;
+                    case CHIMERA_PIXEL_SHADER_BLACK:
+                        blob = reinterpret_cast<DWORD *>(black);
+                        break;
                     case CHIMERA_PIXEL_SHADER_HUD_METERS:
                         blob = reinterpret_cast<DWORD *>(hud_meters);
+                        break;
+                    case CHIMERA_PIXEL_SHADER_FOG:
+                        blob = reinterpret_cast<DWORD *>(fog);
+                        break;
+                    case CHIMERA_PIXEL_SHADER_FOG_ALPHA_KILL:
+                        blob = reinterpret_cast<DWORD *>(fog_akill);
+                        break;
+                    case CHIMERA_PIXEL_SHADER_FOG_SCREEN:
+                        blob = reinterpret_cast<DWORD *>(fog_screen);
                         break;
                 }
 

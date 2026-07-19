@@ -252,6 +252,8 @@ add_library(chimera STATIC
     src/chimera/rasterizer/shader_transparent_generic.cpp
     src/chimera/rasterizer/shader_transparent_generic.S
     src/chimera/rasterizer/rasterizer_transparent_geometry.cpp
+    src/chimera/rasterizer/rasterizer_environment_fog.cpp
+    src/chimera/rasterizer/rasterizer_environment_fog.S
     src/chimera/rasterizer/rasterizer.cpp
     src/chimera/rasterizer/rasterizer_vertex_shaders.cpp
     src/chimera/signature/hook.cpp
