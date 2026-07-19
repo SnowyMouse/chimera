@@ -19,6 +19,13 @@ namespace Chimera {
     extern bool *fog_enabled;
     extern RasterizerGlobalData **global_rasterizer_data;
     extern D3DPRESENT_PARAMETERS *d3d_present_parameters;
+    extern std::uint32_t *local_random_seed; // This is the non deterministic seed. The global deterministic seed should never be touched by chimera.
+    extern RasterizerDebugOptions *rasterizer_debug_options;
+    extern bool *water_visible_for_window_flag;
+    extern bool *model_sky_flag;
+    extern unsigned char **local_node_remap_table;
+    extern std::int32_t *local_node_remap_table_size;
+
 
     /**
     * Set up pointers to game global variables.

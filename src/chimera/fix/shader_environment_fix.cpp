@@ -92,8 +92,9 @@ namespace Chimera {
 
     extern "C" void set_constants_for_reflection_mirror(ShaderEnvironment *shader, float *c_eye_forward) noexcept {
         // These always should be set here, Why gearbox didn't is a mystery...
-        rasterizer_set_texture_direct(1, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
-        rasterizer_set_texture_direct(2, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
+        bool custom = game_engine() == GameEngine::GAME_ENGINE_CUSTOM_EDITION;
+        custom ? rasterizer_set_texture_direct(1, 0, (*global_rasterizer_data)->vector_normalization.tag_id) : rasterizer_set_texture_direct_d3dx(1, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
+        custom ? rasterizer_set_texture_direct(2, 0, (*global_rasterizer_data)->vector_normalization.tag_id) : rasterizer_set_texture_direct_d3dx(2, 0, (*global_rasterizer_data)->vector_normalization.tag_id);
 
         // Shader constant for signaling bump map == NONE
         c_eye_forward[3] = shader->environment.diffuse.bump_map.tag_id.is_null() ? 1.0f : 0.0f;

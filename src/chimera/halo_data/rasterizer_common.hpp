@@ -16,6 +16,119 @@
 
 
 namespace Chimera {
+    struct RasterizerDebugOptions {
+        bool fps_accumulation;
+        PAD(0x1);
+        short statistics_mode;
+        short drawing_mode;
+        bool wireframe_enabled;
+
+        bool debug_model_vertices_enabled;
+        short debug_model_lod;
+        bool debug_transparent_geometry_enabled;
+        bool debug_meter_shader_enabled;
+
+        bool draw_models;
+        bool draw_model_transparent_geometry;
+        bool draw_first_person_weapon_first;
+        bool stencil_mask_enabled;
+
+        std::uint8_t draw_environment; //Not a bool?
+        bool draw_environment_lightmaps;
+        bool draw_environment_shadows;
+        bool draw_environment_diffuse_lights;
+        bool draw_environment_textures;
+        bool draw_environment_decals;
+        bool draw_environment_specular_lights;
+        bool draw_environment_specular_lightmaps;
+        bool draw_environment_reflection_lightmap_masks;
+        bool draw_environment_reflection_mirrors;
+        bool draw_environment_reflections;
+        bool draw_environment_transparent_geometry;
+        bool draw_environment_fog;
+        bool draw_environment_fog_screen;
+
+        bool draw_water;
+        bool draw_lens_flares;
+
+        bool draw_dynamic_unlit_geometry;
+        bool draw_dynamic_lit_geometry;
+        bool draw_dynamic_screen_geometry;
+
+        bool draw_hud_motion_sensor;
+
+        bool draw_detail_objects;
+        bool draw_debug_geometry;
+        bool debug_geometry_multipass;
+
+        bool fog_atmospheric_enabled;
+        bool fog_planar_enabled;
+
+        bool bump_mapping_enabled;
+        PAD(0x2);
+
+        float lightmap_ambient;
+        short lightmap_mode;
+        PAD(0x2);
+        bool lightmap_incident_radiosity_enabled;
+        bool lightmap_filtering_enabled;
+        PAD(0x2);
+
+        float model_lighting_ambient;
+
+        bool environment_alpha_testing_enabled;
+        bool environment_specular_mask_enabled;
+
+        bool shadow_convolution_enabled;
+        bool shadow_debug_enabled;
+        bool water_mipmapping_enabled;
+        bool active_camouflage_enabled;
+        bool active_camouflage_multipass_enabled;
+        bool plasma_energy_enabled;
+        bool lens_flare_occlusion_enabled;
+        bool lens_flare_occlusion_debug;
+        bool lens_flare_sun_glow_enabled;
+
+        bool screen_flash_enabled;
+        bool screen_effects_enabled;
+        bool DXTC_noise_enabled;
+        bool soft_filter_enabled;
+        bool secondary_render_target_debug_enabled;
+        bool profile_log_enabled;
+        PAD(0x3);
+
+        float detail_object_screen_facing_offset_multiplier;
+
+        long zbias;
+        float zoffset;
+
+        bool force_all_player_views_to_default_player;
+        bool safe_frame_bounds_adjust_enabled;
+        short freeze_flying_camera;
+
+        bool zsprite_enabled;
+        bool filthy_decal_fog_hack_enabled;
+        bool smart_states_enabled;
+        bool splitscreen_VB_optimization_enabled;
+
+        bool profile_print_locks;
+        PAD(0x3);
+        float profile_objectlock_time;
+        short rasterizer_effects_level;
+        short rasterizer_texture_default_mip_level;
+        short rasterizer_model_quality_level;
+        PAD(0x2);
+        float pad3_scale;
+        PAD(0x18);
+    };
+    static_assert(sizeof(RasterizerDebugOptions) == 144);
+
+
+    enum RenderConstants {
+        MAXIMUM_WINDOWS = 4,
+        MAXIMUM_LENS_FLARES_PER_FRAME = 1024,
+        MAXIMUM_LIGHTS_PER_WINDOW = 128,
+    };
 
     // Rasterizer Definitions
     enum RasterizerLock {
@@ -38,6 +151,19 @@ namespace Chimera {
         RASTERIZER_LOCK_SPRITE,
         RASTERIZER_LOCK_BSP_SWITCH,
         NUMBER_OF_RASTERIZER_LOCKS
+    };
+
+    enum RasterizerRenderTargets {
+        RENDER_TARGET_BACK_BUFFER,
+        RENDER_TARGET_RENDER_PRIMARY,
+        RENDER_TARGET_RENDER_SECONDARY,
+        RENDER_TARGET_SHADOW_PRIMARY,
+        RENDER_TARGET_SHADOW_SECONDARY,
+        RENDER_TARGET_MOTION_SENSOR,
+        RENDER_TARGET_SUN_GLOW_PRIMARY,
+        RENDER_TARGET_SUN_GLOW_SECONDARY,
+        RENDER_TARGET_WATER,
+        NUM_OF_RENDER_TARGETS = 9
     };
 
     struct RasterizerGlobalData {
@@ -105,6 +231,16 @@ namespace Chimera {
     };
     static_assert(sizeof(RasterizerGlobals) == 0x60);
 
+    struct TriangleBuffer {
+        short type;
+        PAD(0x2);
+        long count;
+        long offset;
+        void *hardware_format;
+    };
+    static_assert(sizeof(TriangleBuffer) == 0x10);
+
+
     struct RenderCamera {
         Point3D position;
         VectorIJK forward;
@@ -137,12 +273,63 @@ namespace Chimera {
     };
     static_assert(sizeof(RenderFrustum) == 0x18C);
 
+    enum FogScreenFlags : std::uint16_t {
+        FOG_SCREEN_NO_ENVIRONMENT_MULTIPASS_BIT,
+        FOG_SCREEN_NO_MODEL_MULTIPASS_BIT,
+        FOG_SCREEN_NO_TEXTURE_FALLOFF_BIT,
+        NUMBER_OF_FOG_SCREEN_FLAGS
+    };
+
+    struct FogScreen {
+        std::uint16_t flags;
+        short layer_count;
+        
+        float near_distance;
+        float far_distance;
+        float near_density;
+        float far_density;
+        float start_distance_from_fog_plane;
+        
+        PAD(0x4);
+        
+        Pixel32 color;
+        
+        // movement modifiers
+        float rotation_multiplier;
+        float strafing_multiplier;
+        float zoom_multiplier;
+        
+        PAD(0x8);
+        
+        // map
+        float map_scale;
+        TagReference map;
+        
+        // wind
+        float animation_period;
+        PAD(0x4);
+        float wind_velocity_lower_bound;
+        float wind_velocity_upper_bound;
+        float wind_period_lower_bound;
+        float wind_period_upper_bound;
+        float wind_acceleration_weight;
+        float wind_perpendicular_weight;
+
+        PAD(0x8);
+    };
+    static_assert(sizeof(FogScreen) == 0x70);
+
     // This is for the fog tag and should be moved if that gets defined.
     enum FogFlags {
         FOG_FLAGS_IS_WATER_BIT,
         FOG_FLAGS_ATMOSPHERE_DOMINANT_BIT,
         FOG_FLAGS_SCREEN_EFFECT_ONLY_BIT,
         NUMBER_OF_FOG_FLAGS
+    };
+
+    enum FogRuntimeFlags : std::uint16_t {
+        RENDER_FOG_RUNTIME_SCREEN_USE_SKY_INTERPOLATOR_BIT,
+        NUMBER_OF_RENDER_FOG_RUNTIME_FLAGS
     };
 
     struct RenderFog {
@@ -158,8 +345,7 @@ namespace Chimera {
         float planar_maximum_density;
         float planar_maximum_distance;
         float planar_maximum_depth;
-        //FogScreen
-        std::uint32_t *screen;
+        FogScreen *screen;
         float screen_external_intensity;
     };
     static_assert(sizeof(RenderFog) == 0x50);
@@ -182,8 +368,37 @@ namespace Chimera {
     struct RasterizerFrameParameters {
         double elapsed_time_sec;
         float delta_time;
+        PAD(0x4);
     };
     static_assert(sizeof(RasterizerFrameParameters) == 0x10);
+
+    struct RenderDistantLight {
+        ColorRGB color;
+        Vector3D direction;
+    };
+    static_assert(sizeof(RenderDistantLight) == 0x18);
+
+    struct RenderLighting {
+        ColorRGB ambient_color;
+        short distant_light_count;
+        PAD(0x2);
+        RenderDistantLight distant_lights[2];
+        short point_light_count;
+        PAD(0x2);
+        long point_light_indices[2];
+        ColorARGB reflection_tint_color;
+        Vector3D shadow_vector;
+        ColorRGB shadow_color;
+    };
+    static_assert(sizeof(RenderLighting) == 0x74);
+
+
+    struct RenderSkinning {
+        Matrix4x3 *node_matrices;
+        short node_matrix_count;
+        PAD(0x2);
+    };
+    static_assert(sizeof(RenderSkinning) == 0x8);
 
     struct RenderAnimation {
         ColorRGB *colors;
@@ -219,6 +434,8 @@ namespace Chimera {
         RASTERIZER_GEOMETRY_FLAGS_VIEWSPACE_BIT,
         RASTERIZER_GEOMETRY_FLAGS_ATMOSPHERIC_FOG_BUT_NO_PLANAR_FOG_BIT,
         RASTERIZER_GEOMETRY_FLAGS_FIRST_PERSON_BIT,
+        RASTERIZER_GEOMETRY_FLAGS_PARTS_DEFINE_LOCAL_NODES_BIT,
+        RASTERIZER_GEOMETRY_FLAGS_DONT_SKIN,
         NUMBER_OF_RASTERIZER_GEOMETRY_FLAGS
     };
 
@@ -236,7 +453,7 @@ namespace Chimera {
 
         // triangles
         long dynamic_triangle_buffer_index;
-        std::byte *triangle_buffer;
+        TriangleBuffer *triangle_buffer;
         long first_triangle_index;
         long triangle_count;
 
@@ -251,10 +468,10 @@ namespace Chimera {
         Matrix4x3 *node_matrices;
         short node_matrix_count;
         PAD(0x2);
-        std::uint16_t *local_node_remap_table;
+        const unsigned char *local_node_remap_table;
         std::uint32_t local_node_remap_table_size;
 
-        std::byte *lighting;
+        RenderLighting *lighting;
         RenderAnimation *animation;
 
         // sorting
@@ -339,6 +556,21 @@ namespace Chimera {
     };
     static_assert(sizeof(RasterizerScreenEffectParams) == 0x38);
 
+
+    struct RasterizerModelBeginParams {
+        std::uint32_t geometry_flags;
+        std::uint32_t unique_id;
+
+        RenderSkinning skinning;
+        RenderLighting  lighting;
+        RenderAnimation animation;
+        RenderModelEffect effect;
+
+        Point3D centroid;
+        float radius;
+        Vector2D base_map_scale;
+    };
+    static_assert(sizeof(RasterizerModelBeginParams) == 0xCC);
 }
 
 #endif

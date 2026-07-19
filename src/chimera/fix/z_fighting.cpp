@@ -177,7 +177,7 @@ namespace Chimera {
     void update_z_near() noexcept {
         // Trial and error coefficient values.
         auto data = camera_data();
-        float scale = std::sqrt(magnitude_squared(data.position));
+        float scale = magnitude3d(data.position);
 
         z_near = DEFAULT_Z_MIN + 0.0000000825f * scale;
         z_near_veh = DEFAULT_Z_MIN + 0.000000024f * scale;

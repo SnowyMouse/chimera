@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "math_trig.hpp"
+#include "../halo_data/game_variables.hpp"
 
 namespace Chimera {
     ColorRGB::ColorRGB(float r, float g, float b) noexcept :
@@ -195,13 +196,43 @@ namespace Chimera {
         return std::sqrt(distance_squared(a.x, a.y, b.x, b.y));
     }
 
-    float magnitude_squared(float x, float y, float z) noexcept {
-        return x*x + y*y + z*z;
+    float magnitude_squared3d(const Point3D &a) noexcept {
+        return a.x * a.x + a.y * a.y + a.z * a.z;
     }
 
-    float magnitude_squared(const Point3D &a) noexcept {
-        return a.x*a.x + a.y*a.y + a.z*a.z;
+    float magnitude_squared2d(const Point2D &a) noexcept {
+        return a.x * a.x + a.y * a.y;
     }
+
+    float magnitude3d(const Point3D &a) noexcept {
+        return std::sqrt(magnitude_squared3d(a));
+    }
+
+    float magnitude2d(const Point2D &a) noexcept {
+        return std::sqrt(magnitude_squared2d(a));
+    }
+
+    float normalize2d(VectorIJ &a) noexcept {
+        float mag = magnitude2d(a);
+        if(mag >= 0.0001f) {
+            a.i = a.i * (1.0f / mag);
+            a.j = a.j * (1.0f / mag);
+        }
+        else {
+            mag = 0.0f;
+        }
+
+        return mag;
+    }
+
+    float dot_product_3d(Point3D *a, Point3D *b) noexcept {
+        return (a->x * b->x) + (a->y * b->y) + (a->z * b->z);
+    }
+
+    float dot_product_3d(VectorIJK *a, VectorIJK *b) noexcept {
+        return (a->i * b->i) + (a->j * b->j) + (a->k * b->k);
+    }
+
 
     double counter_time_elapsed(const LARGE_INTEGER &before) noexcept {
         LARGE_INTEGER now;
@@ -234,4 +265,15 @@ namespace Chimera {
         color->blue = ((pixel >> 0) & 0xFF) / 255.0;
     }
 
+    float real_local_random() noexcept {
+        return REAL_RANDOM(*local_random_seed);
+    }
+
+    float real_local_random_range(float lower, float upper) noexcept {
+        return REAL_RANDOM_RANGE(*local_random_seed, lower, upper - lower);
+    }
+
+    bool bool_local_random() noexcept {
+        return RANDOM(*local_random_seed) > 0x8000;
+    }
 }

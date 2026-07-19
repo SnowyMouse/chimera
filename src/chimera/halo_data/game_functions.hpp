@@ -19,9 +19,18 @@ namespace Chimera {
         void rasterizer_transparent_geometry_group_draw_vertices(TransparentGeometryGroup *group, bool has_lightmap) noexcept;
         double periodic_function_evaluate(double period, WaveFunction function) noexcept;
         void rasterizer_set_frustum_z(float z_near, float z_far) noexcept;
+        void rasterizer_draw_dynamic_triangles_static_vertices(std::int32_t dynamic_triangle_buffer_index, std::int32_t first_triangle_index, std::int32_t triangle_count, VertexBuffer *vertex_buffer) noexcept;
         void rasterizer_draw_dynamic_triangles_static_vertices2(std::int32_t dynamic_triangle_buffer_index, std::int32_t first_triangle_index, std::int32_t triangle_count, VertexBuffer *vertex_buffer0, VertexBuffer *vertex_buffer1) noexcept;
         void render_camera_build_frustum(const RenderCamera *camera, const Bounds2D *frustum_bounds, RenderFrustum *frustum, bool build_projection) noexcept;
         bool rasterizer_set_texture_direct(std::int16_t stage, std::int32_t bitmap_group_index, TagID bitmap_index) noexcept;
+        bool rasterizer_set_texture_direct_d3dx(std::int16_t stage, std::int32_t bitmap_group_index, TagID bitmap_index) noexcept;
+        void  rasterizer_set_model_skinning(const RenderSkinning *skinning, bool push);
+        void  rasterizer_set_up_node_parts(const unsigned char *remap_table, std::uint32_t table_size);
+        void *rasterizer_memory_alloc(const void *src, std::uint32_t size);
+        void matrix4x3_multiply(const Matrix4x3 *m1, const Matrix4x3 *m2, Matrix4x3 *output);
+        void matrix4x3_inverse(const Matrix4x3 *matrix, Matrix4x3 *output);
+        void matrix4x3_transform_normal(const Matrix4x3 *matrix, const Vector3D *normal, Vector3D *output) noexcept;
+        void matrix4x3_transform_point(const Matrix4x3 *matrix, const Vector3D *normal, Vector3D *output) noexcept;
     }
 
     /**

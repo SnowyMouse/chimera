@@ -84,6 +84,13 @@ namespace Chimera {
         long buffer_count;
     };
 
+    struct DynamicVertex {
+        Vector3D position;
+        Pixel32 color;
+        Vector2D texture_position;
+    };
+    static_assert(sizeof(DynamicVertex) == 0x18);
+
     struct VertexBuffer {
         short type;
         std::uint16_t pad;

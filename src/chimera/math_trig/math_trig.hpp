@@ -19,6 +19,12 @@
 #define SET_FLAG(f, b, v) ((v) ? ((f)|=FLAG(b)) : ((f)&=~FLAG(b)))
 #define SWAP_FLAG(f, b) ((f)^=FLAG(b))
 
+#define RANDOM_A 1664525L
+#define RANDOM_C 1013904223L
+#define RANDOM(seed) (((seed) = RANDOM_A * (seed) + RANDOM_C)>>16)
+#define REAL_RANDOM(seed) ((1.0f / static_cast<float>(0xffff)) * RANDOM(seed))
+#define REAL_RANDOM_RANGE(seed, lower_bound, delta) ((lower_bound) + (delta) * REAL_RANDOM(seed))
+
 namespace Chimera {
     struct ColorARGB;
     struct ColorByte;
@@ -101,12 +107,23 @@ namespace Chimera {
     struct VectorIJ {
         float i;
         float j;
+
+        operator Point2D() const {return {i, j};}
     };
 
     struct VectorIJK {
         float i;
         float j;
         float k;
+
+        operator Point3D() const {return {i, j, k};}
+    };
+
+    struct VectorIJKL {
+        float i;
+        float j;
+        float k;
+        float l;
     };
 
     struct Euler3DPYR {
@@ -123,11 +140,13 @@ namespace Chimera {
 
     struct Matrix4x3 {
         float scale;
+
         VectorIJK forward;
         VectorIJK left;
         VectorIJK up;
         Point3D position;
     };
+    static_assert(sizeof(Matrix4x3) == 0x34);
 
     struct Bounds2D {
         float left;
@@ -269,19 +288,44 @@ namespace Chimera {
 
     /**
      * Calculate the magnitude of a 3D vector without taking square roots. If the square root isn't necessary, then this is faster.
-     * @param  x This is the X value.
-     * @param  y This is the Y value.
-     * @param  z This is the Z value.
-     * @return    Return the magnitude.
+     * @param  a This is the point vector.
+     * @return   Return the magnitude.
      */
-    float magnitude_squared(float x, float y, float z) noexcept;
+    float magnitude_squared3d(const Point3D &a) noexcept;
 
     /**
-     * Calculate the magnitude of a 3D vector without taking square roots. If the square root isn't necessary, then this is faster.
+     * Calculate the magnitude of a 2D vector without taking square roots. If the square root isn't necessary, then this is faster.
      * @param  a This is the point vector.
-     * @return    Return the magnitude.
+     * @return   Return the magnitude.
      */
-    float magnitude_squared(const Point3D &a) noexcept;
+    float magnitude_squared2d(const Point2D &a) noexcept;
+
+    /**
+     * Calculate the magnitude of a 3D vector.
+     * @param  a This is the point vector.
+     * @return   Return the magnitude.
+     */
+    float magnitude3d(const Point3D &a) noexcept;
+
+    /**
+     * Calculate the magnitude of a 2D vector.
+     * @param  a This is the point vector.
+     * @return   Return the magnitude.
+     */
+    float magnitude2d(const Point2D &a) noexcept;
+
+    /**
+     * Calculate normalized magnitude of a vector.
+     * @param  a This is the point vector.
+     * @return   Return the normalized magnitude.
+     */
+    float normalize2d(VectorIJ &a) noexcept;
+
+    /**
+     * Outputs dot product of 2 3D points.
+     */
+    float dot_product_3d(Point3D *a, Point3D *b) noexcept;
+    float dot_product_3d(VectorIJK *a, VectorIJK *b) noexcept;
 
     /**
      * Get the time elapsed since a counter.
@@ -302,6 +346,21 @@ namespace Chimera {
      * Convert 32-bit argb color to float.
      */
     void pixel32_to_real_argb_color(const std::uint32_t pixel, ColorARGB *color) noexcept;
+
+    /**
+     * Outputs a pseudorandom float. This uses the games random seed.
+     */
+    float real_local_random() noexcept;
+
+    /**
+     * Outputs a pseudorandom float between 2 values. This uses the games random seed.
+     */
+    float real_local_random_range(float lower, float upper) noexcept;
+
+    /**
+     * Outputs a pseudorandom bool. This uses the games random seed.
+     */
+    bool bool_local_random() noexcept;
 
 }
 

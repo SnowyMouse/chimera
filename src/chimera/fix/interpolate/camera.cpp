@@ -102,7 +102,7 @@ namespace Chimera {
                     if(type == CameraType::CAMERA_FIRST_PERSON
                         && !vehicle_first_person
                         && distance_squared(previous_tick->data.position, current_tick->data.position) > 0.5 * 0.5
-                        && magnitude_squared(object->object.translational_velocity) <= 0.5 * 0.5) {
+                        && magnitude_squared3d(object->object.translational_velocity) <= 0.5 * 0.5) {
 
                         skip = true;
                         return;

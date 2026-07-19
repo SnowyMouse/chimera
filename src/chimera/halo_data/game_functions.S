@@ -96,6 +96,20 @@ _rasterizer_set_frustum_z:
     add esp, 8
     ret
 
+.globl _rasterizer_draw_dynamic_triangles_static_vertices
+_rasterizer_draw_dynamic_triangles_static_vertices:
+    push eax
+    push esi
+    mov esi, dword ptr [esp + 24]
+    mov eax, dword ptr [esp + 20]
+    push [esp + 16]
+    push [esp + 16]
+    call dword ptr [_rasterizer_draw_dynamic_triangles_static_vertices_func]
+    add esp, 8
+    pop esi
+    pop eax
+    ret
+
 .globl _rasterizer_draw_dynamic_triangles_static_vertices2
 _rasterizer_draw_dynamic_triangles_static_vertices2:
     push eax
@@ -134,4 +148,89 @@ _rasterizer_set_texture_direct:
     push [esp + 8]
     call dword ptr [_rasterizer_set_texture_direct_func]
     add esp, 8
+    ret
+
+.globl _rasterizer_set_texture_direct_d3dx
+_rasterizer_set_texture_direct_d3dx:
+    mov eax, [esp + 12]
+    push [esp + 8]
+    push [esp + 8]
+    call dword ptr [_rasterizer_set_texture_direct_d3dx_func]
+    add esp, 8
+    ret
+
+.globl _rasterizer_set_model_skinning
+_rasterizer_set_model_skinning:
+    push edi
+    mov edi, [esp + 8]
+    push [esp + 12]
+    call dword ptr [_rasterizer_set_model_skinning_func]
+    add esp, 4
+    pop edi
+    ret
+
+.globl _rasterizer_set_up_node_parts
+_rasterizer_set_up_node_parts:
+    push eax
+    push esi
+    mov eax, [esp + 16]
+    mov esi, [esp + 12]
+    call dword ptr [_rasterizer_set_up_node_parts_func]
+    pop esi
+    pop eax
+    ret
+
+.globl _rasterizer_memory_alloc
+_rasterizer_memory_alloc:
+    push ecx
+    mov ecx, [esp + 12]
+    mov eax, [esp + 8]
+    call dword ptr [_rasterizer_memory_alloc_func]
+    pop ecx
+    ret
+
+.globl _matrix4x3_multiply
+_matrix4x3_multiply:
+    push [esp + 12]
+    push [esp + 12]
+    push [esp + 12]
+    call dword ptr [_matrix4x3_multiply_func]
+    add esp, 12
+    ret
+
+.globl _matrix4x3_inverse
+_matrix4x3_inverse:
+    push eax
+    push ecx
+    mov eax, [esp + 16]
+    mov ecx, [esp + 12]
+    call dword ptr [_matrix4x3_inverse_func]
+    pop ecx
+    pop eax
+    ret
+
+.globl _matrix4x3_transform_normal
+_matrix4x3_transform_normal:
+    push edx
+    push eax
+    mov eax, [esp + 20]
+    mov edx, [esp + 16]
+    push [esp + 12]
+    call dword ptr [_matrix4x3_transform_normal_func]
+    add esp, 4
+    pop eax
+    pop edx
+    ret
+
+.globl _matrix4x3_transform_point
+_matrix4x3_transform_point:
+    push edx
+    push eax
+    mov eax, [esp + 20]
+    mov edx, [esp + 16]
+    push [esp + 12]
+    call dword ptr [_matrix4x3_transform_point_func]
+    add esp, 4
+    pop eax
+    pop edx
     ret
