@@ -360,13 +360,13 @@ namespace Chimera {
 
         // Release pixel shaders.
         for(std::uint16_t i = 0; i < MAX_GENERIC_INSTANCE_COUNT; i++) {
-            if(generic_instance_cache[i].shader && (generic_instance_cache[i].shader != disabled_pixel_shader_1_1 || generic_instance_cache[i].shader != disabled_pixel_shader)) {
+            if(generic_instance_cache[i].shader && (generic_instance_cache[i].shader != chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1] || generic_instance_cache[i].shader != chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE])) {
                 IDirect3DPixelShader9_Release(generic_instance_cache[i].shader);
             }
-            if(generic_instance_cache[i].shader_fogged && generic_instance_cache[i].shader_fogged != disabled_pixel_shader_1_1) {
+            if(generic_instance_cache[i].shader_fogged && generic_instance_cache[i].shader_fogged != chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1]) {
                 IDirect3DPixelShader9_Release(generic_instance_cache[i].shader_fogged);
             }
-            if(generic_instance_cache[i].shader_nofog && generic_instance_cache[i].shader_nofog != disabled_pixel_shader_1_1) {
+            if(generic_instance_cache[i].shader_nofog && generic_instance_cache[i].shader_nofog != chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1]) {
                 IDirect3DPixelShader9_Release(generic_instance_cache[i].shader_nofog);
             }
         }
@@ -440,9 +440,9 @@ namespace Chimera {
                 }
                 else {
                     // If compilation failed, return the disabled shader instead of crashing.
-                    generic_ps = disabled_pixel_shader_1_1;
-                    generic_ps_fogged = disabled_pixel_shader_1_1;
-                    generic_ps_nofog = disabled_pixel_shader_1_1;
+                    generic_ps = chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1];
+                    generic_ps_fogged = chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1];
+                    generic_ps_nofog = chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE_1_1];
                 }
 
                 generic_instance_cache[generic_instance_index].shader = generic_ps;
@@ -480,7 +480,7 @@ namespace Chimera {
                 }
                 else {
                     // If compilation failed, return the disabled shader instead of crashing.
-                    generic_ps = disabled_pixel_shader;
+                    generic_ps = chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_WHITE];
                 }
 
                 generic_instance_cache[generic_instance_index].shader = generic_ps;

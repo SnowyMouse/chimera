@@ -14,20 +14,25 @@
 
 
 namespace Chimera {
+    enum ChimeraPixelShaders {
+        CHIMERA_PIXEL_SHADER_WHITE = 0,
+        CHIMERA_PIXEL_SHADER_WHITE_1_1,
+        CHIMERA_PIXEL_SHADER_HUD_METERS,
+        NUMBER_OF_CHIMERA_PIXEL_SHADERS
+    };
 
     extern IDirect3DDevice9 **global_d3d9_device;
     extern D3DCAPS9 *d3d9_device_caps;
     extern bool chimera_rasterizer_enabled;
 
-    extern IDirect3DPixelShader9 *disabled_pixel_shader_1_1;
-    extern IDirect3DPixelShader9 *disabled_pixel_shader;
-    extern IDirect3DPixelShader9 *hud_meter_ps;
+    extern IDirect3DPixelShader9 *chimera_pixel_shaders[NUMBER_OF_CHIMERA_PIXEL_SHADERS];
 
     /**
     * D3D function calls.
     */
     void rasterizer_set_render_state(D3DRENDERSTATETYPE state, DWORD value) noexcept;
     void rasterizer_set_sampler_state(std::uint16_t sampler, D3DSAMPLERSTATETYPE type, DWORD value) noexcept;
+
     /**
     * Compile shader binary blobs from HLSL code.
     */

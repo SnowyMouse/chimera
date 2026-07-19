@@ -26,7 +26,7 @@ namespace Chimera {
 
     extern "C" bool hud_meter_shader_draw(RasterizerMeterParams *meter, const void *vertices) noexcept {
         // Use fixed function draw if we don't have ps_2_0 support
-        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 || !hud_meter_ps || global_fix_flags.gearbox_meters) {
+        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 || !chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_HUD_METERS] || global_fix_flags.gearbox_meters) {
             return false;
         }
 
@@ -76,7 +76,7 @@ namespace Chimera {
         rasterizer_set_sampler_state(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
         rasterizer_set_sampler_state(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 
-        IDirect3DDevice9_SetPixelShader(*global_d3d9_device, hud_meter_ps);
+        IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_HUD_METERS]);
         IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, psh_constants, 6);
         IDirect3DDevice9_DrawPrimitiveUP(*global_d3d9_device, D3DPT_TRIANGLEFAN, 2, vertices, 24);
 

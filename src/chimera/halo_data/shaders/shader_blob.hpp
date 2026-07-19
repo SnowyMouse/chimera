@@ -40,11 +40,11 @@ extern unsigned char ce_effects_collection[];
 extern const size_t ce_effects_collection_sze;
 
 // Pixel Shaders
-extern unsigned char disabled_shader[];
-extern const size_t disabled_shader_size;
+extern unsigned char white[];
+extern const size_t white_size;
 
-extern unsigned char disabled_shader_1_1[];
-extern const size_t disabled_shader_1_1_size;
+extern unsigned char white_1_1[];
+extern const size_t white_1_1_size;
 
 extern unsigned char hud_meters[];
 extern const size_t hud_meters_size;

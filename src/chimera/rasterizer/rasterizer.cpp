@@ -15,10 +15,7 @@ namespace Chimera {
     D3DCAPS9 *d3d9_device_caps = nullptr;
     bool chimera_rasterizer_enabled = false;
 
-    // Use this if the generic shader fails to compile instead of crashing out.
-    IDirect3DPixelShader9 *disabled_pixel_shader = nullptr;
-    IDirect3DPixelShader9 *disabled_pixel_shader_1_1 = nullptr;
-    IDirect3DPixelShader9 *hud_meter_ps = nullptr;
+    IDirect3DPixelShader9 *chimera_pixel_shaders[NUMBER_OF_CHIMERA_PIXEL_SHADERS] = { nullptr };
 
     void rasterizer_set_render_state(D3DRENDERSTATETYPE state, DWORD value) noexcept {
         throw_error(global_d3d9_device, "d3d device missing");
@@ -31,33 +28,38 @@ namespace Chimera {
     }
 
     void rasterizer_create_pixel_shaders() noexcept {
-        if(!disabled_pixel_shader_1_1) {
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(disabled_shader_1_1), &disabled_pixel_shader_1_1);
-        }
+        throw_error(global_d3d9_device, "d3d device missing");
 
-        // Ensure ps2.0 support for the rest.
-        if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
-            return;
-        }
+        for(int i = 0; i < NUMBER_OF_CHIMERA_PIXEL_SHADERS; i++) {
+            if(!chimera_pixel_shaders[i]) {
+                DWORD *blob;
+                switch(i) {
+                    case CHIMERA_PIXEL_SHADER_WHITE:
+                        blob = reinterpret_cast<DWORD *>(white);
+                        break;
+                    case CHIMERA_PIXEL_SHADER_WHITE_1_1:
+                        blob = reinterpret_cast<DWORD *>(white_1_1);
+                        break;
+                    case CHIMERA_PIXEL_SHADER_HUD_METERS:
+                        blob = reinterpret_cast<DWORD *>(hud_meters);
+                        break;
+                }
 
-        //Create the things.
-        if(!disabled_pixel_shader) {
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(disabled_shader), &disabled_pixel_shader);
-        }
-        if(!hud_meter_ps) {
-            IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, reinterpret_cast<DWORD *>(hud_meters), &hud_meter_ps);
+                // Ensure ps2.0 support for all except the ps_1_1 shader.
+                if(d3d9_device_caps->PixelShaderVersion < 0xffff0200 && i != CHIMERA_PIXEL_SHADER_WHITE_1_1) {
+                    continue;
+                }
+
+                IDirect3DDevice9_CreatePixelShader(*global_d3d9_device, blob, &chimera_pixel_shaders[i]);
+            }
         }
     }
 
     void rasterizer_release_pixel_shaders() noexcept {
-        if(disabled_pixel_shader_1_1) {
-            IDirect3DPixelShader9_Release(disabled_pixel_shader_1_1);
-        }    
-        if(disabled_pixel_shader) {
-            IDirect3DPixelShader9_Release(disabled_pixel_shader);
-        }
-        if(hud_meter_ps) {
-            IDirect3DPixelShader9_Release(hud_meter_ps);
+        for(int i = 0; i < NUMBER_OF_CHIMERA_PIXEL_SHADERS; i++) {
+            if(chimera_pixel_shaders[i]) {
+                IDirect3DPixelShader9_Release(chimera_pixel_shaders[i]);
+            }
         }
     }
 

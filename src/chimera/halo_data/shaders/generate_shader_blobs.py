@@ -97,9 +97,9 @@ if __name__ == '__main__':
     generate_shader_blobs("vsh_transparent_generic_viewer_centered_m", sys.argv[1] + "vertex/transparent_generic_viewer_centered_m.cso", 2)
 
     # Pixel Shaders
-    generate_shader_blobs("shader_transparent_generic_source", sys.argv[1] + "pixel/shader_transparent_generic.hlsl", 3)
-    generate_shader_blobs("shader_transparent_generic_2_0_source", sys.argv[1] + "pixel/shader_transparent_generic_2_0.hlsl", 3)
+    generate_shader_blobs("shader_transparent_generic_source", sys.argv[1] + "pixel/hlsl/shader_transparent_generic.psh", 3)
+    generate_shader_blobs("shader_transparent_generic_2_0_source", sys.argv[1] + "pixel/hlsl/shader_transparent_generic_2_0.psh", 3)
 
-    generate_shader_blobs("disabled_shader", sys.argv[1] + "pixel/disabled.cso", 3)
-    generate_shader_blobs("disabled_shader_1_1", sys.argv[1] + "pixel/disabled_1_1.cso", 3)
+    generate_shader_blobs("white", sys.argv[1] + "pixel/white.cso", 3)
+    generate_shader_blobs("white_1_1", sys.argv[1] + "pixel/white.cso", 3)
     generate_shader_blobs("hud_meters", sys.argv[1] + "pixel/hud_meters.cso", 3)
