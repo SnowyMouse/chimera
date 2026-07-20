@@ -214,6 +214,9 @@ namespace Chimera {
         if(rasterizer_environment_fog_screen_is_active()) {
             FogScreen *screen_fog = global_window_parameters->fog.screen;
             FogScreenData *layer_data = &local_fog_screen_data[global_window_parameters->window_index];
+            // Max fog layers supported by the shader is 4, but the tag could have any value.
+            // Clamp it here to prevent out-of-bounds reads.
+            short clamped_layer_count = PIN(screen_fog->layer_count, 1, static_cast<short>(MAXIMUM_NUMBER_OF_FOG_LAYERS));
 
             if(pass == 0) {
                 Matrix4x3 transform;
@@ -227,7 +230,7 @@ namespace Chimera {
                     for(std::int16_t window_index = 0; window_index < MAXIMUM_WINDOWS; window_index++) {
                         memset(&local_fog_screen_data[window_index], 0, sizeof(FogScreenData));
 
-                        for(std::int16_t index = 0; index < screen_fog->layer_count; index++) {
+                        for(std::int16_t index = 0; index < MAXIMUM_NUMBER_OF_FOG_LAYERS; index++) {
                             local_fog_screen_data[window_index].offsets[index].x = real_local_random();
                             local_fog_screen_data[window_index].offsets[index].y = real_local_random();
                         }
@@ -253,7 +256,7 @@ namespace Chimera {
 
                 memcpy(&previous_cameras[global_window_parameters->window_index], current_camera, sizeof(Matrix4x3));
 
-                float layer_to_layer_distance = (screen_fog->far_distance - screen_fog->near_distance) / static_cast<float>(screen_fog->layer_count);
+                float layer_to_layer_distance = (screen_fog->far_distance - screen_fog->near_distance) / static_cast<float>(clamped_layer_count);
                 float inverse_gradient = 1.0f / (screen_fog->far_distance - screen_fog->near_distance);
 
                 std::int16_t viewport_width = global_window_parameters->camera.viewport_bounds.right - global_window_parameters->camera.viewport_bounds.left;
@@ -289,7 +292,7 @@ namespace Chimera {
                 float animation_times[MAXIMUM_NUMBER_OF_FOG_LAYERS];
 
                 // Animation
-                for(std::int16_t index = 0; index < screen_fog->layer_count && index < MAXIMUM_NUMBER_OF_FOG_LAYERS; index++) {
+                for(std::int16_t index = 0; index < clamped_layer_count; index++) {
                     const float animation_phases[] = { 0.0f, 0.7135f, 0.3422f, 0.5798f };
                     Bitmap *bitmap = get_bitmap_tag(screen_fog->map.tag_id);
 
@@ -309,7 +312,7 @@ namespace Chimera {
                 // VSH constants
                 VectorIJKL vsh_constants_texanim[8];
 
-                for(std::int16_t index = 0; index < screen_fog->layer_count && index < MAXIMUM_NUMBER_OF_FOG_LAYERS; index++) {
+                for(std::int16_t index = 0; index < clamped_layer_count; index++) {
                     std::int16_t index_2 = LAYER_WRAP(layer_data->base_index + index);
 
                     float layer_distance = layer_to_layer_distance * (layer_data->base_z + static_cast<float>(index)) + screen_fog->near_distance;
@@ -526,15 +529,23 @@ namespace Chimera {
 
             bool multipass_flag  = local_fog_environment_geometry_flag || local_fog_model_geometry_flag;
 
-            for(short index = 0; index < screen_fog->layer_count && index < MAXIMUM_NUMBER_OF_FOG_LAYERS; index++) {
-                short index_2 = LAYER_WRAP(layer_data->base_index + index);
+            float ps_constants[4 * 6] = {0};
+            float *stage0_color0 = &ps_constants[0];
+            float *stage1_color0 = &ps_constants[4];
+            float *stage0_color1 = &ps_constants[8];
+            float *stage1_color1 = &ps_constants[12];
+            float *planar_color = &ps_constants[16];
 
-                rasterizer_set_texture_direct(index, local_fog_layer_animation_frames[index_2], screen_fog->map.tag_id);
-                rasterizer_set_sampler_state(index, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-                rasterizer_set_sampler_state(index, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-                rasterizer_set_sampler_state(index, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                rasterizer_set_sampler_state(index, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-                rasterizer_set_sampler_state(index, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+            for(short i = 0; i < MAXIMUM_NUMBER_OF_FOG_LAYERS; i++) {
+                short index_2 = LAYER_WRAP(layer_data->base_index + i);
+                bool use_fog_map = i < screen_fog->layer_count;
+
+                rasterizer_set_texture_direct(i, use_fog_map ? local_fog_layer_animation_frames[index_2] : 0, use_fog_map ? screen_fog->map.tag_id : (*global_rasterizer_data)->default_2d.tag_id);
+                rasterizer_set_sampler_state(i, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+                rasterizer_set_sampler_state(i, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+                rasterizer_set_sampler_state(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+                rasterizer_set_sampler_state(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+                rasterizer_set_sampler_state(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
             }
 
             rasterizer_set_render_state(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -545,14 +556,6 @@ namespace Chimera {
             rasterizer_set_render_state(D3DRS_SRCBLEND, multipass_flag ? D3DBLEND_INVDESTALPHA : D3DBLEND_ONE);
             rasterizer_set_render_state(D3DRS_DESTBLEND, multipass_flag ? D3DBLEND_ONE : D3DBLEND_SRCALPHA);
             rasterizer_set_render_state(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-
-            float ps_consants[4 * 5] = {0};
-
-            float *stage0_color0 = &ps_consants[0];
-            float *stage1_color0 = &ps_consants[4];
-            float *stage0_color1 = &ps_consants[8];
-            float *stage1_color1 = &ps_consants[12];
-            float *planar_color = &ps_consants[16];
 
             stage0_color0[0] = local_fog_layer_vectors[0].x;
             stage0_color0[1] = local_fog_layer_vectors[0].y;
@@ -586,10 +589,11 @@ namespace Chimera {
             IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_CONVOLUTION));
             IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(RASTERIZER_VERTEX_TYPE_DYNAMIC_SCREEN));
             IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_FOG_SCREEN]);
-            IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, ps_consants, 5);
+            IDirect3DDevice9_SetPixelShaderConstantF(*global_d3d9_device, 0, ps_constants, 5);
 
             IDirect3DDevice9_DrawPrimitiveUP(*global_d3d9_device, D3DPT_TRIANGLEFAN, 2, reinterpret_cast<const void *>(screen_vertices), 24);
 
+            // This shouldn't do anything...
             if(local_fog_pass == 0 && multipass_flag) {
                 rasterizer_set_render_state(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
                 rasterizer_set_render_state(D3DRS_SRCBLEND, D3DBLEND_INVDESTALPHA);
