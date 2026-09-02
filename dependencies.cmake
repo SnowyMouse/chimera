@@ -23,8 +23,8 @@ if(${CHIMERA_WINXP})
 	endif()
 else()
 	# use latest version
-    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_21_0/curl-8.21.0.tar.xz")
-    set(LOCAL_CURL_URL_HASH aa1b66a70eace83dc624508745646c08ae561de512ab403adffb93ac87fc72e6)
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_22_0/curl-8.22.0.tar.xz")
+    set(LOCAL_CURL_URL_HASH f7ef3ae8a22e521f289803fe93543eb64c329b58aa73a9e224dfd915a2a5f4f7)
 endif()
 
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
