@@ -1086,6 +1086,11 @@
             "gearbox_bump_attenuation": true
         },
         {
+            "map_name": "hyrule_castle_hv",
+            "tags_checksum": 3675178184,
+            "gearbox_bump_attenuation": true
+        },
+        {
             "map_name": "intensity-plus",
             "tags_checksum": 2527303275,
             "gearbox_meters": true,
