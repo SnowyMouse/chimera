@@ -762,6 +762,13 @@
 			"gearbox_bump_attenuation": true
         },
         {
+            "map_name": "disconnect_beta2",
+            "tags_checksum": 3416323354,
+            "gearbox_meters": true,
+            "gearbox_multitexture_blend_modes": true,
+            "hud_number_scale": true
+        },
+        {
             "map_name": "dmt-drug-bust",
             "tags_checksum": 902893642,
             "gearbox_bump_attenuation": true,
