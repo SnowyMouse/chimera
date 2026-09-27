@@ -150,3 +150,16 @@ _environment_reflection_set_constants_retail_asm:
     call _set_constants_for_environment_reflection
     add esp, 8
     ret
+
+.global _environment_lightmaps_set_has_no_lightmap_asm
+_environment_lightmaps_set_has_no_lightmap_asm:
+    test eax, eax
+    mov ebx, dword ptr [_lm_no_lightmap]
+    jnz lightmap
+    mov byte ptr [ebx], 0x1
+    ret
+
+    lightmap:
+    mov byte ptr [ebx], 0x0
+    ret
+    

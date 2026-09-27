@@ -34,9 +34,12 @@ namespace Chimera {
 
         void environment_reflection_set_constants_retail_asm() noexcept;
         void environment_reflection_set_constants_custom_asm() noexcept;
+
+        void environment_lightmaps_set_has_no_lightmap_asm() noexcept;
+        bool *lm_no_lightmap = nullptr;
     }
 
-    void meme_the_speular_light_draw() noexcept {
+    void meme_the_specular_light_draw() noexcept {
         if(d3d9_device_caps->PixelShaderVersion < 0xffff0200) {
             return;
         }
@@ -107,7 +110,7 @@ namespace Chimera {
 
     void set_up_shader_environment_fix() noexcept {
         // Fix specular_light texture/sampler mismatch
-        add_game_start_event(meme_the_speular_light_draw);
+        add_game_start_event(meme_the_specular_light_draw);
 
         // Fix specular_lightmap not setting brightness multiplier const.
         if(get_chimera().feature_present("client_custom_edition")) {
@@ -159,5 +162,8 @@ namespace Chimera {
             write_jmp_call(get_chimera().get_signature("reflection_const_retail_sig").data(), reflection_hook, reinterpret_cast<const void *>(environment_reflection_set_constants_retail_asm), nullptr);
         }
 
+        static Hook lm_no_lm;
+        write_jmp_call(get_chimera().get_signature("rasterizer_environment_lightmap_no_lightmap_sig").data() + 10, lm_no_lm, reinterpret_cast<const void *>(environment_lightmaps_set_has_no_lightmap_asm), nullptr);
+        lm_no_lightmap = reinterpret_cast<bool *>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("lightmap_has_no_data_sig").data() + 2));
     }
 }
