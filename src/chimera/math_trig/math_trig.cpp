@@ -249,13 +249,22 @@ namespace Chimera {
     long fast_ftol(float float_to_round) noexcept {
         long rounded_down = static_cast<long>(float_to_round);
 
+        long offset = float_to_round < 0.0f ? -1 : 1;
         long a = rounded_down;
-        long b = rounded_down + 1;
+        long b = rounded_down + offset;
 
-        long low = float_to_round - (static_cast<float>(a));
-        long high = (static_cast<float>(b)) - float_to_round;
+        float low = std::fabs(float_to_round - (static_cast<float>(a)));
+        float high = std::fabs((static_cast<float>(b)) - float_to_round);
 
-        return (low < high) ? a : b;
+        if(low < high) {
+            return a;
+        }
+        else if(low > high) {
+            return b;
+        }
+        else {
+            return (a & 1) ? b : a;
+        }
     }
 
     void pixel32_to_real_argb_color(const std::uint32_t pixel, ColorARGB *color) noexcept {
