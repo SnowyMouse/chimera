@@ -95,34 +95,6 @@ namespace Chimera {
     };
     static_assert(sizeof(ShaderStageParams) == sizeof(std::int16_t) * 29);
 
-    ShaderTransparentGeneric *shader_transparent_generic_get(std::byte *shader) noexcept {
-        auto *shader_test = reinterpret_cast<_shader *>(shader);
-
-        if(shader_test->type == SHADER_TYPE_TRANSPARENT_GENERIC) {
-            return reinterpret_cast<ShaderTransparentGeneric *>(shader);
-        }
-        show_error_box("Error", "Invalid shader type");
-        std::exit(1);
-    }
-
-    TagReference *shader_transparent_generic_get_layer(ShaderTransparentGeneric *shader_data, std::uint16_t layer) noexcept {
-        auto *extra_layer = get_tag_block_data(&shader_data->generic.extra_layers, layer, sizeof(TagReference));
-        throw_error(extra_layer, "transparent generic invalid extra layer block data");
-        return reinterpret_cast<TagReference *>(extra_layer);
-    }
-
-    ShaderTransparentGenericMap *shader_transparent_generic_get_map(ShaderTransparentGeneric *shader_data, std::uint16_t map_index) noexcept {
-        auto *map_data = get_tag_block_data(&shader_data->generic.maps, map_index, sizeof(ShaderTransparentGenericMap));
-        throw_error(map_data, "transparent generic invalid map block data");
-        return reinterpret_cast<ShaderTransparentGenericMap *>(map_data);
-    }
-
-    ShaderTransparentGenericStage *shader_transparent_generic_get_stage(ShaderTransparentGeneric *shader_data, std::uint16_t stage_index) noexcept {
-        auto *stage_data = get_tag_block_data(&shader_data->generic.stages, stage_index, sizeof(ShaderTransparentGenericStage));
-        throw_error(stage_data, "transparent generic invalid stage block data");
-        return reinterpret_cast<ShaderTransparentGenericStage *>(stage_data);
-    }
-
     // Stage defines generation based on ringworld https://github.com/MangoFizz/ringworld/blob/master/src/impl/rasterizer/rasterizer_shader_transparent_generic.c#L75
     static D3D_SHADER_MACRO generate_stage_define(size_t stage_index, ShaderStageParams params) noexcept {
         char buffer[216];

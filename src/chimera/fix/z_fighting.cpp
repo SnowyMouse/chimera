@@ -86,7 +86,7 @@ namespace Chimera {
 
                     case SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED: {
                         ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(group->shader);
-                        map_count = shader_data->chicago_extended.maps_4_stage.count;
+                        map_count = shader_data->chicago_extended.maps.count;
                         break;
                     }
 

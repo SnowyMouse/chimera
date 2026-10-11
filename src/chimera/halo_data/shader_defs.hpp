@@ -682,6 +682,20 @@ namespace Chimera {
     /**
     * shader_transparent_chicago - basically generic without the stages
     */
+
+    enum ShaderTransparentChicagoFlags
+    {
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_ALPHA_TESTED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_DECAL_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_TWO_SIDED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_FIRST_MAP_IS_IN_SCREENSPACE_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_DRAW_BEFORE_WATER_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_IGNORE_EFFECT_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_SCALE_FIRST_MAP_WITH_DISTANCE_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_NUMERIC_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_FLAGS
+    };
+
     enum ShaderTransparentChicagoMapFlags {
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_POINT_SAMPLED_BIT,
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_ALPHA_REPLICATE,
@@ -694,6 +708,24 @@ namespace Chimera {
         SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_DONT_FADE_ACTIVE_CAMOUFLAGE,
         SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_NUMERIC_COUNTDOWN_TIMER,
         SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS
+    };
+
+    enum ShaderTransparentChicagoMapFunctions {
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_CURRENT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_NEXT_MAP,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_MULTIPLY,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_DOUBLE_MULTIPLY,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ADD,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ADD_SIGNED_CURRENT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ADD_SIGNED_NEXT_MAP,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_SUBTRACT_CURRENT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_SUBTRACT_NEXT_MAP,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ALPHA_BLEND_CURRENT,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ALPHA_BLEND_CURRENT_INVERSE,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ALPHA_BLEND_NEXT_MAP,
+        SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTION_ALPHA_BLEND_NEXT_MAP_INVERSE,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_MAP_FUNCTIONS,
     };
 
     struct ShaderTransparentChicagoMap {
@@ -757,8 +789,8 @@ namespace Chimera {
         TagReference lens_flare;
 
         TagBlock extra_layers;
-        TagBlock maps_4_stage;
-        TagBlock maps_2_stage;
+        TagBlock maps;
+        TagBlock maps_ff;
         std::uint32_t extra_flags;
         PAD(0x8);
     };
@@ -851,6 +883,28 @@ namespace Chimera {
         PAD(0x14);
     };
     static_assert(sizeof(ShaderDecal) == 0x40);
+
+
+#define shader_transparent_generic_get_layer(shader, index) (GET_TAG_BLOCK_ELEMENT(TagReference, &(shader)->generic.extra_layers, (index)))
+#define shader_transparent_generic_get_stage(shader, index) (GET_TAG_BLOCK_ELEMENT(ShaderTransparentGenericStage, &(shader)->generic.stages, (index)))
+#define shader_transparent_generic_get_map(shader, index) (GET_TAG_BLOCK_ELEMENT(ShaderTransparentGenericMap, &(shader)->generic.maps, (index)))
+#define shader_transparent_chicago_get_layer(shader, index) (GET_TAG_BLOCK_ELEMENT(TagReference, &(shader)->chicago.extra_layers, (index)))
+#define shader_transparent_chicago_get_map(shader, index) (GET_TAG_BLOCK_ELEMENT(ShaderTransparentChicagoMap, &(shader)->chicago.maps, (index)))
+#define shader_transparent_chicago_extended_get_layer(shader, index) (GET_TAG_BLOCK_ELEMENT(TagReference, &(shader)->chicago_extended.extra_layers, (index)))
+#define shader_transparent_chicago_extended_get_map(shader, index) (GET_TAG_BLOCK_ELEMENT(ShaderTransparentChicagoMap, &(shader)->chicago_extended.maps, (index)))
+#define shader_transparent_chicago_extended_get_map_ff(shader, index) (GET_TAG_BLOCK_ELEMENT(ShaderTransparentChicagoMap &(shader)->chicago_extended.maps_ff, (index)))
+
+#define SHADER_GET_BY_TYPE(shader, shader_type, type) (reinterpret_cast<type *>(shader))
+
+#define shader_screen_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_SCREEN, shader_screen))
+#define shader_effect_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_EFFECT, ShaderEffect))
+#define shader_decal_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_DECAL, ShaderDecal))
+#define shader_environment_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_ENVIRONMENT, ShaderEnvironment))
+#define shader_model_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_MODEL, ShaderModel))
+#define shader_transparent_generic_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_TRANSPARENT_GENERIC, ShaderTransparentGeneric))
+#define shader_transparent_chicago_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_TRANSPARENT_CHICAGO, ShaderTransparentChicago))
+#define shader_transparent_glass_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_TRANSPARENT_GLASS, ShaderTransparentGlass))
+#define shader_transparent_chicago_extended_get(shader) (SHADER_GET_BY_TYPE(shader, SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED, ShaderTransparentChicagoExtended))
 
 }
 

@@ -8,8 +8,11 @@
 #include "../rasterizer/rasterizer.hpp"
 #include "../halo_data/shader_defs.hpp"
 #include "../halo_data/rasterizer_common.hpp"
+#include "../halo_data/game_functions.hpp"
 #include "../halo_data/game_variables.hpp"
 #include "../math_trig/math_trig.hpp"
+#include "../rasterizer/rasterizer_vertex_shaders.hpp"
+#include "../rasterizer/rasterizer_transparent_geometry.hpp"
 
 
 namespace Chimera {
@@ -30,13 +33,13 @@ namespace Chimera {
 
         bool extended = shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED;
         if(extended) {
-            ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(shader);
+            ShaderTransparentChicagoExtended *shader_data = shader_transparent_chicago_extended_get(shader);
             if(TEST_FLAG(shader_data->chicago_extended.extra_flags, SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING) || !chimera_rasterizer_enabled) {
                 return;
             }
         }
         else {
-            ShaderTransparentChicago *shader_data = reinterpret_cast<ShaderTransparentChicago *>(shader);
+            ShaderTransparentChicago *shader_data = shader_transparent_chicago_get(shader);
             if(TEST_FLAG(shader_data->chicago.extra_flags, SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING) || !chimera_rasterizer_enabled) {
                 return;
             }
@@ -53,13 +56,13 @@ namespace Chimera {
 
         bool extended = shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED;
         if(extended) {
-            ShaderTransparentChicagoExtended *shader_data = reinterpret_cast<ShaderTransparentChicagoExtended *>(shader);
+            ShaderTransparentChicagoExtended *shader_data = shader_transparent_chicago_extended_get(shader);
             if(TEST_FLAG(shader_data->chicago_extended.extra_flags, SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING) || !chimera_rasterizer_enabled) {
                 return;
             }
         }
         else {
-            ShaderTransparentChicago *shader_data = reinterpret_cast<ShaderTransparentChicago *>(shader);
+            ShaderTransparentChicago *shader_data = shader_transparent_chicago_get(shader);
             if(TEST_FLAG(shader_data->chicago.extra_flags, SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING) || !chimera_rasterizer_enabled) {
                 return;
             }
@@ -84,14 +87,14 @@ namespace Chimera {
         std::uint32_t stage = 0;
 
         if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO) {
-            ShaderTransparentChicago *chicago_shader = reinterpret_cast<ShaderTransparentChicago *>(group->shader);
+            ShaderTransparentChicago *chicago_shader = shader_transparent_chicago_get(group->shader);
             framebuffer_blend_function = chicago_shader->chicago.framebuffer_blend_function;
             stage = chicago_shader->chicago.maps.count;
         }
         else if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED) {
-            ShaderTransparentChicagoExtended *extended_shader = reinterpret_cast<ShaderTransparentChicagoExtended *>(group->shader);
+            ShaderTransparentChicagoExtended *extended_shader = shader_transparent_chicago_extended_get(group->shader);
             framebuffer_blend_function = extended_shader->chicago_extended.framebuffer_blend_function;
-            stage = extended_shader->chicago_extended.maps_4_stage.count;
+            stage = extended_shader->chicago_extended.maps.count;
         }
 
         if(TEST_FLAG(group->geometry_flags, RASTERIZER_GEOMETRY_FLAGS_SKY_BIT) && framebuffer_blend_function == SHADER_FRAMEBUFFER_BLEND_FUNCTION_ALPHA_BLEND) {
@@ -122,11 +125,11 @@ namespace Chimera {
         // We only want to enable projective divide on stage 0 if the first map is 2D
         bool first_map_is_cube = false;
         if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO) {
-            ShaderTransparentChicago *chicago_shader = reinterpret_cast<ShaderTransparentChicago *>(group->shader);
+            ShaderTransparentChicago *chicago_shader = shader_transparent_chicago_get(group->shader);
             first_map_is_cube = chicago_shader->chicago.type > SHADER_TRANSPARENT_GENERIC_TYPE_2D_MAP ? true : false;
         }
         else if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED) {
-            ShaderTransparentChicagoExtended *extended_shader = reinterpret_cast<ShaderTransparentChicagoExtended *>(group->shader);
+            ShaderTransparentChicagoExtended *extended_shader = shader_transparent_chicago_extended_get(group->shader);
             first_map_is_cube = extended_shader->chicago_extended.type > SHADER_TRANSPARENT_GENERIC_TYPE_2D_MAP ? true : false;
         }
         else {
@@ -137,7 +140,15 @@ namespace Chimera {
         if(!first_map_is_cube) {
             IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_PROJECTED);
         }
-        
+
+        // Fix some memes. Gearbox chicago sets the vertex shader before drawing extra layers, so the vertex shader can be changed if the 
+        // extra layer uses a different one. We re-set it here to make sure we're drawing with the correct vertex shader and declaration.
+        short vertex_shader_permutation = shader_get_vertex_shader_permutation(reinterpret_cast<std::byte *>(group->shader));
+        short vertex_type = rasterizer_transparent_geometry_get_primary_vertex_type(group);
+        IDirect3DVertexShader9 *vertex_shader = vertex_shaders[vertex_shader_permutations[vertex_shader_permutation + vertex_type * 6]].shader;
+        IDirect3DDevice9_SetVertexShader(*global_d3d9_device, vertex_shader);
+        IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(vertex_type));
+
         // Fix fog blending when the sky bit is set and the framebuffer blend function is alpha blend.
         chicago_fog_fix(group);
     }
