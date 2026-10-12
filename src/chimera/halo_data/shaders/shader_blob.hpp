@@ -106,3 +106,8 @@ extern const size_t decal_multiply2x_size;
 extern const size_t decal_alpha_blend_size;
 extern const size_t decal_alpha_madd_size;
 
+extern unsigned char transparent_chicago[];
+extern const size_t transparent_chicago_size;
+
+extern unsigned char transparent_chicago_cube[];
+extern const size_t transparent_chicago_cube_size;

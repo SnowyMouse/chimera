@@ -47,3 +47,27 @@ _chicago_set_projective_divide_asm:
     call _chicago_projective_divide_first_map
     add esp, 4
     ret
+
+.global _chicago_set_up_pixel_shader_asm
+_chicago_set_up_pixel_shader_asm:
+    call _rasterizer_shader_transparent_chicago_draw
+    cmp al, 1
+    je skip_ff_draw
+    jmp dword ptr[_chicago_draw_original_ptr]
+
+    skip_ff_draw:
+    mov eax, dword ptr[_chicago_draw_original_ptr]
+    add eax, 5
+    jmp eax
+
+.global _chicago_extended_set_up_pixel_shader_asm
+_chicago_extended_set_up_pixel_shader_asm:
+    call _rasterizer_shader_transparent_chicago_extended_draw
+    cmp al, 1
+    je skip_ex_ff_draw
+    jmp dword ptr[_chicago_extended_draw_original_ptr]
+
+    skip_ex_ff_draw:
+    mov eax, dword ptr[_chicago_extended_draw_original_ptr]
+    add eax, 5
+    jmp eax

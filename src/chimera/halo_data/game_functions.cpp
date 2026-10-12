@@ -29,6 +29,8 @@ namespace Chimera {
         void *matrix4x3_inverse_func = nullptr;
         void *matrix4x3_transform_normal_func = nullptr;
         void *matrix4x3_transform_point_func = nullptr;
+        void *numeric_countdown_timer_get_func = nullptr;
+
     }
 
     void set_up_function_hooks() noexcept {
@@ -60,6 +62,7 @@ namespace Chimera {
             matrix4x3_inverse_func = reinterpret_cast<void *>(get_chimera().get_signature("matrix4x3_inverse_sig").data());
             matrix4x3_transform_normal_func = reinterpret_cast<void *>(get_chimera().get_signature("matrix4x3_transform_normal_sig").data());
             matrix4x3_transform_point_func = reinterpret_cast<void *>(get_chimera().get_signature("matrix4x3_transform_point_sig").data());
+            numeric_countdown_timer_get_func = reinterpret_cast<void *>(get_chimera().get_signature("numeric_countdown_timer_get_sig").data());
 
             functions_hooks_enabled = true;
         }

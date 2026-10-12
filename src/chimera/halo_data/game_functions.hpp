@@ -31,6 +31,8 @@ namespace Chimera {
         void matrix4x3_inverse(const Matrix4x3 *matrix, Matrix4x3 *output);
         void matrix4x3_transform_normal(const Matrix4x3 *matrix, const Vector3D *normal, Vector3D *output) noexcept;
         void matrix4x3_transform_point(const Matrix4x3 *matrix, const Vector3D *normal, Vector3D *output) noexcept;
+        short numeric_countdown_timer_get(short shader_permutation_index) noexcept;
+
     }
 
     /**

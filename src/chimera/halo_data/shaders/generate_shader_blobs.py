@@ -126,3 +126,6 @@ if __name__ == '__main__':
     generate_shader_blobs("decal_multiply2x", sys.argv[1] + "pixel/decal_multiply2x.cso", 3)
     generate_shader_blobs("decal_alpha_blend", sys.argv[1] + "pixel/decal_alpha_blend.cso", 3)
     generate_shader_blobs("decal_alpha_madd", sys.argv[1] + "pixel/decal_alpha_madd.cso", 3)
+
+    generate_shader_blobs("transparent_chicago", sys.argv[1] + "pixel/transparent_chicago.cso", 3)
+    generate_shader_blobs("transparent_chicago_cube", sys.argv[1] + "pixel/transparent_chicago_cube.cso", 3)

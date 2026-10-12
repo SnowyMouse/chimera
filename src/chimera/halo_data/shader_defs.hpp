@@ -682,33 +682,12 @@ namespace Chimera {
     /**
     * shader_transparent_chicago - basically generic without the stages
     */
-
-    enum ShaderTransparentChicagoFlags
-    {
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_ALPHA_TESTED_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_DECAL_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_TWO_SIDED_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_FIRST_MAP_IS_IN_SCREENSPACE_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_DRAW_BEFORE_WATER_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_IGNORE_EFFECT_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_SCALE_FIRST_MAP_WITH_DISTANCE_BIT,
-        SHADER_TRANSPARENT_CHICAGO_FLAGS_NUMERIC_BIT,
-        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_FLAGS
-    };
-
     enum ShaderTransparentChicagoMapFlags {
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_POINT_SAMPLED_BIT,
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_ALPHA_REPLICATE,
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_U_CLAMPED_BIT,
         SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS_V_CLAMPED_BIT,
         NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_MAP_FLAGS
-    };
-
-    enum ShaderTransparentChicagoExtraFlags {
-        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_DONT_FADE_ACTIVE_CAMOUFLAGE,
-        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_NUMERIC_COUNTDOWN_TIMER,
-        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING,
-        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS
     };
 
     enum ShaderTransparentChicagoMapFunctions {
@@ -746,11 +725,38 @@ namespace Chimera {
     };
     static_assert(sizeof(ShaderTransparentChicagoMap) == 0xDC);
 
+    enum ShaderTransparentChicagoType : short {
+        SHADER_TRANSPARENT_CHICAGO_TYPE_2D_MAP,
+        SHADER_TRANSPARENT_CHICAGO_TYPE_FIRST_MAP_IS_REFLECTION_CUBE_MAP,
+        SHADER_TRANSPARENT_CHICAGO_TYPE_FIRST_MAP_IS_OBJECT_CENTERED_CUBE_MAP,
+        SHADER_TRANSPARENT_CHICAGO_TYPE_FIRST_MAP_IS_VIEWER_CENTERED_CUBE_MAP,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_TYPES
+    };
+
+    enum ShaderTransparentChicagoFlags {
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_ALPHA_TESTED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_DECAL_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_TWO_SIDED_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_FIRST_MAP_IS_IN_SCREENSPACE_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_DRAW_BEFORE_WATER_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_IGNORE_EFFECT_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_SCALE_FIRST_MAP_WITH_DISTANCE_BIT,
+        SHADER_TRANSPARENT_CHICAGO_FLAGS_NUMERIC_BIT,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_FLAGS
+    };
+
+    enum ShaderTransparentChicagoExtraFlags {
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_DONT_FADE_ACTIVE_CAMOUFLAGE,
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_NUMERIC_COUNTDOWN_TIMER,
+        SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS_CUSTOM_EDITION_BLENDING,
+        NUMBER_OF_SHADER_TRANSPARENT_CHICAGO_EXTRA_FLAGS
+    };
+
     struct _shader_transparent_chicago {
         std::uint8_t numeric_counter_limit;
         std::uint8_t flags;
 
-        ShaderTransparentGenericType type;
+        ShaderTransparentChicagoType type;
         FramebufferBlendFunction framebuffer_blend_function;
         FramebufferFadeMode framebuffer_fade_mode;
         short framebuffer_fade_source;
@@ -779,7 +785,7 @@ namespace Chimera {
         std::uint8_t numeric_counter_limit;
         std::uint8_t flags;
 
-        ShaderTransparentGenericType type;
+        ShaderTransparentChicagoType type;
         FramebufferBlendFunction framebuffer_blend_function;
         FramebufferFadeMode framebuffer_fade_mode;
         short framebuffer_fade_source;

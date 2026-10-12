@@ -234,3 +234,9 @@ _matrix4x3_transform_point:
     pop eax
     pop edx
     ret
+
+.globl _numeric_countdown_timer_get
+_numeric_countdown_timer_get:
+    mov eax, [esp + 4]
+    call _numeric_countdown_timer_get_func
+    ret

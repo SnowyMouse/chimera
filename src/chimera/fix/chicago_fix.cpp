@@ -6,8 +6,8 @@
 #include "../signature/signature.hpp"
 #include "../signature/hook.hpp"
 #include "../rasterizer/rasterizer.hpp"
-#include "../halo_data/shader_defs.hpp"
 #include "../halo_data/rasterizer_common.hpp"
+#include "../halo_data/shader_defs.hpp"
 #include "../halo_data/game_functions.hpp"
 #include "../halo_data/game_variables.hpp"
 #include "../math_trig/math_trig.hpp"
@@ -24,6 +24,12 @@ namespace Chimera {
         void chicago_extended_multiply2x_set_xbox_blending_asm() noexcept;
 
         void chicago_set_projective_divide_asm() noexcept;
+
+        void chicago_set_up_pixel_shader_asm() noexcept;
+        void chicago_extended_set_up_pixel_shader_asm() noexcept;
+        const void *chicago_draw_original_ptr = nullptr;
+        const void *chicago_extended_draw_original_ptr = nullptr;
+
     }
 
     extern "C" void chicago_multiply_set_xbox_blending(_shader *shader, std::uint32_t stage, DWORD tss_option_argument) noexcept {
@@ -126,11 +132,11 @@ namespace Chimera {
         bool first_map_is_cube = false;
         if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO) {
             ShaderTransparentChicago *chicago_shader = shader_transparent_chicago_get(group->shader);
-            first_map_is_cube = chicago_shader->chicago.type > SHADER_TRANSPARENT_GENERIC_TYPE_2D_MAP ? true : false;
+            first_map_is_cube = chicago_shader->chicago.type > SHADER_TRANSPARENT_CHICAGO_TYPE_2D_MAP ? true : false;
         }
         else if(shader->type == SHADER_TYPE_TRANSPARENT_CHICAGO_EXTENDED) {
             ShaderTransparentChicagoExtended *extended_shader = shader_transparent_chicago_extended_get(group->shader);
-            first_map_is_cube = extended_shader->chicago_extended.type > SHADER_TRANSPARENT_GENERIC_TYPE_2D_MAP ? true : false;
+            first_map_is_cube = extended_shader->chicago_extended.type > SHADER_TRANSPARENT_CHICAGO_TYPE_2D_MAP ? true : false;
         }
         else {
             // Something seriously borkus must have happened for this to ever happen
@@ -158,6 +164,16 @@ namespace Chimera {
     }
 
     void set_up_chicago_fix() noexcept {
+        // Nuke FF chicago if we can
+        static Hook chicago_draw_hook, extended_draw_hook;
+        auto *chicago_switch_ptr = *reinterpret_cast<std::byte **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("transparent_shader_draw_switch_sig").data() + 3) + 5 * 4) + 5;
+        auto *extended_switch_ptr = *reinterpret_cast<std::byte **>(*reinterpret_cast<std::byte **>(get_chimera().get_signature("transparent_shader_draw_switch_sig").data() + 3) + 6 * 4) + 5;
+
+        write_function_override(chicago_switch_ptr, chicago_draw_hook, reinterpret_cast<const void *>(chicago_set_up_pixel_shader_asm), &chicago_draw_original_ptr);
+        write_function_override(extended_switch_ptr, extended_draw_hook, reinterpret_cast<const void *>(chicago_extended_set_up_pixel_shader_asm), &chicago_extended_draw_original_ptr);
+
+        // Leave these memes in for potato PCs so FF chicago at least works correctly.
+
         // Fix multiply and multiply2x blend functions.
         // We'll check the gearbox blending flag added in H1A for if we want borked rendering for some tags.
         static Hook multiply, multiply2x, extended_multiply, extended_multiply2x;
