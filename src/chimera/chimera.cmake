@@ -106,6 +106,8 @@ add_library(chimera STATIC
     src/chimera/fix/chicago_fix.S
     src/chimera/fix/contrail_fix.cpp
     src/chimera/fix/contrail_fix.S
+    src/chimera/fix/countdown_timer_fix.cpp
+    src/chimera/fix/countdown_timer_fix.S
     src/chimera/fix/custom_map_lobby_fix.cpp
     src/chimera/fix/death_reset_time.cpp
     src/chimera/fix/decal_fix.cpp

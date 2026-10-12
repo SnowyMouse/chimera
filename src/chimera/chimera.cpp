@@ -66,6 +66,7 @@
 #include "fix/multitexture_overlay_fix.hpp"
 #include "fix/blue_32bit_color_fix.hpp"
 #include "fix/contrail_fix.hpp"
+#include "fix/countdown_timer_fix.hpp"
 #include "fix/interpolate/interpolate.hpp"
 #include "fix/sun_fix.hpp"
 #include "fix/screen_effect_fix.hpp"
@@ -206,6 +207,7 @@ namespace Chimera {
                 set_up_multitexture_overlay_fix();
                 set_up_bitmap_formats();
                 set_up_index_buffer_fix();
+                set_up_countdown_timer_fix();
 
                 // This seemed like a good idea at the time...
                 set_up_water_fix();
