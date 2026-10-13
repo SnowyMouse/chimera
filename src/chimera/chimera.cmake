@@ -166,6 +166,7 @@ add_library(chimera STATIC
     src/chimera/fix/screen_effect_fix.S
     src/chimera/fix/shader_environment_fix.cpp
     src/chimera/fix/shader_environment_fix.S
+    src/chimera/fix/fixed_function.cpp
     src/chimera/fix/sun_fix.cpp
     src/chimera/fix/timer_offset.cpp
     src/chimera/fix/uncompressed_sound_fix.cpp

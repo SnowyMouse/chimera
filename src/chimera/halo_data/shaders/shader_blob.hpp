@@ -120,3 +120,9 @@ extern const size_t modulate_size;
 
 extern unsigned char diffuse[];
 extern const size_t diffuse_size;
+
+extern unsigned char texture[];
+extern const size_t texture_size;
+
+extern unsigned char occlusion_test[];
+extern const size_t occlusion_test_size;

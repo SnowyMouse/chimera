@@ -134,3 +134,5 @@ if __name__ == '__main__':
 
     generate_shader_blobs("modulate", sys.argv[1] + "pixel/modulate.cso", 3)
     generate_shader_blobs("diffuse", sys.argv[1] + "pixel/diffuse.cso", 3)
+    generate_shader_blobs("texture", sys.argv[1] + "pixel/texture.cso", 3)
+    generate_shader_blobs("occlusion_test", sys.argv[1] + "pixel/occlusion_test.cso", 3)
