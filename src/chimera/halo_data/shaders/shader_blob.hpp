@@ -114,3 +114,9 @@ extern const size_t transparent_chicago_cube_size;
 
 extern unsigned char transparent_glass_tint[];
 extern const size_t transparent_glass_tint_size;
+
+extern unsigned char modulate[];
+extern const size_t modulate_size;
+
+extern unsigned char diffuse[];
+extern const size_t diffuse_size;
