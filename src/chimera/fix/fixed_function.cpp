@@ -83,7 +83,14 @@ namespace Chimera {
 
         //Nuke FF widget memes
         static Hook occlusion_hook, sprite_hook;
-        auto *occlusion = get_chimera().get_signature("widget_occlusion_test_begin_sig").data();
+        std::byte *occlusion = nullptr;
+        if(get_chimera().feature_present("client_custom_edition")) {
+            occlusion = get_chimera().get_signature("widget_occlusion_test_begin_ce_sig").data();
+        }
+        else {
+            occlusion = get_chimera().get_signature("widget_occlusion_test_begin_sig").data();
+        }
+
         auto *sprite = get_chimera().get_signature("widget_sprite_begin_sig").data();
         write_jmp_call(occlusion, occlusion_hook, nullptr, reinterpret_cast<std::byte *>(widget_occlusion_test_use_psh));
         write_jmp_call(sprite, sprite_hook, nullptr, reinterpret_cast<std::byte *>(widget_sprite_use_vsh));
