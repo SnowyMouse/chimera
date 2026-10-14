@@ -458,6 +458,7 @@ the chimera folder created by Chimera.
 - [Set name](#set-name)
 - [Show coordinates](#show-coordinates)
 - [Show FPS](#show-fps)
+- [Show Timer](#show-timer)
 - [Shrink empty weapons](#shrink-empty-weapons)
 - [Spam to join](#spam-to-join)
 - [Split screen HUD](#split-screen-hud)
@@ -718,19 +719,6 @@ which will always scale by 480p regardless of this to prevent the afformentioned
 Set the mouse sensitivity. This is more granular than using Halo's settings. It
 is recommended to have mouse acceleration disabled if using low values.
 
-Halo | Horizontal | Vertical
------|------------|--------
-10   | 4          | 2
-9    | 4          | 2
-8    | 3          | 1.5
-7    | 2          | 1
-6    | 1.5        | 0.75
-5    | 1.25       | 0.625
-4    | 1          | 0.5
-3    | 0.75       | 0.375
-2    | 0.5        | 0.25
-1    | 0.25       | 0.125
-
 **Usage:** `chimera_mouse_sensitivity [off | <horizontal> <vertical>]`
 
 #### Player info
@@ -774,6 +762,11 @@ Show your in-game coordinates.
 Show your in-game FPS.
 
 **Usage:** `chimera_show_fps [true/false]`
+
+#### Show Timer
+Show the time since the map started.
+
+**Usage:** `chimera_show_timer [true/false]`
 
 #### Shrink empty weapons
 Make empty weapons appear smaller so they're easier to spot.
