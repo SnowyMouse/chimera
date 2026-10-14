@@ -11,6 +11,7 @@ include(ExternalProject)
 # As long as the hashes are the same it should be fine. Needed for some MinGW-w64 releases, mainly winlibs.
 set(CMAKE_TLS_VERIFY OFF)
 
+# cURL
 if(${CHIMERA_WINXP})
 	if(NOT ${CHIMERA_WINXP_UCRT})
 		# curl 8.17.0 is the last version to support Windows XP using the older MSVCRT C runtime.
@@ -23,8 +24,8 @@ if(${CHIMERA_WINXP})
 	endif()
 else()
 	# use latest version
-    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_22_0/curl-8.22.0.tar.xz")
-    set(LOCAL_CURL_URL_HASH f7ef3ae8a22e521f289803fe93543eb64c329b58aa73a9e224dfd915a2a5f4f7)
+    set(LOCAL_CURL_URL "https://github.com/curl/curl/releases/download/curl-8_23_0/curl-8.23.0.tar.xz")
+    set(LOCAL_CURL_URL_HASH 8dadd7d2536a314f982ad05a651b713f426bf7d02cc2c76cffb9796f2218e6c5)
 endif()
 
 set(LOCAL_CURL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/curl/include)
@@ -50,9 +51,24 @@ ExternalProject_Add(curl
         -DCURL_USE_LIBSSH2=OFF
         -DCURL_ZLIB=OFF
         -DCURL_ZSTD=OFF
-        -DHTTP_ONLY=ON
         -DUSE_NGHTTP2=OFF
         -DUSE_LIBIDN2=OFF
+        -DCURL_DISABLE_DICT=ON
+        -DCURL_DISABLE_FILE=ON
+        -DCURL_DISABLE_FTP=ON
+        -DCURL_DISABLE_GOPHER=ON
+        -DCURL_DISABLE_IMAP=ON
+        -DCURL_DISABLE_IPFS=ON
+        -DCURL_DISABLE_LDAP=ON
+        -DCURL_DISABLE_LDAPS=ON
+        -DCURL_DISABLE_MQTT=ON
+        -DCURL_DISABLE_POP3=ON
+        -DCURL_DISABLE_RTSP=ON
+        -DCURL_DISABLE_SMTP=ON
+        -DCURL_DISABLE_TELNET=ON
+        -DCURL_DISABLE_TFTP=ON
+        -DCURL_DISABLE_WEBSOCKETS=ON
+        $<$<BOOL:${CHIMERA_WINXP}>:-DCURL_DISABLE_SMB=ON>
         -DCURL_TARGET_WINDOWS_VERSION=${CHIMERA_TARGET_WINDOWS_VERSION}
 )
 
@@ -60,6 +76,13 @@ add_library(local_curl STATIC IMPORTED)
 set_target_properties(local_curl PROPERTIES IMPORTED_LOCATION ${LOCAL_CURL_LIB_DIR}/libcurl.a)
 add_dependencies(local_curl curl)
 
+if(${CHIMERA_WINXP})
+    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt)
+else()
+    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt iphlpapi)
+endif()
+
+# zstd
 set(LOCAL_ZSTD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/include)
 set(LOCAL_ZSTD_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/zstd/lib)
 
@@ -86,9 +109,3 @@ ExternalProject_Add(zstd
 add_library(local_zstd STATIC IMPORTED)
 set_target_properties(local_zstd PROPERTIES IMPORTED_LOCATION ${LOCAL_ZSTD_LIB_DIR}/libzstd.a)
 add_dependencies(local_zstd zstd)
-
-if(${CHIMERA_WINXP})
-    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt)
-else()
-    set(LOCAL_CURL_LIBRARIES local_curl ws2_32 bcrypt iphlpapi)
-endif()
