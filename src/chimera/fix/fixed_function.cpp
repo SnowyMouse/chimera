@@ -13,11 +13,14 @@
 
 namespace Chimera {
     void shadow_convolve_border_pass_use_psh() noexcept {
-        IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(VERTEX_DECLARATION_SCREEN_TRANSFORMED_LIT));
-        IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_LENS_FLARE));
-        IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_DIFFUSE]);
-        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+        if(d3d9_device_caps->PixelShaderVersion >= 0xffff0200) {
+            IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(VERTEX_DECLARATION_SCREEN_TRANSFORMED_LIT));
+            IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_LENS_FLARE));
+            IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_DIFFUSE]);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+            IDirect3DDevice9_SetFVF(*global_d3d9_device, 0);
+        }
     }
 
     void environment_model_shadow_use_psh() noexcept {
@@ -37,23 +40,25 @@ namespace Chimera {
     }
 
     void widget_occlusion_test_use_psh() noexcept {
-        auto viewport_width = global_window_parameters->camera.viewport_bounds.right - global_window_parameters->camera.viewport_bounds.left;
-        auto viewport_height = global_window_parameters->camera.viewport_bounds.bottom - global_window_parameters->camera.viewport_bounds.top;
+        if(d3d9_device_caps->PixelShaderVersion >= 0xffff0200) {
+            auto viewport_width = global_window_parameters->camera.viewport_bounds.right - global_window_parameters->camera.viewport_bounds.left;
+            auto viewport_height = global_window_parameters->camera.viewport_bounds.bottom - global_window_parameters->camera.viewport_bounds.top;
 
-        float screenproj[5][4] = {
-            {2.0f/static_cast<float>(viewport_width), 0.0f, 0.0f, -1.0f - 1.0f/static_cast<float>(viewport_width)},
-            {0.0f,-2.0f/static_cast<float>(viewport_height), 0.0f, 1.0f + 1.0f/static_cast<float>(viewport_height)},
-            {0.0f, 0.0f, 1.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f},
-        };
-        IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, reinterpret_cast<float *>(screenproj), 5);
-        IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(VERTEX_DECLARATION_SCREEN_TRANSFORMED_LIT));
-        IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_LENS_FLARE));
-        IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_OCCLUSION]);
-        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-        IDirect3DDevice9_SetFVF(*global_d3d9_device, 0);
+            float screenproj[5][4] = {
+                {2.0f/static_cast<float>(viewport_width), 0.0f, 0.0f, -1.0f - 1.0f/static_cast<float>(viewport_width)},
+                {0.0f,-2.0f/static_cast<float>(viewport_height), 0.0f, 1.0f + 1.0f/static_cast<float>(viewport_height)},
+                {0.0f, 0.0f, 1.0f, 0.0f},
+                {0.0f, 0.0f, 0.0f, 1.0f},
+                {0.0f, 0.0f, 0.0f, 1.0f},
+            };
+            IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, reinterpret_cast<float *>(screenproj), 5);
+            IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(VERTEX_DECLARATION_SCREEN_TRANSFORMED_LIT));
+            IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_LENS_FLARE));
+            IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_OCCLUSION]);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+            IDirect3DDevice9_SetFVF(*global_d3d9_device, 0);
+        }
     }
 
     void widget_sprite_use_vsh() noexcept {
@@ -71,6 +76,14 @@ namespace Chimera {
         IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(VERTEX_DECLARATION_SCREEN_TRANSFORMED_LIT_SPECULAR));
         IDirect3DDevice9_SetVertexShader(*global_d3d9_device, rasterizer_get_vertex_shader(VSH_LENS_FLARE));
         IDirect3DDevice9_SetFVF(*global_d3d9_device, 0);
+    }
+
+    void detail_object_draw_use_psh() noexcept {
+        if(d3d9_device_caps->PixelShaderVersion >= 0xffff0200) {
+            IDirect3DDevice9_SetPixelShader(*global_d3d9_device, chimera_pixel_shaders[CHIMERA_PIXEL_SHADER_MODULATE]);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+            IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+        }
     }
 
     void set_up_fixed_function_fix() noexcept {
@@ -94,5 +107,9 @@ namespace Chimera {
         auto *sprite = get_chimera().get_signature("widget_sprite_begin_sig").data();
         write_jmp_call(occlusion, occlusion_hook, nullptr, reinterpret_cast<std::byte *>(widget_occlusion_test_use_psh));
         write_jmp_call(sprite, sprite_hook, nullptr, reinterpret_cast<std::byte *>(widget_sprite_use_vsh));
+
+        static Hook detail_obj_hook;
+        auto *detail_obj = get_chimera().get_signature("detail_object_begin_sig").data();
+        write_jmp_call(detail_obj, detail_obj_hook, nullptr, reinterpret_cast<std::byte *>(detail_object_draw_use_psh));
     }
 }
