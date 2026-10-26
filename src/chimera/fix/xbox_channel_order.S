@@ -10,3 +10,10 @@ _set_psh_const_for_xbox_order_asm:
     call _set_psh_const_for_xbox_order
     add esp, 4
     ret
+
+.global _set_psh_const_for_cc_error_asm
+_set_psh_const_for_cc_error_asm:
+    push [esp + 0x54]
+    call _set_psh_const_for_cc_error_red
+    add esp, 4
+    ret
