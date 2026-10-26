@@ -265,6 +265,8 @@ namespace Chimera {
         IDirect3DDevice9_SetVertexShader(*global_d3d9_device, vertex_shader);
         IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(vertex_type));
         IDirect3DDevice9_SetPixelShader(*global_d3d9_device, NULL);
+        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
         rasterizer_set_render_state(D3DRS_CULLMODE, TEST_FLAG(shader_data->chicago.flags, SHADER_TRANSPARENT_CHICAGO_FLAGS_TWO_SIDED_BIT) ? D3DCULL_NONE : D3DCULL_CCW);
         rasterizer_set_render_state(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
@@ -394,6 +396,13 @@ namespace Chimera {
             }
             IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, vsh_constants_texanim, 8);
         }
+        else {
+            // Just draw with no pixel shader to handle bullshit custom tags with no maps...
+            rasterizer_transparent_geometry_group_draw_vertices(group, FALSE);
+            IDirect3DDevice9_SetRenderState(*global_d3d9_device, D3DRS_BLENDOP, D3DBLENDOP_ADD);
+
+            return true;
+        }
 
         shader_transparent_chicago_create(shader_data);
 
@@ -470,6 +479,8 @@ namespace Chimera {
         IDirect3DDevice9_SetVertexShader(*global_d3d9_device, vertex_shader);
         IDirect3DDevice9_SetVertexDeclaration(*global_d3d9_device, rasterizer_get_vertex_declaration(vertex_type));
         IDirect3DDevice9_SetPixelShader(*global_d3d9_device, NULL);
+        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+        IDirect3DDevice9_SetTextureStageState(*global_d3d9_device, 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
         rasterizer_set_render_state(D3DRS_CULLMODE, TEST_FLAG(shader_data->chicago_extended.flags, SHADER_TRANSPARENT_CHICAGO_FLAGS_TWO_SIDED_BIT) ? D3DCULL_NONE : D3DCULL_CCW);
         rasterizer_set_render_state(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
@@ -598,6 +609,14 @@ namespace Chimera {
                 }
             }
             IDirect3DDevice9_SetVertexShaderConstantF(*global_d3d9_device, 13, vsh_constants_texanim, 8);
+        }
+
+        else {
+            // Just draw with no pixel shader to handle bullshit custom tags with no maps...
+            rasterizer_transparent_geometry_group_draw_vertices(group, FALSE);
+            IDirect3DDevice9_SetRenderState(*global_d3d9_device, D3DRS_BLENDOP, D3DBLENDOP_ADD);
+
+            return true;
         }
 
         shader_transparent_chicago_extended_create(shader_data);
